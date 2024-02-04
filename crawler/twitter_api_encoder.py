@@ -11,32 +11,48 @@ class IncompleteBuildException(Exception):
 
 class DataEncoder(ABC):
     # Must not be overriden
-    def build(self) -> Dict:
-        result = self._build()
-        
+    def encode_as_dict(self) -> Dict:
+        result = self._build()   
+        return result
+    
+    def encode_changes_as_dict(self) -> Dict:
+        result = self._encode_changes_as_dict()
         return result
     
     # Must be overriden
+    # Changes will be stored seperately should only be the metrics I think
+    
     @abstractmethod
-    def _build(self) -> Dict:
+    def _encode_as_dict(self) -> Dict:
+        raise NotImplementedError()
+   
+    @abstractmethod
+    def _encode_changes_as_dict(self) -> Dict:
         raise NotImplementedError()
 
 
-
-class TweetEncoder(DataEncoder):
+class Tweet(DataEncoder):
     def __init__(self) -> None:
         pass
     
-    def _build(self) -> Dict:
-        return {}
+    def _encode_changes_as_dict(self) -> Dict:
+       pass
     
-
+    def _encode_as_dict(self) -> Dict:
+        pass
+   
+   
     def set_text(self, text: str):
         pass
 
     def get_text(self):
         pass
+        
+    def set_id(self):
+        pass
     
+    def get_id(self):
+        pass
 
     def set_post_date(self, date: str):
         pass
@@ -52,8 +68,7 @@ class TweetEncoder(DataEncoder):
 
     def set_public_metrics(self, retweet_count, reply_count, like_count, quote_count):
         pass
-    
-    
+        
     def set_entities(self, content_links, content_text: str):
         pass
 
@@ -63,12 +78,16 @@ class TweetEncoder(DataEncoder):
 
 
 
-class ProfileEncoder(DataEncoder):
+class Profile(DataEncoder):
     def __init__(self) -> None:
         pass
-    def _build(self) -> Dict:
-        return {}
     
+    def _encode_changes_as_dict(self) -> Dict:
+       pass
+    
+    def _encode_as_dict(self) -> Dict:
+        pass
+   
     def set_name(self, name: str):
         pass
     
