@@ -1,60 +1,59 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from twitter_api_encoder import TweetEncoder, ProfileEncoder
+from twitter_api_encoder import Tweet, Profile
 from urllib.parse import urlparse
-
 import database as db
 from driver import create_undetected_driver
 import time
+from selenium.common.exceptions import WebDriverException
 
 
+class CrawlResults(TypedDict):
+    profile: Profile
+    tweets: List[Tweet]
+    raw_data: str | None
+    next_url: str | None
+    error: bool
+    
+    
 class Crawler:
     def __init__(self) -> None:
         self.driver = create_undetected_driver()
 
-    def crawl(self, account: str, stop_date: float, saveProfile: bool):
-        url = self.get_url(account)
+    def crawl(self, url: str) -> CrawlResults:
+        results: CrawlResults = {"profile": None, "tweets": [], "raw_data": None, "next_url": None, "error": False}
 
-        self.driver_load_page(url)
+        try:
+            self.driver_load_page(url)
 
-        if saveProfile:
-            profile = self.parse_profile()
-            db.add_twitter_profile(profile)
+        except WebDriverException as e:
+            results["error"] = True
+            return results
 
-        while url != None:
-            filename = self.backup_raw_data(url)
-            tweets, next_url = self.parse_tweets()
+        if self.detect_error_loading():
+            results["error"] = True
+            return results
 
-            db.add_tweets(tweets)
-            url = next_url
 
-            if tweets[len(tweets) - 1].get_post_date_as_epoch() < stop_date:
-                break
+        results["raw_data"] = self.get_raw_data()
+        results["profile"] = self.parse_profile()
+        results["tweets"], results["next_url"] = self.parse_tweets()
+        
+        return results
 
-            time.sleep(5)
-            if url != None:
-                self.driver_load_page(url)
-
-    def get_url(self, text) -> str:
+    def detect_error_loading(self) -> bool:
         raise NotImplementedError()
-
+    
     def driver_load_page(self, url: str):
         raise NotImplementedError()
 
-    # Back up text file incase we have any problems with parsed data
-    # TODO: integrate with database
-    def backup_raw_data(self, url: str) -> str:
-        parsed_url = urlparse(url)
-        last_url_part = parsed_url.path.split("/")[-1]
-        filename = last_url_part + "-time-" + str(int(time.time()))
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.driver.page_source)
+    # raw html data
+    def get_raw_data(self) -> str:
+        return self.driver.page_source
 
-        return filename
-
-    def parse_tweets(self) -> Tuple[List[TweetEncoder], str | None]:
+    def parse_tweets(self) -> Tuple[List[Tweet], str | None]:
         raise NotImplementedError()
 
-    def parse_profile(self) -> ProfileEncoder:
+    def parse_profile(self) -> Profile:
         raise NotImplementedError()

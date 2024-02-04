@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from typing import List
 from twitter_api_encoder import TweetEncoder, ProfileEncoder
 
 #ask for external ip
@@ -7,14 +6,24 @@ client = MongoClient('10.0.0.28', port=27017, username='Admin', password='***REM
 db = client["twitter"]
 
 
-def get_crawl_list() -> List[str]:
+def get_crawl_list() -> list[str]:
+    collection = db["crawl_list"]
+
+def get_crawl_history(acccount:str ) -> list[str]:
     pass
 
-def get_crawl_history(acccount:str ) -> List[str]:
-    pass
 
-def add_twitter_profile(profile: ProfileEncoder):
-    pass
+
+
+def upsert_twitter_profile(profile: ProfileEncoder):
+    collection = db["profiles"]
     
-def add_tweets(tweets: List[TweetEncoder]):
-    pass
+def upsert_tweets(tweets: list[TweetEncoder]):
+    collection = db["tweets"]
+
+
+def get_mirrors() -> list[dict]:
+    collection = db["mirrors"]
+
+def save_mirror(mirror: dict):
+    collection = db["mirrors"]
