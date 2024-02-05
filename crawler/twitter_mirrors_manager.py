@@ -1,3 +1,4 @@
+# List of domain entries
 from typing import List, TypedDict
 import database as db
 import queue
@@ -9,10 +10,12 @@ class MirrorMeta(TypedDict):
     down_events: int
     
     
+# TODO: Sync with a database and store states. Implement a ranking system for the mirrors.
 class TwitterMirrorManager:
     def __init__(self) -> None:
         self._up_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
         self._down_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
+
         self.load_mirrors()
         
         
