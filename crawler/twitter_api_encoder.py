@@ -40,6 +40,8 @@ class DataEncoder(ABC):
         return result
     
     # Must be overriden
+    # Changes will be stored seperately should only be the metrics I think
+    
     @abstractmethod
     def _encode_as_dict(self) -> Dict:
         raise NotImplementedError()
