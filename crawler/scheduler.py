@@ -6,7 +6,10 @@ from twiiit_crawler import Twiiit_Crawler, Crawler
 import time
 from twitter_mirrors_manager import TwitterMirrorManager
 import database as db
+import os
+from datetime import datetime
 
+import backup as Backup
 
 class CrawlerScheduler:
     def __init__(self, accounts: List[str], crawler_count: int) -> None:
@@ -17,7 +20,7 @@ class CrawlerScheduler:
     
                     
     
-    def start(self):
+    def start(self):        
         for _ in range(self.crawler_count):
             threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start()                
     
@@ -26,7 +29,7 @@ class CrawlerScheduler:
         return f"http://{domain}/{account}"
     
     def wait(self):
-        time.sleep(5)      
+        time.sleep(3)      
     
     def run_crawler(self, crawler: Crawler):
         while not self.account_queue.empty():
@@ -47,10 +50,12 @@ class CrawlerScheduler:
                 continue
             
             
+            backup_file_id = Backup.backup_raw_data(results["raw_data"], results["profile"].get_username())
             
-            db_results = db.upsert_tweets(results["tweets"])
             
-            profile_result = db.upsert_twitter_profile(results["profile"])
+            db_results = db.upsert_tweets(results["tweets"], backup_file_id)
+            
+            profile_result = db.upsert_twitter_profile(results["profile"], backup_file_id)
             
             if results["next_url"]:
                 self.account_queue.put(results["next_url"])
@@ -60,19 +65,7 @@ class CrawlerScheduler:
         
 
 
-'''
-    def backup_raw_data(self, url: str) -> str:
-        parsed_url = urlparse(url)
-        last_url_part = parsed_url.path.split("/")[-1]
-        filename = last_url_part + "-time-" + str(int(time.time()))
-        fullpath = self.backup_raw_dir + "/" + filename
-        
-        with open(fullpath, "w", encoding="utf-8") as f:
-            f.write(self.driver.page_source)
 
-        return fullpath
-'''  
+
     
     
-test = CrawlerScheduler(["alabama_cs", "umichcse", "EECS_UTK", "OleMissCompSci", "gatech_scs", "LSUCSE", "UFCISE", "TulaneSSE", "MITEECS", "UAZScience", "CSatUSC"], 7)
-test.start()
