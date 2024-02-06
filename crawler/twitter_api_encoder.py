@@ -148,6 +148,9 @@ class Tweet(DataEncoder):
         self.object["entities"] = entities
         self.set_fields.add('entities')
 
+    def get_entities(self):
+        return self.object["entities"]
+
     def set_attachments(self, photos, videos):
         self.object["attachments"] = {}
         self.object["attachments"]["photos"] = photos
@@ -238,13 +241,6 @@ class Profile(DataEncoder):
     
     def get_url(self):
         return self.object['url']
-    
-    def set_description(self, description: str):
-        self.object["description"] = description
-        self.set_fields.add('description')
-    
-    def get_description(self):
-        return self.object["description"]
         
     def set_verified(self, verified: bool):
         self.object["verified"] = verified
