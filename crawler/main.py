@@ -1,5 +1,5 @@
 from scheduler import CrawlerScheduler
 
-test = CrawlerScheduler(["alabama_cs", "umichcse", "EECS_UTK", "OleMissCompSci", "gatech_scs", "LSUCSE", "UFCISE", "TulaneSSE", "MITEECS", "UAZScience", "CSatUSC"], 7)
+test = CrawlerScheduler(["alabama_cs", "umichcse", "EECS_UTK", "gatech_scs", "LSUCSE", "MITEECS", "UAZScience", "CSatUSC"], 3)
 test.start()
 

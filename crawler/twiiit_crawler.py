@@ -11,8 +11,8 @@ import urllib.request
 from twitter_api_encoder import Tweet, Profile, ReferencedTweetType
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
+import time
 
-# 
 
 class Twiiit_Crawler(Crawler):
     def __init__(self) -> None:
@@ -28,6 +28,13 @@ class Twiiit_Crawler(Crawler):
             return self.driver.find_element(by, value)
         except NoSuchElementException:
             return None
+    
+    def find_element_by_element_or_none(self, ele: WebElement, by: By, value: str) -> WebElement:
+        try:
+            return ele.find_element(by, value)
+        except NoSuchElementException:
+            return None
+          
     def find_text_or_none(self, parent: WebElement, by: By, value: str) -> str:
         try:
             return parent.find_element(by, value).text
@@ -57,16 +64,40 @@ class Twiiit_Crawler(Crawler):
         
         return pictures_list
     
+    def _enable_video_playback(self):
+        
+        overlay = self.find_element_or_none(By.CLASS_NAME, "video-overlay")
+        
+        if overlay == None:
+            return
+        
+        button = self.find_element_by_element_or_none(overlay, By.TAG_NAME, "button")
+        
+        if button == None:
+            return
+        
+        print("clicking enable video playback")
+        button.click()
+        print("clicked enable video playback")
+        time.sleep(5) #TODO: fix this
+            
     ##TODO: FIX Error parsing video:  Message: no such element: Unable to locate element: {"method":"tag name","selector":"video"}
     def _parse_videos(self, videos_ele: List[WebElement]) -> List:
         videos_list = [] # Just the links
+        if len(videos_ele) == 0:
+            return []
+        
         for video_ele in videos_ele:
             try:
                 video = video_ele.find_element(By.TAG_NAME, "video")
                 videos_list.append({'poster': video.get_attribute("poster"), "data-url": video.get_attribute("data-url"), "data-autoload": video.get_attribute("data-autolaod")})
+
+                    
             except Exception as e:
                 videos_list.append({"error": "Error parsing video"})
                 print("Error parsing video: ", e)
+                #print(self.driver.page_source)
+                
         return videos_list
     
     # TODO add many more error checks
@@ -90,6 +121,13 @@ class Twiiit_Crawler(Crawler):
     # does this need to be implemented?
     def parse_quoted_tweet(self, quote_ele: WebElement):
         pass
+    
+    
+    #TODO: Parse a card
+    # card-content, card-title, card-description, card-destination, card-image (img tag inside), 
+    def _parse_card(self, card_ele: WebElement):
+        pass
+    
     
     def parse_profile(self) -> Profile:
         profile_ele = self.driver.find_element(By.CLASS_NAME, "profile-card")
@@ -153,6 +191,7 @@ class Twiiit_Crawler(Crawler):
         return profile
         
     def parse_tweets(self) -> Tuple[List[Tweet], str | None]:
+        self._enable_video_playback()
         tweets = self.driver.find_elements(By.CLASS_NAME, "timeline-item")
         json_tweets = []
         
@@ -178,6 +217,7 @@ class Twiiit_Crawler(Crawler):
 
 
             videos_ele = tweet.find_elements(By.CLASS_NAME, "video-container")
+                   
             videos_list = self._parse_videos(videos_ele)
             tweet_stats_ele = tweet.find_element(By.CLASS_NAME, "tweet-stats")
 
@@ -213,12 +253,12 @@ class Twiiit_Crawler(Crawler):
             json_tweet.set_attachments(pictures_list, videos_list)
             
             if is_retweet:
-                json_tweet.set_refenced_tweets(link_text, ReferencedTweetType.RETWEET)
+                json_tweet.set_refenced_tweet(link_text, ReferencedTweetType.RETWEET)
             elif is_quote:
                 quote_link_text= self.find_attribute_or_none(quote_ele, By.CLASS_NAME, "quote-link", "href")
-                json_tweet.set_refenced_tweets(quote_link_text, ReferencedTweetType.QUOTED)
+                json_tweet.set_refenced_tweet(quote_link_text, ReferencedTweetType.QUOTED)
             else:
-                json_tweet.set_refenced_tweets("", ReferencedTweetType.NONE)
+                json_tweet.set_refenced_tweet("", ReferencedTweetType.NONE)
                 
             json_tweets.append(json_tweet)
 
