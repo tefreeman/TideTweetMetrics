@@ -17,12 +17,14 @@ class CrawlerScheduler:
         self.account_queue: queue.Queue = queue.Queue()
         self.crawler_count = crawler_count
         [self.account_queue.put(account) for account in accounts]
+        
+        self.crawler_threads = []
     
                     
     
     def start(self):        
         for _ in range(self.crawler_count):
-            threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start()                
+            self.crawler_threads.append(threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start())                
     
     @staticmethod
     def make_url(account: str, domain: str) -> str:
@@ -54,7 +56,6 @@ class CrawlerScheduler:
             
             
             db_results = db.upsert_tweets(results["tweets"], backup_file_id)
-            
             profile_result = db.upsert_twitter_profile(results["profile"], backup_file_id)
             
             if results["next_url"]:
