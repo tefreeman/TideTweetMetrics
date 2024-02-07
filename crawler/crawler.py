@@ -24,6 +24,8 @@ class Crawler:
     def crawl(self, url: str) -> CrawlResults:
         results: CrawlResults = {"profile": None, "tweets": [], "raw_data": None, "next_url": None, "error": False}
 
+
+        #TODO: Add in error handling that will define different error types
         try:
             self.driver_load_page(url)
 
@@ -31,7 +33,11 @@ class Crawler:
             results["error"] = True
             return results
 
-        if self.detect_error_loading():
+        if self.driver.get_status_code() != 200:
+            results["error"] = True
+            return results
+        
+        if self.detected_html_not_loaded():
             results["error"] = True
             return results
 
@@ -42,7 +48,7 @@ class Crawler:
         
         return results
 
-    def detect_error_loading(self) -> bool:
+    def detected_html_not_loaded(self) -> bool:
         raise NotImplementedError()
     
     def driver_load_page(self, url: str):
