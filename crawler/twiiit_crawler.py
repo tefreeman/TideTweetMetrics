@@ -12,6 +12,8 @@ from twitter_api_encoder import Tweet, Profile, ReferencedTweetType
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
 import time
+import logging
+
 
 
 class Twiiit_Crawler(Crawler):
@@ -22,6 +24,7 @@ class Twiiit_Crawler(Crawler):
     # load data into the driver
     def driver_load_page(self, url: str):
         self.driver.get(url)
+            
 
     def find_element_or_none(self, by: By, value: str) -> WebElement:
         try:
@@ -80,8 +83,8 @@ class Twiiit_Crawler(Crawler):
         button.click()
         print("clicked enable video playback")
         time.sleep(5) #TODO: fix this
-            
-    ##TODO: FIX Error parsing video:  Message: no such element: Unable to locate element: {"method":"tag name","selector":"video"}
+
+
     def _parse_videos(self, videos_ele: List[WebElement]) -> List:
         videos_list = [] # Just the links
         if len(videos_ele) == 0:
@@ -90,22 +93,20 @@ class Twiiit_Crawler(Crawler):
         for video_ele in videos_ele:
             try:
                 video = video_ele.find_element(By.TAG_NAME, "video")
-                videos_list.append({'poster': video.get_attribute("poster"), "data-url": video.get_attribute("data-url"), "data-autoload": video.get_attribute("data-autolaod")})
+                videos_list.append({'poster': video.get_attribute("poster"), "data-url": video.get_attribute("data-url"), "data-autoload": video.get_attribute("data-autoload")})
 
-                    
             except Exception as e:
-                videos_list.append({"error": "Error parsing video"})
-                print("Error parsing video: ", e)
-                #print(self.driver.page_source)
+                logging.error("Error parsing video: ", e)
+                continue
+            
                 
         return videos_list
     
     # TODO add many more error checks
-    def detect_error_loading(self) -> bool:
-        
+    def detected_html_not_loaded(self, max_wait=10) -> bool:
         try:
             element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
-            WebDriverWait(self.driver, 10).until(element_present)
+            WebDriverWait(self.driver, max_wait).until(element_present)
         except TimeoutException:
             return True
         
@@ -278,7 +279,7 @@ class Twiiit_Crawler(Crawler):
             print("Error parsing load more link: ", e)
         
         
-        return json_tweets, load_more_link
+        return json_tweets, load_more_link, errors
     
 
     
