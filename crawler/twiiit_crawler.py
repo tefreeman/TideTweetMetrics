@@ -24,17 +24,13 @@ class Twiiit_Crawler(Crawler):
     # load data into the driver
     def driver_load_page(self, url: str):
         self.driver.get(url)
-            
-
-    def find_element_or_none(self, by: By, value: str) -> WebElement:
-        try:
-            return self.driver.find_element(by, value)
-        except NoSuchElementException:
-            return None
     
-    def find_element_by_element_or_none(self, ele: WebElement, by: By, value: str) -> WebElement:
+    def find_element_or_none(self, parent: WebElement, by: By, value: str) -> WebElement:
         try:
-            return ele.find_element(by, value)
+            if parent == None:
+                return self.driver.find_element(by, value)
+            else:
+                return parent.find_element(by, value)
         except NoSuchElementException:
             return None
           
@@ -69,12 +65,12 @@ class Twiiit_Crawler(Crawler):
     
     def _enable_video_playback(self):
         
-        overlay = self.find_element_or_none(By.CLASS_NAME, "video-overlay")
+        overlay = self.find_element_or_none(None, By.CLASS_NAME, "video-overlay")
         
         if overlay == None:
             return
         
-        button = self.find_element_by_element_or_none(overlay, By.TAG_NAME, "button")
+        button = self.find_element_or_none(None, overlay, By.TAG_NAME, "button")
         
         if button == None:
             return
@@ -82,7 +78,7 @@ class Twiiit_Crawler(Crawler):
         print("clicking enable video playback")
         button.click()
         print("clicked enable video playback")
-        time.sleep(5) #TODO: fix this
+        time.sleep(8) #TODO: fix this
 
 
     def _parse_videos(self, videos_ele: List[WebElement]) -> List:
@@ -119,17 +115,49 @@ class Twiiit_Crawler(Crawler):
     def parse_profile_pic(self, picture_ele: WebElement):
         return {"href": picture_ele.get_attribute("href"), "img_src": self.find_attribute_or_none(picture_ele, By.TAG_NAME, "img", "src")}
     
-    # does this need to be implemented?
     def parse_quoted_tweet(self, quote_ele: WebElement):
-        pass
-    
-    
-    #TODO: Parse a card
-    # card-content, card-title, card-description, card-destination, card-image (img tag inside), 
+        link = self.find_attribute_or_none(quote_ele, By.CLASS_NAME, "quote-link", "href")
+        fullname_text = self.find_text_or_none(quote_ele, By.CLASS_NAME, "fullname")
+        username_text = self.find_text_or_none(quote_ele, By.CLASS_NAME, "username")
+        date_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "tweet-date")
+        date_text = None
+        if date_ele != None:
+            date_text = self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title")
+            
+        
+        content_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-text")
+        content_text = content_ele.text
+        content_links_ele = content_ele.find_elements(By.TAG_NAME, "a")
+        content_links_list = self._parse_links(content_links_ele)
+        
+        quote_media_container_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-media-container")
+        pictures_ele = quote_media_container_ele.find_elements(By.CLASS_NAME, "still-image")
+        pictures_list = self._parse_pictures(pictures_ele)
+        
+        print("done")
+
     def _parse_card(self, card_ele: WebElement):
-        pass
-    
-    
+        card_link = self.find_attribute_or_none(card_ele, By.CLASS_NAME, "card-container", "href")
+        card_img_ele = self.find_element_or_none(card_ele, By.CLASS_NAME, "card-image-container")
+        
+        card_img_srcs = []
+        
+        if card_img_ele != None:
+            card_img_srcs.append(card_img_ele.find_elements(By.TAG_NAME, "img").get_attribute("src"))
+            
+
+        card_title = self.find_text_or_none(card_ele, By.CLASS_NAME, "card-title")
+        card_description = self.find_text_or_none(card_ele, By.CLASS_NAME, "card-description")
+        card_destination = self.find_text_or_none(card_ele, By.CLASS_NAME, "card-destination")
+        
+        return {
+            "url": card_link,
+            "img_srcs": card_img_srcs,
+            "title": card_title,
+            "description": card_description,
+            "destination": card_destination
+        }
+      
     def parse_profile(self) -> Profile:
         profile_ele = self.driver.find_element(By.CLASS_NAME, "profile-card")
         fullname_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-fullname")
@@ -138,7 +166,7 @@ class Twiiit_Crawler(Crawler):
         location_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-location")
         website_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-website")
 
-        join_date_ele = self.find_element_or_none(By.CLASS_NAME, "profile-joindate")
+        join_date_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-joindate")
         join_date_text = None
         
         if join_date_ele != None:
@@ -147,7 +175,7 @@ class Twiiit_Crawler(Crawler):
         verified_profile_ele = profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue")
         verified_profile_bool = len(verified_profile_ele) > 0
 
-        profile_pic_ele = self.find_element_or_none(By.CLASS_NAME, "profile-card-avatar")
+        profile_pic_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-card-avatar")
         
         profile_pic = None
         if profile_pic_ele != None:
@@ -205,7 +233,12 @@ class Twiiit_Crawler(Crawler):
             
             fullname_text = self.find_text_or_none(tweet, By.CLASS_NAME, "fullname")
             username_text = self.find_text_or_none(tweet, By.CLASS_NAME, "username")
-            date_text = tweet.find_element(By.CLASS_NAME, "tweet-date").find_element(By.TAG_NAME, 'a').get_attribute("title")
+            
+            date_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-date")
+            date_text = None
+            if date_ele != None:
+                date_text = self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title")
+            
             
             content_ele = tweet.find_element(By.CLASS_NAME, "tweet-content")
             content_text = content_ele.text
@@ -235,13 +268,18 @@ class Twiiit_Crawler(Crawler):
 
             is_retweet = True if len(tweet.find_elements(By.CLASS_NAME,"retweet-header")) > 0 else False
             
+            cards = tweet.find_elements(By.CLASS_NAME, "card")
+            cards_list = []
+            
+            for card in cards:
+                cards_list.append(self._parse_card(card))
+                
             #TODO: Simplify this
-            quote_ele = None
             quotes = tweet.find_elements(By.CLASS_NAME, "quote")
-            if len(quotes) == 1:
-                quote_ele = quotes[0]
-
-            is_quote = True if quote_ele != None else False
+            for quote in quotes:
+                self.parse_quoted_tweet(quote)
+            
+            is_quote = len(quotes)  > 0
             
 
             json_tweet = Tweet()
@@ -251,12 +289,13 @@ class Twiiit_Crawler(Crawler):
             json_tweet.set_author(username_text)
             json_tweet.set_public_metrics(retweet_count, comment_count, heart_count, quote_count)
             json_tweet.set_entities(content_links_list, content_text)
-            json_tweet.set_attachments(pictures_list, videos_list)
+            json_tweet.set_attachments(pictures_list, videos_list, cards_list)
             
+            # TODO: Need to set a retweet to have correct referenced tweet
             if is_retweet:
                 json_tweet.set_refenced_tweet(link_text, ReferencedTweetType.RETWEET)
             elif is_quote:
-                quote_link_text= self.find_attribute_or_none(quote_ele, By.CLASS_NAME, "quote-link", "href")
+                quote_link_text = self.find_attribute_or_none(quotes[0], By.CLASS_NAME, "quote-link", "href")
                 json_tweet.set_refenced_tweet(quote_link_text, ReferencedTweetType.QUOTED)
             else:
                 json_tweet.set_refenced_tweet("", ReferencedTweetType.NONE)
@@ -279,7 +318,7 @@ class Twiiit_Crawler(Crawler):
             print("Error parsing load more link: ", e)
         
         
-        return json_tweets, load_more_link, errors
+        return json_tweets, load_more_link
     
 
     
