@@ -39,8 +39,21 @@ class DataEncoder(ABC):
         result["imeta"]["bfi"] = backup_file_id
         return result
     
-    # Must be overriden
-    # Changes will be stored seperately should only be the metrics I think
+    def decode_from_dict(self, data: Dict):
+        raise NotImplementedError()
+    
+    def decode_changes_from_dict(self, data: Dict):
+        raise NotImplementedError()
+    
+    
+    # These must be overridden
+    @abstractmethod
+    def _decode_as_dict(self) -> Dict:
+        raise NotImplementedError()
+    
+    @abstractmethod
+    def _decode_changes_as_dict(self) -> Dict:
+        raise NotImplementedError()
     
     @abstractmethod
     def _encode_as_dict(self) -> Dict:
@@ -52,12 +65,16 @@ class DataEncoder(ABC):
 
 
 class Tweet(DataEncoder):
-    def __init__(self) -> None:
+    def __init__(self, as_json = None, changes_json=None) -> None:
         self.object = {}
         self.includes = {}
         self.set_fields = set()
         self.required_fields = {'id', 'text', 'created_at', 'author_id', 'public_metrics', 'entities', 'attachments'}
-
+        
+        if as_json != None:
+            self.decode_from_dict(as_json)
+        if changes_json != None:
+            self.decode_changes_from_dict(changes_json)
 
     def ensure_required_fields_set(self):
         if not self.required_fields.issubset(self.set_fields):
@@ -75,7 +92,6 @@ class Tweet(DataEncoder):
         metrics["timestamp"] = datetime.now()
         return metrics
     
-
     def set_id(self, id: str | None):
         self.object["id"] = id
         if id != None or id != "":
@@ -182,12 +198,17 @@ class Tweet(DataEncoder):
 
 
 class Profile(DataEncoder):
-    def __init__(self) -> None:
+    def __init__(self, as_json=None, changes_json=None) -> None:
         self.object = {}
         self.set_fields = set()
         self.required_fields = {'name', 'description', 'username', 'location', 'url', 'description', 'verified', 'created_at', 'profile_image_url', 'public_metrics'}
 
-    
+        if as_json != None:
+            self.decode_from_dict(as_json)
+        if changes_json != None:
+            self.decode_changes_from_dict(changes_json)
+            
+            
     def raise_unless_required_fields_set(self):
         if not self.required_fields.issubset(self.set_fields):
             missing_fields = self.required_fields - self.set_fields
