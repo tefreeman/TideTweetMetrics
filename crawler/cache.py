@@ -1,4 +1,5 @@
 from threading import Lock
+from twitter_api_encoder import Profile
 import time
 
 class ProfileUpdateCache:
@@ -7,8 +8,9 @@ class ProfileUpdateCache:
         self.max_cache_size = max_cache_size
         self.lock = Lock()
     
-    def load_from_db(self):
-        pass
+    def load_from_db(self, profiles: list[Profile]):
+        for profile in profiles:
+            self._cache[profile.get_username()] = None
     
     def get_or_cache_profile(self, username: str) -> bool:
         if self._cache[username] != None:
