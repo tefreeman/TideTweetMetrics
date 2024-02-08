@@ -1,0 +1,22 @@
+from threading import Lock
+import time
+
+class ProfileUpdateCache:
+    def __init__(self, max_cache_size: int):
+        self._cache = {}
+        self.max_cache_size = max_cache_size
+        self.lock = Lock()
+    
+    def load_from_db(self):
+        pass
+    
+    def get_or_cache_profile(self, username: str) -> bool:
+        if self._cache[username] != None:
+            return self._cache[username] 
+        
+        if len(self._cache) >= self.max_cache_size:
+            self._cache.popitem()
+        
+        self._cache[username] = time.time()
+        
+        return None
