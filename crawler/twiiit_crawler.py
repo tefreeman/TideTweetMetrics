@@ -19,12 +19,12 @@ import logging
 class Twiiit_Crawler(Crawler):
     def __init__(self) -> None:
         super().__init__()
-
-
-    # load data into the driver
+        
+    # Load data into the driver
     def driver_load_page(self, url: str):
         self.driver.get(url)
     
+    # Catch if element is not found
     def find_element_or_none(self, parent: WebElement, by: By, value: str) -> WebElement:
         try:
             if parent == None:
@@ -34,18 +34,21 @@ class Twiiit_Crawler(Crawler):
         except NoSuchElementException:
             return None
           
+    # Catch if element.text is not found
     def find_text_or_none(self, parent: WebElement, by: By, value: str) -> str:
         try:
             return parent.find_element(by, value).text
         except NoSuchElementException:
             return None
  
+    # Catch if element.get_attribute is not found
     def find_attribute_or_none(self, parent: WebElement, by: By, value: str, attrib: str) -> str:
         try:
             return parent.find_element(by, value).get_attribute(attrib)
         except NoSuchElementException:
             return None       
         
+    # Returns List of link attributes 
     def _parse_links(self, content_links_ele: List[WebElement]) -> List:
         content_links_list = []
         for content_link_ele in content_links_ele:
@@ -56,6 +59,7 @@ class Twiiit_Crawler(Crawler):
                     })
         return content_links_list
     
+    # Returns list of picture attributes
     def _parse_pictures(self, pictures_ele: List[WebElement]) -> List:
         pictures_list = [] # Just the links
         for picture_ele in pictures_ele:
@@ -63,8 +67,8 @@ class Twiiit_Crawler(Crawler):
         
         return pictures_list
     
+    # Function that clicks "enable video playback" for videos
     def _enable_video_playback(self):
-        
         overlay = self.find_element_or_none(None, By.CLASS_NAME, "video-overlay")
         
         if overlay == None:
@@ -78,11 +82,13 @@ class Twiiit_Crawler(Crawler):
         print("clicking enable video playback")
         button.click()
         print("clicked enable video playback")
-        time.sleep(8) #TODO: fix this
+        time.sleep(8) #TODO: fix this -> problem with waiting page to load after enabling video playback. Sleep allows for page to load. Low priority
 
-
+    # Return list of video attributes
     def _parse_videos(self, videos_ele: List[WebElement]) -> List:
         videos_list = [] # Just the links
+
+        # If the video element is empty, return empty list
         if len(videos_ele) == 0:
             return []
         
@@ -98,7 +104,9 @@ class Twiiit_Crawler(Crawler):
                 
         return videos_list
     
-    # TODO add many more error checks
+
+    # TODO add many more error checks-----------------------------------------------------------------------------------
+    # Detects if the html isn't loading
     def detected_html_not_loaded(self, max_wait=10) -> bool:
         try:
             element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
@@ -318,20 +326,17 @@ class Twiiit_Crawler(Crawler):
             print("Error parsing load more link: ", e)
         
         
-        return json_tweets, load_more_link
+        return json_tweets, load_more_link, error_list
     
-
-    
-
-def _remove_domain(url: str) -> str:
-    parsed_url = urlparse(url)
-    # Reconstruct URL without scheme and net location
-    # Include params, query, and fragment if needed
-    new_url = parsed_url.path
-    if parsed_url.params:
-        new_url += ';' + parsed_url.params
-    if parsed_url.query:
-        new_url += '?' + parsed_url.query
-    if parsed_url.fragment:
-        new_url += '#' + parsed_url.fragment
-    return new_url[1:] if new_url.startswith('/') else new_url
+    def _remove_domain(url: str) -> str:
+        parsed_url = urlparse(url)
+        # Reconstruct URL without scheme and net location
+        # Include params, query, and fragment if needed
+        new_url = parsed_url.path
+        if parsed_url.params:
+            new_url += ';' + parsed_url.params
+        if parsed_url.query:
+            new_url += '?' + parsed_url.query
+        if parsed_url.fragment:
+            new_url += '#' + parsed_url.fragment
+        return new_url[1:] if new_url.startswith('/') else new_url
