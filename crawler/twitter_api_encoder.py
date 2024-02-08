@@ -15,6 +15,11 @@ class ReferencedTweetType(Enum):
     REPLY = 'replied_to'
     NONE = 'none'
 
+# TODO: Add a MetaData class to store the metadata for the object
+# instead of having to add it to the json object itself
+class MetaData:
+    pass
+
 class DataEncoder(ABC):
     # Must not be overriden
     def encode_as_dict(self, backup_file_id) -> Dict:
@@ -62,7 +67,6 @@ class DataEncoder(ABC):
     @abstractmethod
     def _encode_changes_as_dict(self) -> Dict:
         raise NotImplementedError()
-
 
 class Tweet(DataEncoder):
     def __init__(self, as_json = None, changes_json=None) -> None:
