@@ -44,7 +44,7 @@ class Crawler:
 
         results["raw_data"] = self.get_raw_data()
         results["profile"] = self.parse_profile()
-        results["tweets"], results["next_url"] = self.parse_tweets()
+        results["tweets"], results["next_url"], results["error"] = self.parse_tweets()       
         
         return results
 
