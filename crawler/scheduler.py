@@ -22,9 +22,12 @@ class CrawlerScheduler:
     
                     
     
-    def start(self):        
-        for _ in range(self.crawler_count):
-            self.crawler_threads.append(threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start())                
+    def start(self):
+        if self.crawler_count == 1:
+            self.run_crawler(Twiiit_Crawler())
+        else:
+            for _ in range(self.crawler_count):
+                self.crawler_threads.append(threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start())                
     
     @staticmethod
     def make_url(account: str, domain: str) -> str:
