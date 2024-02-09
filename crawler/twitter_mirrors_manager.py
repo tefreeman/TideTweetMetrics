@@ -33,6 +33,7 @@ class TwitterMirrorManager:
         
 
     def reload_bad_mirrors(self):
+        print("reloading bad mirrors")
         while not self._down_mirrors.empty():
             mirror = self._down_mirrors.get()
             self._up_mirrors.put(mirror)
