@@ -52,6 +52,8 @@ class DataEncoder(ABC):
     
     
     # These must be overridden
+    
+    '''
     @abstractmethod
     def _decode_as_dict(self) -> Dict:
         raise NotImplementedError()
@@ -67,7 +69,7 @@ class DataEncoder(ABC):
     @abstractmethod
     def _encode_changes_as_dict(self) -> Dict:
         raise NotImplementedError()
-
+    '''
 class Tweet(DataEncoder):
     def __init__(self, as_json = None, changes_json=None) -> None:
         self.object = {}
@@ -171,10 +173,11 @@ class Tweet(DataEncoder):
     def get_entities(self):
         return self.object["entities"]
 
-    def set_attachments(self, photos, videos):
+    def set_attachments(self, photos, videos, cards):
         self.object["attachments"] = {}
         self.object["attachments"]["photos"] = photos
         self.object["attachments"]["videos"] = videos
+        self.object["attachments"]["cards"] = cards
         self.set_fields.add("attachments")
 
     def get_attachments(self):

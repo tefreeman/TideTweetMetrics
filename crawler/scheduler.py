@@ -2,7 +2,8 @@ import threading
 import queue
 from urllib.parse import urlparse
 from typing import Dict, List
-from twiiit_crawler import Twiiit_Crawler, Crawler
+from twiiit_crawler import Twiiit_Crawler
+from crawler import Crawler
 import time
 from twitter_mirrors_manager import TwitterMirrorManager
 import database as db
@@ -34,8 +35,8 @@ class CrawlerScheduler:
         return f"http://{domain}/{account}"
     
     def wait(self):
-        time.sleep(3)      
-    
+        time.sleep(8)      
+
     def run_crawler(self, crawler: Crawler):
         while not self.account_queue.empty():
            

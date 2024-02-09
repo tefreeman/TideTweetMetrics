@@ -74,7 +74,7 @@ class Twiiit_Crawler(Crawler):
         if overlay == None:
             return
         
-        button = self.find_element_or_none(None, overlay, By.TAG_NAME, "button")
+        button = self.find_element_or_none(overlay, By.TAG_NAME, "button")
         
         if button == None:
             return
@@ -82,7 +82,7 @@ class Twiiit_Crawler(Crawler):
         print("clicking enable video playback")
         button.click()
         print("clicked enable video playback")
-        time.sleep(8) #TODO: fix this -> problem with waiting page to load after enabling video playback. Sleep allows for page to load. Low priority
+        time.sleep(10) #TODO: fix this -> problem with waiting page to load after enabling video playback. Sleep allows for page to load. Low priority
 
     # Return list of video attributes
     def _parse_videos(self, videos_ele: List[WebElement]) -> List:
@@ -107,7 +107,7 @@ class Twiiit_Crawler(Crawler):
 
     # TODO add many more error checks-----------------------------------------------------------------------------------
     # Detects if the html isn't loading
-    def detected_html_not_loaded(self, max_wait=10) -> bool:
+    def detected_html_not_loaded(self, max_wait=15) -> bool:
         try:
             element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
             WebDriverWait(self.driver, max_wait).until(element_present)
@@ -139,8 +139,9 @@ class Twiiit_Crawler(Crawler):
         content_links_list = self._parse_links(content_links_ele)
         
         quote_media_container_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-media-container")
-        pictures_ele = quote_media_container_ele.find_elements(By.CLASS_NAME, "still-image")
-        pictures_list = self._parse_pictures(pictures_ele)
+        if quote_media_container_ele != None:
+            pictures_ele = quote_media_container_ele.find_elements(By.CLASS_NAME, "still-image")
+            pictures_list = self._parse_pictures(pictures_ele)
         
         print("done")
 
@@ -151,7 +152,9 @@ class Twiiit_Crawler(Crawler):
         card_img_srcs = []
         
         if card_img_ele != None:
-            card_img_srcs.append(card_img_ele.find_elements(By.TAG_NAME, "img").get_attribute("src"))
+            images = card_img_ele.find_elements(By.TAG_NAME, "img")
+            for image in images:     
+                card_img_srcs.append(image.get_attribute("src"))
             
 
         card_title = self.find_text_or_none(card_ele, By.CLASS_NAME, "card-title")
@@ -284,8 +287,11 @@ class Twiiit_Crawler(Crawler):
                 
             #TODO: Simplify this
             quotes = tweet.find_elements(By.CLASS_NAME, "quote")
+            
+            '''
             for quote in quotes:
                 self.parse_quoted_tweet(quote)
+            '''
             
             is_quote = len(quotes)  > 0
             
@@ -326,17 +332,17 @@ class Twiiit_Crawler(Crawler):
             print("Error parsing load more link: ", e)
         
         
-        return json_tweets, load_more_link, error_list
+        return json_tweets, load_more_link, None
     
-    def _remove_domain(url: str) -> str:
-        parsed_url = urlparse(url)
-        # Reconstruct URL without scheme and net location
-        # Include params, query, and fragment if needed
-        new_url = parsed_url.path
-        if parsed_url.params:
-            new_url += ';' + parsed_url.params
-        if parsed_url.query:
-            new_url += '?' + parsed_url.query
-        if parsed_url.fragment:
-            new_url += '#' + parsed_url.fragment
-        return new_url[1:] if new_url.startswith('/') else new_url
+def _remove_domain(url: str) -> str:
+    parsed_url = urlparse(url)
+    # Reconstruct URL without scheme and net location
+    # Include params, query, and fragment if needed
+    new_url = parsed_url.path
+    if parsed_url.params:
+        new_url += ';' + parsed_url.params
+    if parsed_url.query:
+        new_url += '?' + parsed_url.query
+    if parsed_url.fragment:
+        new_url += '#' + parsed_url.fragment
+    return new_url[1:] if new_url.startswith('/') else new_url
