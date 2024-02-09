@@ -6,7 +6,8 @@ import time
 import datetime
 
 client = MongoClient("10.0.0.28", port=27017, username="Admin", password="We420?Z4!")
-db = client["twitter"]
+db_old = client["twitter"]
+db = client["twitter_1"]
 
 
 def attach_new_tweet_meta(obj: dict):
@@ -20,7 +21,7 @@ def attach_new_tweet_meta(obj: dict):
 
 
 def get_crawl_list() -> list[str]:
-    collection = db["crawl_list"]
+    collection = db_old["crawl_list"]
     usernames = set()
     for user in collection.find():
         if not ("username" in user):
@@ -92,7 +93,7 @@ def _update_tweet(tweet: Tweet, backup_file_id: int):
 
 
 def get_mirrors() -> list[dict]:
-    collection = db["mirrors"]
+    collection = db_old["mirrors"]
     mirrors = []
     for mirror in collection.find():
         if not (
