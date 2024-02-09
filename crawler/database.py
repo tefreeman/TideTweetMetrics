@@ -1,3 +1,4 @@
+from bson import ObjectId
 from pymongo import MongoClient
 from typing import TypedDict
 from twitter_api_encoder import Tweet, Profile
@@ -13,34 +14,43 @@ def attach_new_tweet_meta(obj: dict):
         obj["imeta"] = {}
 
     obj["imeta"]["created"] = datetime.datetime.now()
-    obj["imeta"]["update_id"] = (None,)
+    obj["imeta"]["update_id"] = None
     obj["imeta"]["errors"] = []
     obj["imeta"]["version"] = 1
 
 
 def get_crawl_list() -> list[str]:
     collection = db["crawl_list"]
-    usernames = []
+    usernames = set()
     for user in collection.find():
         if not ("username" in user):
             raise Exception("username not inside user in crawl_list collection")
 
-        usernames.append(user["username"])
+        usernames.add(user["username"])
 
-    return usernames
+    return list(usernames)
 
 
 def get_crawl_history(acccount: str) -> list[str]:
     collection = db["crawl_history"]
 
-
+    
 def upsert_twitter_profile(profile: Profile, backup_file_id: int):
     collection = db["profiles"]
-
-    if collection.find_one({"username": profile.get_username()}) != None:
+    profile_updates_col = db["profile_updates"]
+    
+    db_profile = collection.find_one({"username": profile.get_username()})
+    if db_profile != None:
+        if db_profile["imeta"]["update_id"] != None:
+            update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["update_id"])})
+            if update != None:
+                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=1):
+                    return # aka no update
         return _update_profile(profile, backup_file_id)
 
-    collection.insert_one(profile.encode_as_dict(backup_file_id))
+    profile_json = profile.encode_as_dict(backup_file_id)
+    attach_new_tweet_meta(profile_json)
+    collection.insert_one(profile_json)
 
 
 def _update_profile(profile: Profile, backup_file_id: int):
