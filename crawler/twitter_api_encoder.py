@@ -17,9 +17,27 @@ class ReferencedTweetType(Enum):
 
 # TODO: Add a MetaData class to store the metadata for the object
 # instead of having to add it to the json object itself
-class MetaData:
-    pass
+# Should be able to attach itself to the raw json object
 
+class MetaData:
+    def __init__(self) -> None:
+        pass
+    
+    def get_created(self):
+        pass
+    
+    def get_update_id(self):
+        pass
+    
+    def get_errors(self):
+        pass
+    
+    def get_version(self):
+        pass
+    
+    def get_backup_file_id(self):
+        pass
+    
 class DataEncoder(ABC):
     # Must not be overriden
     def encode_as_dict(self, backup_file_id) -> Dict:
