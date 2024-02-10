@@ -7,7 +7,7 @@ import datetime
 
 client = MongoClient("10.0.0.28", port=27017, username="Admin", password="We420?Z4!")
 db_old = client["twitter"]
-db = client["twitter_1"]
+db = client["twitter"]
 
 
 def attach_new_tweet_meta(obj: dict):

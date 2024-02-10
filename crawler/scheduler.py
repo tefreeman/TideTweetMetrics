@@ -35,7 +35,8 @@ class CrawlerScheduler:
         self.mirror_manager = TwitterMirrorManager()
         self.account_queue: queue.Queue[PageLink] = queue.Queue()
         self.crawler_count = crawler_count
-        [self.account_queue.put(account) for account in accounts]
+
+        [self.account_queue.put(PageLink(account+"sfsd")) for account in accounts]
         
         self.crawler_threads = []
     

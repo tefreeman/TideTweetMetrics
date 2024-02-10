@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
 import time
 import logging
+from error_sys import Error
 
 
 
@@ -104,21 +105,21 @@ class Twiiit_Crawler(Crawler):
                 
         return videos_list
     
+    #TODO: Add error checking (In progress)
 
-    # TODO add many more error checks-----------------------------------------------------------------------------------
-    # Detects if the html isn't loading
-    def detected_html_not_loaded(self, max_wait=15) -> bool:
+    # Detects if the html isn't loading (DONE)
+    def detected_html_not_loaded(self, max_wait=15):
         try:
             element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
             WebDriverWait(self.driver, max_wait).until(element_present)
-        except TimeoutException:
-            return True
-        
+        except TimeoutException as e:
+            return Error(e.__class__._name__)
+
+        #Error for when HTML generates error panel etc. wrong user name
         error_div = self.driver.find_elements(By.CLASS_NAME, "error-panel")
         if len(error_div) > 0:
-            return True
-        
-        return False
+            return Error("ErrorPanelFound")
+        return None
         
     def parse_profile_pic(self, picture_ele: WebElement):
         return {"href": picture_ele.get_attribute("href"), "img_src": self.find_attribute_or_none(picture_ele, By.TAG_NAME, "img", "src")}
