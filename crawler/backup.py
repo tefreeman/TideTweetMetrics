@@ -4,10 +4,6 @@ import os
 import queue
 import lzma
 
-
-
-
-
 _backup_dir = "backup_raw_data"
 _file_lock = threading.Lock()
 
