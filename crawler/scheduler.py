@@ -9,13 +9,31 @@ from twitter_mirrors_manager import TwitterMirrorManager
 import database as db
 import os
 from datetime import datetime
-
 import backup as Backup
 
+class PageLink:
+    def __init__(self, page_url: str) -> None:
+        self._page_url = page_url
+        self._in_use = False
+        self._failures = 0
+    
+    def get(self) -> str:
+        if self._in_use:
+            raise Exception("PageLink is in use")
+        self._in_use = True
+        return self._page_url
+    
+    def failure_count(self) -> int:
+        return self._failures
+    
+    def return_failure(self):
+        self._in_use = False
+        self._failures += 1
+    
 class CrawlerScheduler:
     def __init__(self, accounts: List[str], crawler_count: int) -> None:
         self.mirror_manager = TwitterMirrorManager()
-        self.account_queue: queue.Queue = queue.Queue()
+        self.account_queue: queue.Queue[PageLink] = queue.Queue()
         self.crawler_count = crawler_count
         [self.account_queue.put(account) for account in accounts]
         
@@ -43,15 +61,22 @@ class CrawlerScheduler:
             self.wait()
             
             account = self.account_queue.get()
+            
+            if account.failure_count() > 3:
+                self.account_queue.task_done()
+                continue
+            
             mirror = self.mirror_manager.get_mirror()
             domain = mirror["url"]
             
-            url = CrawlerScheduler.make_url(account, domain)
+            url = CrawlerScheduler.make_url(account.get(), domain)
            
             results = crawler.crawl(url)
             
             if results["error"]:
                 self.mirror_manager.return_offline(mirror)
+                
+                account.return_failure() 
                 self.account_queue.put(account)
                 continue
             
