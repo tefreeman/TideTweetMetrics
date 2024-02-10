@@ -3,25 +3,29 @@ from typing import List, TypedDict
 import database as db
 import queue
 
+
 class MirrorMeta(TypedDict):
     url: str
     is_working: bool
     up_events: int
     down_events: int
-    
-    
-# TODO: Sync with a database and store states. Implement a ranking system for the mirrors.
+
+
 class TwitterMirrorManager:
     def __init__(self) -> None:
         self._up_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
         self._down_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
 
         self.load_mirrors()
-        
-        
+
     def make_mirror_meta(self, mirror: str, is_working: bool) -> MirrorMeta:
-        return {"url": mirror, "is_working": is_working, "up_events": 0, "down_events": 0}
-    
+        return {
+            "url": mirror,
+            "is_working": is_working,
+            "up_events": 0,
+            "down_events": 0,
+        }
+
     def load_mirrors(self):
         mirrors: list[MirrorMeta] = db.get_mirrors()
         for mirror in mirrors:
@@ -30,15 +34,12 @@ class TwitterMirrorManager:
             else:
                 self._down_mirrors.put(mirror)
 
-        
-
     def reload_bad_mirrors(self):
         print("reloading bad mirrors")
         while not self._down_mirrors.empty():
             mirror = self._down_mirrors.get()
             self._up_mirrors.put(mirror)
-            
-            
+
     def get_mirror(self) -> MirrorMeta:
         try:
             return self._up_mirrors.get(timeout=10)
