@@ -3,7 +3,7 @@ import database as db
 
 accounts = db.get_crawl_list()
 
-test = CrawlerScheduler(accounts, 10)
+test = CrawlerScheduler(accounts, 1)
 test.start()
 
  
