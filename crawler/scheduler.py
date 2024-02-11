@@ -36,7 +36,7 @@ class CrawlerScheduler:
         self.account_queue: queue.Queue[PageLink] = queue.Queue()
         self.crawler_count = crawler_count
 
-        [self.account_queue.put(PageLink(account+"sfsd")) for account in accounts]
+        [self.account_queue.put(PageLink(account)) for account in accounts]
         
         self.crawler_threads = []
     
@@ -74,7 +74,8 @@ class CrawlerScheduler:
            
             results = crawler.crawl(url)
             
-            if results["error"]:
+            if len(results["errors"]) > 0:
+                print(results["errors"])
                 self.mirror_manager.return_offline(mirror)
                 
                 account.return_failure() 
