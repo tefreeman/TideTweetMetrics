@@ -92,6 +92,7 @@ class Tweet(DataEncoder):
     def __init__(self, as_json = None, changes_json=None) -> None:
         self.object = {}
         self.includes = {}
+        self.errors = []
         self.set_fields = set()
         self.required_fields = {'id', 'text', 'created_at', 'author_id', 'public_metrics', 'entities', 'attachments'}
         
@@ -107,6 +108,14 @@ class Tweet(DataEncoder):
     
     def _encode_as_dict(self) -> Dict:
         self.ensure_required_fields_set()
+        if "imeta" not in self.object:
+            self.object["imeta"] = {}
+        self.object["imeta"]["errors"] = []    
+        
+        for error in self.errors:
+            if error != None:
+                self.object["imeta"]["errors"].append(error.to_json())
+            
         return {"data": self.object, "includes": self.includes}
     
     def _encode_changes_as_dict(self) -> Dict:
@@ -201,6 +210,9 @@ class Tweet(DataEncoder):
     def get_attachments(self):
         return self.object["attachments"]
     
+    def set_errors(self, errors):
+        self.errors = errors
+        
     # Version 2 of the Twitter API has a new field called "referenced_tweets" that can be set
     # For some reason this field is an array and an object in Twitter API docs
     # We will implement it as an object
