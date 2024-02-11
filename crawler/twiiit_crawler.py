@@ -215,32 +215,31 @@ class Twiiit_Crawler(Crawler):
         profile_errors: list[Error] = []
         
         profile_ele = self.find_element_or_none(None, By.CLASS_NAME, "profile-card")
+        
+        if profile_ele is None:
+            return None, [Error("ProfileNotFound")]
+        
         fullname_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-fullname")
         username_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-username")
         bio_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-bio")
         location_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-location")
         website_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-website")
 
-        join_date_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-joindate")
-        join_date_text = None
-        
-        if join_date_ele != None:
-            join_date_text = self.find_attribute_or_none(join_date_ele, By.TAG_NAME, "span", "title")
 
-        verified_profile_ele = profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue")
-        verified_profile_bool = len(verified_profile_ele) > 0
+        join_date_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-joindate")
+        join_date_text = self.find_attribute_or_none(join_date_ele, By.TAG_NAME, "span", "title") if join_date_ele else None
+
+        verified_profile_bool = bool(profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue"))
 
         profile_pic_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-card-avatar")
-        
-        profile_pic = None
-        if profile_pic_ele != None:
-            profile_pic, errors = self.parse_profile_pic(profile_pic_ele)
-            if errors != None:
-                profile_errors.append(errors)
+        profile_pic, pic_errors = self.parse_profile_pic(profile_pic_ele) if profile_pic_ele else (None, None)
+        if pic_errors:
+            profile_errors.append(pic_errors)
         
         stat_container_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-statlist")
         tweets_cnt, following_cnt, follower_cnt, likes_cnt, stat_err = self._parse_profile_stats(stat_container_ele)
-        if stat_err != None:
+        
+        if stat_err:
             profile_errors.append(stat_err)
             
         profile = Profile()
@@ -255,8 +254,26 @@ class Twiiit_Crawler(Crawler):
         profile.set_url(website_text)
         
         return profile, profile_errors
-    
-    
+
+    def _extract_content(self, tweet):
+        content_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-content")
+        content_text = content_ele.text if content_ele else ""
+        content_links_ele = content_ele.find_elements(By.TAG_NAME, "a") if content_ele else []
+        content_links_list, parse_errs = self._parse_links(content_links_ele)
+        return content_text, content_links_list, parse_errs   
+
+    def _extract_date(self, tweet):
+            date_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-date")
+            return self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title") if date_ele else None
+
+    def _extract_tweet_stats(self, tweet):
+        stats_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-stats")
+        return {
+            stat: stats_ele.find_element(By.CLASS_NAME, f"icon-{stat}").find_element(By.XPATH, "..").text or "0"
+            for stat in ["comment", "retweet", "quote", "heart"]
+        }
+        
+            
     def parse_tweets(self) -> Tuple[List[Tweet], str | None, list[Error]]:
         error_list: list[Error] = []
         
@@ -266,25 +283,16 @@ class Twiiit_Crawler(Crawler):
         json_tweets = []
         
         for tweet in tweets:
-            tweet_error_list: list[Error] = []
-            
             if tweet.text == "Load newest":
                 continue
+            tweet_error_list: list[Error] = []
             
             link_text = self.find_attribute_or_none(tweet, By.CLASS_NAME, "tweet-link", "href")
-            
             fullname_text = self.find_text_or_none(tweet, By.CLASS_NAME, "fullname")
             username_text = self.find_text_or_none(tweet, By.CLASS_NAME, "username")
+            date_text = self._extract_date(tweet)
             
-            date_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-date")
-            date_text = None
-            if date_ele != None:
-                date_text = self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title")
-            
-            content_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-content")
-            content_text = content_ele.text
-            content_links_ele = content_ele.find_elements(By.TAG_NAME, "a")
-            content_links_list, parse_errs = self._parse_links(content_links_ele)
+            content_text, content_links_list, parse_errs = self._extract_content(tweet)
             tweet_error_list.extend(parse_errs)
 
             pictures_ele = tweet.find_elements(By.CLASS_NAME, "still-image")
@@ -292,23 +300,12 @@ class Twiiit_Crawler(Crawler):
             tweet_error_list.extend(pic_errs)
 
             videos_ele = tweet.find_elements(By.CLASS_NAME, "video-container")
-                   
             videos_list, video_errs = self._parse_videos(videos_ele)
             tweet_error_list.extend(video_errs)
             
-            tweet_stats_ele = self.find_element_or_none(tweet, By.CLASS_NAME, "tweet-stats")
-
-            comment_count = tweet_stats_ele.find_element(By.CLASS_NAME, "icon-comment").find_element(By.XPATH, "..").text
-            retweet_count = tweet_stats_ele.find_element(By.CLASS_NAME, "icon-retweet").find_element(By.XPATH, "..").text
-            quote_count = tweet_stats_ele.find_element(By.CLASS_NAME, "icon-quote").find_element(By.XPATH, "..").text
-            heart_count = tweet_stats_ele.find_element(By.CLASS_NAME, "icon-heart").find_element(By.XPATH, "..").text
-
-            comment_count = comment_count if comment_count != "" else "0"
-            retweet_count = retweet_count if retweet_count != "" else "0"
-            quote_count = quote_count if quote_count != "" else "0"
-            heart_count = heart_count if heart_count != "" else "0"
-
-
+            stats = self._extract_tweet_stats(tweet)
+            retweet_count, comment_count, heart_count, quote_count = stats["retweet"], stats["comment"], stats["heart"], stats["quote"]
+            
             is_retweet = True if len(tweet.find_elements(By.CLASS_NAME,"retweet-header")) > 0 else False
             
             cards = tweet.find_elements(By.CLASS_NAME, "card")
