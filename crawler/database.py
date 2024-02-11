@@ -4,10 +4,15 @@ from typing import TypedDict
 from twitter_api_encoder import Tweet, Profile
 import time
 import datetime
+from config import Config
 
-client = MongoClient("10.0.0.28", port=27017, username="Admin", password="***REMOVED***")
-db_old = client["twitter"]
-db = client["twitter"]
+client = None
+db = None
+
+def init_database():
+    global client, db
+    client = MongoClient(Config.db_host(), port=Config.db_port(), username=Config.db_user(), password=Config.db_password())
+    db = client[Config.db_name()]
 
 
 def attach_new_tweet_meta(obj: dict):
@@ -21,7 +26,7 @@ def attach_new_tweet_meta(obj: dict):
 
 
 def get_crawl_list() -> list[str]:
-    collection = db_old["crawl_list"]
+    collection = db["crawl_list"]
     usernames = set()
     for user in collection.find():
         if not ("username" in user):
@@ -93,7 +98,7 @@ def _update_tweet(tweet: Tweet, backup_file_id: int):
 
 
 def get_mirrors() -> list[dict]:
-    collection = db_old["mirrors"]
+    collection = db["mirrors"]
     mirrors = []
     for mirror in collection.find():
         if not (
