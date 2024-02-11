@@ -1,0 +1,14 @@
+{
+    "DB": {    
+    "HOST": "10.0.0.28",
+    "PORT": 27017,
+    "NAME": "twitter",
+    "USER": "Admin",
+    "PASSWORD": "We420?Z4!"
+    },
+    "CRAWLER": {
+        "NUM_THREADS": 1,
+        "SLEEP_TIME": 3
+    }
+
+}
