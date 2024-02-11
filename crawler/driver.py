@@ -21,6 +21,7 @@ def create_undetected_driver()-> webdriver.Chrome:
     
     # additional method via monkey patching
     driver.get_status_code: Callable[[], Optional[int]] = lambda: _get_status_code(driver)
+    driver.has_connection: Callable[[], bool] = lambda: _has_connection(driver)
     driver.set_window_size(640,480)
     
     return driver
@@ -37,3 +38,9 @@ def _get_status_code(self: webdriver.Chrome) -> Optional[int]:
                         if response_url == self.current_url:
                             return response_status
 
+
+def _has_connection(self: webdriver.Chrome) -> bool:
+    try:
+        self.driver.find_element_by_xpath('//span[@jsselect="heading" and @jsvalues=".innerHTML:msg"]')
+        return False
+    except: return True
