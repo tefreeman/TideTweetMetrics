@@ -33,6 +33,10 @@ class Config:
         return Config.__CONFIG["CRAWLER"]["NUM_THREADS"]
     
     @staticmethod
+    def get_version() -> str:
+        return Config.__CONFIG["VERSION"]
+    
+    @staticmethod
     def Load():
         with open("config.json", "r") as f:
             test = f.read()
