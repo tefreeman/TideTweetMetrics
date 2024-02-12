@@ -23,9 +23,6 @@ class ReferencedTweetType(Enum):
 # instead of having to add it to the json object itself
 # Should be able to attach itself to the raw json object
 
-
-
-
 class DataEncoder(ABC):
     # Must not be overriden
     def encode_as_dict(self) -> Dict:
