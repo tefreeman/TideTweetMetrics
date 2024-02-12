@@ -8,12 +8,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from crawler import Crawler
 import urllib.request
-from twitter_api_encoder import Tweet, Profile, ReferencedTweetType
+from crawler.encoders.twitter_api_encoder import Tweet, Profile, ReferencedTweetType
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
 import time
 import logging
-from error_sys import Error
+from crawler_sys.utils.error_sys import Error
 
 
 

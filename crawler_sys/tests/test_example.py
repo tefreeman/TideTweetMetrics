@@ -2,7 +2,7 @@ import unittest
 
 # import example
 # Notice you cannot run file directly now
-from cache import ProfileUpdateCache
+from crawler_sys.utils.cache import ProfileUpdateCache
 
 class TestSum(unittest.TestCase):
 
