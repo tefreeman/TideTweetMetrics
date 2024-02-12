@@ -1,7 +1,8 @@
 from bson import ObjectId
 from pymongo import MongoClient
 from typing import TypedDict
-from crawler.encoders.twitter_api_encoder import Tweet, Profile
+from encoders.tweet_encoder import Tweet
+from encoders.profile_encoder import Profile
 import time
 import datetime
 from config import Config

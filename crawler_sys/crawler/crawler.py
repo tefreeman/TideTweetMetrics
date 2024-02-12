@@ -1,7 +1,8 @@
 from typing import List, Dict, Tuple, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from crawler.encoders.twitter_api_encoder import Tweet, Profile
+from ..encoders.tweet_encoder import Tweet
+from ..encoders.profile_encoder import Profile
 from urllib.parse import urlparse
 import database as db
 from crawler_sys.utils.driver import create_undetected_driver

@@ -1,6 +1,3 @@
-import sys
-sys.path.append("..")
-
 from typing import List, Dict,Tuple
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
