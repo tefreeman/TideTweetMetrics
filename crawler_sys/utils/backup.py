@@ -21,7 +21,7 @@ def backup_raw_data(raw_source: str, username: str) -> str:
 
     # TODO: Compress the files if we have too many using lzma
     # may need to transform into a class to handle this
-        
+    
     file_id = len(files) + 1
     
     fullpath = save_dir + "/" + str(file_id) + ".html"

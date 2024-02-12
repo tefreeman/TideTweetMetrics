@@ -2,14 +2,14 @@ import threading
 import queue
 from urllib.parse import urlparse
 from typing import Dict, List
-from twiiit_crawler import Twiiit_Crawler
+from crawler.crawler.twiiit_crawler import Twiiit_Crawler
 from crawler import Crawler
 import time
 from twitter_mirrors_manager import TwitterMirrorManager
 import database as db
 import os
 from datetime import datetime
-import backup as Backup
+import crawler_sys.utils.backup as Backup
 
 class PageLink:
     def __init__(self, page_url: str) -> None:
