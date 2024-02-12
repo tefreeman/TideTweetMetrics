@@ -1,5 +1,5 @@
 from threading import Lock
-from crawler.encoders.twitter_api_encoder import Profile
+from ..encoders.profile_encoder import Profile
 import time
 
 class ProfileUpdateCache:

@@ -2,7 +2,7 @@ import threading
 import queue
 from urllib.parse import urlparse
 from typing import Dict, List
-from crawler.crawler.twiiit_crawler import Twiiit_Crawler
+from .crawler.twiiit_crawler import Twiiit_Crawler
 from crawler import Crawler
 import time
 from twitter_mirrors_manager import TwitterMirrorManager
