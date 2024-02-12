@@ -9,6 +9,7 @@
     "CRAWLER": {
         "NUM_THREADS": 1,
         "SLEEP_TIME": 3
-    }
+    },
+    "VERSION": "0.0.1"
 
 }
