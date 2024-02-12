@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 from typing import List, Dict,Tuple
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -8,7 +11,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from crawler import Crawler
 import urllib.request
-from crawler.encoders.twitter_api_encoder import Tweet, Profile, ReferencedTweetType
+
+from ..encoders.tweet_encoder import Tweet
+from ..encoders.profile_encoder import Profile
+from ..encoders.twitter_api_encoder import ReferencedTweetType
+
+
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
 import time
