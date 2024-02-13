@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
-from typing import Dict
 from config import Config
 import pytz
-from crawler_sys.utils.error_sys import Error
+from utils.error_sys import Error
 
 class IncompleteBuildException(Exception):
     """Exception raised when building Twiiit object fails due all required fields not being set."""
@@ -25,34 +24,34 @@ class ReferencedTweetType(Enum):
 
 class DataEncoder(ABC):
     # Must not be overriden
-    def encode_as_dict(self) -> Dict:
-        return self._encode_as_dict()
+    def to_json_dict(self) -> dict:
+        return self._to_json_dict()
 
-    def encode_changes_as_dict(self, backup_file_id) -> Dict:
-        return self._encode_changes_as_dict()
+    def changes_to_json_dict(self) -> dict:
+        return self._changes_to_json_dict()
 
-    def decode_from_dict(self, data: Dict) -> dict:
-        return self._decode_as_dict(data)
+    def from_json_dict(self, data: dict) -> dict:
+        return self._from_json_dict(data)
 
-    def decode_changes_from_dict(self, data: Dict) -> dict:
-        return self._decode_changes_as_dict()
+    def changes_from_json_dict(self, data: dict) -> dict:
+        return self._changes_from_json_dict()
 
     # These must be overridden
 
 
     @abstractmethod
-    def _decode_as_dict(self) -> Dict:
+    def _to_json_dict(self) -> dict:
         raise NotImplementedError()
     
     @abstractmethod
-    def _decode_changes_as_dict(self) -> Dict:
+    def _changes_to_json_dict(self) -> dict:
         raise NotImplementedError()
     
     @abstractmethod
-    def _encode_as_dict(self) -> Dict:
+    def _from_json_dict(self, data: dict) -> dict:
         raise NotImplementedError()
     
     @abstractmethod
-    def _encode_changes_as_dict(self) -> Dict:
+    def _changes_from_json_dict(self, data: dict) -> dict:
         raise NotImplementedError()
 
