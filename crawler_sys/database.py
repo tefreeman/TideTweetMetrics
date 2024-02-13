@@ -16,15 +16,6 @@ def init_database():
     db = client[Config.db_name()]
 
 
-def attach_new_tweet_meta(obj: dict):
-    if "imeta" not in obj:
-        obj["imeta"] = {}
-
-    obj["imeta"]["created"] = datetime.datetime.now()
-    obj["imeta"]["update_id"] = None
-    obj["imeta"]["errors"] = []
-    obj["imeta"]["version"] = 1
-
 
 def get_crawl_list() -> list[str]:
     collection = db["crawl_list"]
@@ -42,59 +33,61 @@ def get_crawl_history(acccount: str) -> list[str]:
     collection = db["crawl_history"]
 
     
-def upsert_twitter_profile(profile: Profile, backup_file_id: int):
+def upsert_twitter_profile(profile: Profile):
     collection = db["profiles"]
     profile_updates_col = db["profile_updates"]
     
     db_profile = collection.find_one({"username": profile.get_username()})
     if db_profile != None:
-        if db_profile["imeta"]["update_id"] != None:
-            update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["update_id"])})
+        if db_profile["imeta"]["uid"] != None:
+            update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["uid"])})
             if update != None:
-                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=1):
+                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=0):
                     return # aka no update
-        return _update_profile(profile, backup_file_id)
+        return _update_profile(profile)
 
-    profile_json = profile.encode_as_dict(backup_file_id)
-    attach_new_tweet_meta(profile_json)
-    collection.insert_one(profile_json)
+    profile.get_meta_ref().set_as_new()
+    collection.insert_one(profile.to_json_dict())
 
 
-def _update_profile(profile: Profile, backup_file_id: int):
+def _update_profile(profile: Profile):
     profile_updates_col = db["profile_updates"]
     profile_col = db["profiles"]
 
+    profile.get_meta_ref().set_as_update(profile.get_username())
+    
     result = profile_updates_col.insert_one(
-        profile.encode_changes_as_dict(backup_file_id)
+        profile.changes_to_json_dict()
     )
     profile_col.update_one(
         {"username": profile.get_username()},
-        {"$set": {"imeta.update_id": result.inserted_id}},
+        {"$set": {"imeta.uid": result.inserted_id}},
     )
 
 
-def upsert_tweets(tweets: list[Tweet], backup_file_id: int):
+def upsert_tweets(tweets: list[Tweet]):
     for tweet in tweets:
-        upsert_tweet(tweet, backup_file_id)
+        upsert_tweet(tweet)
 
 
-def upsert_tweet(tweet: Tweet, backup_file_id):
+def upsert_tweet(tweet: Tweet):
     collection = db["tweets"]
     if collection.find_one({"data.id": tweet.get_id()}) != None:
-        return _update_tweet(tweet, backup_file_id)
+        return _update_tweet(tweet)
     else:
-        tweet_as_json = tweet.encode_as_dict(backup_file_id)
-        attach_new_tweet_meta(tweet_as_json)
-        collection.insert_one(tweet_as_json)
+        tweet.get_meta_ref().set_as_new()        
+        collection.insert_one(tweet.to_json_dict())
 
 
-def _update_tweet(tweet: Tweet, backup_file_id: int):
+def _update_tweet(tweet: Tweet):
     update_col = db["tweet_updates"]
     tweet_col = db["tweets"]
-    result = update_col.insert_one(tweet.encode_changes_as_dict(backup_file_id))
+    
+    tweet.get_meta_ref().set_as_update(tweet.get_id())
+    result = update_col.insert_one(tweet.changes_to_json_dict())
 
     tweet_col.update_one(
-        {"data.id": tweet.get_id()}, {"$set": {"imeta.update_id": result.inserted_id}}
+        {"data.id": tweet.get_id()}, {"$set": {"imeta.uid": result.inserted_id}}
     )
 
 

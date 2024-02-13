@@ -2,7 +2,6 @@ from .twitter_api_encoder import DataEncoder, IncompleteBuildException, Referenc
 from .meta_encoder import MetaData
 from datetime import datetime
 
-
 class Tweet(DataEncoder):
     def __init__(self, as_json=None, changes_json=None) -> None:
         self._object = {}
@@ -20,9 +19,9 @@ class Tweet(DataEncoder):
         }
 
         if as_json != None:
-            self.decode_from_dict(as_json)
+            self.from_json_dict(as_json)
         if changes_json != None:
-            self.decode_changes_from_dict(changes_json)
+            self.changes_from_json_dict(changes_json)
 
     def ensure_required_fields_set(self):
         if not self._required_fields.issubset(self._set_fields):
@@ -30,31 +29,29 @@ class Tweet(DataEncoder):
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
-    def _decode_as_dict(self, data: dict):
+
+    def _from_json_dict(self, data: dict):
         self._object = data["data"]
         self._includes = data["includes"]
         self._meta = MetaData(data["imeta"])
     
-    def _decode_changes_as_dict(self, data: dict):
+
+    def _changes_from_json_dict(self, data: dict):
         pass
     
-    def _encode_as_dict(self) -> dict:
+
+    def _to_json_dict(self) -> dict:
         self.ensure_required_fields_set()
-        if "imeta" not in self._object:
-            self._object["imeta"] = {}
-        self._object["imeta"]["errors"] = []
-
-        for error in self.errors:
-            if error != None:
-                self._object["imeta"]["errors"].append(error.to_json())
-
-        return {"data": self._object, "includes": self._includes}
-
-    def _encode_changes_as_dict(self) -> dict:
+        return_object = {"data": self._object, "includes": self._includes}
+        self._meta.attach(return_object)
+        return return_object
+    
+    
+    def _changes_to_json_dict(self) -> dict:
         self.ensure_required_fields_set()
         metrics = self._object["public_metrics"]
-        metrics["imeta"] = {"tweet_id": self.get_id()}
         metrics["timestamp"] = datetime.now()
+        self.get_meta_ref().attach(metrics)
         return metrics
 
     def set_id(self, id: str | None):
@@ -178,9 +175,6 @@ class Tweet(DataEncoder):
     def get_attachments(self):
         return self._object["attachments"]
 
-    def set_errors(self, errors):
-        self._meta.set_errors(errors)
-
     # Version 2 of the Twitter API has a new field called "referenced_tweets" that can be set
     # For some reason this field is an array and an object in Twitter API docs
     # We will implement it as an object
@@ -200,3 +194,7 @@ class Tweet(DataEncoder):
 
     def get_referenced_tweet(self):
         return self._object["referenced_tweet"]
+
+
+    def get_meta_ref(self) -> MetaData:
+        return self._meta

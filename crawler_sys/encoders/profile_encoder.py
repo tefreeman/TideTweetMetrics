@@ -21,9 +21,9 @@ class Profile(DataEncoder):
         }
 
         if as_json != None:
-            self.decode_from_dict(as_json)
+            self.from_json_dict(as_json)
         if changes_json != None:
-            self.decode_changes_from_dict(changes_json)
+            self.changes_from_json_dict(changes_json)
 
     def raise_unless_required_fields_set(self):
         if not self._required_fields.issubset(self._set_fields):
@@ -31,18 +31,32 @@ class Profile(DataEncoder):
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
+    
 
-    def _encode_as_dict(self) -> dict:
+    def _to_json_dict(self) -> dict:
         self.raise_unless_required_fields_set()
+        self._meta.attach(self._object)
         return self._object
+    
 
-    def _encode_changes_as_dict(self) -> dict:
+    def _changes_to_json_dict(self) -> dict:
         self.raise_unless_required_fields_set()
         metrics = self._object["public_metrics"]
-        metrics["imeta"] = {"username": self._object["username"]}
         metrics["timestamp"] = datetime.now()
+        
+        self.get_meta_ref().attach(metrics)
+        
         return metrics
+    
 
+    def _from_json_dict(self, data: dict):
+        self._object = data
+        self._meta = MetaData(data["imeta"])
+    
+
+    def _changes_from_json_dict(self, data: dict):
+        pass
+    
     def set_name(self, name: str):
         self._object["name"] = name
         self._set_fields.add("name")
@@ -122,8 +136,6 @@ class Profile(DataEncoder):
 
     def get_public_metrics(self):
         return self._object["public_metrics"]
-
-    def set_errors(self, errors):
-        self._meta.set_errors(errors)
-        
-        
+    
+    def get_meta_ref(self) -> MetaData:
+        return self._meta
