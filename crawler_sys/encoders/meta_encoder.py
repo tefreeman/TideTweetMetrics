@@ -1,17 +1,25 @@
 from datetime import datetime
-from crawler_sys.utils.error_sys import Error
+from utils.error_sys import Error
 from .twitter_api_encoder import DataEncoder
 from config import Config
 
+
 class MetaData(DataEncoder):
     def __init__(self, as_json=None) -> None:
-        
+
         self._object = {}
         self._errors: list[Error] = []
-        
+
         if as_json != None:
-            self._object = self.decode_from_dict(as_json)
-            
+            self._object = self.from_json_dict(as_json)
+    
+    # Attaches the imeta to the object
+    def attach(self, object: dict):
+        if "imeta" in object:
+            raise Exception("imeta already exists in object")
+        
+        object["imeta"] = self.to_json_dict()
+        
     def get_created(self):
         return self._object["created"]
 
@@ -27,31 +35,50 @@ class MetaData(DataEncoder):
     def get_backup_file_id(self):
         return self._object["bfi"]
 
-    def set_created(self, created: datetime):
+    def set_as_new(self):
+        self._set_created(datetime.now())
+        self._set_version_to_current()
+        self._set_update_id(None)
+        
+    def set_as_update(self, owner_id: str):
+        self._set_owner_id(owner_id)
+        self._set_version_to_current()
+        
+    def _set_created(self, created: datetime):
         self._object["created"] = created
 
-    def set_update_id(self, update_id):
+    def _set_owner_id(self, owner_id):
+        self._object["oid"] = owner_id
+        
+    def _set_update_id(self, update_id):
         self._object["uid"] = update_id
 
     def set_errors(self, errors):
-         self._errors = [error for error in errors if error != None]
+        self._errors = [error for error in errors if error != None]
 
-    def set_version_to_current(self):
+    def _set_version(self, version):
+        self._object["version"] = version
+        
+    def _set_version_to_current(self):
         self._object["version"] = Config.get_version()
 
     def set_backup_file_id(self, backup_file_id):
         self._object["bfi"] = backup_file_id
 
-    def _decode_as_dict(self, data: dict) -> dict:
-        self._object = data 
+    def _errors_to_json(self):
+        return [error.to_json() for error in self._errors]
+    
+    def _from_json_dict(self, data: dict) -> dict:
+        self._object = data
         self._errors = [Error(from_json=error) for error in data["errors"]]
-    
-    def _decode_changes_as_dict(self) -> dict:
+
+    def _changes_from_json_dict(self) -> dict:
         pass
-    
-    def _encode_as_dict(self):
-        self._object["errors"] = [error.to_json() for error in self._errors]
+
+    def _to_json_dict(self):
+        self._object["errors"] = self._errors_to_json()
         return self._object
-    
-    def _encode_changes_as_dict(self):
-        return self._encode_as_dict()
+
+    def _changes_to_json_dict(self):
+        self._object["errors"] = self._errors_to_json()
+        return self._object

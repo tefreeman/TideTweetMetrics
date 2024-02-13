@@ -1,14 +1,14 @@
 from typing import List, Dict, Tuple, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from ..encoders.tweet_encoder import Tweet
-from ..encoders.profile_encoder import Profile
+from encoders.tweet_encoder import Tweet
+from encoders.profile_encoder import Profile
 from urllib.parse import urlparse
 import database as db
-from crawler_sys.utils.driver import create_undetected_driver
+from utils.driver import create_undetected_driver
 import time
 from selenium.common.exceptions import WebDriverException
-from crawler_sys.utils.error_sys import Error
+from utils.error_sys import Error
 
 class CrawlResults(TypedDict):
     profile: Profile
