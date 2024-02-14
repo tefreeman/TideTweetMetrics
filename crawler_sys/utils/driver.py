@@ -14,10 +14,10 @@ def create_undetected_driver()-> webdriver.Chrome:
     capabilities = DesiredCapabilities.CHROME
     capabilities['goog:loggingPrefs'] = {'performance': 'ALL'}
     #chromeOptions = webdriver.ChromeOptions()
-    chrome_options = uc.ChromeOptions()
-    #driver = webdriver.Chrome()
+    #chrome_options = uc.ChromeOptions()
+    driver = webdriver.Chrome()
     #driver = uc.Chrome(enable_cdp_events=True)
-    driver = uc.Chrome(options=chrome_options, desired_capabilities=capabilities)
+    #driver = uc.Chrome(options=chrome_options, desired_capabilities=capabilities)
     
     # additional method via monkey patching
     driver.get_status_code: Callable[[], Optional[int]] = lambda: _get_status_code(driver)
