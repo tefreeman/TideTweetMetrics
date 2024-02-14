@@ -11,6 +11,7 @@ import database as db
 import os
 from datetime import datetime
 import utils.backup as Backup
+from utils.error_sys import Error, is_error_in_errors
 
 class PageLink:
     def __init__(self, page_url: str) -> None:
@@ -87,6 +88,8 @@ class CrawlerScheduler:
             
             if len(results["errors"]) > 0:
                 print(results["errors"])
+                
+                #TODO error type detection and handling
                 self.mirror_manager.return_offline(mirror)
                 
                 account.return_failure() 
