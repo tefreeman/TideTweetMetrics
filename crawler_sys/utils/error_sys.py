@@ -8,7 +8,7 @@ class ErrorType(Enum):
 
 class Error:
     _parsing_error_set = {"IncompleteException"}
-    _mirror_error_set = {"TimeoutException", "ErrorPanelFound", "BadHTTPResponseCode"}
+    _mirror_error_set = {"TimeoutException", "ErrorPanelFound", "BadHTTPResponseCode", "NoHTTPResponseCode"}
     _internet_error_set = {}
 
     def __init__(self, error_name=None, from_json=None) -> None:
