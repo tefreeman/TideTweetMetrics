@@ -77,8 +77,10 @@ class MetaData(DataEncoder):
 
     def _to_json_dict(self):
         self._object["errors"] = self._errors_to_json()
+        self._object["zid"] = Config.next_run_backup_zip_id()
         return self._object
 
     def _changes_to_json_dict(self):
         self._object["errors"] = self._errors_to_json()
+        self._object["zid"] = Config.next_run_backup_zip_id()
         return self._object
