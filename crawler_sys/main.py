@@ -21,7 +21,7 @@ def crawl_job():
 schedule.every().day.at("14:45").do(crawl_job,)
 while True:
     schedule.run_pending()
-    time.sleep(10) # wait one minute
+    time.sleep(10)
 
 
  
