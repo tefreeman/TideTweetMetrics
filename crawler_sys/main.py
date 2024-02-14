@@ -4,11 +4,10 @@ from config import Config
 from encoders.tweet_encoder import Tweet
 
 
-Config.Load()
-
+Config.init()
 db.init_database()
 
-accounts = db.get_crawl_list()
+accounts = ["alabama_cs"]
 test = CrawlerScheduler(accounts, Config.crawler_threads())
 test.start()
 
