@@ -19,12 +19,8 @@ def back_up_html_file(raw_source: str, username: str) -> int:
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
-    # Not the best way to do this, but it works for now
     files = [entry for entry in os.listdir(save_dir) if os.path.isfile(os.path.join(save_dir, entry))]
 
-    # TODO: Compress the files if we have too many using lzma
-    # may need to transform into a class to handle this
-    
     file_id = len(files) + 1
     
     fullpath = save_dir + "/" + str(file_id) + ".html"
@@ -55,6 +51,6 @@ def compress_backups():
     os.rename(zip_name, 'backups/' + zip_file_name)
 
 
-def delete_raw_data():
+def remove_backup_files():
     shutil.rmtree(_backup_dir)
                       
