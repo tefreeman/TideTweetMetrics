@@ -63,7 +63,7 @@ class CrawlerScheduler:
             
             account = self.account_queue.get()
             
-            if account.failure_count() > 3:
+            if account.failure_count() > 10:
                 self.account_queue.task_done()
                 continue
             
@@ -83,7 +83,7 @@ class CrawlerScheduler:
                 continue
             
             # alias: BFI
-            backup_file_id = Backup.backup_raw_data(results["raw_data"], results["profile"].get_username())
+            backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
             
             for tweet in results["tweets"]:
                 tweet.get_meta_ref().set_backup_file_id(backup_file_id)
@@ -94,7 +94,7 @@ class CrawlerScheduler:
             profile_result = db.upsert_twitter_profile(results["profile"])
             
             if results["next_url"]:
-                self.account_queue.put(results["next_url"])
+                self.account_queue.put(PageLink(results["next_url"]))
                
             self.mirror_manager.return_online(mirror)
             self.account_queue.task_done()
