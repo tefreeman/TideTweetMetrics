@@ -43,11 +43,11 @@ def upsert_twitter_profile(profile: Profile):
             update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["uid"])})
             if update != None:
                 if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=0):
-                    return # aka no update
+                    return None
         return _update_profile(profile)
 
     profile.get_meta_ref().set_as_new()
-    collection.insert_one(profile.to_json_dict())
+    return collection.insert_one(profile.to_json_dict())
 
 
 def _update_profile(profile: Profile):
@@ -63,20 +63,20 @@ def _update_profile(profile: Profile):
         {"username": profile.get_username()},
         {"$set": {"imeta.uid": result.inserted_id}},
     )
+    return result
 
 
-def upsert_tweets(tweets: list[Tweet]):
-    for tweet in tweets:
-        upsert_tweet(tweet)
-
+def upsert_tweets(tweets: list[Tweet]) -> list[ObjectId]:
+    results = [upsert_tweet(tweet) for tweet in tweets]
+    return results
 
 def upsert_tweet(tweet: Tweet):
     collection = db["tweets"]
     if collection.find_one({"data.id": tweet.get_id()}) != None:
-        return _update_tweet(tweet)
+        return _update_tweet(tweet).inserted_id
     else:
         tweet.get_meta_ref().set_as_new()        
-        collection.insert_one(tweet.to_json_dict())
+        return collection.insert_one(tweet.to_json_dict()).inserted_id
 
 
 def _update_tweet(tweet: Tweet):
@@ -89,6 +89,8 @@ def _update_tweet(tweet: Tweet):
     tweet_col.update_one(
         {"data.id": tweet.get_id()}, {"$set": {"imeta.uid": result.inserted_id}}
     )
+    
+    return result
 
 
 def get_mirrors() -> list[dict]:
