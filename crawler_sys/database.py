@@ -28,7 +28,11 @@ def get_crawl_list() -> list[str]:
 
     return list(usernames)
 
-
+def add_crawl_summary(summary: dict):
+    collection = db["crawl_summaries"]
+    collection.insert_one(summary)
+    
+    
 def get_crawl_history(acccount: str) -> list[str]:
     collection = db["crawl_history"]
 
@@ -42,7 +46,7 @@ def upsert_twitter_profile(profile: Profile):
         if db_profile["imeta"]["uid"] != None:
             update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["uid"])})
             if update != None:
-                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=0):
+                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=Config.get_profile_min_update_time()):
                     return None
         return _update_profile(profile)
 
