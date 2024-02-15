@@ -1,13 +1,14 @@
 from typing import List, Dict, Tuple, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from twitter_api_encoder import Tweet, Profile
+from encoders.tweet_encoder import Tweet
+from encoders.profile_encoder import Profile
 from urllib.parse import urlparse
 import database as db
-from driver import create_undetected_driver
+from utils.driver import create_undetected_driver
 import time
 from selenium.common.exceptions import WebDriverException
-from error_sys import Error
+from utils.error_sys import Error
 
 class CrawlResults(TypedDict):
     profile: Profile
@@ -21,17 +22,23 @@ class Crawler:
     def __init__(self) -> None:
         self.driver = create_undetected_driver()
     
-    def load_and_check_errors(self, url, errors: list[Error]) -> None:
+    def try_load_page(self, url, errors: list[Error]) -> None:
         try:
             self.driver_load_page(url)
 
         except WebDriverException as e:
             errors.append(Error(e.__class__.__name__))
             return
-
-        if self.driver.get_status_code() >= 300:
-            errors.append(Error("BadHTTPResponseCode"))
-            return
+        
+        # fix this
+        try:
+            if self.driver.get_status_code() >= 300:
+                errors.append(Error("BadHTTPResponseCode"))
+                return
+        except Exception as e:
+                print(e)
+                errors.append(Error("BadHTTPResponseCode"))
+                return
         
         if self.driver.has_connection() == False:
             errors.append(Error("NoInternetConnection"))
@@ -46,7 +53,7 @@ class Crawler:
     def crawl(self, url: str) -> CrawlResults:
         results: CrawlResults = {"profile": None, "tweets": [], "raw_data": None, "next_url": None, "errors": []}
 
-        self.load_and_check_errors(url, results["errors"])
+        self.try_load_page(url, results["errors"])
         
         if len(results["errors"]) > 0:
             return results
@@ -64,6 +71,9 @@ class Crawler:
         
         return results
 
+    def shutdown(self):
+        self.driver.quit()
+        
     def detected_html_not_loaded(self) -> Error | None:
         raise NotImplementedError()
     

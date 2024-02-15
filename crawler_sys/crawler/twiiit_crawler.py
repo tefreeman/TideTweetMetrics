@@ -6,14 +6,19 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from crawler import Crawler
+from crawler.crawler import Crawler # hmmmm
 import urllib.request
-from twitter_api_encoder import Tweet, Profile, ReferencedTweetType
+
+from encoders.tweet_encoder import Tweet
+from encoders.profile_encoder import Profile
+from encoders.twitter_api_encoder import ReferencedTweetType
+
+
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
 import time
 import logging
-from error_sys import Error
+from utils.error_sys import Error
 
 
 
@@ -334,7 +339,7 @@ class Twiiit_Crawler(Crawler):
             json_tweet.set_public_metrics(retweet_count, comment_count, heart_count, quote_count)
             json_tweet.set_entities(content_links_list, content_text)
             json_tweet.set_attachments(pictures_list, videos_list, cards_list)
-            json_tweet.set_errors(tweet_error_list)
+            json_tweet.get_meta_ref().set_errors(tweet_error_list)
             
             # TODO: Need to set a retweet to have correct referenced tweet
             if is_retweet:
