@@ -39,3 +39,6 @@ class TestProfileEncoder(unittest.TestCase):
 
     def test_profile_public_metrics(self):
         pass
+
+if __name__ == '__main__':
+    unittest.main()
