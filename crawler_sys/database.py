@@ -14,9 +14,38 @@ def init_database():
     global client, db
     client = MongoClient(Config.db_host(), port=Config.db_port(), username=Config.db_user(), password=Config.db_password())
     db = client[Config.db_name()]
+    
 
-
-
+    collection_names = db.list_collection_names()
+    if len(collection_names) == 0:
+        _init_collections()
+        
+        
+def _init_collections():
+    old_db = client["twitter"]
+    
+    db.create_collection("crawl_list")
+    crawl_list = old_db["crawl_list"].find({})
+    for user in crawl_list:
+        db["crawl_list"].insert_one(user)
+   
+    db.create_collection("mirrors")
+    mirror_list = old_db["mirrors"].find({})
+    for mirror in mirror_list:
+        mirror["up_events"] = 0
+        mirror["down_events"] = 0
+        mirror["is_working"] = True
+        db["mirrors"].insert_one(mirror)
+   
+    db.create_collection("profiles")
+    db.create_collection("tweets")
+   
+    db["tweets"].create_index([("data.id", 1)], unique=True)
+    db["profiles"].create_index([("username", 1)], unique=True)
+   
+    db.create_collection("profile_updates", timeseries={"timeField": "timestamp", 'metaField': 'imeta', 'granularity': 'hours'})
+    db.create_collection("tweet_updates", timeseries={"timeField": "timestamp", 'metaField': 'imeta', 'granularity': 'hours'})
+    
 def get_crawl_list() -> list[str]:
     collection = db["crawl_list"]
     usernames = set()
