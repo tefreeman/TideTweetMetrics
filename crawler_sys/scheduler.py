@@ -2,14 +2,17 @@ import threading
 import queue
 from urllib.parse import urlparse
 from typing import Dict, List
-from twiiit_crawler import Twiiit_Crawler
-from crawler import Crawler
+from crawler.twiiit_crawler import Twiiit_Crawler
+from crawler.crawler import Crawler #hmmm
 import time
 from twitter_mirrors_manager import TwitterMirrorManager
+from utils.summary import Summary
 import database as db
 import os
 from datetime import datetime
-import backup as Backup
+import utils.backup as Backup
+from utils.error_sys import Error
+from config import Config
 
 class PageLink:
     def __init__(self, page_url: str) -> None:
@@ -33,8 +36,9 @@ class PageLink:
 class CrawlerScheduler:
     def __init__(self, accounts: List[str], crawler_count: int) -> None:
         self.mirror_manager = TwitterMirrorManager()
+        self.summary = Summary()
         self.account_queue: queue.Queue[PageLink] = queue.Queue()
-        self.crawler_count = crawler_count
+        self.crawler_count = min(crawler_count, len(accounts)) # Can't have more threads than accounts
 
         [self.account_queue.put(PageLink(account)) for account in accounts]
         
@@ -43,27 +47,36 @@ class CrawlerScheduler:
                     
     
     def start(self):
+        self.summary.set_start_time()
         if self.crawler_count == 1:
             self.run_crawler(Twiiit_Crawler())
         else:
+            self.summary.set_start_time()
             for _ in range(self.crawler_count):
-                self.crawler_threads.append(threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),)).start())                
-    
+                t = threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),))
+                t.start()
+                t.join()
+                self.crawler_threads.append(t)
+                
+        self.summary.set_end_time()    
+        return self.summary.get_summary()         
+                
     @staticmethod
     def make_url(account: str, domain: str) -> str:
         return f"http://{domain}/{account}"
     
     def wait(self):
-        time.sleep(8)      
+        time.sleep(Config.get_sleep_time())      
 
     def run_crawler(self, crawler: Crawler):
-        while not self.account_queue.empty():
-           
+        i = 0
+        while not self.account_queue.empty() and i < 8:
+            i += 1 
             self.wait()
             
             account = self.account_queue.get()
             
-            if account.failure_count() > 3:
+            if account.failure_count() > 10:
                 self.account_queue.task_done()
                 continue
             
@@ -76,26 +89,34 @@ class CrawlerScheduler:
             
             if len(results["errors"]) > 0:
                 print(results["errors"])
+                
+                #TODO error type detection and handling
                 self.mirror_manager.return_offline(mirror)
                 
                 account.return_failure() 
                 self.account_queue.put(account)
                 continue
+        
+            # alias: BFI
+            backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
             
+            for tweet in results["tweets"]:
+                tweet.get_meta_ref().set_backup_file_id(backup_file_id)
             
-            backup_file_id = Backup.backup_raw_data(results["raw_data"], results["profile"].get_username())
+            results["profile"].get_meta_ref().set_backup_file_id(backup_file_id)
             
+            tweets_result = db.upsert_tweets(results["tweets"])
+            profile_result = db.upsert_twitter_profile(results["profile"])
             
-            db_results = db.upsert_tweets(results["tweets"], backup_file_id)
-            profile_result = db.upsert_twitter_profile(results["profile"], backup_file_id)
+            self.summary.add_data(results["profile"], tweets_result)
             
             if results["next_url"]:
-                self.account_queue.put(results["next_url"])
+                self.account_queue.put(PageLink(results["next_url"]))
                
             self.mirror_manager.return_online(mirror)
             self.account_queue.task_done()
         
-
+        crawler.shutdown()
 
 
 

@@ -1,6 +1,8 @@
 
 # backup_raw_data
 /backup_raw_data/*
+/backups/*
+*.7z
 # Mac shit
 
 bin/*
