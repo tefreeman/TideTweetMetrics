@@ -36,6 +36,7 @@ class Crawler:
                 errors.append(Error("BadHTTPResponseCode"))
                 return
         except Exception as e:
+                print(e)
                 errors.append(Error("BadHTTPResponseCode"))
                 return
         
@@ -70,6 +71,9 @@ class Crawler:
         
         return results
 
+    def shutdown(self):
+        self.driver.quit()
+        
     def detected_html_not_loaded(self) -> Error | None:
         raise NotImplementedError()
     
