@@ -47,6 +47,9 @@ class Config:
         return Config.__CONFIG["VERSION"]
     
     @staticmethod
+    def get_sleep_time() -> int:
+        return Config.__CONFIG["CRAWLER"]["SLEEP_TIME"]
+    @staticmethod
     def next_run_backup_zip_id() -> int:
         return Config._next_backup_zip_id
     

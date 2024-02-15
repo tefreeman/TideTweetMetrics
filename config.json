@@ -1,16 +1,16 @@
 {
     "DB": {    
-    "HOST": "73.58.28.154",
+    "HOST": "10.0.0.28",
     "PORT": 27017,
     "NAME": "twitter_v1",
     "USER": "Admin",
     "PASSWORD": "***REMOVED***"
     },
     "CRAWLER": {
-        "NUM_THREADS": 1,
+        "NUM_THREADS": 2,
         "SLEEP_TIME": 3,
         "PROFILE_MIN_UPDATE_TIME": 1,
-        "START_TIME": "14:44s"
+        "START_TIME": "18:00"
     },
     "VERSION": "0.0.1"
 
