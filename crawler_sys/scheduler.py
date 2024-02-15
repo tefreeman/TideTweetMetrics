@@ -11,7 +11,8 @@ import database as db
 import os
 from datetime import datetime
 import utils.backup as Backup
-from utils.error_sys import Error, is_error_in_errors
+from utils.error_sys import Error
+from config import Config
 
 class PageLink:
     def __init__(self, page_url: str) -> None:
@@ -37,7 +38,7 @@ class CrawlerScheduler:
         self.mirror_manager = TwitterMirrorManager()
         self.summary = Summary()
         self.account_queue: queue.Queue[PageLink] = queue.Queue()
-        self.crawler_count = crawler_count
+        self.crawler_count = min(crawler_count, len(accounts)) # Can't have more threads than accounts
 
         [self.account_queue.put(PageLink(account)) for account in accounts]
         
@@ -65,11 +66,11 @@ class CrawlerScheduler:
         return f"http://{domain}/{account}"
     
     def wait(self):
-        time.sleep(8)      
+        time.sleep(Config.get_sleep_time())      
 
     def run_crawler(self, crawler: Crawler):
         i = 0
-        while not self.account_queue.empty() and i < 3:
+        while not self.account_queue.empty() and i < 8:
             i += 1 
             self.wait()
             
@@ -95,7 +96,7 @@ class CrawlerScheduler:
                 account.return_failure() 
                 self.account_queue.put(account)
                 continue
-            
+        
             # alias: BFI
             backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
             
@@ -115,7 +116,7 @@ class CrawlerScheduler:
             self.mirror_manager.return_online(mirror)
             self.account_queue.task_done()
         
-
+        crawler.shutdown()
 
 
 
