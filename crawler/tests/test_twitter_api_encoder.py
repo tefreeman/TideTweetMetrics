@@ -1,10 +1,13 @@
 import unittest
-
+import sys
+sys.path.append('../crawler')
+from crawler.twitter_api_encoder import *
 
 class TestTwitterApiEncoder(unittest.TestCase):
 
-    def test_tweet_creation(self):
-        pass
+    def setUp(self):
+        self.tweet = Tweet()
+        self.profile = Profile()
 
     def test_tweet_encode_as_dict(self):
         pass
@@ -16,19 +19,29 @@ class TestTwitterApiEncoder(unittest.TestCase):
         pass
 
     def test_tweet_id(self):
-        pass
+        self.tweet.set_id("abc")
+        self.assertEqual(self.tweet.get_id(), "abc")
 
     def test_tweet_text(self):
-        pass
+        self.tweet.set_text("abc")
+        self.assertEqual(self.tweet.get_text(), "abc")
 
     def test_tweet_post_date(self):
-        pass
+        self.tweet.set_post_date("February 3, 2024 · 12:00 UTC")
+        self.assertEqual(self.tweet.get_post_date(), "February 3, 2024 · 12:00 UTC")
+        self.assertEqual(self.tweet.get_post_date_as_epoch(), 1706961600)
 
     def test_tweet_author(self):
-        pass
+        self.tweet.set_author("abc")
+        self.assertEqual(self.tweet.get_author(), "abc")
 
     def test_tweet_public_metrics(self):
-        pass
+        self.tweet.set_public_metrics(20, 10, 50, 5)
+        resp = self.tweet.get_public_metrics()
+        self.assertEqual(resp['retweet_count'], 20)
+        self.assertEqual(resp['reply_count'], 10)
+        self.assertEqual(resp['like_count'], 50)
+        self.assertEqual(resp['quote_count'], 5)
 
     def test_tweet_entities(self):
         pass
@@ -37,9 +50,6 @@ class TestTwitterApiEncoder(unittest.TestCase):
         pass
 
     def test_tweet_referenced_tweet(self):
-        pass
-
-    def test_profile_creation(self):
         pass
 
     def test_profile_encode_as_dict(self):
