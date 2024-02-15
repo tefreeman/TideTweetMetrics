@@ -3,7 +3,6 @@ from utils.error_sys import Error
 from .twitter_api_encoder import DataEncoder
 from config import Config
 
-
 class MetaData(DataEncoder):
     def __init__(self, as_json=None) -> None:
 
@@ -23,6 +22,9 @@ class MetaData(DataEncoder):
     def get_created(self):
         return self._object["created"]
 
+    def get_owner_id(self) -> int:
+        return self._object["oid"]
+    
     def get_update_id(self):
         return self._object["uid"]
 
@@ -73,7 +75,7 @@ class MetaData(DataEncoder):
         self._errors = [Error(from_json=error) for error in data["errors"]]
 
     def _changes_from_json_dict(self) -> dict:
-        pass
+        raise Exception("Metadata does not support this method")
 
     def _to_json_dict(self):
         self._object["errors"] = self._errors_to_json()

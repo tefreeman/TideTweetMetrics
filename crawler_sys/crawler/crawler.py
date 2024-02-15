@@ -22,20 +22,22 @@ class Crawler:
     def __init__(self) -> None:
         self.driver = create_undetected_driver()
     
-    def load_and_check_errors(self, url, errors: list[Error]) -> None:
+    def try_load_page(self, url, errors: list[Error]) -> None:
         try:
             self.driver_load_page(url)
 
         except WebDriverException as e:
             errors.append(Error(e.__class__.__name__))
             return
-
-        if self.driver.get_status_code() is None:
-            errors.append(Error("NoHTTPResponseCode"))
-            return  
-        if self.driver.get_status_code() >= 300:
-            errors.append(Error("BadHTTPResponseCode"))
-            return
+        
+        # fix this
+        try:
+            if self.driver.get_status_code() >= 300:
+                errors.append(Error("BadHTTPResponseCode"))
+                return
+        except Exception as e:
+                errors.append(Error("BadHTTPResponseCode"))
+                return
         
         if self.driver.has_connection() == False:
             errors.append(Error("NoInternetConnection"))
@@ -50,7 +52,7 @@ class Crawler:
     def crawl(self, url: str) -> CrawlResults:
         results: CrawlResults = {"profile": None, "tweets": [], "raw_data": None, "next_url": None, "errors": []}
 
-        self.load_and_check_errors(url, results["errors"])
+        self.try_load_page(url, results["errors"])
         
         if len(results["errors"]) > 0:
             return results

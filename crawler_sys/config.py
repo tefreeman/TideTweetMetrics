@@ -33,8 +33,11 @@ class Config:
     @staticmethod
     def db_password() -> str:
         return Config.__CONFIG["DB"]["PASSWORD"]
-
-
+    
+    @staticmethod
+    def get_profile_min_update_time() -> int:
+        return Config.__CONFIG["CRAWLER"]["PROFILE_MIN_UPDATE_TIME"]
+    
     @staticmethod
     def crawler_threads() -> str:
         return Config.__CONFIG["CRAWLER"]["NUM_THREADS"]
