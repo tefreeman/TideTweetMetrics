@@ -55,7 +55,7 @@ class Config:
     
     @staticmethod
     def Load():
-        with open("config.json", "r") as f:
+        with open("crawler_config.json", "r") as f:
             test = f.read()
             Config.__CONFIG = json.loads(test)
         
