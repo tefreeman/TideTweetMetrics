@@ -64,7 +64,6 @@ class CrawlerScheduler:
                 page_link.set_domain(mirror["url"])
                 
                 url = page_link.get()
-            
                 results = crawler.crawl(url)
                 
                 if len(results["errors"]) > 0:
@@ -81,7 +80,9 @@ class CrawlerScheduler:
                 backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
                 
                 for tweet in results["tweets"]:
-                    tweet.get_meta_ref().set_backup_file_id(backup_file_id)
+                    ref = tweet.get_meta_ref()
+                    ref.set_backup_file_id(backup_file_id)
+                    ref.set_domain(page_link.get_domain())
                 
                 results["profile"].get_meta_ref().set_backup_file_id(backup_file_id)
                 
