@@ -1,7 +1,7 @@
 from .twitter_api_encoder import DataEncoder, IncompleteBuildException, ReferencedTweetType
 from .meta_encoder import MetaData
 from datetime import datetime
-
+import re
 class Tweet(DataEncoder):
     def __init__(self, as_json=None, changes_json=None) -> None:
         self._object = {}
@@ -54,9 +54,16 @@ class Tweet(DataEncoder):
         self.get_meta_ref().attach(metrics)
         return metrics
 
-    def set_id(self, id: str | None):
-        self._object["id"] = id
-        if id != None or id != "":
+    def _extract_id_from_url(self, url: str) -> str:
+        match = re.search(r"/status/(\d+)", url)
+        if match:
+            return match.group(1)
+        else:
+            raise ValueError("Invalid URL")
+    
+    def set_id(self, url: str | None):
+        self._object["id"] = self._extract_id_from_url(url)
+        if url != None or url != "":
             self._set_fields.add("id")
 
     def get_id(self) -> str | None:
