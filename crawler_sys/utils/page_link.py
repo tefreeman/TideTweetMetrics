@@ -13,7 +13,10 @@ class PageLink:
     
     def set_domain(self, domain: str) -> None:
         self._domain = domain
-        
+    
+    def get_domain(self) -> str:
+        return self._domain
+    
     def failure_count(self) -> int:
         return self._failures
     
