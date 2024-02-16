@@ -55,8 +55,10 @@ class CrawlerScheduler:
             for _ in range(self.crawler_count):
                 t = threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),))
                 t.start()
-                t.join()
                 self.crawler_threads.append(t)
+            
+            for t_ in self.crawler_threads:
+                t_.join()
                 
         self.summary.set_end_time()    
         return self.summary.get_summary()         
@@ -109,10 +111,11 @@ class CrawlerScheduler:
                 
                 self.summary.add_data(results["profile"], tweets_result)
                 
-                if results["next_url"]:
+                continue_bool = self.summary.get_tweet_count(results["profile"].get_username()) < Config.max_profile_tweet_crawl_depth()
+                if results["next_url"] and continue_bool:
                     self.account_queue.put(PageLink(results["next_url"]))
                 
-                self.mirror_manager.return_online(PageLink(mirror))
+                self.mirror_manager.return_online(mirror)
                 self.account_queue.task_done()
         except Exception as e:
             print("!------THREAD FAULT-------!")

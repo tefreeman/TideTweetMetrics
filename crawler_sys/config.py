@@ -63,6 +63,10 @@ class Config:
         return Config.__CONFIG["CRAWLER"]["MAX_URL_PAGE_ERROR"]
     
     @staticmethod
+    def max_profile_tweet_crawl_depth() -> int:
+        return Config.__CONFIG["CRAWLER"]["MAX_TWEET_CRAWL_DEPTH"]
+    
+    @staticmethod
     def Load():
         with open("crawler_config.json", "r") as f:
             test = f.read()
