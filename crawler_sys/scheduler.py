@@ -84,7 +84,9 @@ class CrawlerScheduler:
                     ref.set_backup_file_id(backup_file_id)
                     ref.set_domain(page_link.get_domain())
                 
-                results["profile"].get_meta_ref().set_backup_file_id(backup_file_id)
+                profile_ref = results["profile"].get_meta_ref()
+                profile_ref.set_backup_file_id(backup_file_id)
+                profile_ref.set_domain(page_link.get_domain())
                 
                 tweets_result = db.upsert_tweets(results["tweets"])
                 profile_result = db.upsert_twitter_profile(results["profile"])
