@@ -13,6 +13,13 @@ class Summary:
         self.thread_faults = []
         self._lock = Lock()
     
+    def get_tweet_count(self, username: str) -> int:
+        with self._lock:
+            if username in self.profiles_summary:
+                return self.profiles_summary[username]["added_tweet_count"]
+            else:
+                return 0
+            
     def add_thread_fault(self, name: str, fault: str):
         with self._lock:
             self.thread_faults.append({"name": name, "fault": fault})
