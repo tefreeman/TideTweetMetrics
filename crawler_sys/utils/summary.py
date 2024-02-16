@@ -10,8 +10,13 @@ class Summary:
         self._start_time = -1
         self._end_time = -1
         self._error_count = 0
+        self.thread_faults = []
         self._lock = Lock()
     
+    def add_thread_fault(self, name: str, fault: str):
+        with self._lock:
+            self.thread_faults.append({"name": name, "fault": fault})
+            
     def add_errors(self, count: int):
         with self._lock:
             self._error_count += count
@@ -36,4 +41,6 @@ class Summary:
         if self._start_time == -1 or self._end_time == -1:
             raise Exception("Summary times not correctly set")
         
-        return {"results": self.profiles_summary, "start_time": self._start_time, "end_time": self._end_time, "zid": Config.next_run_backup_zip_id(), "error_count": self._error_count}
+        return {"results": self.profiles_summary, "start_time": self._start_time,
+                "end_time": self._end_time, "zid": Config.next_run_backup_zip_id(), 
+                "error_count": self._error_count, "thread_faults": self.thread_faults}
