@@ -31,6 +31,8 @@ def back_up_html_file(raw_source: str, username: str) -> int:
     _file_lock.release()
     return file_id
 
+def check_if_raw_backup_exists() -> bool:
+    return os.path.exists(_backup_dir)
 
 def next_zip_num() -> int:
     return len(glob.glob1("backups/","*.zip")) + 1

@@ -35,7 +35,7 @@ class Config:
         return Config.__CONFIG["DB"]["PASSWORD"]
     
     @staticmethod
-    def get_profile_min_update_time() -> int:
+    def get_profile_min_update_time_hours() -> int:
         return Config.__CONFIG["CRAWLER"]["PROFILE_MIN_UPDATE_TIME"]
     
     @staticmethod
@@ -49,9 +49,18 @@ class Config:
     @staticmethod
     def get_sleep_time() -> int:
         return Config.__CONFIG["CRAWLER"]["SLEEP_TIME"]
+    
+    @staticmethod
+    def get_max_page_load_time() -> int:
+        return Config.__CONFIG["CRAWLER"]["MAX_PAGE_LOAD_TIME"]
+    
     @staticmethod
     def next_run_backup_zip_id() -> int:
         return Config._next_backup_zip_id
+    
+    @staticmethod
+    def get_max_url_page_error() -> int: 
+        return Config.__CONFIG["CRAWLER"]["MAX_URL_PAGE_ERROR"]
     
     @staticmethod
     def Load():

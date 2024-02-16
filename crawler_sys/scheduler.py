@@ -69,54 +69,57 @@ class CrawlerScheduler:
         time.sleep(Config.get_sleep_time())      
 
     def run_crawler(self, crawler: Crawler):
-        i = 0
-        while not self.account_queue.empty() and i < 8:
-            i += 1 
-            self.wait()
+        try:
+            while not self.account_queue.empty():
+                self.wait()
+                
+                account = self.account_queue.get()
+                
+                if account.failure_count() > Config.get_max_url_page_error():
+                    self.account_queue.task_done()
+                    continue
+                
+                mirror = self.mirror_manager.get_mirror()
+                domain = mirror["url"]
+                
+                url = CrawlerScheduler.make_url(account.get(), domain)
             
-            account = self.account_queue.get()
+                results = crawler.crawl(url)
+                
+                if len(results["errors"]) > 0:
+                    print(results["errors"])
+                    
+                    #TODO error type detection and handling
+                    self.mirror_manager.return_offline(mirror)
+                    
+                    account.return_failure() 
+                    self.account_queue.put(account)
+                    continue
             
-            if account.failure_count() > 10:
+                # alias: BFI
+                backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
+                
+                for tweet in results["tweets"]:
+                    tweet.get_meta_ref().set_backup_file_id(backup_file_id)
+                
+                results["profile"].get_meta_ref().set_backup_file_id(backup_file_id)
+                
+                tweets_result = db.upsert_tweets(results["tweets"])
+                profile_result = db.upsert_twitter_profile(results["profile"])
+                
+                self.summary.add_data(results["profile"], tweets_result)
+                
+                if results["next_url"]:
+                    self.account_queue.put(PageLink(results["next_url"]))
+                
+                self.mirror_manager.return_online(PageLink(mirror))
                 self.account_queue.task_done()
-                continue
-            
-            mirror = self.mirror_manager.get_mirror()
-            domain = mirror["url"]
-            
-            url = CrawlerScheduler.make_url(account.get(), domain)
-           
-            results = crawler.crawl(url)
-            
-            if len(results["errors"]) > 0:
-                print(results["errors"])
-                
-                #TODO error type detection and handling
-                self.mirror_manager.return_offline(mirror)
-                
-                account.return_failure() 
-                self.account_queue.put(account)
-                continue
-        
-            # alias: BFI
-            backup_file_id = Backup.back_up_html_file(results["raw_data"], results["profile"].get_username())
-            
-            for tweet in results["tweets"]:
-                tweet.get_meta_ref().set_backup_file_id(backup_file_id)
-            
-            results["profile"].get_meta_ref().set_backup_file_id(backup_file_id)
-            
-            tweets_result = db.upsert_tweets(results["tweets"])
-            profile_result = db.upsert_twitter_profile(results["profile"])
-            
-            self.summary.add_data(results["profile"], tweets_result)
-            
-            if results["next_url"]:
-                self.account_queue.put(PageLink(results["next_url"]))
-               
-            self.mirror_manager.return_online(mirror)
-            self.account_queue.task_done()
-        
-        crawler.shutdown()
+        except Exception as e:
+            print("!------THREAD FAULT-------!")
+            print(e)
+            self.summary.add_thread_fault(e.__class__.__name__, str(e))
+        finally:  
+            crawler.shutdown()
 
 
 
