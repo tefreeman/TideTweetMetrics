@@ -38,6 +38,10 @@ def next_zip_num() -> int:
     return len(glob.glob1("backups/","*.zip")) + 1
 
 def compress_backups():
+    
+    if not os.path.exists("backups"):
+        os.makedirs("backups")
+        
     name = 'backup_raw_data/'
     zip_file_name = str(next_zip_num()) + '.zip'
     zip_name = name + zip_file_name
