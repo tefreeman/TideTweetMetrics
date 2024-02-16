@@ -13,26 +13,8 @@ from datetime import datetime
 import utils.backup as Backup
 from utils.error_sys import Error
 from config import Config
+from utils.page_link import PageLink
 
-class PageLink:
-    def __init__(self, page_url: str) -> None:
-        self._page_url = page_url
-        self._in_use = False
-        self._failures = 0
-    
-    def get(self) -> str:
-        if self._in_use:
-            raise Exception("PageLink is in use")
-        self._in_use = True
-        return self._page_url
-    
-    def failure_count(self) -> int:
-        return self._failures
-    
-    def return_failure(self):
-        self._in_use = False
-        self._failures += 1
-    
 class CrawlerScheduler:
     def __init__(self, accounts: List[str], crawler_count: int) -> None:
         self.mirror_manager = TwitterMirrorManager()
@@ -63,9 +45,6 @@ class CrawlerScheduler:
         self.summary.set_end_time()    
         return self.summary.get_summary()         
                 
-    @staticmethod
-    def make_url(account: str, domain: str) -> str:
-        return f"http://{domain}/{account}"
     
     def wait(self):
         time.sleep(Config.get_sleep_time())      
@@ -75,16 +54,16 @@ class CrawlerScheduler:
             while not self.account_queue.empty():
                 self.wait()
                 
-                account = self.account_queue.get()
+                page_link = self.account_queue.get()
                 
-                if account.failure_count() > Config.get_max_url_page_error():
+                if page_link.failure_count() > Config.get_max_url_page_error():
                     self.account_queue.task_done()
                     continue
                 
                 mirror = self.mirror_manager.get_mirror()
-                domain = mirror["url"]
+                page_link.set_domain(mirror["url"])
                 
-                url = CrawlerScheduler.make_url(account.get(), domain)
+                url = page_link.get()
             
                 results = crawler.crawl(url)
                 
@@ -94,8 +73,8 @@ class CrawlerScheduler:
                     #TODO error type detection and handling
                     self.mirror_manager.return_offline(mirror)
                     
-                    account.return_failure() 
-                    self.account_queue.put(account)
+                    page_link.return_failure() 
+                    self.account_queue.put(page_link)
                     continue
             
                 # alias: BFI
