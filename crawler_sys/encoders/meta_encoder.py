@@ -41,6 +41,9 @@ class MetaData(DataEncoder):
         self._set_created(datetime.now())
         self._set_version_to_current()
         self._set_update_id(None)
+    
+    def set_domain(self, domain: str):
+        self._object["domain"] = domain
         
     def set_as_update(self, owner_id: str):
         self._set_owner_id(owner_id)
