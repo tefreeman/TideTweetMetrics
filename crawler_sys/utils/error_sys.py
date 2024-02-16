@@ -27,12 +27,14 @@ class Error:
             return ErrorType.MIRROR_ERROR
         elif self.error_name in Error._internet_error_set:
             return ErrorType.HTTP_ERROR
+        else:
+            return None
     
     def get_error_type(self) -> ErrorType:
         return self.error_type
     
     def to_json(self) -> dict:
-        return {"name": self.error_name}  
+        return {"name": self.error_name, "type": self.error_type.name}  
 
     def init_from_json(self, json: dict):
         self.error_name = json["name"]

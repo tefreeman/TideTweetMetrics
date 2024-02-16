@@ -75,7 +75,7 @@ def upsert_twitter_profile(profile: Profile):
         if db_profile["imeta"]["uid"] != None:
             update = profile_updates_col.find_one({"_id": ObjectId(db_profile["imeta"]["uid"])})
             if update != None:
-                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(days=Config.get_profile_min_update_time()):
+                if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(hours=Config.get_profile_min_update_time_hours()):
                     return None
         return _update_profile(profile)
 

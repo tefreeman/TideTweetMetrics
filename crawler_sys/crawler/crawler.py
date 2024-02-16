@@ -1,3 +1,4 @@
+from http.client import HTTPException, ResponseNotReady
 from typing import List, Dict, Tuple, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -26,7 +27,7 @@ class Crawler:
         try:
             self.driver_load_page(url)
 
-        except WebDriverException as e:
+        except (WebDriverException, HTTPException, ResponseNotReady) as e:
             errors.append(Error(e.__class__.__name__))
             return
         

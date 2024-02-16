@@ -130,7 +130,7 @@ class Twiiit_Crawler(Crawler):
             element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
             WebDriverWait(self.driver, max_wait).until(element_present)
         except TimeoutException as e:
-            return Error(e.__class__._name__)
+            return Error(e.__class__.__name__)
 
         #Error for when HTML generates error panel etc. wrong user name
         error_div = self.driver.find_elements(By.CLASS_NAME, "error-panel")

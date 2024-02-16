@@ -4,6 +4,7 @@ import undetected_chromedriver as uc
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
+from config import Config
 
 #TODO: Implement a method to create a driver that is undetected
 # This method should return a webdriver.Chrome object
@@ -18,6 +19,8 @@ def create_undetected_driver()-> webdriver.Chrome:
     #driver = webdriver.Chrome()
     #driver = uc.Chrome(enable_cdp_events=True)
     driver = uc.Chrome(options=chrome_options, desired_capabilities=capabilities)
+    
+    driver.set_page_load_timeout(Config.get_max_page_load_time())
     
     # additional method via monkey patching
     driver.get_status_code: Callable[[], Optional[int]] = lambda: _get_status_code(driver)
