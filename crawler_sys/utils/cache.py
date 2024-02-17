@@ -1,12 +1,13 @@
 from threading import Lock
-from ..encoders.profile_encoder import Profile
+from encoders.profile_encoder import Profile
+from datetime import datetime
 import time
 
-class ProfileUpdateCache:
+class ProfileCache:
     def __init__(self, max_cache_size: int):
         self._cache = {}
         self.max_cache_size = max_cache_size
-        self.lock = Lock()
+        self._lock = Lock()
     
     def load_from_db(self, profiles: list[Profile]):
         for profile in profiles:
