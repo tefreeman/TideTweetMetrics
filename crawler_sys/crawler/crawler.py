@@ -31,19 +31,17 @@ class Crawler:
             errors.append(Error(e.__class__.__name__))
             return
 
-        # fix this
-        try:
-            if self.driver.get_status_code() >= 300:
-                errors.append(Error("BadHTTPResponseCode"))
-                return
-        except Exception as e:
-            print(e)
-            errors.append(Error("BadHTTPResponseCode"))
-            return
-
+        # check these 
         if self.driver.has_connection() == False:
             errors.append(Error("NoInternetConnection"))
             return
+        if self.driver.get_status_code() != None:
+            errors.append(Error("noHTTPResponseCode"))
+            return 
+        if self.driver.get_status_code() >= 300:
+            errors.append(Error("BadHTTPResponseCode"))
+            return
+
 
         html_not_loaded_error = self.detected_html_not_loaded()
         if html_not_loaded_error != None:

@@ -24,7 +24,7 @@ class CustomChromeDriver(uc.Chrome):
         return _has_connection(self)
 
 
-def create_undetected_driver() -> webdriver.Chrome:
+def create_undetected_driver() -> CustomChromeDriver:
 
     capabilities = DesiredCapabilities.CHROME
     capabilities["goog:loggingPrefs"] = {"performance": "ALL"}
