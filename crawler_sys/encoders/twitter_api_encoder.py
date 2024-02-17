@@ -5,6 +5,7 @@ from config import Config
 import pytz
 from utils.error_sys import Error
 
+
 class IncompleteBuildException(Exception):
     """Exception raised when building Twiiit object fails due all required fields not being set."""
 
@@ -22,6 +23,7 @@ class ReferencedTweetType(Enum):
 # instead of having to add it to the json object itself
 # Should be able to attach itself to the raw json object
 
+
 class DataEncoder(ABC):
     # Must not be overriden
     def to_json_dict(self) -> dict:
@@ -38,20 +40,18 @@ class DataEncoder(ABC):
 
     # These must be overridden
 
-
     @abstractmethod
     def _to_json_dict(self) -> dict:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _changes_to_json_dict(self) -> dict:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _from_json_dict(self, data: dict) -> dict:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _changes_from_json_dict(self, data: dict) -> dict:
         raise NotImplementedError()
-
