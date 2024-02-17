@@ -17,7 +17,7 @@ class TestProfileEncoder(unittest.TestCase):
 
     def test_description(self):
         self.profile.set_description("Sam is HIM")
-        self.assertEqual(self.profile.get_description, "Sam is HIM")
+        self.assertEqual(self.profile.get_description(), "Sam is HIM")
 
     def test_location(self):
         self.profile.set_location("Gamertown, USA")

@@ -6,6 +6,7 @@ from .twitter_api_encoder import (
 from .meta_encoder import MetaData
 from datetime import datetime
 import re
+import pytz
 
 
 class Tweet(DataEncoder):
