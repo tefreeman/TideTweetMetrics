@@ -1,9 +1,7 @@
 from bson import ObjectId
 from pymongo import MongoClient
-from typing import TypedDict
 from encoders.tweet_encoder import Tweet
 from encoders.profile_encoder import Profile
-import time
 import datetime
 from config import Config
 
@@ -99,7 +97,7 @@ def upsert_twitter_profile(profile: Profile):
             )
             if update != None:
                 if update["timestamp"] > datetime.datetime.now() - datetime.timedelta(
-                    days=Config.get_profile_min_update_time()
+                    hours=Config.get_profile_min_update_time_hours()
                 ):
                     return None
         return _update_profile(profile)

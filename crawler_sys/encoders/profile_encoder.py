@@ -2,6 +2,7 @@ from .twitter_api_encoder import DataEncoder, IncompleteBuildException
 from .meta_encoder import MetaData
 from datetime import datetime
 
+
 class Profile(DataEncoder):
     def __init__(self, as_json=None, changes_json=None) -> None:
         self._object = {}
@@ -31,32 +32,28 @@ class Profile(DataEncoder):
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
-    
 
     def _to_json_dict(self) -> dict:
         self.raise_unless_required_fields_set()
         self._meta.attach(self._object)
         return self._object
-    
 
     def _changes_to_json_dict(self) -> dict:
         self.raise_unless_required_fields_set()
         metrics = self._object["public_metrics"]
         metrics["timestamp"] = datetime.now()
-        
+
         self.get_meta_ref().attach(metrics)
-        
+
         return metrics
-    
 
     def _from_json_dict(self, data: dict):
         self._object = data
         self._meta = MetaData(data["imeta"])
-    
 
     def _changes_from_json_dict(self, data: dict):
         pass
-    
+
     def set_name(self, name: str):
         self._object["name"] = name
         self._set_fields.add("name")
@@ -136,6 +133,6 @@ class Profile(DataEncoder):
 
     def get_public_metrics(self):
         return self._object["public_metrics"]
-    
+
     def get_meta_ref(self) -> MetaData:
         return self._meta

@@ -3,6 +3,7 @@ from utils.error_sys import Error
 from .twitter_api_encoder import DataEncoder
 from config import Config
 
+
 class MetaData(DataEncoder):
     def __init__(self, as_json=None) -> None:
 
@@ -11,20 +12,20 @@ class MetaData(DataEncoder):
 
         if as_json != None:
             self._object = self.from_json_dict(as_json)
-    
+
     # Attaches the imeta to the object
     def attach(self, object: dict):
         if "imeta" in object:
             raise Exception("imeta already exists in object")
-        
+
         object["imeta"] = self.to_json_dict()
-        
+
     def get_created(self):
         return self._object["created"]
 
     def get_owner_id(self) -> int:
         return self._object["oid"]
-    
+
     def get_update_id(self):
         return self._object["uid"]
 
@@ -41,17 +42,20 @@ class MetaData(DataEncoder):
         self._set_created(datetime.now())
         self._set_version_to_current()
         self._set_update_id(None)
-        
+
+    def set_domain(self, domain: str):
+        self._object["domain"] = domain
+
     def set_as_update(self, owner_id: str):
         self._set_owner_id(owner_id)
         self._set_version_to_current()
-        
+
     def _set_created(self, created: datetime):
         self._object["created"] = created
 
     def _set_owner_id(self, owner_id):
         self._object["oid"] = owner_id
-        
+
     def _set_update_id(self, update_id):
         self._object["uid"] = update_id
 
@@ -60,7 +64,7 @@ class MetaData(DataEncoder):
 
     def _set_version(self, version):
         self._object["version"] = version
-        
+
     def _set_version_to_current(self):
         self._object["version"] = Config.get_version()
 
@@ -69,7 +73,7 @@ class MetaData(DataEncoder):
 
     def _errors_to_json(self):
         return [error.to_json() for error in self._errors]
-    
+
     def _from_json_dict(self, data: dict) -> dict:
         self._object = data
         self._errors = [Error(from_json=error) for error in data["errors"]]
