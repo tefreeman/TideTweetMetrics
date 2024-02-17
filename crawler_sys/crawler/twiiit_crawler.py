@@ -147,8 +147,6 @@ class Twiiit_Crawler(Crawler):
 
         return videos_list, errors
 
-    # TODO: Add error checking (In progress)
-
     # Detects if the html isn't loading
     def detected_html_not_loaded(self, max_wait=15) -> Error | None:
         try:
