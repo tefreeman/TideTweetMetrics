@@ -147,22 +147,22 @@ class Twiiit_Crawler(Crawler):
 
         return videos_list, errors
 
-    # TODO: Add error checking (In progress)
-
-    # Detects if the html isn't loading (DONE)
+    # Detects if the html isn't loading
     def detected_html_not_loaded(self, max_wait=15) -> Error | None:
         try:
-            element_present = EC.presence_of_element_located(
-                (By.CLASS_NAME, "container")
-            )
+            # Wait for the presence of the container element
+            element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
             WebDriverWait(self.driver, max_wait).until(element_present)
         except TimeoutException as e:
+            # Create Error object
             return Error(e.__class__.__name__)
 
-        # Error for when HTML generates error panel etc. wrong user name
+        # Check for error panel if theres an issue with HTML loading
         error_div = self.driver.find_elements(By.CLASS_NAME, "error-panel")
         if len(error_div) > 0:
             return Error("ErrorPanelFound")
+        
+        # If no errors found, return None
         return None
 
     # Returns profile picture image attributes
@@ -181,24 +181,31 @@ class Twiiit_Crawler(Crawler):
 
     # Parse and stores quoted tweet info
     def _parse_quoted_tweet(self, quote_ele: WebElement):
-        link = self.find_attribute_or_none(
-            quote_ele, By.CLASS_NAME, "quote-link", "href"
-        )
+        # Extracting link
+        link = self.find_attribute_or_none(quote_ele, By.CLASS_NAME, "quote-link", "href")
+
+        # Extracting user information
         fullname_text = self.find_text_or_none(quote_ele, By.CLASS_NAME, "fullname")
         username_text = self.find_text_or_none(quote_ele, By.CLASS_NAME, "username")
-        date_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "tweet-date")
-        date_text = None
-        if date_ele != None:
-            date_text = self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title")
 
+        # Extracting tweet data
+        date_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "tweet-date")
+        date_text = (
+            self.find_attribute_or_none(date_ele, By.TAG_NAME, "a", "title")
+            if date_ele is not None
+            else None
+        )
+
+        # Extracting tweet content
         content_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-text")
         content_text = content_ele.text
+
+        # Extracting links in the content
         content_links_ele = content_ele.find_elements(By.TAG_NAME, "a")
         content_links_list = self._parse_links(content_links_ele)
 
-        quote_media_container_ele = self.find_element_or_none(
-            quote_ele, By.CLASS_NAME, "quote-media-container"
-        )
+        # Extracting pictures if avaliable
+        quote_media_container_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-media-container")
         if quote_media_container_ele != None:
             pictures_ele = quote_media_container_ele.find_elements(
                 By.CLASS_NAME, "still-image"
@@ -250,7 +257,10 @@ class Twiiit_Crawler(Crawler):
         followers_count_text = None
         likes_count_text = None
         try:
+            # Find all stat elements within the container
             stat_list_ele = stat_container_ele.find_elements(By.TAG_NAME, "li")
+
+            # Loop through each element and extract info
             for stat_ele in stat_list_ele:
                 stat_text = stat_ele.text.lower().replace("\n", "")
                 if "tweets" in stat_text:
@@ -263,8 +273,10 @@ class Twiiit_Crawler(Crawler):
                     likes_count_text = stat_text.replace("likes", "")
 
         except Exception as e:
+            # Create Error object if error occurs during parsing
             return None, None, None, None, Error(e.__class__.__name__)
 
+        # Return the parsed value
         return (
             tweets_count_text,
             following_count_text,
@@ -277,59 +289,42 @@ class Twiiit_Crawler(Crawler):
     def parse_profile(self) -> Profile:
         profile_errors: list[Error] = []
 
+        # Find profile element
         profile_ele = self.find_element_or_none(None, By.CLASS_NAME, "profile-card")
-
         if profile_ele is None:
             return None, [Error("ProfileNotFound")]
 
-        fullname_text = self.find_text_or_none(
-            profile_ele, By.CLASS_NAME, "profile-card-fullname"
-        )
-        username_text = self.find_text_or_none(
-            profile_ele, By.CLASS_NAME, "profile-card-username"
-        )
+        # Extract profile information
+        fullname_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-fullname")
+        username_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-username")
         bio_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-bio")
-        location_text = self.find_text_or_none(
-            profile_ele, By.CLASS_NAME, "profile-location"
-        )
-        website_text = self.find_text_or_none(
-            profile_ele, By.CLASS_NAME, "profile-website"
-        )
+        location_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-location")
+        website_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-website")
 
-        join_date_ele = self.find_element_or_none(
-            profile_ele, By.CLASS_NAME, "profile-joindate"
-        )
+        # Extract join data
+        join_date_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-joindate")
         join_date_text = (
             self.find_attribute_or_none(join_date_ele, By.TAG_NAME, "span", "title")
             if join_date_ele
             else None
         )
 
-        verified_profile_bool = bool(
-            profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue")
-        )
+        # Check if profile is verified
+        verified_profile_bool = bool(profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue"))
 
-        profile_pic_ele = self.find_element_or_none(
-            profile_ele, By.CLASS_NAME, "profile-card-avatar"
-        )
-        profile_pic, pic_errors = (
-            self._parse_profile_pic(profile_pic_ele)
-            if profile_pic_ele
-            else (None, None)
-        )
+        # Extract profile picutre
+        profile_pic_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-card-avatar")
+        profile_pic, pic_errors = (self._parse_profile_pic(profile_pic_ele) if profile_pic_ele else (None, None))
         if pic_errors:
             profile_errors.append(pic_errors)
 
-        stat_container_ele = self.find_element_or_none(
-            profile_ele, By.CLASS_NAME, "profile-statlist"
-        )
-        tweets_cnt, following_cnt, follower_cnt, likes_cnt, stat_err = (
-            self._parse_profile_stats(stat_container_ele)
-        )
-
+        # Extract profile statistics
+        stat_container_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-statlist")
+        tweets_cnt, following_cnt, follower_cnt, likes_cnt, stat_err = (self._parse_profile_stats(stat_container_ele))
         if stat_err:
             profile_errors.append(stat_err)
 
+        # Create and set Profile object
         profile = Profile()
         profile.set_name(fullname_text)
         profile.set_description(bio_text)
