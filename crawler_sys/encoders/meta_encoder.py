@@ -11,7 +11,7 @@ class MetaData(DataEncoder):
         self._errors: list[Error] = []
 
         if as_json != None:
-            self._object = self.from_json_dict(as_json)
+            self.from_json_dict(as_json)
 
     # Attaches the imeta to the object
     def attach(self, object: dict):
