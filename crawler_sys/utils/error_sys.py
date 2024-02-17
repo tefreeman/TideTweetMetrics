@@ -1,6 +1,7 @@
 from selenium.common.exceptions import TimeoutException
 from enum import Enum
 
+
 class ErrorType(Enum):
     PARSING_ERROR = 1
     MIRROR_ERROR = 2
@@ -9,10 +10,14 @@ class ErrorType(Enum):
 
 class Error:
     _parsing_error_set = {"IncompleteException"}
-    _mirror_error_set = {"TimeoutException", "ErrorPanelFound", "BadHTTPResponseCode", "NoHTTPResponseCode"}
+    _mirror_error_set = {
+        "TimeoutException",
+        "ErrorPanelFound",
+        "BadHTTPResponseCode",
+        "NoHTTPResponseCode",
+    }
     _internet_error_set = {}
-    
-        
+
     def __init__(self, error_name=None, from_json=None) -> None:
         if error_name != None:
             self.error_name = error_name
@@ -29,14 +34,13 @@ class Error:
             return ErrorType.HTTP_ERROR
         else:
             return None
-    
+
     def get_error_type(self) -> ErrorType:
         return self.error_type
-    
+
     def to_json(self) -> dict:
-        return {"name": self.error_name, "type": self.error_type.name}  
+        return {"name": self.error_name, "type": self.error_type.name}
 
     def init_from_json(self, json: dict):
         self.error_name = json["name"]
         self.error_type = self._find_error_type()
-
