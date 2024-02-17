@@ -15,6 +15,10 @@
         "MAX_PAGE_LOAD_TIME": 20,
         "MAX_URL_PAGE_ERROR": 10
     },
+    "BACKUP": {
+        "RAW_DIR": "backup_raw_data",
+        "DIR": "backups"
+    },
     "VERSION": "0.0.1"
 
 }
