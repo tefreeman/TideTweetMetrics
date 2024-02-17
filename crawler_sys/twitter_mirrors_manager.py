@@ -1,5 +1,5 @@
 # List of domain entries
-from typing import List, TypedDict
+from typing import TypedDict
 import database as db
 import queue
 
@@ -16,7 +16,7 @@ class TwitterMirrorManager:
         self._up_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
         self._down_mirrors: queue.Queue[MirrorMeta] = queue.Queue()
 
-        self.load_mirrors()
+        self._load_mirrors()
 
     def make_mirror_meta(self, mirror: str, is_working: bool) -> MirrorMeta:
         return {
@@ -26,7 +26,7 @@ class TwitterMirrorManager:
             "down_events": 0,
         }
 
-    def load_mirrors(self):
+    def _load_mirrors(self):
         mirrors: list[MirrorMeta] = db.get_mirrors()
         for mirror in mirrors:
             if mirror["is_working"]:
@@ -34,7 +34,7 @@ class TwitterMirrorManager:
             else:
                 self._down_mirrors.put(mirror)
 
-    def reload_bad_mirrors(self):
+    def _reload_bad_mirrors(self):
         print("reloading bad mirrors")
         while not self._down_mirrors.empty():
             mirror = self._down_mirrors.get()
@@ -44,7 +44,7 @@ class TwitterMirrorManager:
         try:
             return self._up_mirrors.get(timeout=10)
         except queue.Empty:
-            self.reload_bad_mirrors()
+            self._reload_bad_mirrors()
             return self._up_mirrors.get(timeout=10)
 
     def return_online(self, mirror: MirrorMeta):
