@@ -8,7 +8,7 @@ class ErrorType(Enum):
 
 
 class Error:
-    _parsing_error_set = {"IncompleteException"}
+    _parsing_error_set = {"IncompleteException", "LoadMoreError"}
     _mirror_error_set = {"TimeoutException", "ErrorPanelFound", "BadHTTPResponseCode", "NoHTTPResponseCode"}
     _internet_error_set = {}
     
