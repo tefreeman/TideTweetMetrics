@@ -1,10 +1,10 @@
 {
-    "DB": {    
-    "HOST": "10.0.0.28",
-    "PORT": 27017,
-    "NAME": "twitter",
-    "USER": "Admin",
-    "PASSWORD": "We420?Z4!"
+    "DB": {
+        "HOST": "73.58.28.154",
+        "PORT": 27017,
+        "NAME": "twitter",
+        "USER": "Admin",
+        "PASSWORD": "We420?Z4!"
     },
     "CRAWLER": {
         "NUM_THREADS": 1,
@@ -20,5 +20,4 @@
         "DIR": "backups"
     },
     "VERSION": "0.0.1"
-
 }
