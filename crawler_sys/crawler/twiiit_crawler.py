@@ -165,6 +165,7 @@ class Twiiit_Crawler(Crawler):
             return Error("ErrorPanelFound")
         return None
 
+    # Returns profile picture image attributes
     def _parse_profile_pic(
         self, picture_ele: WebElement
     ) -> tuple[dict | None, Error | None]:
@@ -178,6 +179,7 @@ class Twiiit_Crawler(Crawler):
         except Exception as e:
             return None, Error(e.__class__.__name__)
 
+    # Parse and stores quoted tweet info
     def _parse_quoted_tweet(self, quote_ele: WebElement):
         link = self.find_attribute_or_none(
             quote_ele, By.CLASS_NAME, "quote-link", "href"
@@ -239,6 +241,7 @@ class Twiiit_Crawler(Crawler):
         except Exception as e:
             return None, Error(e.__class__.__name__)
 
+    # Parse and stores profile stats
     def _parse_profile_stats(
         self, stat_container_ele: WebElement
     ) -> tuple[str | None, str | None, str | None, str | None, Error | None]:
@@ -270,6 +273,7 @@ class Twiiit_Crawler(Crawler):
             None,
         )
 
+    # Parse and stores profile info
     def parse_profile(self) -> Profile:
         profile_errors: list[Error] = []
 
@@ -366,6 +370,7 @@ class Twiiit_Crawler(Crawler):
             for stat in ["comment", "retweet", "quote", "heart"]
         }
 
+    # Parse and stores tweet info
     def parse_tweets(self) -> Tuple[List[Tweet], str | None, list[Error]]:
         error_list: list[Error] = []
 
