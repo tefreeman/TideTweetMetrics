@@ -9,7 +9,7 @@ client = None
 db = None
 
 
-def init_database():
+def init_database(name=None):
     global client, db
     client = MongoClient(
         Config.db_host(),
@@ -17,7 +17,8 @@ def init_database():
         username=Config.db_user(),
         password=Config.db_password(),
     )
-    db = client[Config.db_name()]
+    db_name = Config.db_name() if name == None else name
+    db = client[db_name]
 
     collection_names = db.list_collection_names()
     if len(collection_names) == 0:
