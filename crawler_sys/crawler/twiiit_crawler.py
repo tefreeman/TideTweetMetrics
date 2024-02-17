@@ -374,34 +374,40 @@ class Twiiit_Crawler(Crawler):
     def parse_tweets(self) -> Tuple[List[Tweet], str | None, list[Error]]:
         error_list: list[Error] = []
 
+        # Enable video playback
         error_list.append(self._enable_video_playback())
 
+        # Find timeline items
         tweets = self.driver.find_elements(By.CLASS_NAME, "timeline-item")
         json_tweets = []
 
         for tweet in tweets:
             if tweet.text == "Load newest":
                 continue
+
             tweet_error_list: list[Error] = []
 
-            link_text = self.find_attribute_or_none(
-                tweet, By.CLASS_NAME, "tweet-link", "href"
-            )
+            # Extract tweet attributes
+            link_text = self.find_attribute_or_none(tweet, By.CLASS_NAME, "tweet-link", "href")
             fullname_text = self.find_text_or_none(tweet, By.CLASS_NAME, "fullname")
             username_text = self.find_text_or_none(tweet, By.CLASS_NAME, "username")
             date_text = self._extract_date(tweet)
 
+            # Extract tweet contents
             content_text, content_links_list, parse_errs = self._extract_content(tweet)
             tweet_error_list.extend(parse_errs)
 
+            # Extract pictures
             pictures_ele = tweet.find_elements(By.CLASS_NAME, "still-image")
             pictures_list, pic_errs = self._parse_pictures(pictures_ele)
             tweet_error_list.extend(pic_errs)
 
+            # Extract videos
             videos_ele = tweet.find_elements(By.CLASS_NAME, "video-container")
             videos_list, video_errs = self._parse_videos(videos_ele)
             tweet_error_list.extend(video_errs)
 
+            # Extract tweet stacks
             stats = self._extract_tweet_stats(tweet)
             retweet_count, comment_count, heart_count, quote_count = (
                 stats["retweet"],
@@ -410,57 +416,45 @@ class Twiiit_Crawler(Crawler):
                 stats["quote"],
             )
 
-            is_retweet = (
-                True
-                if len(tweet.find_elements(By.CLASS_NAME, "retweet-header")) > 0
-                else False
-            )
+            # Checks if its a retweet (BOOL)
+            is_retweet = len(tweet.find_elements(By.CLASS_NAME, "retweet-header")) > 0
 
+            # Extract cards
             cards = tweet.find_elements(By.CLASS_NAME, "card")
             cards_list = []
-
             for card in cards:
                 card_json, card_err = self._parse_card(card)
                 cards_list.append(card_json)
                 tweet_error_list.append(card_err)
 
+            # Extract quotes
             quotes = tweet.find_elements(By.CLASS_NAME, "quote")
-
-            """
-            for quote in quotes:
-                self.parse_quoted_tweet(quote)
-            """
-
             is_quote = len(quotes) > 0
 
+            # Create tweet object
             json_tweet = Tweet()
             json_tweet.set_id(link_text)
             json_tweet.set_text(content_text)
             json_tweet.set_post_date(date_text)
             json_tweet.set_author(username_text)
-            json_tweet.set_public_metrics(
-                retweet_count, comment_count, heart_count, quote_count
-            )
+            json_tweet.set_public_metrics(retweet_count, comment_count, heart_count, quote_count)
             json_tweet.set_entities(content_links_list, content_text)
             json_tweet.set_attachments(pictures_list, videos_list, cards_list)
             json_tweet.get_meta_ref().set_errors(tweet_error_list)
 
-            # TODO: Need to set a retweet to have correct referenced tweet
+            # Set reference tweet
             if is_retweet:
                 json_tweet.set_refenced_tweet(link_text, ReferencedTweetType.RETWEET)
             elif is_quote:
-                quote_link_text = self.find_attribute_or_none(
-                    quotes[0], By.CLASS_NAME, "quote-link", "href"
-                )
-                json_tweet.set_refenced_tweet(
-                    quote_link_text, ReferencedTweetType.QUOTED
-                )
+                quote_link_text = self.find_attribute_or_none(quotes[0], By.CLASS_NAME, "quote-link", "href")
+                json_tweet.set_refenced_tweet(quote_link_text, ReferencedTweetType.QUOTED)
             else:
                 json_tweet.set_refenced_tweet("", ReferencedTweetType.NONE)
 
+            # Append to list
             json_tweets.append(json_tweet)
 
-        # loads older tweets
+        # Load older tweets
         load_more_link = None
         try:
             show_more_links = self.driver.find_elements(By.CLASS_NAME, "show-more")
