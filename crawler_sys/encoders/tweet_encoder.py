@@ -10,11 +10,12 @@ import pytz
 
 
 class Tweet(DataEncoder):
-    def __init__(self, as_json=None, changes_json=None) -> None:
+    def __init__(self, as_json=None, changes_json=None, ignore_required=False) -> None:
         self._object = {}
         self._includes = {}
         self._meta = MetaData()
         self._set_fields = set()
+        self.ignore_required = ignore_required
         self._required_fields = {
             "id",
             "text",
@@ -31,6 +32,8 @@ class Tweet(DataEncoder):
             self.changes_from_json_dict(changes_json)
 
     def ensure_required_fields_set(self):
+        if self.ignore_required:
+            return
         if not self._required_fields.issubset(self._set_fields):
             missing_fields = self._required_fields - self._set_fields
             raise IncompleteBuildException(
@@ -40,7 +43,7 @@ class Tweet(DataEncoder):
     def _from_json_dict(self, data: dict):
         self._object = data["data"]
         self._includes = data["includes"]
-        self._meta = MetaData(data["imeta"])
+        self._meta = MetaData(as_json=data["imeta"])
 
     def _changes_from_json_dict(self, data: dict):
         pass
