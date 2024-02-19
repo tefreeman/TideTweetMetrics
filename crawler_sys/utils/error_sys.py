@@ -22,6 +22,7 @@ class Error:
         if error_name != None:
             self.error_name = error_name
             self.error_type = self._find_error_type()
+        
         elif from_json != None:
             self.init_from_json(from_json)
 
@@ -39,7 +40,8 @@ class Error:
         return self.error_type
 
     def to_json(self) -> dict:
-        return {"name": self.error_name, "type": self.error_type.name}
+        err_type = self.error_type
+        return {"name": self.error_name, "type": self.error_type.name if err_type != None else None}
 
     def init_from_json(self, json: dict):
         self.error_name = json["name"]

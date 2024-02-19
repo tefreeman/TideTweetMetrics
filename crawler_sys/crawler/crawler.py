@@ -35,10 +35,12 @@ class Crawler:
         if self.driver.has_connection() == False:
             errors.append(Error("NoInternetConnection"))
             return
-        if self.driver.get_status_code() != None:
+        
+        status = self.driver.get_status_code()
+        if status is None:
             errors.append(Error("noHTTPResponseCode"))
             return 
-        if self.driver.get_status_code() >= 300:
+        if status >= 300:
             errors.append(Error("BadHTTPResponseCode"))
             return
 

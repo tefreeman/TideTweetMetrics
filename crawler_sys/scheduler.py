@@ -10,7 +10,7 @@ import database as db
 import utils.backup as Backup
 from config import Config
 from utils.link_handler import LinkHandler
-
+import logging
 
 class CrawlerScheduler:
     def __init__(self, accounts: list[str], crawler_thread_count: int) -> None:
@@ -108,8 +108,7 @@ class CrawlerScheduler:
                 self._mirror_manager.return_online(mirror)
                 self._link_queue.task_done()
         except Exception as e:
-            print("!------THREAD FAULT-------!")
-            print(e)
+            logging.exception("ThreadFault")
             self._summary_report.add_thread_fault(e.__class__.__name__, str(e))
         finally:
             crawler.shutdown()
