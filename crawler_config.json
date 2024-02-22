@@ -1,0 +1,23 @@
+{
+    "DB": {
+        "HOST": "73.58.28.154",
+        "PORT": 27017,
+        "NAME": "twitter",
+        "USER": "Admin",
+        "PASSWORD": "***REMOVED***"
+    },
+    "CRAWLER": {
+        "NUM_THREADS": 1,
+        "SLEEP_TIME": 3,
+        "PROFILE_MIN_UPDATE_TIME": 18,
+        "MAX_TWEET_CRAWL_DEPTH": 40,
+        "START_TIME": "18:00",
+        "MAX_PAGE_LOAD_TIME": 20,
+        "MAX_URL_PAGE_ERROR": 10
+    },
+    "BACKUP": {
+        "RAW_DIR": "backup_raw_data",
+        "DIR": "backups"
+    },
+    "VERSION": "0.0.1"
+}
