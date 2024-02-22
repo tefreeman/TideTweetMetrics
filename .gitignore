@@ -1,3 +1,14 @@
+
+# backup_raw_data
+/backup_raw_data/*
+/backups/*
+*.7z
+# Mac shit
+
+bin/*
+pyvenv.cfg
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
