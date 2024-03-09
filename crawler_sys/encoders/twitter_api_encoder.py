@@ -25,6 +25,10 @@ class ReferencedTweetType(Enum):
 
 
 class DataEncoder(ABC):
+    
+    def __init__(self):
+        self._required_fields = None
+        
     # Must not be overriden
     def to_json_dict(self) -> dict:
         return self._to_json_dict()
@@ -37,6 +41,12 @@ class DataEncoder(ABC):
 
     def changes_from_json_dict(self, data: dict) -> dict:
         return self._changes_from_json_dict()
+
+    def get_fields(self):
+        if self._required_fields is None:
+            raise Error("Required fields not set")
+        
+        return self._required_fields
 
     # These must be overridden
 
