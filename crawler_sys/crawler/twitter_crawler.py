@@ -21,7 +21,14 @@ import logging
 from utils.error_sys import Error
 
 
+
 class TwitterCrawler(Crawler):
+    p_tar = {
+        "container": "css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0",
+        "name": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-adyw6z.r-135wba7.r-1vr29t4.r-1awozwy.r-6koalj.r-1udh08x",
+        "tag_name": "css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978"
+    }
+    
     def __init__(self) -> None:
         super().__init__()
 
@@ -75,9 +82,13 @@ class TwitterCrawler(Crawler):
         return None
     
     
+    
     def parse_profile(self) -> Profile:
+        cls = TwitterCrawler
         profile_errors: list[Error] = []
-        profile_element = self.find_element_or_none(None, By.CLASS_NAME, "css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0")
+        profile_element = self.find_element_or_none(None, By.CLASS_NAME, cls.p_tar["profile_element"])
 
+        profile_name = self.find_text_or_none(profile_element, By.CLASS_NAME, "h1")
+        
         print("done")
         
