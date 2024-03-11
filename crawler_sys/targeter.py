@@ -15,7 +15,9 @@ _default_tweet_target = {
                            {"value": "time", "type": By.TAG_NAME}
 ],
             "author_id": {"value": "css-1qaijid r-bcqeeo r-qvutc0 r-poiln3", "type": By.CSS_SELECTOR},
-            "public_metrics": {},
+            "public_metrics": {
+                
+                },
             "entities": {},
             "attachments": {}
 }

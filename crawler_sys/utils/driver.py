@@ -24,12 +24,23 @@ class CustomChromeDriver(uc.Chrome):
         return _has_connection(self)
 
 
-def create_undetected_driver() -> CustomChromeDriver:
+def create_undetected_driver(user_data_dir = None, profile_dir = None) -> CustomChromeDriver:
 
     capabilities = DesiredCapabilities.CHROME
     capabilities["goog:loggingPrefs"] = {"performance": "ALL"}
     # chromeOptions = webdriver.ChromeOptions()
     chrome_options = uc.ChromeOptions()
+    
+    if user_data_dir:
+        chrome_options.add_argument(f"user-data-dir={user_data_dir}")
+    else:
+        chrome_options.add_argument('user-data-dir=C:\\Users\\trevo\\AppData\\Local\\Google\\Chrome\\User Data')
+        
+    if profile_dir:
+        chrome_options.add_argument(f"profile-directory={profile_dir}")
+    else:
+        chrome_options.add_argument('profile-directory=Profile 10')
+        
     # driver = webdriver.Chrome()
     # driver = uc.Chrome(enable_cdp_events=True)
     driver = CustomChromeDriver(
