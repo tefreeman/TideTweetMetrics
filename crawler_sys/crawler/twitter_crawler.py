@@ -26,7 +26,12 @@ class TwitterCrawler(Crawler):
     p_tar = {
         "container": "css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0",
         "name": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-adyw6z.r-135wba7.r-1vr29t4.r-1awozwy.r-6koalj.r-1udh08x",
-        "tag_name": "css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978"
+        "tag_name": "css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978",
+        "description": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41",
+        "header_item_container": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-16dba41.r-56xrmm",
+        "header_items": "css-1qaijid.r-bcqeeo.r-qvutc0.r-poiln3.r-4qtqp9.r-1b7u577",
+        "stats_container": "css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj",
+        "stats_items": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-1loqt21"
     }
     
     def __init__(self) -> None:
@@ -85,10 +90,27 @@ class TwitterCrawler(Crawler):
     
     def parse_profile(self) -> Profile:
         cls = TwitterCrawler
+        
         profile_errors: list[Error] = []
-        profile_element = self.find_element_or_none(None, By.CLASS_NAME, cls.p_tar["profile_element"])
+        profile_element = self.find_element_or_none(None, By.CLASS_NAME, cls.p_tar["container"])
 
-        profile_name = self.find_text_or_none(profile_element, By.CLASS_NAME, "h1")
+        profile_name = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["name"])
+        profile_tag = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["tag_name"])
+        profile_description = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["description"])
+        
+        profile_header_container = self.find_element_or_none(profile_element, By.CLASS_NAME, cls.p_tar["header_item_container"])
+        
+        profile_header_items = profile_header_container.find_elements(By.CLASS_NAME, cls.p_tar["header_items"])
+        
+        profile_stats_container = self.find_element_or_none(profile_element, By.CLASS_NAME, cls.p_tar["stats_container"])
+        
+        profile_stats_items = profile_stats_container.find_elements(By.CLASS_NAME, cls.p_tar["stats_items"])
+        
+        
+        
+        for stat_ele in profile_stats_items:
+            print(stat_ele.text)
+        
         
         print("done")
         

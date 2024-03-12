@@ -32,14 +32,14 @@ def create_undetected_driver(user_data_dir = None, profile_dir = None) -> Custom
     chrome_options = uc.ChromeOptions()
     
     if user_data_dir:
-        chrome_options.add_argument(f"user-data-dir={user_data_dir}")
+        chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
     else:
-        chrome_options.add_argument('user-data-dir=C:\\Users\\trevo\\AppData\\Local\\Google\\Chrome\\User Data')
+        chrome_options.add_argument('--user-data-dir=C:\\Users\\sherr\\AppData\\Local\\Google\\Chrome\\User Data')
         
     if profile_dir:
-        chrome_options.add_argument(f"profile-directory={profile_dir}")
+        chrome_options.add_argument(f"--profile-directory={profile_dir}")
     else:
-        chrome_options.add_argument('profile-directory=Profile 10')
+        chrome_options.add_argument('--profile-directory=Default')
         
     # driver = webdriver.Chrome()
     # driver = uc.Chrome(enable_cdp_events=True)
