@@ -34,6 +34,21 @@ class TwitterCrawler(Crawler):
         "stats_items": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-1loqt21"
     }
     
+    t_tar = {
+        "tweets_container_tag": "section",
+        "tweet_container_class": "css-175oi2r.r-16y2uox.r-1wbh5a2.r-1ny4l3l",
+        "time_class": "css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-1q142lx r-1w6e6rj r-9aw3ui r-3s2u2q r-1loqt21".replace(" ", "."),
+        "time_post_attrib": "datetime",
+        "time_status_attrib": "href",
+        "post_text_class": "css-1rynq56 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-bnwqim".replace(" ", "."),
+        "post_stats_class": "css-175oi2r r-1kbdv8c r-18u37iz r-1wtj0ep r-1ye8kvj r-1s2bzr4".replace(" ", "."),
+        "post_stats_data_attrib": "aria-label",
+        "quoted_tweet_class": "css-175oi2r.r-9aw3ui.r-1s2bzr4",
+        "pinned_tweet_class": "css-1rynq56 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-37j5jr r-n6v787 r-1cwl3u0 r-b88u0q".replace(" ", "."),
+        "reposted_tweet_class": "css-1qaijid r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-poiln3 r-n6v787 r-1cwl3u0 r-b88u0q".replace(" ", "."),
+        
+    }
+    
     def __init__(self) -> None:
         super().__init__()
 
@@ -89,28 +104,8 @@ class TwitterCrawler(Crawler):
     
     
     def parse_profile(self) -> Profile:
-        cls = TwitterCrawler
-        
-        profile_errors: list[Error] = []
-        profile_element = self.find_element_or_none(None, By.CLASS_NAME, cls.p_tar["container"])
-
-        profile_name = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["name"])
-        profile_tag = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["tag_name"])
-        profile_description = self.find_text_or_none(profile_element, By.CLASS_NAME, cls.p_tar["description"])
-        
-        profile_header_container = self.find_element_or_none(profile_element, By.CLASS_NAME, cls.p_tar["header_item_container"])
-        
-        profile_header_items = profile_header_container.find_elements(By.CLASS_NAME, cls.p_tar["header_items"])
-        
-        profile_stats_container = self.find_element_or_none(profile_element, By.CLASS_NAME, cls.p_tar["stats_container"])
-        
-        profile_stats_items = profile_stats_container.find_elements(By.CLASS_NAME, cls.p_tar["stats_items"])
-        
-        
-        
-        for stat_ele in profile_stats_items:
-            print(stat_ele.text)
-        
-        
-        print("done")
+        pass
+    
+    def parse_tweets(self):
+        pass
         
