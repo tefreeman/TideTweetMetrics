@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from crawler.crawler import Crawler  # hmmmm
 import urllib.request
-
+import json
 from encoders.tweet_encoder import Tweet
 from encoders.profile_encoder import Profile
 from encoders.twitter_api_encoder import ReferencedTweetType
@@ -107,5 +107,12 @@ class TwitterCrawler(Crawler):
         pass
     
     def parse_tweets(self):
-        pass
+        tweet_response = self.driver.get_tweets()
+        
+        tweet_data = json.loads(tweet_response['body'])
+        
+        with open('tweet_response.json', 'w') as convert_file: 
+            convert_file.write(json.dumps(tweet_data))
+    
+        print("done")
         

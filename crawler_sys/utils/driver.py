@@ -17,6 +17,8 @@ class CustomChromeDriver(uc.Chrome):
         self.add_cdp_listener("Network.responseReceived", self.log)
         self.set_page_load_timeout(Config.get_max_page_load_time())
         self.set_window_size(640, 480)
+        self._user_tweet_update = None
+        self._user_media_update = None
         self._user_tweet_response = None
         self._user_media_response = None
     def get_status_code(self) -> Optional[int]:
@@ -39,13 +41,16 @@ class CustomChromeDriver(uc.Chrome):
                 request_id = response['params']['requestId']
                 body = self.execute_cdp_cmd('Network.getResponseBody', {'requestId': request_id})
                 self._user_tweet_response = body
+                self._user_tweet_update = time.time()
                 print("updated tweets")
                 
             elif "UserMedia?" in request_url:
                 request_id = response['params']['requestId']
                 body = self.execute_cdp_cmd('Network.getResponseBody', {'requestId': request_id})
                 self._user_media_response = body
-
+                self._user_media_update = time.time()
+                print("updated userMedia")
+                
 def create_undetected_driver(user_data_dir = None, profile_dir = None) -> CustomChromeDriver:
 
     capabilities = DesiredCapabilities.CHROME
