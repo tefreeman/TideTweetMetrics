@@ -4,10 +4,53 @@
   <meta charset="utf-8">
   <title>Frontend</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!--Page Title-->
+  <title>Namari - Free Landing Page Template</title>
+
+  <!--Meta Keywords and Description-->
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="images/favicon.ico" title="Favicon"/>
+
+  <!-- Main CSS Files -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!-- Namari Color CSS -->
+  <link rel="stylesheet" href="./assets/css/namari-color.css">
+
+  <!--Icon Fonts - Font Awesome Icons-->
+  <link rel="stylesheet" href="./assets/css/font-awesome.min.css">
+
+  <!-- Animate CSS-->
+  <link href="./assets/css/animate.css" rel="stylesheet" type="text/css">
+
+  <!--Google Webfonts-->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
-  <app-root></app-root>
+  <div id="wrapper">
+    <div class="page-border" data-wow-duration="0.7s" data-wow-delay="0.2s">
+      <div class="top-border wow fadeInDown animated" style="visibility: visible; animation-name: fadeInDown;"></div>
+      <div class="right-border wow fadeInRight animated" style="visibility: visible; animation-name: fadeInRight;"></div>
+      <div class="bottom-border wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;"></div>
+      <div class="left-border wow fadeInLeft animated" style="visibility: visible; animation-name: fadeInLeft;"></div>
+    </div>
+  </div>
+  <app-root>
+    <!-- Preloader -->
+    <div id="preloader">
+      <div id="status" class="la-ball-triangle-path">
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+    </div>
+    <!--End of Preloader-->
+
+  </app-root>
 </body>
 </html>
