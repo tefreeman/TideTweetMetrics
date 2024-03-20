@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
-import { AboutComponent } from './components/about/about.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { PricingComponent } from './components/pricing/pricing.component';
 import { TestimonialsComponent } from './components/testimonials/testimonials.component';
@@ -12,7 +12,7 @@ import { FooterComponent } from './components/footer/footer.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, AboutComponent, ClientsComponent, PricingComponent, TestimonialsComponent, 
+  imports: [RouterOutlet, HeaderComponent, DashboardComponent, ClientsComponent, PricingComponent, TestimonialsComponent, 
   GalleryComponent, NavComponent, ServicesComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
