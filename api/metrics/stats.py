@@ -39,9 +39,10 @@ def get_crawl_list_size(db=None):
 def get_profile_name(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_name() function"
-    if username is None:
-        return "Error: No username specified in get_profile_name() function"
     collection = db["profiles"]
+    if username is None:
+        # Return the names from all the profiles
+        return [x["name"] for x in collection.find({})]
     return collection.find_one({"username": username})["name"]
 
 
@@ -50,7 +51,8 @@ def get_profile_description(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_description() function"
     if username is None:
-        return "Error: No username specified in get_profile_description() function"
+        # Return the descriptions from all the profiles
+        return [x["description"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["description"]
 
@@ -60,7 +62,8 @@ def get_profile_created_at(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_created_at() function"
     if username is None:
-        return "Error: No username specified in get_profile_created_at() function"
+        # Return the created_at from all the profiles
+        return [x["created_at"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["created_at"]
 
@@ -70,7 +73,8 @@ def get_profile_location(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_location() function"
     if username is None:
-        return "Error: No username specified in get_profile_location() function"
+        # Return the locations from all the profiles
+        return [x["location"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["location"]
 
@@ -80,7 +84,8 @@ def get_profile_verified(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_verified() function"
     if username is None:
-        return "Error: No username specified in get_profile_verified() function"
+        # Return the verified statuses from all the profiles
+        return [str(x["verified"]) for x in collection.find({})]
     collection = db["profiles"]
     return str(collection.find_one({"username": username})["verified"])
 
@@ -90,7 +95,8 @@ def get_profile_url(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_url() function"
     if username is None:
-        return "Error: No username specified in get_profile_url() function"
+        # Return the urls from all the profiles
+        return [x["url"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["url"]
 
@@ -101,7 +107,8 @@ def get_profile_followers_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_followers_count() function"
     if username is None:
-        return "Error: No username specified in get_profile_followers_count() function"
+        # Return the number of followers from all the profiles
+        return [x["public_metrics"]["followers_count"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["public_metrics"][
         "followers_count"
@@ -113,7 +120,8 @@ def get_profile_following_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_following_count() function"
     if username is None:
-        return "Error: No username specified in get_profile_following_count() function"
+        # Return the number of following from all the profiles
+        return [x["public_metrics"]["following_count"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["public_metrics"][
         "following_count"
@@ -125,7 +133,8 @@ def get_profile_tweet_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_tweet_count() function"
     if username is None:
-        return "Error: No username specified in get_profile_tweet_count() function"
+        # Return the number of tweets from all the profiles
+        return [x["public_metrics"]["tweet_count"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["public_metrics"]["tweet_count"]
 
@@ -135,7 +144,8 @@ def get_profile_like_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_like_count() function"
     if username is None:
-        return "Error: No username specified in get_profile_like_count() function"
+        # Return the number of likes from all the profiles
+        return [x["public_metrics"]["like_count"] for x in collection.find({})]
     collection = db["profiles"]
     return collection.find_one({"username": username})["public_metrics"]["like_count"]
 
@@ -145,7 +155,13 @@ def get_profiles_avg_followers_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_followers_count() function"
     if usernames is None:
-        return "Error: No usernames specified in get_profiles_avg_followers_count() function"
+        # Return the average followers_count OVER all the profiles
+        return np.average(
+            [
+                x["public_metrics"]["followers_count"]
+                for x in collection.find({"username": {"$in": usernames}})
+            ]
+        )
     collection = db["profiles"]
     followers = []
     for user in usernames:
@@ -160,7 +176,13 @@ def get_profiles_avg_following_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_following_count() function"
     if usernames is None:
-        return "Error: No usernames specified in get_profiles_avg_following_count() function"
+        # Return the average following_count OVER all the profiles
+        return np.average(
+            [
+                x["public_metrics"]["following_count"]
+                for x in collection.find({"username": {"$in": usernames}})
+            ]
+        )
     collection = db["profiles"]
     following = []
     for user in usernames:
@@ -175,8 +197,12 @@ def get_profiles_avg_tweet_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_tweet_count() function"
     if usernames is None:
-        return (
-            "Error: No usernames specified in get_profiles_avg_tweet_count() function"
+        # Return the average tweet_count OVER all the profiles
+        return np.average(
+            [
+                x["public_metrics"]["tweet_count"]
+                for x in collection.find({"username": {"$in": usernames}})
+            ]
         )
     collection = db["profiles"]
     tweets = []
@@ -192,7 +218,13 @@ def get_profiles_avg_like_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_like_count() function"
     if usernames is None:
-        return "Error: No usernames specified in get_profiles_avg_like_count() function"
+        # Return the average like_count OVER all the profiles
+        return np.average(
+            [
+                x["public_metrics"]["like_count"]
+                for x in collection.find({"username": {"$in": usernames}})
+            ]
+        )
     collection = db["profiles"]
     likes = []
     for user in usernames:
@@ -201,6 +233,15 @@ def get_profiles_avg_like_count(db=None, usernames=None):
         )
     return np.average(likes)
 
+
+### NOTES:
+"""
+- Given username and number n (return a dictionary of stuff)
+  - Get average public metrics over last n tweets
+  - Get average "" over last n days
+  - Same, but get a percentage of all the stuff OVER followers
+- 
+"""
 
 # Main function (for testing purposes)
 if __name__ == "__main__":
@@ -216,6 +257,7 @@ if __name__ == "__main__":
     # print(get_crawl_list(db))  # working
     # print(get_crawl_list_size(db))  # working
     # print(get_profile_name(db, "csce_uark"))  # working
+    print(get_profile_name(db))  # working
     # print(get_profile_description(db, "csce_uark"))  # working
     # print(get_profile_created_at(db, "csce_uark"))  # working
     # print(get_profile_location(db, "csce_uark"))  # working
@@ -228,6 +270,7 @@ if __name__ == "__main__":
     # print(
     #     get_profiles_avg_followers_count(db, ["csce_uark", "novaengineer"])
     # )  # working
+
     # print(
     #     get_profiles_avg_following_count(db, ["csce_uark", "novaengineer"])
     # )  # working
