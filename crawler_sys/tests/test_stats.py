@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 # Ensure the parent directory is in the path to find the stats module
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from stats.stats import *
+from api.metrics.stats import *
 
 
 class TestStatsMethods(unittest.TestCase):
