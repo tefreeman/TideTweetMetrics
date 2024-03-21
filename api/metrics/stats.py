@@ -154,15 +154,15 @@ def get_profile_like_count(db=None, username=None):
 def get_profiles_avg_followers_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_followers_count() function"
+    collection = db["profiles"]
     if usernames is None:
         # Return the average followers_count OVER all the profiles
-        return np.average(
-            [
-                x["public_metrics"]["followers_count"]
-                for x in collection.find({"username": {"$in": usernames}})
-            ]
-        )
-    collection = db["profiles"]
+        profile_data = collection.find({})
+        followers_counts = []
+        for profile in profile_data:
+            followers_counts.append(profile["public_metrics"]["followers_count"])
+        return np.average(followers_counts)
+
     followers = []
     for user in usernames:
         followers.append(
@@ -175,15 +175,15 @@ def get_profiles_avg_followers_count(db=None, usernames=None):
 def get_profiles_avg_following_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_following_count() function"
+    collection = db["profiles"]
     if usernames is None:
         # Return the average following_count OVER all the profiles
-        return np.average(
-            [
-                x["public_metrics"]["following_count"]
-                for x in collection.find({"username": {"$in": usernames}})
-            ]
-        )
-    collection = db["profiles"]
+        profile_data = collection.find({})
+        following_counts = []
+        for profile in profile_data:
+            following_counts.append(profile["public_metrics"]["following_count"])
+        return np.average(following_counts)
+
     following = []
     for user in usernames:
         following.append(
@@ -196,15 +196,14 @@ def get_profiles_avg_following_count(db=None, usernames=None):
 def get_profiles_avg_tweet_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_tweet_count() function"
+    collection = db["profiles"]
     if usernames is None:
         # Return the average tweet_count OVER all the profiles
-        return np.average(
-            [
-                x["public_metrics"]["tweet_count"]
-                for x in collection.find({"username": {"$in": usernames}})
-            ]
-        )
-    collection = db["profiles"]
+        profile_data = collection.find({})
+        tweet_counts = []
+        for profile in profile_data:
+            tweet_counts.append(profile["public_metrics"]["tweet_count"])
+        return np.average(tweet_counts)
     tweets = []
     for user in usernames:
         tweets.append(
@@ -217,15 +216,14 @@ def get_profiles_avg_tweet_count(db=None, usernames=None):
 def get_profiles_avg_like_count(db=None, usernames=None):
     if db is None:
         return "Error: No database specified in get_profiles_avg_like_count() function"
+    collection = db["profiles"]
     if usernames is None:
         # Return the average like_count OVER all the profiles
-        return np.average(
-            [
-                x["public_metrics"]["like_count"]
-                for x in collection.find({"username": {"$in": usernames}})
-            ]
-        )
-    collection = db["profiles"]
+        profile_data = collection.find({})
+        like_counts = []
+        for profile in profile_data:
+            like_counts.append(profile["public_metrics"]["like_count"])
+        return np.average(like_counts)
     likes = []
     for user in usernames:
         likes.append(
@@ -257,7 +255,7 @@ if __name__ == "__main__":
     # print(get_crawl_list(db))  # working
     # print(get_crawl_list_size(db))  # working
     # print(get_profile_name(db, "csce_uark"))  # working
-    print(get_profile_name(db))  # working
+    # print(get_profile_name(db))  # working
     # print(get_profile_description(db, "csce_uark"))  # working
     # print(get_profile_created_at(db, "csce_uark"))  # working
     # print(get_profile_location(db, "csce_uark"))  # working
@@ -270,9 +268,12 @@ if __name__ == "__main__":
     # print(
     #     get_profiles_avg_followers_count(db, ["csce_uark", "novaengineer"])
     # )  # working
-
     # print(
     #     get_profiles_avg_following_count(db, ["csce_uark", "novaengineer"])
     # )  # working
     # print(get_profiles_avg_tweet_count(db, ["csce_uark", "novaengineer"]))  # working
     # print(get_profiles_avg_like_count(db, ["csce_uark", "novaengineer"]))  # working
+    print(get_profiles_avg_followers_count(db))  # working
+    print(get_profiles_avg_following_count(db))  # working
+    print(get_profiles_avg_tweet_count(db))  # working
+    print(get_profiles_avg_like_count(db))  # working
