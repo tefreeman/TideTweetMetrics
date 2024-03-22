@@ -16,7 +16,10 @@ db = client['twitter_v1']
 def index(request):
     return HttpResponse("Nothing here. Add \"/metric_name\" to the URL to get a metric.")
 
-def getAccounts(request):
+def getAccountList(request):
     return HttpResponse(json.dumps(get_crawl_list(db)),
             content_type='application/json; charset=utf8')
 
+def getAccount(request, account_username):
+    return HttpResponse(json.dumps(get_profile_name(db, account_username)),
+            content_type='application/json; charset=utf8')
