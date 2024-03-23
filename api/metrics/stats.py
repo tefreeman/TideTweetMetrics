@@ -234,6 +234,45 @@ def get_profiles_avg_like_count(db=None, usernames=None):
     ## Return a dictionary with all the information from a profile, given username
 
 
+def get_profile_info(db=None, username=None):
+    if db is None:
+        return {"Error": "Error: No database specified in get_profile_info() function"}
+    if username is None:
+        return {"Error": "Error: No username specified in get_profile_info() function"}
+    collection = db["profiles"]
+    name = collection.find_one({"username": username})["name"]
+    description = collection.find_one({"username": username})["description"]
+    created_at = collection.find_one({"username": username})["created_at"]
+    location = collection.find_one({"username": username})["location"]
+    verified = str(collection.find_one({"username": username})["verified"])
+    url = collection.find_one({"username": username})["url"]
+    followers_count = collection.find_one({"username": username})["public_metrics"][
+        "followers_count"
+    ]
+    following_count = collection.find_one({"username": username})["public_metrics"][
+        "following_count"
+    ]
+    tweet_count = collection.find_one({"username": username})["public_metrics"][
+        "tweet_count"
+    ]
+    like_count = collection.find_one({"username": username})["public_metrics"][
+        "like_count"
+    ]
+    return {
+        "username": username,
+        "name": name,
+        "description": description,
+        "created_at": created_at,
+        "location": location,
+        "verified": verified,
+        "url": url,
+        "followers_count": followers_count,
+        "following_count": following_count,
+        "tweet_count": tweet_count,
+        "like_count": like_count,
+    }
+
+
 ### NOTES:
 """
 - Given username and number n (return a dictionary of stuff)
@@ -275,7 +314,8 @@ if __name__ == "__main__":
     # )  # working
     # print(get_profiles_avg_tweet_count(db, ["csce_uark", "novaengineer"]))  # working
     # print(get_profiles_avg_like_count(db, ["csce_uark", "novaengineer"]))  # working
-    print(get_profiles_avg_followers_count(db))  # working
-    print(get_profiles_avg_following_count(db))  # working
-    print(get_profiles_avg_tweet_count(db))  # working
-    print(get_profiles_avg_like_count(db))  # working
+    # print(get_profiles_avg_followers_count(db))  # working
+    # print(get_profiles_avg_following_count(db))  # working
+    # print(get_profiles_avg_tweet_count(db))  # working
+    # print(get_profiles_avg_like_count(db))  # working
+    print(get_profile_info(db, "csce_uark"))  # working
