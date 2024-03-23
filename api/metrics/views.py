@@ -32,3 +32,7 @@ def getAccounts(request):
             content_type='application/json; charset=utf8')
     return HttpResponse(json.dumps(get_profiles_averages(db, usernames)),
         content_type='application/json; charset=utf8')
+    
+def getAccountsAllAverage(request):
+    return HttpResponse(json.dumps(get_all_profile_averages(db)),
+            content_type='application/json; charset=utf8')
