@@ -2,15 +2,11 @@ from pymongo import MongoClient
 import numpy as np
 
 
-def get_avg_likes(by_user=None):
-    collection = db["tweets"]
-    if None:
-        tweets = collection.find({})
-        count = []
-        for tweet in tweets:
-            count.append(tweet["data"]["public_metrics"]["like_count"])
-
-        return np.average(count)
+# Username Verification
+def username_in_database(db, username):
+    collection = db["profiles"]
+    # If username is found, return true; else return false
+    return collection.find_one({"username": username}) is not None
 
 
 # crawl_list functions
@@ -43,6 +39,8 @@ def get_profile_name(db=None, username=None):
     if username is None:
         # Return the names from all the profiles
         return [x["name"] for x in collection.find({})]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
     return collection.find_one({"username": username})["name"]
 
 
@@ -50,10 +48,13 @@ def get_profile_name(db=None, username=None):
 def get_profile_description(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_description() function"
+    collection = db["profiles"]
     if username is None:
         # Return the descriptions from all the profiles
         return [x["description"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return collection.find_one({"username": username})["description"]
 
 
@@ -61,10 +62,13 @@ def get_profile_description(db=None, username=None):
 def get_profile_created_at(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_created_at() function"
+    collection = db["profiles"]
     if username is None:
         # Return the created_at from all the profiles
         return [x["created_at"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return collection.find_one({"username": username})["created_at"]
 
 
@@ -72,10 +76,13 @@ def get_profile_created_at(db=None, username=None):
 def get_profile_location(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_location() function"
+    collection = db["profiles"]
     if username is None:
         # Return the locations from all the profiles
         return [x["location"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return collection.find_one({"username": username})["location"]
 
 
@@ -83,10 +90,13 @@ def get_profile_location(db=None, username=None):
 def get_profile_verified(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_verified() function"
+    collection = db["profiles"]
     if username is None:
         # Return the verified statuses from all the profiles
         return [str(x["verified"]) for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return str(collection.find_one({"username": username})["verified"])
 
 
@@ -94,10 +104,13 @@ def get_profile_verified(db=None, username=None):
 def get_profile_url(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_url() function"
+    collection = db["profiles"]
     if username is None:
         # Return the urls from all the profiles
         return [x["url"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return collection.find_one({"username": username})["url"]
 
 
@@ -106,10 +119,13 @@ def get_profile_url(db=None, username=None):
 def get_profile_followers_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_followers_count() function"
+    collection = db["profiles"]
     if username is None:
         # Return the number of followers from all the profiles
         return [x["public_metrics"]["followers_count"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
+
     return collection.find_one({"username": username})["public_metrics"][
         "followers_count"
     ]
@@ -119,10 +135,12 @@ def get_profile_followers_count(db=None, username=None):
 def get_profile_following_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_following_count() function"
+    collection = db["profiles"]
     if username is None:
         # Return the number of following from all the profiles
         return [x["public_metrics"]["following_count"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
     return collection.find_one({"username": username})["public_metrics"][
         "following_count"
     ]
@@ -132,10 +150,12 @@ def get_profile_following_count(db=None, username=None):
 def get_profile_tweet_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_tweet_count() function"
+    collection = db["profiles"]
     if username is None:
         # Return the number of tweets from all the profiles
         return [x["public_metrics"]["tweet_count"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
     return collection.find_one({"username": username})["public_metrics"]["tweet_count"]
 
 
@@ -143,10 +163,12 @@ def get_profile_tweet_count(db=None, username=None):
 def get_profile_like_count(db=None, username=None):
     if db is None:
         return "Error: No database specified in get_profile_like_count() function"
+    collection = db["profiles"]
     if username is None:
         # Return the number of likes from all the profiles
         return [x["public_metrics"]["like_count"] for x in collection.find({})]
-    collection = db["profiles"]
+    if not username_in_database(db, username):
+        return "Error: Username not found in database"
     return collection.find_one({"username": username})["public_metrics"]["like_count"]
 
 
@@ -183,7 +205,10 @@ def get_profiles_avg_following_count(db=None, usernames=None):
         for profile in profile_data:
             following_counts.append(profile["public_metrics"]["following_count"])
         return np.average(following_counts)
-
+    # For each username, verify that it exists in the profile collection
+    for user in usernames:
+        if not username_in_database(db, user):
+            return "Error: Username ", user, " not found in database"
     following = []
     for user in usernames:
         following.append(
@@ -204,6 +229,10 @@ def get_profiles_avg_tweet_count(db=None, usernames=None):
         for profile in profile_data:
             tweet_counts.append(profile["public_metrics"]["tweet_count"])
         return np.average(tweet_counts)
+    # For each username, verify that it exists in the profile collection
+    for user in usernames:
+        if not username_in_database(db, user):
+            return "Error: Username ", user, " not found in database"
     tweets = []
     for user in usernames:
         tweets.append(
@@ -224,6 +253,10 @@ def get_profiles_avg_like_count(db=None, usernames=None):
         for profile in profile_data:
             like_counts.append(profile["public_metrics"]["like_count"])
         return np.average(like_counts)
+    # For each username, verify that it exists in the profile collection
+    for user in usernames:
+        if not username_in_database(db, user):
+            return "Error: Username ", user, " not found in database"
     likes = []
     for user in usernames:
         likes.append(
@@ -231,14 +264,16 @@ def get_profiles_avg_like_count(db=None, usernames=None):
         )
     return np.average(likes)
 
-    ## Return a dictionary with all the information from a profile, given username
 
-
+## Return a dictionary with all the information from a profile, given username
 def get_profile_info(db=None, username=None):
     if db is None:
         return {"Error": "Error: No database specified in get_profile_info() function"}
     if username is None:
         return {"Error": "Error: No username specified in get_profile_info() function"}
+    # If username is not found in the database, return an error
+    if not username_in_database(db, username):
+        return {"Error": "Error: Username not found in database"}
     collection = db["profiles"]
     name = collection.find_one({"username": username})["name"]
     description = collection.find_one({"username": username})["description"]
@@ -272,6 +307,7 @@ def get_profile_info(db=None, username=None):
         "like_count": like_count,
     }
 
+
 ### Given a list of usernames, return all average data
 def get_profiles_averages(db=None, usernames=None):
     if db is None:
@@ -280,36 +316,75 @@ def get_profiles_averages(db=None, usernames=None):
     if usernames is None:
         # Return averages over ALL the profiles
         profile_data = collection.find({})
-        followers_counts, following_counts, tweet_counts, total_like_counts, avg_likes = [], [], [], [], []
+        (
+            followers_counts,
+            following_counts,
+            tweet_counts,
+            total_like_counts,
+            avg_likes,
+        ) = ([], [], [], [], [])
         for profile in profile_data:
             followers_counts.append(profile["public_metrics"]["followers_count"])
             following_counts.append(profile["public_metrics"]["following_count"])
             tweet_counts.append(profile["public_metrics"]["tweet_count"])
             total_like_counts.append(profile["public_metrics"]["like_count"])
             if profile["public_metrics"]["tweet_count"] != 0:
-                avg_likes.append(profile["public_metrics"]["like_count"]/profile["public_metrics"]["tweet_count"])
-    
-    else:
-        followers_counts, following_counts, tweet_counts, total_like_counts, avg_likes = [], [], [], [], []
-        for user in usernames:
-            followers_counts.append(collection.find_one({"username": user})["public_metrics"]["followers_count"])
-            following_counts.append(collection.find_one({"username": user})["public_metrics"]["following_count"])
-            tweet_counts.append(collection.find_one({"username": user})["public_metrics"]["tweet_count"])
-            total_like_counts.append(collection.find_one({"username": user})["public_metrics"]["like_count"])
-            if collection.find_one({"username": user})["public_metrics"]["tweet_count"] != 0:
                 avg_likes.append(
-                    collection.find_one({"username": user})["public_metrics"]["like_count"]
-                    / collection.find_one({"username": user})["public_metrics"]["tweet_count"]
+                    profile["public_metrics"]["like_count"]
+                    / profile["public_metrics"]["tweet_count"]
                 )
 
-    if len(avg_likes) == 0: avg_likes = [0]
+    else:
+        # For each username, verify that it exists in the profile collection
+        for user in usernames:
+            if not username_in_database(db, user):
+                return "Error: Username ", user, " not found in database"
+        (
+            followers_counts,
+            following_counts,
+            tweet_counts,
+            total_like_counts,
+            avg_likes,
+        ) = ([], [], [], [], [])
+        for user in usernames:
+            followers_counts.append(
+                collection.find_one({"username": user})["public_metrics"][
+                    "followers_count"
+                ]
+            )
+            following_counts.append(
+                collection.find_one({"username": user})["public_metrics"][
+                    "following_count"
+                ]
+            )
+            tweet_counts.append(
+                collection.find_one({"username": user})["public_metrics"]["tweet_count"]
+            )
+            total_like_counts.append(
+                collection.find_one({"username": user})["public_metrics"]["like_count"]
+            )
+            if (
+                collection.find_one({"username": user})["public_metrics"]["tweet_count"]
+                != 0
+            ):
+                avg_likes.append(
+                    collection.find_one({"username": user})["public_metrics"][
+                        "like_count"
+                    ]
+                    / collection.find_one({"username": user})["public_metrics"][
+                        "tweet_count"
+                    ]
+                )
+
+    if len(avg_likes) == 0:
+        avg_likes = [0]
 
     return {
         "followers_count": np.average(followers_counts),
         "following_count": np.average(following_counts),
         "tweet_count": np.average(tweet_counts),
         "total_like_count": np.average(total_like_counts),
-        "avg_likes": np.average(avg_likes)
+        "avg_likes": np.average(avg_likes),
     }
 
 

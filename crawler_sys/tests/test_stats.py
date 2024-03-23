@@ -19,6 +19,11 @@ class TestStatsMethods(unittest.TestCase):
         )
         cls.db = cls.client["twitter_v2"]
 
+    def test_username_in_database(self):
+        # Tests if the username is in the database.
+        self.assertTrue(username_in_database(self.db, "csce_uark"))
+        self.assertFalse(username_in_database(self.db, "csce_uarkk"))
+
     def test_get_crawl_list(self):
         # Tests if a list is returned.
         self.assertIsInstance(get_crawl_list(self.db), list)
