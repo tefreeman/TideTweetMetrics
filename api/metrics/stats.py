@@ -231,6 +231,8 @@ def get_profiles_avg_like_count(db=None, usernames=None):
         )
     return np.average(likes)
 
+    ## Return a dictionary with all the information from a profile, given username
+
 
 ### NOTES:
 """
