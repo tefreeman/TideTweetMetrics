@@ -84,20 +84,15 @@ class Tweet(DataEncoder):
         return self._object["text"]
 
     def set_post_date(self, date: str):
-        self._object["created_at"] = date
+        date_format = "%b %d, %Y · %I:%M %p"
+        parsed_date = datetime.strptime(date.split(" UTC")[0], date_format)
+        parsed_date = parsed_date.replace(tzinfo=pytz.UTC)
+        self._object["created_at"] = parsed_date
         if date != None and date != "":
             self._set_fields.add("created_at")
 
     def get_post_date(self):
         return self._object["created_at"]
-
-    def get_post_date_as_epoch(self):
-        date_format = "%b %d, %Y · %I:%M %p"
-        parsed_date = datetime.strptime(
-            self._object["created_at"].split(" UTC")[0], date_format
-        )
-        parsed_date = parsed_date.replace(tzinfo=pytz.UTC)
-        return parsed_date.timestamp()
 
     def set_author(self, username: str):
         if username.startswith("@"):
