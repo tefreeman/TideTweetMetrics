@@ -280,26 +280,36 @@ def get_profiles_averages(db=None, usernames=None):
     if usernames is None:
         # Return averages over ALL the profiles
         profile_data = collection.find({})
-        followers_counts, following_counts, tweet_counts, like_counts = [], [], [], []
+        followers_counts, following_counts, tweet_counts, total_like_counts, avg_likes = [], [], [], [], []
         for profile in profile_data:
             followers_counts.append(profile["public_metrics"]["followers_count"])
             following_counts.append(profile["public_metrics"]["following_count"])
             tweet_counts.append(profile["public_metrics"]["tweet_count"])
-            like_counts.append(profile["public_metrics"]["like_count"])
+            total_like_counts.append(profile["public_metrics"]["like_count"])
+            if profile["public_metrics"]["tweet_count"] != 0:
+                avg_likes.append(profile["public_metrics"]["like_count"]/profile["public_metrics"]["tweet_count"])
     
     else:
-        followers_counts, following_counts, tweet_counts, like_counts = [], [], [], []
+        followers_counts, following_counts, tweet_counts, total_like_counts, avg_likes = [], [], [], [], []
         for user in usernames:
             followers_counts.append(collection.find_one({"username": user})["public_metrics"]["followers_count"])
             following_counts.append(collection.find_one({"username": user})["public_metrics"]["following_count"])
             tweet_counts.append(collection.find_one({"username": user})["public_metrics"]["tweet_count"])
-            like_counts.append(collection.find_one({"username": user})["public_metrics"]["like_count"])
+            total_like_counts.append(collection.find_one({"username": user})["public_metrics"]["like_count"])
+            if collection.find_one({"username": user})["public_metrics"]["tweet_count"] != 0:
+                avg_likes.append(
+                    collection.find_one({"username": user})["public_metrics"]["like_count"]
+                    / collection.find_one({"username": user})["public_metrics"]["tweet_count"]
+                )
+
+    if len(avg_likes) == 0: avg_likes = [0]
 
     return {
         "followers_count": np.average(followers_counts),
         "following_count": np.average(following_counts),
         "tweet_count": np.average(tweet_counts),
-        "like_count": np.average(like_counts)
+        "total_like_count": np.average(total_like_counts),
+        "avg_likes": np.average(avg_likes)
     }
 
 
