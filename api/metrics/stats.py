@@ -16,8 +16,8 @@ def username_in_database(db, username):
 def get_crawl_list(db=None):
     if db is None:
         return "Error: No database specified in get_crawl_list() function"
-    collection = db["crawl_list"]
-    return [x["username"] for x in collection.find({})]
+    collection = db["profiles"]
+    return [{"username": x["username"], "name": x["name"]} for x in collection.find({})]
 
 
 ## Return number of documents in crawl_list collection
