@@ -395,8 +395,10 @@ def get_profiles_averages(db=None, usernames=None):
 def get_all_profile_averages(db):
     profiles = get_crawl_list(db=db)
     profiles = [x["username"] for x in profiles]
-    print(profiles)
-    return get_profiles_averages(db=db, usernames=profiles)
+    accounts_data = {}
+    for profile in profiles:
+        accounts_data[profile] = get_profiles_averages(db=db, usernames=[profile])
+    return accounts_data
 
 ### NOTES:
 """
