@@ -272,6 +272,36 @@ def get_profile_info(db=None, username=None):
         "like_count": like_count,
     }
 
+### Given a list of usernames, return all average data
+def get_profiles_averages(db=None, usernames=None):
+    if db is None:
+        return "Error: No database specified in get_profiles_avg_followers_count() function"
+    collection = db["profiles"]
+    if usernames is None:
+        # Return averages over ALL the profiles
+        profile_data = collection.find({})
+        followers_counts, following_counts, tweet_counts, like_counts = [], [], [], []
+        for profile in profile_data:
+            followers_counts.append(profile["public_metrics"]["followers_count"])
+            following_counts.append(profile["public_metrics"]["following_count"])
+            tweet_counts.append(profile["public_metrics"]["tweet_count"])
+            like_counts.append(profile["public_metrics"]["like_count"])
+    
+    else:
+        followers_counts, following_counts, tweet_counts, like_counts = [], [], [], []
+        for user in usernames:
+            followers_counts.append(collection.find_one({"username": user})["public_metrics"]["followers_count"])
+            following_counts.append(collection.find_one({"username": user})["public_metrics"]["following_count"])
+            tweet_counts.append(collection.find_one({"username": user})["public_metrics"]["tweet_count"])
+            like_counts.append(collection.find_one({"username": user})["public_metrics"]["like_count"])
+
+    return {
+        "followers_count": np.average(followers_counts),
+        "following_count": np.average(following_counts),
+        "tweet_count": np.average(tweet_counts),
+        "like_count": np.average(like_counts)
+    }
+
 
 ### NOTES:
 """
@@ -306,9 +336,7 @@ if __name__ == "__main__":
     # print(get_profile_following_count(db, "csce_uark"))  # working
     # print(get_profile_tweet_count(db, "csce_uark"))  # working
     # print(get_profile_like_count(db, "csce_uark"))  # working
-    # print(
-    #     get_profiles_avg_followers_count(db, ["csce_uark", "novaengineer"])
-    # )  # working
+    # print(get_profiles_avg_followers_count(db, ["csce_uark", "novaengineer"]))  # working
     # print(
     #     get_profiles_avg_following_count(db, ["csce_uark", "novaengineer"])
     # )  # working
@@ -318,4 +346,5 @@ if __name__ == "__main__":
     # print(get_profiles_avg_following_count(db))  # working
     # print(get_profiles_avg_tweet_count(db))  # working
     # print(get_profiles_avg_like_count(db))  # working
-    print(get_profile_info(db, "csce_uark"))  # working
+    # print(get_profile_info(db, "csce_uark"))  # working
+    print(get_profiles_averages(db, ["csce_uark", "novaengineer"]))
