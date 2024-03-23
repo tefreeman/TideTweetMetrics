@@ -88,6 +88,12 @@ class TestStatsMethods(unittest.TestCase):
             get_profiles_avg_followers_count(self.db, ["csce_uark", "novaengineer"]), 0
         )
 
+    def test_get_all_profiles_avg_followers_count(self):
+        # Test functionality when no usernames are specified.
+        # All profiles in the database will be examined.
+        self.assertEqual(get_profiles_avg_followers_count(self.db), 5112.455782312925)
+        self.assertNotEqual(get_profiles_avg_followers_count(self.db), 0)
+
     def test_get_profiles_avg_following_count(self):
         # Tests if the actual average following_count matches the expected average following_count.
         self.assertEqual(
@@ -97,6 +103,12 @@ class TestStatsMethods(unittest.TestCase):
         self.assertNotEqual(
             get_profiles_avg_following_count(self.db, ["csce_uark", "novaengineer"]), 0
         )
+
+    def test_get_all_profiles_avg_following_count(self):
+        # Test functionality when no usernames are specified.
+        # All profiles in the database will be examined.
+        self.assertEqual(get_profiles_avg_following_count(self.db), 584.8775510204082)
+        self.assertNotEqual(get_profiles_avg_following_count(self.db), 0)
 
     def test_get_profiles_avg_tweet_count(self):
         # Tests if the actual average tweet_count matches the expected average tweet_count.
@@ -108,6 +120,12 @@ class TestStatsMethods(unittest.TestCase):
             get_profiles_avg_tweet_count(self.db, ["csce_uark", "novaengineer"]), 0
         )
 
+    def test_get_all_profiles_avg_tweet_count(self):
+        # Test functionality when no usernames are specified.
+        # All profiles in the database will be examined.
+        self.assertEqual(get_profiles_avg_tweet_count(self.db), 3680.1768707482993)
+        self.assertNotEqual(get_profiles_avg_tweet_count(self.db), 0)
+
     def test_get_profiles_avg_like_count(self):
         # Tests if the actual average like_count matches the expected average like_count.
         self.assertEqual(
@@ -117,6 +135,12 @@ class TestStatsMethods(unittest.TestCase):
         self.assertNotEqual(
             get_profiles_avg_like_count(self.db, ["csce_uark", "novaengineer"]), 0
         )
+
+    def test_get_all_profiles_avg_like_count(self):
+        # Test functionality when no usernames are specified.
+        # All profiles in the database will be examined.
+        self.assertEqual(get_profiles_avg_like_count(self.db), 2622.530612244898)
+        self.assertNotEqual(get_profiles_avg_like_count(self.db), 0)
 
 
 if __name__ == "__main__":
