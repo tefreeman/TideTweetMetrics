@@ -142,6 +142,35 @@ class TestStatsMethods(unittest.TestCase):
         self.assertEqual(get_profiles_avg_like_count(self.db), 2622.530612244898)
         self.assertNotEqual(get_profiles_avg_like_count(self.db), 0)
 
+    def test_get_profile_info(self):
+        # Tests if the actual profile info matches the expected profile info.
+        self.assertEqual(
+            get_profile_info(self.db, "csce_uark"),
+            {
+                "username": "csce_uark",
+                "name": "UArk Computer Science & Computer Engineering",
+                "description": "This page is no longer in use! We are now @UArkEECS",
+                "created_at": "9:25 PM - 10 Mar 2021",
+                "location": "Fayetteville, AR",
+                "verified": "False",
+                "url": "linktr.ee/uarkeecs",
+                "followers_count": 145,
+                "following_count": 89,
+                "tweet_count": 853,
+                "like_count": 453,
+            },
+        )
+        # Test error functionality when the username is not specified.
+        self.assertEqual(
+            get_profile_info(self.db),
+            {"Error": "Error: No username specified in get_profile_info() function"},
+        )
+        # Test error functionality when no database is specified.
+        self.assertEqual(
+            get_profile_info(),
+            {"Error": "Error: No database specified in get_profile_info() function"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
