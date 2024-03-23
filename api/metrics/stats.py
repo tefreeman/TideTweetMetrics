@@ -354,51 +354,30 @@ def get_profiles_averages(db=None, usernames=None):
             avg_likes,
             avg_likes_per_follower
         ) = ([], [], [], [], [], [])
-        for user in usernames:
+        
+        for username in usernames:
+            user = collection.find_one({"username": username})
             followers_counts.append(
-                collection.find_one({"username": user})["public_metrics"][
-                    "followers_count"
-                ]
+                user["public_metrics"]["followers_count"]
             )
             following_counts.append(
-                collection.find_one({"username": user})["public_metrics"][
+                user["public_metrics"][
                     "following_count"
                 ]
             )
             tweet_counts.append(
-                collection.find_one({"username": user})["public_metrics"]["tweet_count"]
+                user["public_metrics"]["tweet_count"]
             )
             total_like_counts.append(
-                collection.find_one({"username": user})["public_metrics"]["like_count"]
+                user["public_metrics"]["like_count"]
             )
-            if (
-                collection.find_one({"username": user})["public_metrics"]["tweet_count"]
-                != 0
-            ):
+            if user["public_metrics"]["tweet_count"] != 0:
                 avg_likes.append(
-                    collection.find_one({"username": user})["public_metrics"][
-                        "like_count"
-                    ]
-                    / collection.find_one({"username": user})["public_metrics"][
-                        "tweet_count"
-                    ]
+                    user["public_metrics"]["like_count"] / user["public_metrics"]["tweet_count"]
                 )
-            if (
-                collection.find_one({"username": user})["public_metrics"]["tweet_count"]
-                != 0 and
-                collection.find_one({"username": user})["public_metrics"]["followers_count"]
-                != 0
-            ):
+            if user["public_metrics"]["tweet_count"] != 0 and user["public_metrics"]["followers_count"]!= 0:
                 avg_likes_per_follower.append(
-                    collection.find_one({"username": user})["public_metrics"][
-                        "like_count"
-                    ]
-                    / collection.find_one({"username": user})["public_metrics"][
-                        "tweet_count"
-                    ]
-                    / collection.find_one({"username": user})["public_metrics"][
-                        "followers_count"
-                    ]
+                   user["public_metrics"]["like_count"] / user["public_metrics"]["tweet_count"] / user["public_metrics"]["followers_count"]
                 )
 
     if len(avg_likes) == 0:
@@ -413,6 +392,13 @@ def get_profiles_averages(db=None, usernames=None):
         "avg_likes_per_follower": np.average(avg_likes_per_follower)
     }
 
+def get_all_profile_averages(db):
+    profiles = get_crawl_list(db=db)
+    profiles = [x["username"] for x in profiles]
+    accounts_data = {}
+    for profile in profiles:
+        accounts_data[profile] = get_profiles_averages(db=db, usernames=[profile])
+    return accounts_data
 
 ### NOTES:
 """
