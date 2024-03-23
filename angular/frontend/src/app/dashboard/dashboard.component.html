@@ -1,0 +1,8 @@
+<mat-grid-list cols="{{graph_cols}}" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let graph of graphs;">
+        <mat-card class="full-width-height-card">
+            <app-line-chart [graphId]=graph></app-line-chart>
+        </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+  
