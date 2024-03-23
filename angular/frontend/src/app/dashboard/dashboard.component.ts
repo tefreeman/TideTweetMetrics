@@ -1,10 +1,10 @@
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component, HostListener, AfterViewInit} from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card'; 
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { LineChartComponent } from '../line-chart/line-chart.component';
-
+import { GraphService, IGraph } from '../graph.service';
 
 interface Graph {
   name: string;
@@ -15,7 +15,7 @@ interface Graph {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatGridListModule, NgFor, MatCardModule,
+  imports: [MatGridListModule, NgFor, NgIf,  MatCardModule,
      BarChartComponent, LineChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -25,9 +25,11 @@ export class DashboardComponent implements AfterViewInit{
   screenWidth:any;
   graph_cols = 2;
   breakpoint_width = 1080;
-  graphs = ["g1", "g2", "g3", "g4"]
+  graphs: IGraph[];
 
-
+  constructor(private graphService: GraphService){
+    this.graphs = this.graphService.getGraphs();
+  }
   // Resizing to 1 column when screen width is less than 1080px breakPoint_width
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -42,9 +44,6 @@ export class DashboardComponent implements AfterViewInit{
       }
   console.log(this.screenHeight, this.screenWidth);
     }
-}
-
-constructor() {
 }
 
 ngAfterViewInit(){
