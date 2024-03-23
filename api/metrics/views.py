@@ -23,3 +23,9 @@ def getAccountList(request):
 def getAccount(request, account_username):
     return HttpResponse(json.dumps(get_profile_name(db, account_username)),
             content_type='application/json; charset=utf8')
+
+def getAccounts(request):
+    usernames = request.GET.getlist("usernames", None)
+    days = request.GET.get("days", None)
+    numTweets = request.GET.get("tweets", None)
+    return HttpResponse("Usernames: " + usernames[0] + ", days: " + days + ", numTweets: " + numTweets)
