@@ -9,11 +9,11 @@ export interface Tile {
 }
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [MatGridListModule],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+    selector: 'app-dashboard',
+    standalone: true,
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.css',
+    imports: [MatGridListModule]
 })
 export class DashboardComponent {
 
