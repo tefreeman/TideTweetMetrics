@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, HostListener} from '@angular/core';
 import Chart from 'chart.js/auto';
 import { IGraph } from '../graph.service';
+import {GraphDataColorService} from '../graph-data-color.service';
 
 @Component({
   selector: 'app-line-chart',
@@ -12,7 +13,7 @@ import { IGraph } from '../graph.service';
 
 export class LineChartComponent implements OnInit{
   @Input() graph: IGraph;
-  constructor(){
+  constructor(private graphDataColorService: GraphDataColorService){
     this.graph = {'id': '', 'name': '', 'type': '', 'data': {labels: [], datasets: []}};
 
   }
@@ -36,11 +37,52 @@ export class LineChartComponent implements OnInit{
 
       data: {// values on X-Axis
         labels: this.graph.data.labels,
-	       datasets: this.graph.data.datasets
+	       datasets: this.graph.data.datasets.map((dataset, index) => ({
+          ...dataset,
+         backgroundColor: this.graphDataColorService.getBackgroundColor(index),
+         borderColor:this.graphDataColorService.getBackgroundColor(index),
+         borderWidth: 5
+        }))
       },
       options: {
-        aspectRatio:2.5
+        aspectRatio:2.5,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              color: 'white' // Change legend label color
+            }
+          },
+          title: {
+            display: true,
+            text: 'Graph Name',
+            color: 'white' // Change title color
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: 'white' // Change y-axis ticks color
+            },
+            grid: {
+              display: false, // Remove grid lines from the y-axis
+            },
+
+          },
+          x: {
+            ticks: {
+              color: 'white' // Change x-axis ticks color
+            },
+            grid: {
+              display: false // Remove grid lines from the y-axis
+            }
+          }
+        }
+        
       }
+      
       
     });
   }
