@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, HostListener} from '@angular/core';
 import {IGraph } from '../graph.service';
 import Chart from 'chart.js/auto';
+import {GraphDataColorService} from '../graph-data-color.service';
 
 @Component({
   selector: 'app-bar-chart',
@@ -13,9 +14,9 @@ import Chart from 'chart.js/auto';
 export class BarChartComponent implements OnInit {
   @Input() graph: IGraph;
 
-  constructor(){
-    this.graph = {'id': '', 'name': '', 'type': '', 'data': {labels: [], datasets: []}};
+  constructor(private graphDataColorService: GraphDataColorService){
 
+    this.graph = {'id': '', 'name': '', 'type': '', 'data': {labels: [], datasets: []}};
   }
 
   public chart: any;
@@ -42,7 +43,7 @@ export class BarChartComponent implements OnInit {
         labels: this.graph.data.labels,
         datasets: this.graph.data.datasets.map((dataset, index) => ({
           ...dataset,
-          backgroundColor: this.getBackgroundColor(index),
+          backgroundColor: this.graphDataColorService.getBackgroundColor(index),
           borderWidth: 1,
           borderRadius: 10
         }))
@@ -59,7 +60,7 @@ export class BarChartComponent implements OnInit {
           },
           title: {
             display: true,
-            text: 'Likes',
+            text: 'Graph Name',
             color: 'white' // Change title color
           }
         },
@@ -87,11 +88,5 @@ export class BarChartComponent implements OnInit {
     });
 }
 
-
-  // Function to get background color based on index
-  getBackgroundColor(index: number): string {
-    const colors = ['rgba(241,116,99,255)', 'rgba(180,218,225,255)', 'rgba(255, 206, 86, 0.5)'];
-    return colors[index % colors.length]; 
-  }
 
 }
