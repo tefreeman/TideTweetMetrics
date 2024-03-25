@@ -26,6 +26,7 @@ export class DashboardComponent implements AfterViewInit{
   graph_cols = 2;
   breakpoint_width = 1080;
   graphs: IGraph[];
+  
 
   constructor(private graphService: GraphService){
     this.graphs = this.graphService.getGraphs();
