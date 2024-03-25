@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ClassifyService } from './classify.service';
 import {MatCardModule} from '@angular/material/card';
@@ -36,5 +36,24 @@ export class AppComponent {
     this.classifyService.set_random_tweet(this.tweet.data.id, this.uid, flag).then((data) => {
       this.tweet=data;
     });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    const windowWidth = event.target.innerWidth;
+
+    // Define your desired margins and width for different window sizes
+    let cardWidth = '500px';
+
+    if (windowWidth < 600) {
+      // Adjust margins and width for smaller window sizes
+      cardWidth = 'calc(100% - 50px)';
+    }
+
+    // Apply the computed styles to your mat-card
+    const matCard = document.querySelector('.custom-card') as HTMLElement;
+    if (matCard) {
+      matCard.style.width = cardWidth;
+    }
   }
 }
