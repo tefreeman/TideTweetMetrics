@@ -1,0 +1,35 @@
+.custom-card {
+    padding: 50px;
+    margin-top: 200px;
+    margin-left: 650px;
+    margin-right: 650px;
+    background-color: #2d3340; /* Change this color to your desired background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.mat-mdc-raised-button.custom-button {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    width: 80px;
+    background-color: #00bcd4; /* Change this to your desired button color */
+    border-radius: 0; /* Set border-radius to 0 for sharp corners */
+    color: white; /* Text color */
+}
+
+.title-text {
+    color: white;
+    font-weight: bold;
+    font-size: 30px; 
+    margin-bottom: 20px;
+}
+.title-small-text {
+    color: white;
+    font-size: 18px; 
+    margin-bottom:-5px;
+}
+
+
+

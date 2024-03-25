@@ -1,12 +1,19 @@
-<mat-card *ngIf="uid.length == 0" style="margin: 50px; padding: 12px">
-    <form class="example-form">
-        <mat-form-field class="example-full-width" style="width: 400px">
-          <mat-label>Enter your email:</mat-label>
-          <input matInput #emailInput>
-        </mat-form-field>
-    </form>  
-    <button style="width: 80px" mat-raised-button (click)="set_uid(emailInput.value)">Submit_id</button>
+<mat-card *ngIf="uid.length == 0" class="custom-card">
+  <form class="example-form">
+      <div class="title-small-text" style="margin-top: 50px;">Tide Tweet Metrics</div>
+      <div class="title-small-text" style="margin-bottom: 20px;">__________</div>
+      <div class="title-text">Welcome to Our Classifier!</div>
+      <div class="title-text" style="margin-bottom: 100px;">Enter Your Email to Join</div>
+      <mat-form-field class="example-full-width" style="width: 400px">
+        <mat-label>Enter your email:</mat-label>
+        <input matInput #emailInput>
+      </mat-form-field>
+  </form>  
+  
+  <button class="custom-button" mat-raised-button (click)="set_uid(emailInput.value)">Join</button>
+  
 </mat-card>
+
 
 <mat-card *ngIf="uid.length != 0" style="margin: 50px; padding: 12px">
     <mat-card-content>
