@@ -23,8 +23,11 @@ export class BarChartComponent implements OnInit {
 
 
   ngOnInit() {
-    this.createChart();
+    setTimeout(() => {
+      this.createChart();
+    }, 200);
   }
+  
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
