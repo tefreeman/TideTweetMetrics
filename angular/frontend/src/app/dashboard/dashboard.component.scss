@@ -21,15 +21,11 @@
   .small-tile {
     width: 95%;
     height: 70%;
-    padding: 5%;
     background-color: rgba(35,41,64,255);
-    font-size: 24px; /* Change the font size */
+    font-size: 15px; /* Change the font size */
     color: #ffff; /* Change the text color */
-    display: flex; /* Use Flexbox */
-    justify-content: center; /* Center the content horizontally */
-    align-items: flex-start; /* Align items to the start (top) vertically */
-    text-align: left; /* Align text to the left */
   }
+
   .big-tile {
     width: 95%;
     height: 90%;
@@ -42,3 +38,14 @@
     background: rgba(21,26,45,255);
   }
 
+  .icon {
+    width: 80px; /* Set the width of the image */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Add margin to separate the image from the text */
+  }
+
+
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+  }
