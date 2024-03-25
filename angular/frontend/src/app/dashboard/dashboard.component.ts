@@ -1,10 +1,11 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, HostListener, AfterViewInit} from '@angular/core';
+import { Component, HostListener, AfterViewInit, OnInit, afterNextRender} from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card'; 
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { LineChartComponent } from '../line-chart/line-chart.component';
 import { GraphService, IGraph } from '../graph.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 interface Graph {
   name: string;
@@ -20,7 +21,7 @@ interface Graph {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements AfterViewInit{
+export class DashboardComponent implements AfterViewInit, OnInit{
   screenHeight:any;
   screenWidth:any;
   graph_cols = 2;
@@ -28,8 +29,20 @@ export class DashboardComponent implements AfterViewInit{
   graphs: IGraph[];
   
 
-  constructor(private graphService: GraphService){
+  constructor(private graphService: GraphService, private cdr: ChangeDetectorRef){
     this.graphs = this.graphService.getGraphs();
+    afterNextRender(() => { 
+      this.graphService.getPostLengthMetrics().subscribe({
+        next: (data) => {
+          this.graphs.push(data);
+          this.cdr.detectChanges();
+
+        },
+        error: (error) => {
+          console.error('Error fetching post length metrics:', error);
+        }
+      });
+    });
   }
   // Resizing to 1 column when screen width is less than 1080px breakPoint_width
   @HostListener('window:resize', ['$event'])
@@ -45,6 +58,9 @@ export class DashboardComponent implements AfterViewInit{
       }
   console.log(this.screenHeight, this.screenWidth);
     }
+}
+
+ngOnInit(){
 }
 
 ngAfterViewInit(){
