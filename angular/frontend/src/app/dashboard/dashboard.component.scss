@@ -1,11 +1,44 @@
   .mat-grid-tile {
     background: rgba(21,26,45,255);
   }
-  .full-width-height-card {
+  .title-card {
+    position: relative; /* Establish positioning context for absolute positioning */
+    border-radius: 0;
+    padding-bottom: 150px; /* Add padding to the bottom */
+    
+    background: rgba(21, 26, 45, 255);
+    font-family: 'Roboto', sans-serif; /* Change the font family */
+    font-size: 24px; /* Change the font size */
+    font-weight: bold; /* Make the text bold */
+    color: #ffff; /* Change the text color */
+  }
+  .title-text {
+    position: absolute; /* Position the text absolutely within the card */
+    bottom: 0; /* Align the text to the bottom */
+    left: 10px; /* Align the text to the left */
+    padding: 10px; /* Add padding for spacing */
+  }
+  .small-tile {
+    width: 95%;
+    height: 70%;
+    padding: 5%;
+    background-color: rgba(35,41,64,255);
+    font-size: 24px; /* Change the font size */
+    color: #ffff; /* Change the text color */
+    display: flex; /* Use Flexbox */
+    justify-content: center; /* Center the content horizontally */
+    align-items: flex-start; /* Align items to the start (top) vertically */
+    text-align: left; /* Align text to the left */
+  }
+  .big-tile {
     width: 95%;
     height: 90%;
+    padding: 3%;
     background-color: rgba(35,41,64,255);
-    padding: 2%;
   }
   
+  .grid-container {
+    padding: 0 200px; /* Adjust the value to add space to the left and right */
+    background: rgba(21,26,45,255);
+  }
 

@@ -1,13 +1,28 @@
-<mat-grid-list cols="1" rowHeight="200px">
-  <mat-grid-tile>
-    <mat-card> testing </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
+<div class="grid-container">
+  <mat-card-content class="title-card"  mat-elevation="0">
+    <div class="title-text">Dashboard</div>
+  </mat-card-content>
+
+
+
+  <mat-grid-list cols="3" rowHeight="200px" gutterSize="0px">
+    <mat-grid-tile>
+      <mat-card class="small-tile"> Your metric score is: 00</mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card class="small-tile">testing</mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card class="small-tile">testing</mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+
 
 
 <mat-grid-list cols="{{graph_cols}}" rowHeight="2:1" class="custom-grid-list1" gutterSize ="0px">
     <mat-grid-tile *ngFor="let graph of graphs">
-      <mat-card class="full-width-height-card">
+      <mat-card class="big-tile">
         <!-- Display bar chart if graph.type is 'bar' -->
         <app-bar-chart *ngIf="graph.type === 'bar'" [graph]="graph"></app-bar-chart>
         <!-- Display line chart if graph.type is 'line' -->
@@ -20,3 +35,5 @@
   <mat-grid-tile>
   </mat-grid-tile>
 </mat-grid-list>
+
+</div>
