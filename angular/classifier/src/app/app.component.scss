@@ -18,7 +18,15 @@
     border-radius: 0; /* Set border-radius to 0 for sharp corners */
     color: white; /* Text color */
 }
-
+.mat-mdc-button.custom-button2 {
+    margin-top: 50px;
+    margin-right: 50px;
+    margin-left: 50px;
+    width: 150px;
+    background-color: #00bcd4; /* Change this to your desired button color */
+    border-radius: 0; /* Set border-radius to 0 for sharp corners */
+    color: white; /* Text color */
+}
 .title-text {
     color: white;
     font-weight: bold;

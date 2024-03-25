@@ -15,14 +15,18 @@
 </mat-card>
 
 
-<mat-card *ngIf="uid.length != 0" style="margin: 50px; padding: 12px">
+<div>
+  <mat-card class="custom-card" *ngIf="uid.length != 0">
     <mat-card-content>
-    <p>{{tweet["data"]["text"]}}</p>
+      <p style="color: white; font-size: 20px; margin: 10px; font-weight: bold; line-height: 1.3;">Can you guess if this tweet is educational or not?</p>
+      <p style="color: white; font-size: 20px; margin-top: -10px; margin-left: 10px">__________</p>
+      <p style="color: white; font-size: 15px; margin: 10px; line-height: 1.3;">{{tweet["data"]["text"]}}</p>
     </mat-card-content>
     <mat-card-actions>
-        <button mat-button (click)="clicked('0')">Not EDU</button>
-        <button mat-button (click)="clicked('1')">Is EDU</button>
-      </mat-card-actions>
-</mat-card>
+      <button class="custom-button2" mat-button (click)="clicked('0')">Not Educational</button>
+      <button class="custom-button2" mat-button (click)="clicked('1')">Educational</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
 
 <router-outlet />
