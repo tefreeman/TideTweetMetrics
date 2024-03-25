@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, firstValueFrom, map } from 'rxjs';
 
 export interface IChartData {
     labels: string[];
@@ -16,6 +18,13 @@ export interface IGraph {
   type: string; // "line", "bar"
   data: IChartData;
 }
+interface DataEntry {
+  avg_likes: number;
+}
+
+interface ApiResponse {
+  [key: string]: DataEntry;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +32,52 @@ export interface IGraph {
 
 export class GraphService {
 
-  constructor() { }
+  constructor(private http: HttpClient) {
+  }
+
+  getGraphsHttp(): Promise<IGraph[]> {
+    return firstValueFrom(this.http.get<any>("http://127.0.0.1:8000/metrics/test/52"));
+  }
+
+  getPostLengthMetrics(): Observable<any> {
+    return this.http.get<ApiResponse>("http://127.0.0.1:8000/metrics/post_length_metric/").pipe(
+      map(data => {
+        const labels: string[] = Object.keys(data);
+        const avgLikes: number[] = Object.values(data).map(entry => entry.avg_likes);
+        return {
+          name: "PostLengthMetric",
+          id: "PostLengthMetric",
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Average Likes",
+                data: avgLikes,
+              }
+            ]
+          },
+          options: {
+            scales: {
+              y: {
+                title: {
+                  display: true,
+                  text: "Average Likes"
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Post Length" // Assuming your X axis represents post length
+                }
+              }
+            }
+          }
+        };
+      })
+    );
+  }
+  
 
   getGraphs(): IGraph[] {
     return [
