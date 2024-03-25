@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostListener} from '@angular/core';
+import { Component, OnInit, Input, HostListener, AfterViewInit} from '@angular/core';
 import Chart from 'chart.js/auto';
 import { IGraph } from '../graph.service';
 import {GraphDataColorService} from '../graph-data-color.service';
@@ -28,7 +28,9 @@ export class LineChartComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.createChart();
+    setTimeout(() => {
+      this.createChart();
+    }, 200);
   }
   createChart(){
   
