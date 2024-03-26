@@ -1,15 +1,22 @@
 .custom-card {
-    padding: 50px;
-    margin-top: 200px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 500px;
+    padding: 8px;
+    position: fixed; /* Keeps the card fixed on the screen */
+    top: 0; /* Aligns the card to the top */
+    left: 0; /* Aligns the card to the left */
+    width: 100%; /* Takes up the full width */
+    height: 100vh; /* Takes up the full viewport height */
+    overflow: auto; 
     background-color: #2d3340; /* Change this color to your desired background color */
-
+    display: flex; /* Utilizes flexbox for alignment */
     align-items: center;
 }
 
-
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 .mat-mdc-raised-button.custom-button {
     margin-top: 50px;
     margin-bottom: 30px;
@@ -28,15 +35,17 @@
     color: white; /* Text color */
 }
 .title-text {
+    margin: 12px;
     color: white;
     font-weight: bold;
-    font-size: 30px; 
+    font-size: 1.5rem; 
     margin-bottom: 20px;
 }
 .title-small-text {
+    margin: 12px;
     color: #c5c6c7;
-    font-size: 18px; 
-    margin-bottom:-5px;
+    font-size: 1rem; 
+    margin-bottom:5px;
 }
 
 

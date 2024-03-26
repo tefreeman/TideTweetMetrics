@@ -15,7 +15,14 @@ def get_rand_tweet(db_edu=None, db_non_edu=None):
         non_edu_col = db_non_edu["tweets"]
         # Aggregation pipeline to get a random document
         pipeline = [
-            { '$sample': { 'size': 400 } }
+            {
+                "$match": {
+                    "$expr": {
+                        "$gt": [{"$strLenCP": "$data.text"}, 8]
+                    }
+                }
+            },
+            { '$sample': { 'size': 250 } }
         ]
 
         edu_tweets = list(edu_col.aggregate(pipeline))
@@ -40,7 +47,7 @@ def get_rand_tweet(db_edu=None, db_non_edu=None):
         in_use.append(tweet)
         return tweet
     else:
-        num = random.randint(0, len(tweets) - 1)
+        num = random.randint(0, len(in_use) - 1)
         tweet = in_use[num]
         tweet["count"] += 1
         
@@ -62,3 +69,9 @@ def set_rand_tweet(edu_db=None, db_non_edu= None, update_db= "user_responses", i
         result = collection.insert_one({"uid": uid, "tweet_id": id, "is_edu": is_edu_bool})
         
         return get_rand_tweet(edu_db, db_non_edu)
+
+def get_user_responses_cnt(db=None):
+    if db is None:
+        return "Error: No database specified in get_user_responses_count() function"
+    collection = db["results"]
+    return collection.count_documents({})
