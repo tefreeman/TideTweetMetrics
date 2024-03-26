@@ -1,0 +1,43 @@
+
+<mat-card *ngIf="uid.length == 0" class="custom-card">
+  <form class="example-form" >
+      <div class="button-container">
+      <div class="title-small-text" style="margin-top:5%;">Tide Tweet Metrics</div>
+      </div>
+      <div class="button-container">
+      <div class="title-small-text" style="margin-bottom: 2%;">__________</div>
+      </div>
+      <div class="button-container">
+      <div class="title-text">Welcome to Our Classifier!</div>
+      </div>
+      <div class="button-container">
+      <div class="title-text" style="margin-bottom: 10%;">Enter Your Email to Join</div>
+      </div>
+      <div class="button-container">
+      <mat-form-field layout="center" class="example-full-width" style="width: 90%; margin: auto;">
+        <mat-label>Enter your email or username:</mat-label>
+        <input matInput #emailInput>
+      </mat-form-field>
+    </div>
+  </form>  
+  <div class="button-container">
+  <button  (keydown)="$event.keyCode == 13 ? $event.preventDefault() : null" class="custom-button" style="width: 60%" mat-raised-button (click)="set_uid(emailInput.value)">I hope this works</button>
+  </div>
+</mat-card>
+
+
+
+  <mat-card class="custom-card" *ngIf="uid.length != 0">
+    <mat-card-content>
+      <p style="color: white; font-size: 20px; margin: 10px; font-weight: bold; line-height: 1.3;">Can you guess if this tweet is educational or not?</p>
+      <p style="color: white; font-size: 20px; margin-top: -10px; margin-left: 10px">__________</p>
+      <p style="color: white; font-size: 15px; margin: 10px; line-height: 1.3;">{{tweet["data"]["text"]}}</p>
+    </mat-card-content>
+    <mat-card-actions >
+      <button style="padding:4px" (keydown)="$event.keyCode == 13 ? $event.preventDefault() : null" class="custom-button2" mat-button (click)="clicked('0')">Not Educational</button>
+      <button style="padding:4px" (keydown)="$event.keyCode == 13 ? $event.preventDefault() : null" class="custom-button2" mat-button (click)="clicked('1')">Educational</button>
+    </mat-card-actions>
+  </mat-card>
+
+
+<router-outlet />
