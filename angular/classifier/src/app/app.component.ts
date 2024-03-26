@@ -38,22 +38,5 @@ export class AppComponent {
     });
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    const windowWidth = event.target.innerWidth;
 
-    // Define your desired margins and width for different window sizes
-    let cardWidth = '500px';
-
-    if (windowWidth < 600) {
-      // Adjust margins and width for smaller window sizes
-      cardWidth = 'calc(100% - 50px)';
-    }
-
-    // Apply the computed styles to your mat-card
-    const matCard = document.querySelector('.custom-card') as HTMLElement;
-    if (matCard) {
-      matCard.style.width = cardWidth;
-    }
-  }
 }

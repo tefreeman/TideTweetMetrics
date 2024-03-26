@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from metrics.stats import *
 from metrics.random_tweet import *
 
-hostname =  "73.58.28.154"
+hostname =  "10.0.0.28"
 port = 27017
 username = "Admin"
 password = "***REMOVED***"
@@ -59,4 +59,8 @@ def get_random_tweet(request):
     
 def set_random_tweet(request, id, uid, flag):
     return HttpResponse(json.dumps(set_rand_tweet(edu_db=db, db_non_edu=client["twitter_nonedu"], update_db=client["user_responses"], id=id, is_edu_bool=flag, uid=uid)),
+                        content_type='application/json; charset=utf8')
+    
+def get_user_responses_count(request):
+    return HttpResponse(json.dumps(get_user_responses_cnt(client["user_responses"])),
                         content_type='application/json; charset=utf8')

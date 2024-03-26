@@ -27,11 +27,14 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   graph_cols = 2;
   breakpoint_width = 1080;
   graphs: IGraph[];
-  
+  number_submits: Number = 0
 
   constructor(private graphService: GraphService, private cdr: ChangeDetectorRef){
     this.graphs = this.graphService.getGraphs();
     afterNextRender(() => { 
+      this.graphService.getClassifierData().then((data)=> {
+        this.number_submits = data;
+      })
       this.graphService.getPostLengthMetrics().subscribe({
         next: (data) => {
           this.graphs.push(data);
