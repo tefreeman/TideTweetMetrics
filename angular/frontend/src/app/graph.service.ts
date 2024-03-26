@@ -36,14 +36,14 @@ export class GraphService {
   }
 
   getClassifierData(): Promise<Number> {
-    return firstValueFrom(this.http.get<any>("http://73.58.28.154:8000/metrics/get_user_responses_count"));
+    return firstValueFrom(this.http.get<any>("http://127.0.0.1:8000/metrics/get_user_responses_count"));
   }
   getGraphsHttp(): Promise<IGraph[]> {
-    return firstValueFrom(this.http.get<any>("http://73.58.28.154:8000/metrics/test/52"));
+    return firstValueFrom(this.http.get<any>("http://127.0.0.1:8000/metrics/test/52"));
   }
 
   getPostLengthMetrics(): Observable<any> {
-    return this.http.get<ApiResponse>("http://73.58.28.154:8000/metrics/post_length_metric/").pipe(
+    return this.http.get<ApiResponse>("http://127.0.0.1:8000/metrics/post_length_metric/").pipe(
       map(data => {
         const labels: string[] = Object.keys(data);
         const avgLikes: number[] = Object.values(data).map(entry => entry.avg_likes);
