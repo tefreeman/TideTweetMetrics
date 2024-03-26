@@ -1,5 +1,7 @@
 
 # backup_raw_data
+.angular/*
+/node_modules/*
 /backup_raw_data/*
 /backups/*
 *.7z
