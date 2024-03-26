@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from metrics.stats import *
 from metrics.random_tweet import *
 
-hostname =  "10.0.0.28"
+hostname =  "73.58.28.154"
 port = 27017
 username = "Admin"
 password = "We420?Z4!"

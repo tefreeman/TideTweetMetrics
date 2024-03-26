@@ -10,10 +10,10 @@ export class ClassifyService {
 
 
   get_random_tweet() : Promise<any>{
-    return firstValueFrom(this.http.get<any>("http://73.58.28.154:8000/metrics/get_random_tweet"));
+    return firstValueFrom(this.http.get<any>("http://127.0.0.1:8000/metrics/get_random_tweet"));
   }
 
   set_random_tweet(tweetId: string, uid: string, result: string): Promise<any> {
-    return firstValueFrom(this.http.get<any>("http://73.58.28.154:8000/metrics/set_random_tweet/" + tweetId +"/" + uid + "/" + result));
+    return firstValueFrom(this.http.get<any>("http://127.0.0.1:8000/metrics/set_random_tweet/" + tweetId +"/" + uid + "/" + result));
   }
 }
