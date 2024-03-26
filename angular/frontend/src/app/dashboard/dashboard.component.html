@@ -9,15 +9,15 @@
     <mat-grid-tile>
       <mat-card class="small-tile">
         <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>Your Metric Score Is: 00</mat-card-title>
+          <mat-card-title>Your Metric Score Is: 99</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <p>
-            The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-            A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-            bred for hunting.
+            What a great score! 
           </p>
+          <div>
+            Click the button below to view your metric score history.
+          </div>
         </mat-card-content>
         <mat-card-actions>
           <button mat-button>VIEW METRIC HISTORY</button>
@@ -26,7 +26,12 @@
     </mat-grid-tile>
 
     <mat-grid-tile>
-      <mat-card class="small-tile"><mat-card-title>Thanks for the {{this.number_submits}} data points. Apologies if any of the tweets came across as harsh.</mat-card-title></mat-card>
+      <mat-card class="small-tile">
+        <mat-card-header>
+        <mat-card-title>Thanks for the {{this.number_submits}} data points.</mat-card-title>
+      </mat-card-header>
+        <mat-card-content> Apologies if any of the tweets came across as harsh!</mat-card-content>
+      </mat-card>
     </mat-grid-tile>
 
     <mat-grid-tile>
