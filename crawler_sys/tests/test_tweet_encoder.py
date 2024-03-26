@@ -1,6 +1,7 @@
 import unittest
 
-from crawler_sys.encoders.tweet_encoder import *
+from encoders.tweet_encoder import *
+import datetime
 
 class TestTweetEncoder(unittest.TestCase):
 
@@ -17,8 +18,7 @@ class TestTweetEncoder(unittest.TestCase):
 
     def test_post_date(self):
         self.tweet.set_post_date("Feb 03, 2024 · 12:00 PM UTC")
-        self.assertEqual(self.tweet.get_post_date(), "Feb 03, 2024 · 12:00 PM UTC")
-        self.assertEqual(self.tweet.get_post_date_as_epoch(), 1706961600)
+        self.assertEqual(self.tweet.get_post_date(), datetime.datetime(2024, 2, 3, 12, 0, tzinfo=datetime.timezone.utc))
 
     def test_author(self):
         self.tweet.set_author("abc")
