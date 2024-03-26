@@ -19,14 +19,13 @@ export class AppComponent {
   public uid: string = "";
   public tweet = {data: {text: "", id: ""}}
   constructor(private classifyService: ClassifyService) {
-    this.classifyService.get_random_tweet().then((data) => {
-      this.tweet = data;
-    });
   }
   
   set_uid(email :string) {
     this.uid = email;
-  
+    this.classifyService.get_random_tweet().then((data) => {
+      this.tweet = data;
+    });
   }
   clicked(flag: string) {
     if (this.uid == "") {
