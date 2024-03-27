@@ -1,6 +1,10 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from bson import ObjectId
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import database as Database
 from encoders.tweet_encoder import Tweet
 from encoders.meta_encoder import MetaData
