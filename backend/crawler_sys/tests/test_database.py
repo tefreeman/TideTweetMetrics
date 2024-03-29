@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import database as Database
 from encoders.tweet_encoder import Tweet
 from encoders.meta_encoder import MetaData
-from config import Config
+from backend.config import Config
 
 _init_flag = False
 
