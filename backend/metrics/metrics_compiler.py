@@ -56,6 +56,10 @@ class StatMetricCompiler:
                     metric.UpdateByTweet(tweet_obj)
     
         # Finalize metrics after processing all data
+        compiled_metrics = {}
+        
         for metric in self.allMetrics:
             metric.FinalUpdate(None, None)  # Placeholder for actual stats arguments
-        return [metric.GetEncoder() for metric in self.allMetrics] # update this with toJson method
+            compiled_metrics[metric.get_name()] = metric.GetEncoder().to_json()
+        
+        return compiled_metrics
