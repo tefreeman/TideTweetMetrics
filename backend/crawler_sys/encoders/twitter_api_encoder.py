@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
-from config import Config
+from backend.config import Config
 import pytz
 from utils.error_sys import Error
 

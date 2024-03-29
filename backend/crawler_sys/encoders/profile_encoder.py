@@ -1,5 +1,5 @@
-from twitter_api_encoder import DataEncoder, IncompleteBuildException
-from meta_encoder import MetaData
+from .twitter_api_encoder import DataEncoder, IncompleteBuildException
+from .meta_encoder import MetaData
 from datetime import datetime
 
 

@@ -8,7 +8,7 @@ from twitter_mirrors_manager import TwitterMirrorManager
 from utils.summary_report import SummaryReport
 import database as db
 import utils.backup as Backup
-from config import Config
+from backend.config import Config
 from utils.link_handler import LinkHandler
 import logging
 
