@@ -2,7 +2,7 @@
     "DB": {
         "HOST": "73.58.28.154",
         "PORT": 27017,
-        "NAME": "twitter",
+        "NAME": "twitter_v2",
         "USER": "Admin",
         "PASSWORD": "***REMOVED***"
     },

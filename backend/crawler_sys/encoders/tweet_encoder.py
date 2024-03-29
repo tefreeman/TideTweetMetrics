@@ -1,9 +1,9 @@
-from twitter_api_encoder import (
+from .twitter_api_encoder import (
     DataEncoder,
     IncompleteBuildException,
     ReferencedTweetType,
 )
-from meta_encoder import MetaData
+from .meta_encoder import MetaData
 from datetime import datetime
 import re
 import pytz

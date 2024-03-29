@@ -1,7 +1,6 @@
 import json
-from utils.backup import next_zip_num, init_backup_dirs
-
-
+from crawler_sys.utils.backup import next_zip_num, init_backup_dirs
+import os
 class Config:
     __CONFIG = None
     _next_backup_zip_id = None
@@ -76,6 +75,7 @@ class Config:
 
     @staticmethod
     def Load():
-        with open("crawler_config.json", "r") as f:
+        print(os.getcwd())
+        with open("main_config.json", "r") as f:
             test = f.read()
             Config.__CONFIG = json.loads(test)

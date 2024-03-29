@@ -1,7 +1,7 @@
 from datetime import datetime
 from utils.error_sys import Error
 from .twitter_api_encoder import DataEncoder
-from config import Config
+from backend.config import Config
 
 
 class MetaData(DataEncoder):

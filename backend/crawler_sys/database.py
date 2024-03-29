@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from encoders.tweet_encoder import Tweet
 from encoders.profile_encoder import Profile
 import datetime
-from config import Config
+from backend.config import Config
 
 client = None
 db = None
