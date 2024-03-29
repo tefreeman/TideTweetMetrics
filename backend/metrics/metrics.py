@@ -3,10 +3,16 @@ from encoders.profile_encoder import Profile
 from encoders.metric_encoder import MetricEncoder
 
 class Metric:
-    def __init__(self, update_over_tweets = False, update_over_profiles = False):
+    def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False):
         self.MetricEncoder = MetricEncoder()
         self._update_over_tweets = update_over_tweets
         self._update_over_profiles = update_over_profiles
+        self.name = name
+    
+    def get_name(self) -> str:
+        if not self.name:
+            raise Exception("Name has not been set")
+        return self.name
     
     def UpdateByTweet(self, tweet: Tweet):
         pass
