@@ -4,7 +4,7 @@ import undetected_chromedriver as uc
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
-from config import Config
+from backend.config import Config
 
 # TODO: Implement a method to create a driver that is undetected
 # This method should return a webdriver.Chrome object

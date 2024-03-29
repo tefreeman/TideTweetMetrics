@@ -1,7 +1,7 @@
 from threading import Lock
 from encoders.profile_encoder import Profile
 from encoders.tweet_encoder import Tweet
-from config import Config
+from backend.config import Config
 import datetime
 
 
