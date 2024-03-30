@@ -121,6 +121,18 @@ class Tweet(DataEncoder):
     def get_public_metrics(self):
         return self._object["public_metrics"]
 
+    def get_like_count(self):
+        return self._object["public_metrics"]["like_count"]
+    
+    def get_retweet_count(self):
+        return self._object["public_metrics"]["retweet_count"]
+    
+    def get_reply_count(self):
+        return self._object["public_metrics"]["reply_count"]
+    
+    def get_quote_count(self):
+        return self._object["public_metrics"]["quote_count"]
+    
     def set_entities(self, content_links, content_text: str):
         entities = {
             "annotations": [],
