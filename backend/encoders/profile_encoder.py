@@ -134,5 +134,16 @@ class Profile(DataEncoder):
     def get_public_metrics(self):
         return self._object["public_metrics"]
 
+    def get_followers_count(self):
+        return self._object["public_metrics"]["followers_count"]
+    
+    def get_following_count(self):
+        return self._object["public_metrics"]["following_count"]
+    
+    def get_tweet_count(self):
+        return self._object["public_metrics"]["tweet_count"]
+    
+    def get_like_count(self):
+        return self._object["public_metrics"]["like_count"]
     def get_meta_ref(self) -> MetaData:
         return self._meta
