@@ -15,10 +15,10 @@ class Metric:
         return self.name
     
     def UpdateByTweet(self, tweet: Tweet):
-        pass
+        raise NotImplementedError("UpdateByTweet method must be implemented in derived classes.")
 
     def UpdateByProfile(self, profile: Profile):
-        pass
+        raise NotImplementedError("UpdateByProfile method must be implemented in derived classes.")
     
     def tweetFilter(self, tweet: Tweet):
         return True  # Default filter returns True
