@@ -60,6 +60,9 @@ class StatMetricCompiler:
         
         for metric in self.allMetrics:
             metric.FinalUpdate(None, None)  # Placeholder for actual stats arguments
-            compiled_metrics[metric.get_name()] = metric.GetEncoder().to_json()
+            encoders = metric.GetEncoders()
+        
+            for encoder in encoders:
+                compiled_metrics[encoder.get_name()] = encoder.to_json()
         
         return compiled_metrics

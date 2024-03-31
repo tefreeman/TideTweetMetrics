@@ -3,12 +3,16 @@ from encoders.profile_encoder import Profile
 from encoders.metric_encoder import MetricEncoder
 
 class Metric:
-    def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False):
-        self.MetricEncoder = MetricEncoder()
+    def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False, encoder_count = 1):
+        self.metric_encoders: list[MetricEncoder] = []
         self._update_over_tweets = update_over_tweets
         self._update_over_profiles = update_over_profiles
         self.name = name
-    
+        self.init_encoder(encoder_count)
+    def init_encoder(self, count):
+        for i in range(count):
+            self.metric_encoders.append(MetricEncoder())
+            
     def get_name(self) -> str:
         if not self.name:
             raise Exception("Name has not been set")
@@ -30,8 +34,8 @@ class Metric:
         # Must be implemented in derived classes
         raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
 
-    def GetEncoder(self):
-        return self.MetricEncoder
+    def GetEncoders(self):
+        return self.metric_encoders
 
     
     
