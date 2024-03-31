@@ -186,6 +186,21 @@ class Tweet(DataEncoder):
     def get_entities(self):
         return self._object["entities"]
 
+    def get_annotations(self):
+        return self._object["entities"]["annotations"]
+    
+    def get_cashtags(self):
+        return self._object["entities"]["cashtags"]
+    
+    def get_hashtags(self): 
+        return self._object["entities"]["hashtags"]
+    
+    def get_mentions(self):
+        return self._object["entities"]["mentions"]
+    
+    def get_urls(self):
+        return self._object["entities"]["urls"]
+    
     def set_attachments(self, photos, videos, cards):
         self._object["attachments"] = {}
         self._object["attachments"]["photos"] = photos
@@ -193,6 +208,15 @@ class Tweet(DataEncoder):
         self._object["attachments"]["cards"] = cards
         self._set_fields.add("attachments")
 
+    def get_photos(self):
+        return self._object["attachments"]["photos"]
+    
+    def get_videos(self):
+        return self._object["attachments"]["videos"]
+    
+    def get_cards(self):
+        return self._object["attachments"]["cards"]
+    
     def get_attachments(self):
         return self._object["attachments"]
 
