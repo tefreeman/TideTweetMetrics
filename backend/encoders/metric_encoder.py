@@ -18,6 +18,7 @@ class MetricEncoder:
     
     def set_name(self, name: str) -> None:
         self.name = name
+        
     def set_axis_titles(self, axis_titles: list[str]) -> None:
         self.axis_titles = axis_titles
 
