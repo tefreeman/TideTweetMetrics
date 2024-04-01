@@ -13,7 +13,7 @@ m_compile.AddMetric(StatGenMetric("tweet_likes", lambda tweet: tweet.get_like_co
 m_compile.AddMetric(StatGenMetric("tweet_retweets", lambda tweet: tweet.get_retweet_count(), np.int32))
 m_compile.AddMetric(StatGenMetric("tweet_replies", lambda tweet: tweet.get_reply_count(), np.int32))
 m_compile.AddMetric(StatGenMetric("tweet_quotes", lambda tweet: tweet.get_quote_count(), np.int32))
-m_compile.AddMetric(StatGenMetric("tweets", lambda tweet: 1, np.int32))
+m_compile.AddMetric(StatGenMetric("tweet_count", lambda tweet: 1, np.int32))
 m_compile.AddMetric(StatGenMetric("tweet_chars", lambda tweet: len(tweet.get_text()), np.int32))
 m_compile.AddMetric(StatGenMetric("tweet_words", lambda tweet: len(tweet.get_text().split()), np.int32))
 
