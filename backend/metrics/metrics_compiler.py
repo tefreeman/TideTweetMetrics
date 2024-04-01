@@ -45,22 +45,22 @@ class StatMetricCompiler:
         for profile in profiles_cursor:
             profile = Profile(as_json=profile)
             for metric in self.profileRowMetrics:
-                if metric.ProfileFilter(profile):
-                    metric.UpdateByProfile(profile)
+                if metric.profile_filter(profile):
+                    metric.update_by_profile(profile)
         
         tweets_cursor = self.get_all_tweets_cursor()      
         for tweet in tweets_cursor:
             tweet_obj = Tweet(as_json=tweet)
             for metric in self.tweetRowMetrics:
-                if metric.tweetFilter(tweet_obj):
-                    metric.UpdateByTweet(tweet_obj)
+                if metric.tweet_filter(tweet_obj):
+                    metric.update_by_tweet(tweet_obj)
     
         # Finalize metrics after processing all data
         compiled_metrics = {}
         
         for metric in self.allMetrics:
-            metric.FinalUpdate(None, None)  # Placeholder for actual stats arguments
-            encoders = metric.GetEncoders()
+            metric.final_update(None, None)  # Placeholder for actual stats arguments
+            encoders = metric.get_encoders()
         
             for encoder in encoders:
                 compiled_metrics[encoder.get_name()] = encoder.to_json()
