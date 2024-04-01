@@ -6,24 +6,23 @@ from typing import Callable, Any
 
 class StatGenMetric(Metric):
     def __init__(self, prop_name:str, data_extractor_func: Callable[[Tweet], Any], dtype):
-        super().__init__("StatGen_" + prop_name,  update_over_tweets=True, update_over_profiles=True, encoder_count=9)
+        super().__init__("statgen_" + prop_name,  update_over_tweets=True, update_over_profiles=True, encoder_count=9)
         self.data_extractor_func = data_extractor_func
         self.prop_name = prop_name
         self.dtype = dtype
         self.profiles = {}
 
-    def UpdateByProfile(self, profile):
+    def update_by_profile(self, profile):
         self.profiles[profile.get_username()] = []
         
-    def UpdateByTweet(self, tweet):
+    def update_by_tweet(self, tweet):
         # Fix if its not in profiles:
         if tweet.get_author() not in self.profiles:
             return
 
         self.profiles[tweet.get_author()].append(self.data_extractor_func(tweet))
-                 
-        
-    def FinalUpdate(self, tweet_stats, profile_stats):
+                     
+    def final_update(self, tweet_stats, profile_stats):
         profile_out_mean = {}
         profile_out_std = {}
         profile_out_min = {}
@@ -49,44 +48,44 @@ class StatGenMetric(Metric):
 
         
         # Build up the metric encoder
-        self.metric_encoders[0].set_name("Profiles_" + self.prop_name + "_mean")
+        self.metric_encoders[0].set_name(self.prop_name + "_mean")
         self.metric_encoders[0].set_axis_titles(["Profile ", self.prop_name + "_mean"])
         for p in profile_out_mean:            
             self.metric_encoders[0].add_dataset(p, (profile_out_mean[p],))
-        self.metric_encoders[1].set_name("Profiles_" + self.prop_name + "_std")
+        self.metric_encoders[1].set_name(self.prop_name + "_std")
         self.metric_encoders[1].set_axis_titles(["Profile ", self.prop_name + "_std"])          
         for p in profile_out_std:            
             self.metric_encoders[1].add_dataset(p, (profile_out_std[p],))
-        self.metric_encoders[2].set_name("Profiles_" + self.prop_name + "_min")
+        self.metric_encoders[2].set_name(self.prop_name + "_min")
         self.metric_encoders[2].set_axis_titles(["Profile ", self.prop_name + "_min"])
         for p in profile_out_min:            
             self.metric_encoders[2].add_dataset(p, (profile_out_min[p],))
-        self.metric_encoders[3].set_name("Profiles_" + self.prop_name + "_max")
+        self.metric_encoders[3].set_name(self.prop_name + "_max")
         self.metric_encoders[3].set_axis_titles(["Profile ", self.prop_name + "_max"])
         for p in profile_out_max:            
             self.metric_encoders[3].add_dataset(p, (profile_out_max[p],))
-        self.metric_encoders[4].set_name("Profiles_" + self.prop_name + "_sum")
+        self.metric_encoders[4].set_name(self.prop_name + "_sum")
         self.metric_encoders[4].set_axis_titles(["Profile ", self.prop_name + "_sum"])
         for p in profile_out_sum:            
             self.metric_encoders[4].add_dataset(p, (profile_out_sum[p],))
     
-        self.metric_encoders[5].set_name("Profiles_" + self.prop_name + "_count")
+        self.metric_encoders[5].set_name(self.prop_name + "_count")
         self.metric_encoders[5].set_axis_titles(["Profile ", self.prop_name + "_count"])
         for p in profile_out_count:            
             self.metric_encoders[5].add_dataset(p, (profile_out_count[p],))
         
-        self.metric_encoders[6].set_name("Profiles_" + self.prop_name + "_median")
+        self.metric_encoders[6].set_name(self.prop_name + "_median")
         self.metric_encoders[6].set_axis_titles(["Profile ", self.prop_name + "_median"])
         for p in profile_out_median:            
             self.metric_encoders[6].add_dataset(p, (profile_out_median[p],))
             
     
-        self.metric_encoders[7].set_name("Profiles_" + self.prop_name + "_25th_percentile")
+        self.metric_encoders[7].set_name(self.prop_name + "_25th_percentile")
         self.metric_encoders[7].set_axis_titles(["Profile ", self.prop_name + "_25th_percentile"])
         for p in profile_out_25th_percentile:            
             self.metric_encoders[7].add_dataset(p, (profile_out_25th_percentile[p],))
             
-        self.metric_encoders[8].set_name("Profiles_" + self.prop_name + "_75th_percentile")
+        self.metric_encoders[8].set_name(self.prop_name + "_75th_percentile")
         self.metric_encoders[8].set_axis_titles(["Profile ", self.prop_name + "_75th_percentile"])
         for p in profile_out_75th_percentile:            
             self.metric_encoders[8].add_dataset(p, (profile_out_75th_percentile[p],))

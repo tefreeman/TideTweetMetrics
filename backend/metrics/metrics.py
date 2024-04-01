@@ -7,34 +7,37 @@ class Metric:
         self.metric_encoders: list[MetricEncoder] = []
         self._update_over_tweets = update_over_tweets
         self._update_over_profiles = update_over_profiles
-        self.name = name
-        self.init_encoder(encoder_count)
-    def init_encoder(self, count):
+        self._name = name
+        
+        
+        self._init_encoder(encoder_count)
+        
+    def _init_encoder(self, count):
         for i in range(count):
             self.metric_encoders.append(MetricEncoder())
             
     def get_name(self) -> str:
-        if not self.name:
+        if not self._name:
             raise Exception("Name has not been set")
-        return self.name
+        return self._name
     
-    def UpdateByTweet(self, tweet: Tweet):
+    def update_by_tweet(self, tweet: Tweet):
         raise NotImplementedError("UpdateByTweet method must be implemented in derived classes.")
 
-    def UpdateByProfile(self, profile: Profile):
+    def update_by_profile(self, profile: Profile):
         raise NotImplementedError("UpdateByProfile method must be implemented in derived classes.")
     
-    def tweetFilter(self, tweet: Tweet):
+    def tweet_filter(self, tweet: Tweet):
         return True  # Default filter returns True
 
-    def ProfileFilter(self, profile: Profile):
+    def profile_filter(self, profile: Profile):
         return True  # Default filter returns True
 
-    def FinalUpdate(self, tweet_stats, profile_stats):
+    def final_update(self, ):
         # Must be implemented in derived classes
         raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
 
-    def GetEncoders(self):
+    def get_encoders(self):
         return self.metric_encoders
 
     
