@@ -63,6 +63,6 @@ class StatMetricCompiler:
             encoders = metric.get_encoders()
         
             for encoder in encoders:
-                compiled_metrics[encoder.get_name()] = encoder.to_json()
+                compiled_metrics[encoder.get_name()] = encoder
         
         return compiled_metrics

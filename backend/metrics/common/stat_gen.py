@@ -4,6 +4,8 @@ from encoders.profile_encoder import Profile
 import numpy as np
 from typing import Callable, Any
 
+
+# TODO: make this faster by using numpy arrays and not computing the statistics all at once
 class StatGenMetric(Metric):
     def __init__(self, prop_name:str, data_extractor_func: Callable[[Tweet], Any], dtype):
         super().__init__("statgen_" + prop_name,  update_over_tweets=True, update_over_profiles=True, encoder_count=9)
@@ -37,7 +39,7 @@ class StatGenMetric(Metric):
             self.metric_encoders[i].set_axis_titles(["Profile", f"{self.prop_name}_{stat}"])
             for profile, stats in profile_stats.items():
                 if stats:  # Only update if stats are not None
-                    self.metric_encoders[i].add_dataset(profile, (stats[stat],))
+                    self.metric_encoders[i].add_dataset(profile, [(stats[stat],)])
 
     def update_by_tweet(self, tweet):
         # Fix if its not in profiles:
