@@ -66,7 +66,7 @@ class Tweet(DataEncoder):
         if match:
             return match.group(1)
         else:
-            raise ValueError("Invalid URL")
+            return url
 
     def set_id(self, url: str | None):
         self._object["id"] = self._extract_id_from_url(url)
@@ -123,16 +123,16 @@ class Tweet(DataEncoder):
 
     def get_like_count(self):
         return self._object["public_metrics"]["like_count"]
-    
+
     def get_retweet_count(self):
         return self._object["public_metrics"]["retweet_count"]
-    
+
     def get_reply_count(self):
         return self._object["public_metrics"]["reply_count"]
-    
+
     def get_quote_count(self):
         return self._object["public_metrics"]["quote_count"]
-    
+
     def set_entities(self, content_links, content_text: str):
         entities = {
             "annotations": [],
@@ -188,19 +188,19 @@ class Tweet(DataEncoder):
 
     def get_annotations(self):
         return self._object["entities"]["annotations"]
-    
+
     def get_cashtags(self):
         return self._object["entities"]["cashtags"]
-    
-    def get_hashtags(self): 
+
+    def get_hashtags(self):
         return self._object["entities"]["hashtags"]
-    
+
     def get_mentions(self):
         return self._object["entities"]["mentions"]
-    
+
     def get_urls(self):
         return self._object["entities"]["urls"]
-    
+
     def set_attachments(self, photos, videos, cards):
         self._object["attachments"] = {}
         self._object["attachments"]["photos"] = photos
@@ -210,13 +210,13 @@ class Tweet(DataEncoder):
 
     def get_photos(self):
         return self._object["attachments"]["photos"]
-    
+
     def get_videos(self):
         return self._object["attachments"]["videos"]
-    
+
     def get_cards(self):
         return self._object["attachments"]["cards"]
-    
+
     def get_attachments(self):
         return self._object["attachments"]
 
