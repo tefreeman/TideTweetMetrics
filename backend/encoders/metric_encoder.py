@@ -8,7 +8,7 @@ class MetricEncoder:
         self.name = name.lower()
         self.max_dimensions = 0
         
-    # example data: [["all time", 245], ["last three months", 100], ["last week", 20]]
+    # example data: [("all time", 245), ("last three months", 100), ("last week", 20)]
     def add_dataset(self, owner: str, data: list[tuple]) -> None:
         self.datasets[owner] = data
         self.max_dimensions = max(self.max_dimensions, len(data[0]))
