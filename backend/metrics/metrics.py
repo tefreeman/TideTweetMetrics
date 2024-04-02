@@ -1,20 +1,15 @@
-from encoders.tweet_encoder import Tweet
-from encoders.profile_encoder import Profile
-from encoders.metric_encoder import MetricEncoder
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
+from backend.encoders.metric_encoder import MetricEncoder
+from backend.metrics.pre_compiler import TweetDataCompiler
 
 class Metric:
-    def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False, encoder_count = 1):
-        self.metric_encoders: list[MetricEncoder] = []
+    def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False,):
+        self.metric_encoder: MetricEncoder = MetricEncoder()
         self._update_over_tweets = update_over_tweets
         self._update_over_profiles = update_over_profiles
         self._name = name
         
-        
-        self._init_encoder(encoder_count)
-        
-    def _init_encoder(self, count):
-        for i in range(count):
-            self.metric_encoders.append(MetricEncoder())
             
     def get_name(self) -> str:
         if not self._name:
@@ -33,12 +28,11 @@ class Metric:
     def profile_filter(self, profile: Profile):
         return True  # Default filter returns True
 
-    def final_update(self, ):
+    def final_update(self, tweet_data_compiler: TweetDataCompiler):
         # Must be implemented in derived classes
         raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
 
-    def get_encoders(self):
-        return self.metric_encoders
+    def get_encoder(self):
+        return self.metric_encoder
 
-    
     

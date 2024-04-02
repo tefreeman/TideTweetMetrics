@@ -6,13 +6,16 @@ class MetricEncoder:
         self.datasets = {}
         self.axis_titles = []
         self.name = name.lower()
-        
         self.max_dimensions = 0
+        
     # example data: [["all time", 245], ["last three months", 100], ["last week", 20]]
     def add_dataset(self, owner: str, data: list[tuple]) -> None:
         self.datasets[owner] = data
         self.max_dimensions = max(self.max_dimensions, len(data[0]))
 
+    def get(self, owner: str) -> list[tuple]:
+        return self.datasets[owner]
+    
     def get_name(self) -> str:
         if self.name == "":
             raise Exception("No name has been set")
@@ -20,6 +23,7 @@ class MetricEncoder:
     
     def set_name(self, name: str) -> None:
         self.name = name.lower()
+        
         
     def set_axis_titles(self, axis_titles: list[str]) -> None:
         self.axis_titles = [title.lower() for title in axis_titles]
