@@ -28,7 +28,7 @@ class Metric:
     def profile_filter(self, profile: Profile):
         return True  # Default filter returns True
 
-    def final_update(self, tweet_data_compiler: TweetDataCompiler):
+    def final_update(self, pre_compiler: TweetDataCompiler):
         # Must be implemented in derived classes
         raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
 
