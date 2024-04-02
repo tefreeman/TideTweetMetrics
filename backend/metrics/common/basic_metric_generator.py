@@ -30,7 +30,7 @@ class BasicMetricGenerator:
             
             for user, data in ctp.get_all_np_arrays().items():
                 if len(data) > 0:
-                    metric.metric_encoder.add_dataset(user, [(stat_func(data),)])
+                    metric.metric_encoder.add_dataset(user, [stat_func(data)])
                 
             metrics.append(metric)
         
