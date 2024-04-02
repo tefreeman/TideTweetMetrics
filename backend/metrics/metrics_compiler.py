@@ -71,11 +71,12 @@ class StatMetricCompiler:
         
         # Finalize metrics after processing all data
         compiled_metrics = {}
+        
         for metric in self.pre_processed_metrics:
             compiled_metrics[metric.get_name()] = metric.get_encoder()
             
         for metric in self.all_metrics:
-            metric.final_update(self.pre_compiler)  # Placeholder for actual stats arguments
+            metric.final_update(self.pre_compiler)
             
             compiled_metrics[metric.get_name()] = metric.get_encoder()
         
