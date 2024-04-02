@@ -1,5 +1,5 @@
 import json
-from crawler_sys.utils.backup import next_zip_num, init_backup_dirs
+from backend.crawler_sys.utils.backup import next_zip_num, init_backup_dirs
 import os
 class Config:
     __CONFIG = None
