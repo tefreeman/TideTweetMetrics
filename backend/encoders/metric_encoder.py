@@ -9,9 +9,12 @@ class MetricEncoder:
         self.max_dimensions = 0
         
     # example data: [["all time", 245], ["last three months", 100], ["last week", 20]]
-    def add_dataset(self, owner: str, data: list[tuple]) -> None:
+    def add_dataset(self, owner: str, data: list[any]) -> None:
         self.datasets[owner] = data
-        self.max_dimensions = max(self.max_dimensions, len(data[0]))
+        if isinstance(data[0], tuple):
+            self.max_dimensions = max(self.max_dimensions, len(data[0]))
+        else:
+            self.max_dimensions = max(self.max_dimensions, 1)
 
     def get(self, owner: str) -> list[tuple]:
         return self.datasets[owner]
