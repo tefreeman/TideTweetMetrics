@@ -1,6 +1,6 @@
 from backend.encoders.profile_encoder import Profile
 from backend.encoders.tweet_encoder import Tweet
-from backend.metrics.tweet_property_array import TweetPropertyArray
+from backend.metrics.profile_stats.tweet_property_array import TweetPropertyArray
 import numpy as np
 
 

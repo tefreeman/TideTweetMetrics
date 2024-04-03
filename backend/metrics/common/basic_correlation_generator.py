@@ -4,8 +4,8 @@ from backend.encoders.tweet_encoder import Tweet
 from  backend.encoders.profile_encoder import Profile
 import numpy as np
 from typing import Callable, Any
-from backend.metrics.tweet_property_array import TweetPropertyArray
-from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
+from backend.metrics.profile_stats.tweet_property_array import TweetPropertyArray
+from backend.metrics.profile_stats.tweet_property_profile_compiler import TweetPropertyProfileCompiler
 from numpy.typing import NDArray
 
 

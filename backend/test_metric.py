@@ -1,5 +1,5 @@
-from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
-from backend.metrics.basic_metric_generator import generate_metrics
+from backend.metrics.profile_stats.tweet_property_profile_compiler import TweetPropertyProfileCompiler
+from backend.metrics.profile_stats.standard_profile_stat_gen import generate_metrics
 from backend.metrics.metrics_compiler import StatMetricCompiler
 from backend.metrics.common.basic_correlation_generator import BasicCorrelationGenerator
 from backend.config import Config
