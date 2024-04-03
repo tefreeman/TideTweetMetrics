@@ -1,5 +1,5 @@
-from backend.metrics.pre_compiler import TweetDataCompiler
-from backend.metrics.common.basic_metric_generator import BasicMetricGenerator
+from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
+from backend.metrics.basic_metric_generator import BasicMetricGenerator
 from backend.metrics.metrics_compiler import StatMetricCompiler
 from backend.config import Config
 import numpy as np

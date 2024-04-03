@@ -1,7 +1,7 @@
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
 from backend.encoders.metric_encoder import MetricEncoder
-from backend.metrics.pre_compiler import TweetDataCompiler
+from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
 
 class Metric:
     def __init__(self, name: str,  update_over_tweets = False, update_over_profiles = False,):
@@ -28,7 +28,7 @@ class Metric:
     def profile_filter(self, profile: Profile):
         return True  # Default filter returns True
 
-    def final_update(self, pre_compiler: TweetDataCompiler):
+    def final_update(self, pre_compiler: TweetPropertyProfileCompiler):
         # Must be implemented in derived classes
         raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
 
