@@ -3,7 +3,7 @@ from config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
-from backend.metrics.pre_compiler import TweetDataCompiler
+from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
 
 
 class StatMetricCompiler:
@@ -12,7 +12,7 @@ class StatMetricCompiler:
         self.profile_row_metrics:list[Metric] = []
         self.all_metrics: list[Metric] = []
         
-        self.pre_compiler = TweetDataCompiler()
+        self.pre_compiler = TweetPropertyProfileCompiler()
         self.pre_processed_metrics: list[Metric] = []
 
     def open_db(self, db_name: str):
@@ -48,7 +48,7 @@ class StatMetricCompiler:
     def pre_process(self):
         self.pre_compiler.process()
     
-    def get_preprossed_compiler(self) -> TweetDataCompiler:
+    def get_preprossed_compiler(self) -> TweetPropertyProfileCompiler:
         return self.pre_compiler
         
     def Process(self):
