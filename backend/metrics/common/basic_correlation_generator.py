@@ -4,12 +4,12 @@ from backend.encoders.tweet_encoder import Tweet
 from  backend.encoders.profile_encoder import Profile
 import numpy as np
 from typing import Callable, Any
-from backend.metrics.common_tweet_property import CommonTweetProperty
-from backend.metrics.pre_compiler import TweetDataCompiler
+from backend.metrics.tweet_property_array import TweetPropertyArray
+from backend.metrics.tweet_property_profile_compiler import TweetPropertyProfileCompiler
 from numpy.typing import NDArray
 
 
-def build_arr(target_ctp: CommonTweetProperty) -> NDArray:
+def build_arr(target_ctp: TweetPropertyArray) -> NDArray:
     target_arr = []
     for data in target_ctp.get_all_np_arrays().values():
         if len(data) == 0:
@@ -27,10 +27,10 @@ class BasicCorrelationGenerator:
             "tweet_likes"
         ]
 
-    def generate_correlation(self, pre_compile: TweetDataCompiler) -> list[Metric]:
+    def generate_correlation(self, pre_compile: TweetPropertyProfileCompiler) -> list[Metric]:
         metrics: list[Metric] = []
         for target_stat in self.target_stats:
-            target_ctp: CommonTweetProperty = pre_compile.get_common_tweet_property(target_stat)
+            target_ctp: TweetPropertyArray = pre_compile.get_common_tweet_property(target_stat)
             target_arr = build_arr(target_ctp)
             
             for ctp in pre_compile.get_all_common_tweet_properties().values():
