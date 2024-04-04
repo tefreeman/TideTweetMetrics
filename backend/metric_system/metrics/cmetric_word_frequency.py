@@ -6,11 +6,13 @@ import nltk
 
 
 class WordFrequencyMetric(ComputableMetric):
-    def __init__(self):
+    def __init__(self, return_count=10):
         super().__init__(owner="none", metric_name="tweet_word_frequency", do_update_over_tweet=True)
         nltk.download('stopwords')
         nltk.download('punkt')
         nltk.download('words')
+        
+        self.return_count = return_count
         self.words = {}
         self.count = 0
         self.stop_words = set(stopwords.words('english'))
@@ -31,4 +33,9 @@ class WordFrequencyMetric(ComputableMetric):
                 
     def final_update(self, stat_helper, previous_metrics):
         values = [(key, val) for key, val in self.words.items()]
-        self.metric_encoder.set_dataset(values)
+        values.sort(key=lambda x: x[1], reverse=True)
+        self.metric_encoder.set_dataset(values[:self.return_count])
+        
+        self.words = {}
+        self.stop_words = None
+        self.english_words = None
