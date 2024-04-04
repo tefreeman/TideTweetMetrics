@@ -13,6 +13,8 @@ class TweetPropertyArray:
         self.internal_arr: tuple[np.array | None]= None
         self.profiles = {}
     
+    def get_count(self) -> int:
+        return self.count
     
     def init_profile(self, tweet_len: int):
         self.count = 0            

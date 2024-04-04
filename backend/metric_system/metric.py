@@ -1,7 +1,7 @@
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
 from backend.encoders.metric_encoder import MetricEncoder
-from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
 
 
 class Metric:
