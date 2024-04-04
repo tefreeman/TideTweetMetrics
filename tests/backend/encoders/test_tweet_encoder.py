@@ -1,5 +1,5 @@
 import unittest
-from backend.encoders.tweet_encoder import Tweet, ReferencedTweetType
+from backend.encoders.tweet_encoder import Tweet
 import json
 from datetime import datetime
 import pytz
@@ -212,6 +212,5 @@ class TestTweetEncoder(unittest.TestCase):
         self.assertEqual(urls[0]["display_url"], "Example Site")
 
 
-# main
 if __name__ == "__main__":
     unittest.main()
