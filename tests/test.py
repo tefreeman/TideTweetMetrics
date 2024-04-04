@@ -1,6 +1,6 @@
-from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
-from backend.metrics.profile_stats.standard_profile_stat_gen import BasicMetricGenerator
-from backend.metrics.metrics_compiler import StatMetricCompiler
+from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.standard_profile_stat_gen import BasicMetricGenerator
+from backend.metric_system.metrics_compiler import StatMetricCompiler
 from backend.config import Config
 import numpy as np
 

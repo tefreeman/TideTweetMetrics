@@ -93,6 +93,9 @@ class Tweet(DataEncoder):
 
     def get_post_date(self):
         return self._object["created_at"]
+    
+    def get_post_date(self):
+        return self._object["created_at"]
 
     def set_author(self, username: str):
         if username.startswith("@"):
