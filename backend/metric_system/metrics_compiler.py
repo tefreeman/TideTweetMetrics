@@ -1,26 +1,22 @@
-from .metrics import Metric, ComputableMetric, MetricGenerator
+from .metric import Metric, ComputableMetric, MetricGenerator
 from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
-from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
 import json
+from backend.metric_system.np_seralizer import numpy_json_serializer
 
 class StatMetricCompiler:
-    def __init__(self):
-        self._profile_tweet_analytics = ProfileTweetAnalytics()
+    def __init__(self, debug_mode=False) -> None:
+        self.debug_mode = debug_mode
+        self._profile_tweet_analytics = ProfileTweetAnalytics(debug_mode)
+        self._profile_tweet_analytics.build()
         
-        self._finshed_metrics: dict[str, Metric] = {
-
-        }
+        self._finshed_metrics: dict[str, dict[str, Metric]] = {}
         
-        
-        self._uncompiled_metrics: dict[str, ComputableMetric] = {
-            
-        }
-        
+        self._uncompiled_metrics: dict[str, ComputableMetric] = {}
         self._update_over_tweet_metrics: list[ComputableMetric] = []
-        
         self._metric_generators: list[MetricGenerator] = []
 
 
@@ -63,7 +59,11 @@ class StatMetricCompiler:
         
     def _process_tweets(self):
         db = self._connect_to_database()
-        tweets_cursor = db["tweets"].find({})
+        if self.debug_mode:
+            tweets_cursor = db["tweets"].find({}).limit(2000)
+        else:
+            tweets_cursor = db["tweets"].find({})
+            
         for tweet in tweets_cursor:
             tweet = Tweet(as_json=tweet)
             for metric in self._update_over_tweet_metrics:
@@ -85,4 +85,8 @@ class StatMetricCompiler:
                 self.add_finshed_metric(metric)
             
     def to_json(self):
-        return json.dumps(self._finshed_metrics)
+        for value in self._finshed_metrics.values():
+            for k, v in value.items():
+                value[k] = v.get_data()
+                
+        return json.dumps(self._finshed_metrics, default=numpy_json_serializer)
