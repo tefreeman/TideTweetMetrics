@@ -1,19 +1,32 @@
-from backend.metrics.profile_stats.tweet_property_profile_compiler import TweetPropertyProfileCompiler
-from backend.metrics.profile_stats.standard_profile_stat_gen import generate_metrics
+from backend.metrics.metrics import ComputableMetric, Metric, MetricGenerator
+from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metrics.likes_per_tweet_len import WordFrequencyMetric
+from backend.metrics.profile_stats.standard_profile_stat_gen import gen_standard_stats_for_all_profiles
 from backend.metrics.metrics_compiler import StatMetricCompiler
-from backend.metrics.common.basic_correlation_generator import BasicCorrelationGenerator
 from backend.config import Config
 import numpy as np
 
 Config.init()
 
-test = TweetPropertyProfileCompiler()
 
-test.compute_stats_for_all_profiles()
 
-output = {}
+smc = StatMetricCompiler()
+pta = ProfileTweetAnalytics()
+pta.compute_stats_for_all_profiles()
+pta.compute_global_stats_over_all_profiles()
+metrics = gen_standard_stats_for_all_profiles(pta)
 
-for k, v in test.get_all_profiles().items():
-    output[k] = generate_metrics(v)
+for metric in metrics:
+    smc.add_metric(metric)
     
-+print("done")
+
+wfm = WordFrequencyMetric()
+smc.add_metric(wfm)
+
+smc.Process()
+
+
+
+
+
+print("done")

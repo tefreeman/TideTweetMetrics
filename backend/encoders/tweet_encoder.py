@@ -80,7 +80,7 @@ class Tweet(DataEncoder):
         self._object["text"] = text
         self._set_fields.add("text")
 
-    def get_text(self):
+    def get_text(self) -> str:
         return self._object["text"]
 
     def set_post_date(self, date: str):
