@@ -3,20 +3,28 @@ from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
-from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 import json
 from backend.metric_system.np_seralizer import numpy_json_serializer
 
 class StatMetricCompiler:
     def __init__(self, debug_mode=False) -> None:
         self.debug_mode = debug_mode
-        self._profile_tweet_analytics = ProfileTweetAnalytics(debug_mode)
-        self._profile_tweet_analytics.build()
         
+        self._tweet_analytics_helper = TweetAnalyticsHelper(debug_mode)
+        self._tweet_analytics_helper.build()
+        
+        # Metrics that have been computed
+        # These metrics are ready to be to.json and send to the frontend
         self._finshed_metrics: dict[str, dict[str, Metric]] = {}
         
+        # Metrics that need to be computed
         self._uncompiled_metrics: dict[str, ComputableMetric] = {}
+        
+        # Metrics that need to be updated over each tweet
         self._update_over_tweet_metrics: list[ComputableMetric] = []
+        
+        # Metric generators
         self._metric_generators: list[MetricGenerator] = []
 
 
@@ -71,9 +79,8 @@ class StatMetricCompiler:
                 
                 
     def Process(self):
-        
         for metric_generator in self._metric_generators:
-            metrics = metric_generator.generate_metrics(self._profile_tweet_analytics, self._finshed_metrics)
+            metrics = metric_generator.generate_metrics(self._tweet_analytics_helper, self._finshed_metrics)
             self.add_metrics(metrics)
         
         if len(self._update_over_tweet_metrics) > 0:
@@ -81,8 +88,9 @@ class StatMetricCompiler:
             
         for owner_dict in self._uncompiled_metrics.values():
             for metric in owner_dict.values():
-                metric.final_update(self._profile_tweet_analytics, self._finshed_metrics)
+                metric.final_update(self._tweet_analytics_helper, self._finshed_metrics)
                 self.add_finshed_metric(metric)
+            
             
     def to_json(self):
         for value in self._finshed_metrics.values():

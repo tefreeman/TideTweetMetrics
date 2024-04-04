@@ -28,7 +28,6 @@ def _default_property_extractor():
             ),
         }
        
-       
 class ProfileWithTweetProperties(Profile):
     def __init__(self, as_json: dict = None) -> None:
         super().__init__(as_json=as_json)

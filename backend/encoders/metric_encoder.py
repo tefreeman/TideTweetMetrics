@@ -2,7 +2,6 @@ import json
 
 
 class MetricEncoder:
-    
     def __init__(self) -> None:
         self._dataset = None
         self._dimension = 0
@@ -16,7 +15,6 @@ class MetricEncoder:
             
         self._dataset = data
 
-  
     def get_dataset(self) -> list[tuple]:
         return self._dataset
     
