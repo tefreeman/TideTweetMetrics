@@ -1,7 +1,6 @@
 import unittest
-from backend.encoders.profile_encoder import Profile, IncompleteBuildException
+from backend.encoders.profile_encoder import Profile
 import json
-from datetime import datetime
 
 
 class TestProfileEncoder(unittest.TestCase):
