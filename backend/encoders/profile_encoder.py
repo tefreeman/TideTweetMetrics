@@ -23,6 +23,7 @@ class Profile(DataEncoder):
 
         if as_json != None:
             self.from_json_dict(as_json)
+            
         if changes_json != None:
             self.changes_from_json_dict(changes_json)
 

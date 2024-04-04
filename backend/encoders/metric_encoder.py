@@ -8,13 +8,15 @@ class MetricEncoder:
         
     # example data: [["all time", 245], ["last three months", 100], ["last week", 20]]
     def set_dataset(self, data: list[any]) -> None:
-        if isinstance(data[0], tuple):
-            self.max_dimensions = len(data[0])
+        if isinstance(data, list):
+            if isinstance(data[0], tuple):
+                self.max_dimensions = len(data[0])
+            else:
+                self.max_dimension = 1
         else:
-            self.max_dimension = 1
+            self.max_dimension = 0 # 0 = scalar
             
         self._dataset = data
-
     def get_dataset(self) -> list[tuple]:
         return self._dataset
     
