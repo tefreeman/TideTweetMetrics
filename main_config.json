@@ -15,6 +15,9 @@
         "MAX_PAGE_LOAD_TIME": 20,
         "MAX_URL_PAGE_ERROR": 10
     },
+    "EMAIL": {
+        "KEY": "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"
+    },
     "BACKUP": {
         "RAW_DIR": "backup_raw_data",
         "DIR": "backups"
