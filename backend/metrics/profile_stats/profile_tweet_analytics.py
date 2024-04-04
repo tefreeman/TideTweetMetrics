@@ -7,24 +7,36 @@ from backend.encoders.profile_encoder import Profile
 from pymongo import ASCENDING
 from backend.metrics.profile_stats.profile_with_tweet_properties import ProfileWithTweetProperties
 
-class TweetPropertyProfileCompiler:
+class ProfileTweetAnalytics:
     def __init__(self) -> None:
         self._has_built = False
         self._profile_store: dict[str, ProfileWithTweetProperties] = {}
-        self._tweets_col = self._connect_to_database(Config.db_name())["tweets"]
+        self._tweets_col = self._connect_to_database()["tweets"]
 
-    def _connect_to_database(self, db_name: str):
+    def _connect_to_database(self):
         return MongoClient(
             Config.db_host(),
             port=Config.db_port(),
             username=Config.db_user(),
             password=Config.db_password(),
-        )[db_name]
+        )[Config.db_name()]
 
     def _load_profiles(self) -> list[dict]:
-        db = self._connect_to_database(Config.db_name())
+        db = self._connect_to_database()
         return list(db["profiles"].find({}))
 
+    def compute_global_stats_over_all_profiles(self):
+        global_profile = ProfileWithTweetProperties()
+        global_profile.set_username("global")
+        tweets = self._tweets_col.find({}).sort(
+                "data.created_at", ASCENDING
+            )
+
+        global_profile.build_stats([Tweet(as_json=tweet) for tweet in tweets])
+        
+        self._profile_store["global"] = global_profile
+        
+        
     def compute_stats_for_all_profiles(self):
         profiles = self._load_profiles()
         for profile in profiles:
