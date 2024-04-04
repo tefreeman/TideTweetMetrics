@@ -1,4 +1,3 @@
-from backend.metric_system.helpers.profile.tweet_property_array import TweetPropertyArray
 from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
@@ -68,21 +67,11 @@ class TweetAnalyticsHelper:
         self._has_built = True
     
     def build(self):
-        self._compute_global_stats_over_all_profiles()
+       # self._compute_global_stats_over_all_profiles() TODO: REDO this
         self._compute_stats_for_all_profiles()
         
-    def get_tweet_property(self, profile_name: str, property_name: str) -> TweetPropertyArray:
-        if not self._has_built:
-            raise Exception("You must call compute_stats_for_all_profiles() before calling get_tweet_property()")
-        return self._profile_store[profile_name].get_stats_by_tweet_property(property_name)
+    def get_profile(self, username: str) -> ProfileWithTweetProperties:
+        return self._profile_store[username]   
     
-    def get_all_tweet_properties(self, profile_name: str) -> dict[str, TweetPropertyArray]:
-        if not self._has_built:
-            raise Exception("You must call compute_stats_for_all_profiles() before calling get_all_tweet_properties()")
-        return self._profile_store[profile_name]._properties
-                
     def get_all_profiles(self) -> dict[str, ProfileWithTweetProperties]:
-        if not self._has_built:
-            raise Exception("You must call compute_stats_for_all_profiles() before calling get_all_profiles()")
-        
         return self._profile_store

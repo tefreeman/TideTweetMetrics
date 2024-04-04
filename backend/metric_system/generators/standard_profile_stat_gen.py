@@ -1,12 +1,11 @@
 from typing import Callable, Any, List, Dict
 import numpy as np
 from backend.metric_system.metric import MetricGenerator, Metric
-from backend.metric_system.helpers.profile.tweet_property_array import TweetPropertyArray
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 
 # Define statistics names along with their corresponding functions.
-STAT_NAMES = [
+_STAT_NAMES = [
     ('mean', np.mean),
     ('std', np.std),
     ('min', np.min),
@@ -37,12 +36,18 @@ class StandardProfileStatGenerator(MetricGenerator):
     def gen_standard_stats_for_profile(profile_plus: ProfileWithTweetProperties) -> List[Metric]:
         """Generate standard stats for a single profile."""
         metrics = []
-        # tpas = Tweet Property Arrays
-        tpas = profile_plus.get_all_stats()
-        for tpa in tpas.values():
-            for stat_name, stat_func in STAT_NAMES:
-                metric = Metric(profile_plus.get_username(), f"{tpa.property_name}_{stat_name}")            
-                if tpa.get_count() > 0:
-                    metric.metric_encoder.set_dataset([stat_func(tpa.get_arr())])                    
+        
+        for tweet_property in profile_plus.get_properties_list():
+            for stat_name, stat_func in _STAT_NAMES:
+                metric = Metric(profile_plus.get_username(), f"{tweet_property}_{stat_name}")
+                arr = profile_plus.get_tweet_property(tweet_property)
+                
+                if len(arr) == 0:
+                    continue
+                
+                metric.metric_encoder.set_dataset(stat_func(arr))
                 metrics.append(metric)
+        
         return metrics
+        
+        

@@ -43,5 +43,6 @@ class ComputableMetric(Metric):
 class MetricGenerator:
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper, previous_metrics: dict[str, Metric]) -> list[Metric]:
         pass
+    
 
 
