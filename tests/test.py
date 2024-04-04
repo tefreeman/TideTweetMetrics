@@ -1,4 +1,4 @@
-from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 from backend.metric_system.helpers.profile.standard_profile_stat_gen import BasicMetricGenerator
 from backend.metric_system.metrics_compiler import StatMetricCompiler
 from backend.config import Config

@@ -5,7 +5,7 @@ from backend.encoders.tweet_encoder import Tweet
 from pymongo import ASCENDING
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 
-class ProfileTweetAnalytics:
+class TweetAnalyticsHelper:
     def __init__(self, limit_for_debug=False) -> None:
         self._limit_for_debug = limit_for_debug
         self._has_built = False
