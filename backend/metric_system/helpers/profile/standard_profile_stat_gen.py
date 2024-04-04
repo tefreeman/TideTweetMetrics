@@ -1,10 +1,10 @@
-from ..metrics import Metric 
+from backend.metric_system.metric import Metric
 from backend.encoders.tweet_encoder import Tweet
 import numpy as np
 from typing import Callable, Any
-from backend.metrics.profile_stats.tweet_property_array import TweetPropertyArray
-from backend.metrics.profile_stats.profile_with_tweet_properties import ProfileWithTweetProperties
-from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.tweet_property_array import TweetPropertyArray
+from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
+from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
 
 
 stat_names = [

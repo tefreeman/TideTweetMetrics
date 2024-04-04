@@ -23,9 +23,9 @@ class MetricEncoder:
     def get_dimension(self) -> int:
         return self._dimension
         
-    def to_json(self) -> tuple[str, str]:
+    def as_dict(self) -> tuple[str, str]:
 
         if self._dataset is None:  # No data
             raise Exception("No data has been added to the encoder")
 
-        return json.dumps(self.get_dataset())
+        return self._dataset
