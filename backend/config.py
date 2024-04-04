@@ -65,6 +65,10 @@ class Config:
     @staticmethod
     def max_profile_tweet_crawl_depth() -> int:
         return Config.__CONFIG["CRAWLER"]["MAX_TWEET_CRAWL_DEPTH"]
+    
+    @staticmethod
+    def email_key() -> str:
+        return Config.__CONFIG["EMAIL"]["KEY"]
 
     @staticmethod
     def get_backup_dir() -> str:
