@@ -3,7 +3,7 @@ import numpy as np
 from backend.metric_system.metric import MetricGenerator, Metric
 from backend.metric_system.helpers.profile.tweet_property_array import TweetPropertyArray
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
-from backend.metric_system.helpers.profile.profile_tweet_analytics import ProfileTweetAnalytics
+from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 
 # Define statistics names along with their corresponding functions.
 STAT_NAMES = [
@@ -21,12 +21,12 @@ STAT_NAMES = [
 class StandardProfileStatGenerator(MetricGenerator):
     """Generates standard statistical metrics for profiles."""
 
-    def generate_metrics(self, stat_helper: ProfileTweetAnalytics, previous_metrics: Dict[str, Metric]) -> List[Metric]:
+    def generate_metrics(self, stat_helper: TweetAnalyticsHelper, previous_metrics: Dict[str, Metric]) -> List[Metric]:
         """Generate metrics for all profiles."""
         return StandardProfileStatGenerator.gen_standard_stats_for_all_profiles(stat_helper)
     
     @staticmethod
-    def gen_standard_stats_for_all_profiles(pta: ProfileTweetAnalytics) -> List[Metric]:
+    def gen_standard_stats_for_all_profiles(pta: TweetAnalyticsHelper) -> List[Metric]:
         """Generate standard stats for all profiles in the analytics data."""
         metrics = []
         for profile_plus in pta.get_all_profiles().values():
