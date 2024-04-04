@@ -1,4 +1,4 @@
-from backend.metrics.profile_stats.tweet_property_profile_compiler import TweetPropertyProfileCompiler
+from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
 from backend.metrics.profile_stats.standard_profile_stat_gen import BasicMetricGenerator
 from backend.metrics.metrics_compiler import StatMetricCompiler
 from backend.config import Config

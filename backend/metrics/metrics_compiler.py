@@ -1,66 +1,88 @@
-from .metrics import Metric
-from config import Config
+from .metrics import Metric, ComputableMetric, MetricGenerator
+from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
-from backend.metrics.profile_stats.tweet_property_profile_compiler import TweetPropertyProfileCompiler
-
+from backend.metrics.profile_stats.profile_tweet_analytics import ProfileTweetAnalytics
+import json
 
 class StatMetricCompiler:
     def __init__(self):
-        self.tweet_row_metrics: list[Metric] = []
-        self.profile_row_metrics:list[Metric] = []
-        self.all_metrics: list[Metric] = []
+        self._profile_tweet_analytics = ProfileTweetAnalytics()
         
-        self.pre_compiler = TweetPropertyProfileCompiler()
-        self.pre_processed_metrics: list[Metric] = []
+        self._finshed_metrics: dict[str, Metric] = {
 
-    def add_metric(self, metric: Metric):
-        self.all_metrics.append(metric)
+        }
         
-        if metric._update_over_tweets:
-            self.tweet_row_metrics.append(metric)
         
-        if metric._update_over_profiles:
-            self.profile_row_metrics.append(metric)
+        self._uncompiled_metrics: dict[str, ComputableMetric] = {
             
-
-    def add_pre_processed_metric(self, metric: Metric):
-        self.pre_processed_metrics.append(metric)
-    
-    def pre_process(self):
-        self.pre_compiler.process()
-    
-    def get_preprossed_compiler(self) -> TweetPropertyProfileCompiler:
-        return self.pre_compiler
+        }
         
+        self._update_over_tweet_metrics: list[ComputableMetric] = []
+        
+        self._metric_generators: list[MetricGenerator] = []
+
+
+    def _connect_to_database(self):
+        return MongoClient(
+            Config.db_host(),
+            port=Config.db_port(),
+            username=Config.db_user(),
+            password=Config.db_password(),
+        )[Config.db_name()]
+        
+        
+    def add_finshed_metric(self, metric: Metric):
+        if metric.get_metric_name() not in self._finshed_metrics:
+            self._finshed_metrics[metric.get_metric_name()] = {}
+        self._finshed_metrics[metric.get_metric_name()][metric.get_owner()] = metric
+    
+    def add_uncompiled_metric(self, metric: ComputableMetric):
+        if metric.get_metric_name() not in self._uncompiled_metrics:
+            self._uncompiled_metrics[metric.get_metric_name()] = {}
+        self._uncompiled_metrics[metric.get_metric_name()][metric.get_owner()] = metric
+        
+        if metric.do_update_over_tweet:
+            self._update_over_tweet_metrics.append(metric)
+        
+    def add_metric(self, metric: tuple[Metric | ComputableMetric]):
+        if isinstance(metric, ComputableMetric):
+            self.add_uncompiled_metric(metric)
+        elif isinstance(metric, Metric):
+            self.add_finshed_metric(metric)
+    
+    
+    def add_metrics(self, metrics: list[Metric | ComputableMetric]):
+        for metric in metrics:
+            self.add_metric(metric)
+    
+    def add_metric_generator(self, metric_generator: MetricGenerator):
+        self._metric_generators.append(metric_generator)
+        
+        
+    def _process_tweets(self):
+        db = self._connect_to_database()
+        tweets_cursor = db["tweets"].find({})
+        for tweet in tweets_cursor:
+            tweet = Tweet(as_json=tweet)
+            for metric in self._update_over_tweet_metrics:
+                metric.update_over_tweet(tweet)
+                
+                
     def Process(self):
         
-        if len(self.profile_row_metrics) > 0:
-            profiles_cursor = self.get_all_profiles_cursor()
-            for profile in profiles_cursor:
-                profile = Profile(as_json=profile)
-                for metric in self.profile_row_metrics:
-                    if metric.profile_filter(profile):
-                        metric.update_by_profile(profile)
+        for metric_generator in self._metric_generators:
+            metrics = metric_generator.generate_metrics(self._profile_tweet_analytics, self._finshed_metrics)
+            self.add_metrics(metrics)
         
-        if len(self.tweet_row_metrics) > 0:
-            tweets_cursor = self.get_all_tweets_cursor()      
-            for tweet in tweets_cursor:
-                tweet_obj = Tweet(as_json=tweet)
-                for metric in self.tweet_row_metrics:
-                    if metric.tweet_filter(tweet_obj):
-                        metric.update_by_tweet(tweet_obj)
-        
-        # Finalize metrics after processing all data
-        compiled_metrics = {}
-        
-        for metric in self.pre_processed_metrics:
-            compiled_metrics[metric.get_name()] = metric.get_encoder()
+        if len(self._update_over_tweet_metrics) > 0:
+            self._process_tweets()
             
-        for metric in self.all_metrics:
-            metric.final_update(self.pre_compiler)
+        for owner_dict in self._uncompiled_metrics.values():
+            for metric in owner_dict.values():
+                metric.final_update(self._profile_tweet_analytics, self._finshed_metrics)
+                self.add_finshed_metric(metric)
             
-            compiled_metrics[metric.get_name()] = metric.get_encoder()
-        
-        return compiled_metrics
+    def to_json(self):
+        return json.dumps(self._finshed_metrics)

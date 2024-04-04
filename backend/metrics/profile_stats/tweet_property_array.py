@@ -12,7 +12,8 @@ class TweetPropertyArray:
         
         self.internal_arr: tuple[np.array | None]= None
         self.profiles = {}
-        
+    
+    
     def init_profile(self, tweet_len: int):
         self.count = 0            
         self.internal_arr = np.zeros(tweet_len, dtype=self.dtype)
