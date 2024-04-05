@@ -6,7 +6,9 @@ from backend.encoders.profile_encoder import Profile
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 import json
 from backend.metric_system.np_seralizer import numpy_json_serializer
+from backend.metric_system.metric_container import MetricContainer
 
+    
 class StatMetricCompiler:
     def __init__(self, debug_mode=False) -> None:
         self.debug_mode = debug_mode
@@ -16,10 +18,10 @@ class StatMetricCompiler:
         
         # Metrics that have been computed
         # These metrics are ready to be to.json and send to the frontend
-        self._finshed_metrics: dict[str, dict[str, Metric]] = {}
+        self._processed_metrics: MetricContainer = MetricContainer()
         
         # Metrics that need to be computed
-        self._uncompiled_metrics: dict[str, ComputableMetric] = {}
+        self._unprocessed_metrics: list[ComputableMetric] = []
         
         # Metrics that need to be updated over each tweet
         self._update_over_tweet_metrics: list[ComputableMetric] = []
@@ -36,34 +38,26 @@ class StatMetricCompiler:
             password=Config.db_password(),
         )[Config.db_name()]
         
-        
-    def add_finshed_metric(self, metric: Metric):
-        if metric.get_metric_name() not in self._finshed_metrics:
-            self._finshed_metrics[metric.get_metric_name()] = {}
-        self._finshed_metrics[metric.get_metric_name()][metric.get_owner()] = metric
     
-    def add_uncompiled_metric(self, metric: ComputableMetric):
-        if metric.get_metric_name() not in self._uncompiled_metrics:
-            self._uncompiled_metrics[metric.get_metric_name()] = {}
-        self._uncompiled_metrics[metric.get_metric_name()][metric.get_owner()] = metric
-        
+    
+    
+    def add_uncompiled_metric(self, metric: ComputableMetric):        
         if metric.do_update_over_tweet:
             self._update_over_tweet_metrics.append(metric)
+    
+        self._unprocessed_metrics.append(metric)
         
     def add_metric(self, metric: tuple[Metric | ComputableMetric]):
         if isinstance(metric, ComputableMetric):
             self.add_uncompiled_metric(metric)
+        
         elif isinstance(metric, Metric):
-            self.add_finshed_metric(metric)
-    
+            self._processed_metrics.add_metric(metric)
     
     def add_metrics(self, metrics: list[Metric | ComputableMetric]):
         for metric in metrics:
             self.add_metric(metric)
-    
-    def add_metric_generator(self, metric_generator: MetricGenerator):
-        self._metric_generators.append(metric_generator)
-        
+                    
         
     def _process_tweets(self):
         db = self._connect_to_database()
@@ -80,21 +74,20 @@ class StatMetricCompiler:
                 
     def Process(self):
         for metric_generator in self._metric_generators:
-            metrics = metric_generator.generate_metrics(self._tweet_analytics_helper, self._finshed_metrics)
+            metrics = metric_generator.generate_metrics(self._tweet_analytics_helper, self._processed_metrics)
             self.add_metrics(metrics)
         
         if len(self._update_over_tweet_metrics) > 0:
             self._process_tweets()
             
-        for owner_dict in self._uncompiled_metrics.values():
-            for metric in owner_dict.values():
-                metric.final_update(self._tweet_analytics_helper, self._finshed_metrics)
-                self.add_finshed_metric(metric)
+        for metric in self._unprocessed_metrics:
+            metric.final_update(self._tweet_analytics_helper, self._processed_metrics)
+            self._processed_metrics.add_metric(metric)
             
             
     def to_json(self):
-        for value in self._finshed_metrics.values():
+        for value in self._processed_metrics.get_metrics().values():
             for k, v in value.items():
                 value[k] = v.get_data()
                 
-        return json.dumps(self._finshed_metrics, default=numpy_json_serializer)
+        return json.dumps(self._processed_metrics, default=numpy_json_serializer)
