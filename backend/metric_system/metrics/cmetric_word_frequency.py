@@ -1,13 +1,13 @@
-from backend.metric_system.metric import ComputableMetric
+from backend.metric_system.metric import OverTweetMetric, ComputableMetric, Metric
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.corpus import words
 import nltk
 
 
-class WordFrequencyMetric(ComputableMetric):
+class WordFrequencyMetric(OverTweetMetric):
     def __init__(self, return_count=10):
-        super().__init__(owner="none", metric_name="tweet_word_frequency", do_update_over_tweet=True)
+        Metric.__init__(self, owner="none", metric_name="tweet_word_frequency")
         nltk.download('stopwords')
         nltk.download('punkt')
         nltk.download('words')
@@ -19,7 +19,7 @@ class WordFrequencyMetric(ComputableMetric):
         self.english_words = set(words.words())
    
     
-    def update_over_tweet(self, tweet):
+    def tweet_update(self, tweet):
         self.count += 1
         words = word_tokenize(tweet.get_text())
         filtered_text = [word for word in words if word.lower() not in self.stop_words]
@@ -31,7 +31,7 @@ class WordFrequencyMetric(ComputableMetric):
             else:
                 self.words[word] = 1
                 
-    def final_update(self, stat_helper, previous_metrics):
+    def final_update(self, stat_helper):
         values = [(key, val) for key, val in self.words.items()]
         values.sort(key=lambda x: x[1], reverse=True)
 
