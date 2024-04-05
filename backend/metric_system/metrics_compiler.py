@@ -1,4 +1,4 @@
-from .metric import Metric, ComputableMetric, MetricGenerator
+from .metric import Metric, ComputableMetric, MetricGenerator, OverTweetMetric, DependentMetric
 from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
@@ -20,14 +20,8 @@ class StatMetricCompiler:
         # These metrics are ready to be to.json and send to the frontend
         self._processed_metrics: MetricContainer = MetricContainer()
         
-        # Metrics that need to be computed
-        self._unprocessed_metrics: list[ComputableMetric] = []
-        
-        # Metrics that need to be updated over each tweet
-        self._update_over_tweet_metrics: list[ComputableMetric] = []
-        
-        # Metric generators
-        self._metric_generators: list[MetricGenerator] = []
+        self._unprocessed_metrics: list[Metric | MetricGenerator] = []
+        self._over_tweet_metrics: list[OverTweetMetric] = []
 
 
     def _connect_to_database(self):
@@ -38,21 +32,21 @@ class StatMetricCompiler:
             password=Config.db_password(),
         )[Config.db_name()]
         
-    
-    
-    
-    def add_uncompiled_metric(self, metric: ComputableMetric):        
-        if metric.do_update_over_tweet:
-            self._update_over_tweet_metrics.append(metric)
-    
-        self._unprocessed_metrics.append(metric)
         
     def add_metric(self, metric: tuple[Metric | ComputableMetric]):
-        if isinstance(metric, ComputableMetric):
-            self.add_uncompiled_metric(metric)
+        if isinstance(metric, Metric) and type(metric) is Metric:
+            self._processed_metrics.add_metric(metric)
+     
+        if isinstance(metric, OverTweetMetric):
+            self._over_tweet_metrics.append(metric)  
+              
+        elif isinstance(metric, (ComputableMetric, MetricGenerator)):
+            self._unprocessed_metrics.append(metric)
         
         elif isinstance(metric, Metric):
-            self._processed_metrics.add_metric(metric)
+            self._unprocessed_metrics.append(metric)
+        else:
+            raise Exception("Invalid metric type")
     
     def add_metrics(self, metrics: list[Metric | ComputableMetric]):
         for metric in metrics:
@@ -68,23 +62,64 @@ class StatMetricCompiler:
             
         for tweet in tweets_cursor:
             tweet = Tweet(as_json=tweet)
-            for metric in self._update_over_tweet_metrics:
-                metric.update_over_tweet(tweet)
+            for metric in self._over_tweet_metrics:
+                metric.tweet_update(tweet)
+        
+        self._unprocessed_metrics.extend(self._over_tweet_metrics)
                 
                 
     def Process(self):
-        for metric_generator in self._metric_generators:
-            metrics = metric_generator.generate_metrics(self._tweet_analytics_helper, self._processed_metrics)
-            self.add_metrics(metrics)
+        self._process_tweets()
         
-        if len(self._update_over_tweet_metrics) > 0:
-            self._process_tweets()
+        ordered_metrics: list[Metric] = self.topological_sort(self._unprocessed_metrics)
+        
+        
+        for metric in ordered_metrics:
+            if isinstance(metric, DependentMetric):
+                metric.set_metric_container(self._processed_metrics)
+                
+            if isinstance(metric, MetricGenerator):
+                metrics = metric.generate_and_validate(self._tweet_analytics_helper)
+                for metric in metrics:
+                    self._processed_metrics.add_metric(metric)
+                    
+            elif isinstance(metric, ComputableMetric):
+                metric.final_update(self._tweet_analytics_helper) 
+                self._processed_metrics.add_metric(metric)
             
-        for metric in self._unprocessed_metrics:
-            metric.final_update(self._tweet_analytics_helper, self._processed_metrics)
-            self._processed_metrics.add_metric(metric)
+          
+    def topological_sort(self, metrics: list[Metric]) -> list[Metric | MetricGenerator]:
+        # Create a mapping from each metric name/alias to the Metric object
+        name_to_metric = {}
+        
+        for metric in metrics:
             
+            if isinstance(metric, Metric):
+                name_to_metric[metric.get_metric_name()] = metric
+                
+            elif isinstance(metric, MetricGenerator):
+                for name in metric.get_created_stat_names():
+                    name_to_metric[name] = metric
+
+        visited = set()
+        result = []
+
+        def visit(metric: Metric):
+            if metric in visited:
+                return
+            visited.add(metric)
             
+            if isinstance(metric, DependentMetric):
+                for dep_name in metric.get_dependencies():
+                    if dep_name in name_to_metric:
+                        visit(name_to_metric[dep_name])
+            result.append(metric)
+
+        for metric in metrics:
+            visit(metric)
+
+        return result[::-1]
+  
     def to_json(self):
         for value in self._processed_metrics.get_metrics().values():
             for k, v in value.items():
