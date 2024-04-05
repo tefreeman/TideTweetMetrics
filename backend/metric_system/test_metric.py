@@ -17,7 +17,7 @@ smc = StatMetricCompiler(True)
 smc.add_metric(GenLikesPerFollower())
 smc.add_metric(StandardProfileStatGenerator())
 
-#smc.add_uncompiled_metric(WordFrequencyMetric())
+smc.add_metric(WordFrequencyMetric())
 
 smc.Process()
 

@@ -118,7 +118,7 @@ class StatMetricCompiler:
         for metric in metrics:
             visit(metric)
 
-        return result[::-1]
+        return result
   
     def to_json(self):
         for value in self._processed_metrics.get_metrics().values():

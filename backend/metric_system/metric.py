@@ -23,13 +23,14 @@ class Metric(ABC):
     def get_data(self):
         return self.metric_encoder.get_dataset()
     
-    def set_data(self):
-        return self.metric_encoder.set_dataset()
+    def set_data(self, data):
+        return self.metric_encoder.set_dataset(data)
 
     
 # Metrics that need to be computed
 # These metrics can be computed from the data in the tweet
 # or from the data in the stat helper
+
 class ComputableMetric(Metric, ABC):
     def final_update(self, stat_helper: TweetAnalyticsHelper):
         raise Exception("Method not implemented")
