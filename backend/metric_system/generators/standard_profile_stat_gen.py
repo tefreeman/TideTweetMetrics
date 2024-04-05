@@ -1,6 +1,6 @@
 from typing import Callable, Any, List, Dict
 import numpy as np
-from backend.metric_system.metric import MetricGenerator, Metric
+from backend.metric_system.metric import MetricGenerator, Metric, DependentMetric
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 
@@ -20,17 +20,19 @@ _STAT_NAMES = [
 class StandardProfileStatGenerator(MetricGenerator):
     """Generates standard statistical metrics for profiles."""
     def __init__(self) -> None:
-        super().__init__()
+        prop_list = ProfileWithTweetProperties.get_properties_list()
+        stat_names_out = [f"{prop}_{stat_name}" for prop in prop_list for stat_name, _ in _STAT_NAMES]
+        super().__init__(stat_names_out) 
         
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> List[Metric]:
         """Generate metrics for all profiles."""
         return StandardProfileStatGenerator.gen_standard_stats_for_all_profiles(stat_helper)
     
     @staticmethod
-    def gen_standard_stats_for_all_profiles(pta: TweetAnalyticsHelper) -> List[Metric]:
+    def gen_standard_stats_for_all_profiles(stat_helper: TweetAnalyticsHelper) -> List[Metric]:
         """Generate standard stats for all profiles in the analytics data."""
         metrics = []
-        for profile_plus in pta.get_all_profiles().values():
+        for profile_plus in stat_helper.get_all_profiles().values():
             metrics += StandardProfileStatGenerator.gen_standard_stats_for_profile(profile_plus)
         return metrics
 
