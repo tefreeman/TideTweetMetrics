@@ -12,11 +12,11 @@ Config.init()
 
 
 
-smc = StatMetricCompiler()
+smc = StatMetricCompiler(True)
 
+smc.add_metric(GenLikesPerFollower())
+smc.add_metric(StandardProfileStatGenerator())
 
-smc.add_metric_generator(StandardProfileStatGenerator())
-smc.add_metric_generator(GenLikesPerFollower())
 #smc.add_uncompiled_metric(WordFrequencyMetric())
 
 smc.Process()
