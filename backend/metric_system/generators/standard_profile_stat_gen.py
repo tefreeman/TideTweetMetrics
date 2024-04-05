@@ -19,8 +19,10 @@ _STAT_NAMES = [
 
 class StandardProfileStatGenerator(MetricGenerator):
     """Generates standard statistical metrics for profiles."""
-
-    def generate_metrics(self, stat_helper: TweetAnalyticsHelper, previous_metrics: Dict[str, Metric]) -> List[Metric]:
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> List[Metric]:
         """Generate metrics for all profiles."""
         return StandardProfileStatGenerator.gen_standard_stats_for_all_profiles(stat_helper)
     
@@ -45,7 +47,7 @@ class StandardProfileStatGenerator(MetricGenerator):
                 if len(arr) == 0:
                     continue
                 
-                metric.metric_encoder.set_dataset(stat_func(arr))
+                metric.set_data(stat_func(arr))
                 metrics.append(metric)
         
         return metrics

@@ -34,7 +34,8 @@ class WordFrequencyMetric(ComputableMetric):
     def final_update(self, stat_helper, previous_metrics):
         values = [(key, val) for key, val in self.words.items()]
         values.sort(key=lambda x: x[1], reverse=True)
-        self.metric_encoder.set_dataset(values[:self.return_count])
+
+        self.set_data(values[:self.return_count])
         
         self.words = {}
         self.stop_words = None
