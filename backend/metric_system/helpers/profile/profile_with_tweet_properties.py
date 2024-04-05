@@ -28,29 +28,31 @@ def _default_property_extractor():
        )
        
 class ProfileWithTweetProperties(Profile):
+    _properties_to_extract = _default_property_extractor()
+    _properties_to_list = [prop[0] for prop in _properties_to_extract]
+    _property_to_index = {prop[0]: i for i, prop in enumerate(_properties_to_extract)}
+    
     def __init__(self, as_json: dict = None) -> None:
         super().__init__(as_json=as_json)
-        self._properties_to_extract = _default_property_extractor()
         self._tweet_data_matrix = None
-        self._property_to_index = {prop[0]: i for i, prop in enumerate(self._properties_to_extract)}
-        self._properties_to_list = [prop[0] for prop in self._properties_to_extract]
     
     
     def _initialize_properties(self, tweet_count):  
-        self._tweet_data_matrix = np.zeros((len(self._properties_to_extract), tweet_count), dtype=np.int16)
+        self._tweet_data_matrix = np.zeros((len(ProfileWithTweetProperties._properties_to_extract), tweet_count), dtype=np.int16)
     
     
     def build_stats(self, tweets: list[Tweet]):
         self._initialize_properties(len(tweets))
         for tweet_cnt, tweet in enumerate(tweets):
-            for prop_i, val in enumerate(self._properties_to_extract):
+            for prop_i, val in enumerate(ProfileWithTweetProperties._properties_to_extract):
                 self._tweet_data_matrix[prop_i][tweet_cnt] = val[1](tweet)
 
-    def get_properties_list(self):
-        return self._properties_to_list
+    @staticmethod
+    def get_properties_list():
+        return ProfileWithTweetProperties._properties_to_list
     
     def get_tweet_property(self, property_name: str):
-        return self._tweet_data_matrix[self._property_to_index[property_name]]
+        return self._tweet_data_matrix[ProfileWithTweetProperties._property_to_index[property_name]]
     
     def get_tweet_likes_np_array(self):
         return self._tweet_data_matrix[:, 0]
