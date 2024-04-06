@@ -1,6 +1,6 @@
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 from backend.metric_system.helpers.profile.standard_profile_stat_gen import BasicMetricGenerator
-from backend.metric_system.metrics_compiler import StatMetricCompiler
+from backend.metric_system.compiler.metrics_compiler import StatMetricCompiler
 from backend.config import Config
 import numpy as np
 
@@ -20,7 +20,7 @@ for prop in all_props:
         test.add_pre_processed_metric(metric)
 
 
-test.Process()
+test.process()
 
 print("done")
 
