@@ -141,4 +141,6 @@ class TestDatabase(TestCase):
 # Main function
 if __name__ == "__main__":
     Config.init()
-    # Run the unit tests
+    TestDatabase().test_0_init_database()
+    print(get_crawl_list())
+    client.close()
