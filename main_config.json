@@ -1,6 +1,6 @@
 {
     "DB": {
-        "HOST": "10.0.0.28",
+        "HOST": "73.58.28.154",
         "PORT": 27017,
         "NAME": "twitter_v2",
         "USER": "Admin",
