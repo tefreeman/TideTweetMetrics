@@ -5,7 +5,7 @@ import {MatCardModule} from '@angular/material/card';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatGridListModule, MatCardModule],
+  imports: [MatGridListModule, MatCardModule, NgFor],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
