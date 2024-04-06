@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import {
   Auth,
   GoogleAuthProvider,
@@ -6,22 +6,34 @@ import {
   UserCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
   authState,
   idToken,
   user
 } from '@angular/fire/auth';
 
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService implements OnDestroy{
+
   private _auth = inject(Auth);
 
 
   authState$ = authState(this._auth);
   user$ = user(this._auth);
   idToken$ = idToken(this._auth);
+  userSubscription: Subscription;
 
-  byGoogle(): Promise<UserCredential> {
-    return signInWithPopup(this._auth, new GoogleAuthProvider());
+  constructor(private router: Router) {
+    this.userSubscription = this.user$.subscribe((user) => {
+      if (user) {
+        this.router.navigate(['dashboard']);
+      } else {
+        this.router.navigate(['login']);
+      }
+    });
   }
 
   signup(email: string, password: string): Promise<UserCredential> {
@@ -39,4 +51,12 @@ export class AuthService {
         password.trim()
       );
     }
+  signout(): Promise<void> {
+    return signOut(this._auth);
+  }
+
+  ngOnDestroy() {
+    // when manually subscribing to an observable remember to unsubscribe in ngOnDestroy
+    this.userSubscription.unsubscribe();
+  }
 }

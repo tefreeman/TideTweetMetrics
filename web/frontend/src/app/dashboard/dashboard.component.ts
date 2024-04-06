@@ -2,6 +2,8 @@ import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
+import { AuthService } from '../auth.service';
+import { inject } from '@angular/core';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
