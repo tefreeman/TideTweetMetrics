@@ -12,6 +12,16 @@ class MetricContainer:
             
         self._metrics[metric.get_metric_name()][metric.get_owner()] = metric
     
+    def remove_error_metrics(self):
+        keys_to_remove = []
+        for metric_name, owner_metrics in self._metrics.items():
+            for owner, metric in owner_metrics.items():
+                if metric.is_error():
+                    keys_to_remove.append((metric_name, owner))
+        
+        for key in keys_to_remove:
+            del self._metrics[key[0]][key[1]]
+            
     def get_metrics(self) -> Dict[str, Dict[str, 'Metric']]:
         return self._metrics
     
