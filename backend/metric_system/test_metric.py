@@ -17,12 +17,16 @@ smc = StatMetricCompiler()
 
 smc.add_metric(GenLikesPerFollower())
 smc.add_metric(StandardProfileStatGenerator())
-#smc.add_metric(WordFrequencyMetric())
+smc.add_metric(WordFrequencyMetric())
 
 smc.add_metric(PearsonCorrelationProfileStatGenerator())
 smc.process()
 
 
+json = smc.to_json()
+
+with open("ex_metric_out.json", "w") as f:
+    f.write(json)
 
 
 print("done")

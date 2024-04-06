@@ -38,6 +38,7 @@ class Metric(ABC):
 # or from the data in the stat helper
 
 class ComputableMetric(Metric, ABC):
+    @abstractmethod
     def final_update(self, stat_helper: TweetAnalyticsHelper):
         raise Exception("Method not implemented")
 

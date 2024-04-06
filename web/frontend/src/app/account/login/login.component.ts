@@ -1,12 +1,12 @@
 import { Component, inject} from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../auth.service';
 import { FormControl, Validators, FormGroup, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,8 @@ import { Router } from '@angular/router';
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatButton],
+    MatButton,
+    RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -37,7 +38,7 @@ export class LoginComponent {
       const { email, password } = this.loginForm.value;
       this._service
         .login(email!, password!)
-        .then(() => setInterval(() => this.router.navigate(['/'])))
+        .then(() => this.router.navigate(['/dashboard']))
         .catch((error) => {
           console.error('User creation failed!', error);
           this.errorMessage = 'User creation failed! Please try again.';
