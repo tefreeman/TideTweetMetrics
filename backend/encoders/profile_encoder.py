@@ -117,20 +117,33 @@ class Profile(DataEncoder):
     def set_public_metrics(
         self, followers_count, following_count, tweet_count, like_count
     ):
+        
         self._object["public_metrics"] = {}
+        
+        
+        if isinstance(followers_count, str) and isinstance(following_count, str) and isinstance(tweet_count, str) and isinstance(like_count, str):
 
-        self._object["public_metrics"]["followers_count"] = int(
-            followers_count.replace(",", "")
-        )
-        self._object["public_metrics"]["following_count"] = int(
-            following_count.replace(",", "")
-        )
-        self._object["public_metrics"]["tweet_count"] = int(
-            tweet_count.replace(",", "")
-        )
-        self._object["public_metrics"]["like_count"] = int(like_count.replace(",", ""))
-
-        self._set_fields.add("public_metrics")
+            self._object["public_metrics"]["followers_count"] = int(
+                followers_count.replace(",", "")
+            )
+            self._object["public_metrics"]["following_count"] = int(
+                following_count.replace(",", "")
+            )
+            self._object["public_metrics"]["tweet_count"] = int(
+                tweet_count.replace(",", "")
+            )
+            self._object["public_metrics"]["like_count"] = int(like_count.replace(",", ""))
+            self._set_fields.add("public_metrics")
+            
+        elif isinstance(followers_count, int) and isinstance(following_count, int) and isinstance(tweet_count, int) and isinstance(like_count, int):
+            self._object["public_metrics"]["followers_count"] = followers_count
+            self._object["public_metrics"]["following_count"] = following_count
+            self._object["public_metrics"]["tweet_count"] = tweet_count
+            self._object["public_metrics"]["like_count"] = like_count
+            self._set_fields.add("public_metrics")
+        
+        else:
+            raise ValueError("Invalid type for public metrics")
 
     def get_public_metrics(self):
         return self._object["public_metrics"]

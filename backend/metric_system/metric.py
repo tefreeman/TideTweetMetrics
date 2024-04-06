@@ -2,7 +2,7 @@ from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
 from backend.encoders.metric_encoder import MetricEncoder
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
-from backend.metric_system.metric_container import MetricContainer
+from backend.metric_system.compiler.metric_container import MetricContainer
 
 
 from abc import ABC, abstractmethod
@@ -13,6 +13,7 @@ class Metric(ABC):
         self.metric_encoder: MetricEncoder = MetricEncoder()
         self._owner = owner
         self._metric_name = metric_name
+        self._error = False
         
     def get_metric_name(self) -> str:
         return self._metric_name
@@ -26,6 +27,11 @@ class Metric(ABC):
     def set_data(self, data):
         return self.metric_encoder.set_dataset(data)
 
+    def is_error(self) -> bool:
+        return self._error
+    
+    def flag_as_error(self):
+        self._error = True
     
 # Metrics that need to be computed
 # These metrics can be computed from the data in the tweet

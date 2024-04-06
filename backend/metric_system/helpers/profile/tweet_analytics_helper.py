@@ -24,28 +24,18 @@ class TweetAnalyticsHelper:
         return list(db["profiles"].find({}))
 
 
-    def _compute_global_stats_over_all_profiles(self):
-        global_profile = ProfileWithTweetProperties()
-        global_profile.set_username("global")
-        tweets = None
-        if self._limit_for_debug:
-            tweets = self._tweets_col.find({}).sort(
-                "data.created_at", ASCENDING
-            ).limit(20)
-        else:
-            tweets = self._tweets_col.find({}).sort(
-                    "data.created_at", ASCENDING
-                )
-
-        global_profile.build_stats([Tweet(as_json=tweet) for tweet in tweets])
-        
-        self._profile_store["global"] = global_profile
         
         
     def _compute_stats_for_all_profiles(self):
+        global_profile = ProfileWithTweetProperties()
+        global_profile.set_public_metrics(0,0,0,0)
+        global_profile.set_username("_global")
+        
         profiles = self._load_profiles()
+        
         for profile in profiles:
             profile_stat = ProfileWithTweetProperties(as_json=profile)
+            global_profile.merge_public_metrics(profile_stat)
             
             tweets = None
             if self._limit_for_debug:
@@ -61,13 +51,17 @@ class TweetAnalyticsHelper:
                     )
                 )
                 
-            profile_stat.build_stats([Tweet(as_json=tweet) for tweet in tweets])
+            profile_tweets = [Tweet(as_json=tweet) for tweet in tweets]
+            
+            profile_stat.build_stats(profile_tweets, is_sorted=True)
+            global_profile.build_stats(profile_tweets, is_sorted=False) # profiles are sorted but multiple profiles are not sorted with respect to each other            
+            
             self._profile_store[profile_stat.get_username()] = profile_stat
 
+        self._profile_store[global_profile.get_username()] = global_profile
         self._has_built = True
     
     def build(self):
-       # self._compute_global_stats_over_all_profiles() TODO: REDO this
         self._compute_stats_for_all_profiles()
         
     def get_profile(self, username: str) -> ProfileWithTweetProperties:

@@ -1,12 +1,11 @@
-from .metric import Metric, ComputableMetric, MetricGenerator, OverTweetMetric, DependentMetric
+from ..metric import Metric, ComputableMetric, MetricGenerator, OverTweetMetric, DependentMetric
 from backend.config import Config
 from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
-from backend.encoders.profile_encoder import Profile
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 import json
-from backend.metric_system.np_seralizer import numpy_json_serializer
-from backend.metric_system.metric_container import MetricContainer
+from backend.metric_system.compiler.np_seralizer import numpy_json_serializer
+from backend.metric_system.compiler.metric_container import MetricContainer
 
     
 class StatMetricCompiler:
@@ -16,10 +15,8 @@ class StatMetricCompiler:
         self._tweet_analytics_helper = TweetAnalyticsHelper(debug_mode)
         self._tweet_analytics_helper.build()
         
-        # Metrics that have been computed
-        # These metrics are ready to be to.json and send to the frontend
-        self._processed_metrics: MetricContainer = MetricContainer()
-        
+
+        self._processed_metrics: MetricContainer = MetricContainer()        
         self._unprocessed_metrics: list[Metric | MetricGenerator] = []
         self._over_tweet_metrics: list[OverTweetMetric] = []
 
@@ -34,19 +31,17 @@ class StatMetricCompiler:
         
         
     def add_metric(self, metric: tuple[Metric | ComputableMetric]):
-        if isinstance(metric, Metric) and type(metric) is Metric:
-            self._processed_metrics.add_metric(metric)
-     
-        if isinstance(metric, OverTweetMetric):
-            self._over_tweet_metrics.append(metric)  
-              
-        elif isinstance(metric, (ComputableMetric, MetricGenerator)):
+        if isinstance(metric, Metric):
+            if isinstance(metric, OverTweetMetric):
+                self._over_tweet_metrics.append(metric)
+            elif isinstance(metric, ComputableMetric):
+                self._unprocessed_metrics.append(metric)
+            else:
+                self._processed_metrics.add_metric(metric)
+        elif isinstance(metric, MetricGenerator):
             self._unprocessed_metrics.append(metric)
-        
-        elif isinstance(metric, Metric):
-            self._unprocessed_metrics.append(metric)
-        else:
-            raise Exception("Invalid metric type")
+        else:    
+            raise TypeError("Invalid metric type")
     
     def add_metrics(self, metrics: list[Metric | ComputableMetric]):
         for metric in metrics:
@@ -68,7 +63,7 @@ class StatMetricCompiler:
         self._unprocessed_metrics.extend(self._over_tweet_metrics)
                 
                 
-    def Process(self):
+    def process(self):
         self._process_tweets()
         
         ordered_metrics: list[Metric] = self.topological_sort(self._unprocessed_metrics)
