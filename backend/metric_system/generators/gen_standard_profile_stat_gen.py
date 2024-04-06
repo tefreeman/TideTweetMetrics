@@ -14,23 +14,20 @@ _STAT_NAMES = [
     ('count', len),
     ('median', np.median),
     ('25th_percentile', lambda x: np.percentile(x, 25)),
-    ('75th_percentile', lambda x: np.percentile(x, 75))
+    ('75th_percentile', lambda x: np.percentile(x, 75)),
 ]
 
 class StandardProfileStatGenerator(MetricGenerator):
-    """Generates standard statistical metrics for profiles."""
     def __init__(self) -> None:
         prop_list = ProfileWithTweetProperties.get_properties_list()
         stat_names_out = [f"{prop}_{stat_name}" for prop in prop_list for stat_name, _ in _STAT_NAMES]
         super().__init__(stat_names_out) 
         
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> List[Metric]:
-        """Generate metrics for all profiles."""
         return StandardProfileStatGenerator.gen_standard_stats_for_all_profiles(stat_helper)
     
     @staticmethod
     def gen_standard_stats_for_all_profiles(stat_helper: TweetAnalyticsHelper) -> List[Metric]:
-        """Generate standard stats for all profiles in the analytics data."""
         metrics = []
         for profile_plus in stat_helper.get_all_profiles().values():
             metrics += StandardProfileStatGenerator.gen_standard_stats_for_profile(profile_plus)
@@ -38,7 +35,6 @@ class StandardProfileStatGenerator(MetricGenerator):
 
     @staticmethod
     def gen_standard_stats_for_profile(profile_plus: ProfileWithTweetProperties) -> List[Metric]:
-        """Generate standard stats for a single profile."""
         metrics = []
         
         for tweet_property in profile_plus.get_properties_list():
@@ -48,10 +44,11 @@ class StandardProfileStatGenerator(MetricGenerator):
                 
                 if len(arr) == 0:
                     continue
-                
+    
                 metric.set_data(stat_func(arr))
                 metrics.append(metric)
-        
+                
+    
         return metrics
         
         
