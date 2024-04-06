@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../auth.service';
 import { FormControl, Validators, FormGroup, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 @Component({
-  selector: 'app-app-register',
+  selector: 'app-register',
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -18,10 +18,10 @@ import { Router } from '@angular/router';
     MatCardModule,
     MatButton
   ],
-  templateUrl: './app-register.component.html',
-  styleUrls: ['./app-register.component.scss']
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
-export class AppRegisterComponent {
+export class RegisterComponent {
   private _service = inject(AuthService);
 
   constructor(private router: Router) {}
