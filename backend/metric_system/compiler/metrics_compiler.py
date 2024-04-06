@@ -116,10 +116,11 @@ class StatMetricCompiler:
         return result
   
     def to_json(self):
-        for value in self._processed_metrics.get_metrics().values():
-            for k, v in value.items():
-                if value[k].is_error():
-                    del value[k] #TODO: Log error
-                value[k] = v.get_data()
+        self._processed_metrics.remove_error_metrics()
+        for owner_metrics in self._processed_metrics.get_metrics().values():
+            for owner, metric in owner_metrics.items():
+                owner_metrics[owner] = metric.get_data()
+            
+
                 
-        return json.dumps(self._processed_metrics, default=numpy_json_serializer)
+        return json.dumps(self._processed_metrics.get_metrics(), default=numpy_json_serializer)
