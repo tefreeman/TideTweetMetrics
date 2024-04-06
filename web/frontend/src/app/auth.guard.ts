@@ -1,23 +1,21 @@
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn, Router  } from '@angular/router';
 import { AuthService } from './auth.service';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable, take, tap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
 
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+export const AuthGuard: CanActivateFn = (route, state) => {
+  const authService: AuthService = inject(AuthService);
+  const router: Router = inject(Router);
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
-    return this.authService.authState$.pipe(
-      take(1), // Take only the first emission from the observable and complete
-      map(authState => !!authState), // Map the authState to true if it exists, otherwise false
-      // You could also redirect the user if not authenticated using a tap() operator here if needed
-    );
-  }
-}
+  return authService.authState$.pipe(
+    take(1), // Take only the first emission from the observable and complete
+    map(authState => !!authState), // Map the authState to true if it exists, otherwise false
+    tap(isAuthenticated => {
+      if (!isAuthenticated) {
+        router.navigate(['/login']); // Redirect to login if not authenticated
+      }
+    })
+  );
+};
+

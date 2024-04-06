@@ -1,3 +1,4 @@
+import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import {
   Auth,
@@ -9,17 +10,21 @@ import {
   signOut,
   authState,
   idToken,
-  user
+  user,
 } from '@angular/fire/auth';
 
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements OnDestroy{
 
+  //TODO - DON"T FORGET TO RECONFIG CORS FOR STORAGE BUCKET
+  // IT"S SET TO ALLOW ALL VERY INSECURE
+  private _storage = inject(Storage);
   private _auth = inject(Auth);
-
+  private httpclient = inject(HttpClient);
 
   authState$ = authState(this._auth);
   user$ = user(this._auth);
@@ -43,12 +48,22 @@ export class AuthService implements OnDestroy{
         password.trim()
       );
     }
-  signout(): Promise<void> {
-    return signOut(this._auth);
+  signout(): void {
+    signOut(this._auth).then(() => {
+      this.router.navigate(['/']);
+    });
   }
 
+  getChartData(): void {
+    console.log('getting chart data')
+    getDownloadURL(ref(this._storage, 'ex_metric_out.json')).then((url) => {
+      this.httpclient.get(url).subscribe((data) => {
+        console.log(data);
+      });
+  });
+}
   ngOnDestroy() {
     // when manually subscribing to an observable remember to unsubscribe in ngOnDestroy
-    
+
   }
 }

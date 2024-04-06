@@ -12,5 +12,9 @@ import { inject } from '@angular/core';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  _auth = inject(AuthService);
 
+  tryGetFile(): void {
+    this._auth.getChartData();
+  }
 }
