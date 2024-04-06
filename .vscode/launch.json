@@ -1,0 +1,29 @@
+{
+    "configurations": [
+    {
+            "name": "Python: Current File (Root)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+    },
+      {
+        "name": "Python Debugger: Current File (Integrated Terminal)",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${file}",
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "Python Debugger: Current File (External Terminal)",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${file}",
+        "cwd": "${workspaceFolder}",
+        "console": "externalTerminal"
+      }
+    ]
+  }
+  
