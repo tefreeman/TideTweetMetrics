@@ -24,16 +24,8 @@ export class AuthService implements OnDestroy{
   authState$ = authState(this._auth);
   user$ = user(this._auth);
   idToken$ = idToken(this._auth);
-  userSubscription: Subscription;
 
   constructor(private router: Router) {
-    this.userSubscription = this.user$.subscribe((user) => {
-      if (user) {
-        this.router.navigate(['dashboard']);
-      } else {
-        this.router.navigate(['login']);
-      }
-    });
   }
 
   signup(email: string, password: string): Promise<UserCredential> {
@@ -57,6 +49,6 @@ export class AuthService implements OnDestroy{
 
   ngOnDestroy() {
     // when manually subscribing to an observable remember to unsubscribe in ngOnDestroy
-    this.userSubscription.unsubscribe();
+    
   }
 }
