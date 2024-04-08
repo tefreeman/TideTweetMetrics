@@ -6,6 +6,8 @@ from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.meta_encoder import MetaData
 from backend.encoders.profile_encoder import Profile
 from backend.crawler_sys import database as Database
+from unittest import TestCase
+from backend.crawler_sys.database import _update_tweet
 
 
 # def init_database(name=None):
@@ -122,11 +124,44 @@ class TestDatabase(TestCase):
         dbTweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
         self.assertEqual(dbTweet["data"]["text"], "This is a tweet")
 
-    # # Update tweet test case
-    # def test_2_update_tweet(self):
-    #     self.test_1_insert_tweet()
+    def test_2_update_tweet(self):
+        # Create a dummy tweet object
+        curMD = MetaData()
+        curMD.set_errors([])
+        curMD.set_as_new()
+        tweet = {
+            "data": {
+                "id": "1234567890",
+                "text": "This is a tweet",
+                "created_at": "2021-10-10T10:10:10.000Z",
+                "author_id": "1234567890",
+                "public_metrics": {
+                    "retweet_count": 1,
+                    "reply_count": 2,
+                    "like_count": 3,
+                },
+                "entities": {
+                    "mentions": [],
+                    "urls": [],
+                    "hashtags": [],
+                    "annotations": [],
+                },
+                "attachments": {"media_keys": []},
+            },
+            "includes": {},
+            "imeta": curMD.to_json_dict(),
+        }
 
-    # # Find and delete test case
+        curTweet = Tweet(as_json=tweet, ignore_required=True)
+        # Call the _update_tweet() function
+        updated_tweet = _update_tweet(curTweet)
+
+        # Assert that the tweet has been updated correctly
+        self.assertEqual(updated_tweet["data"]["retweet_count"], 1)
+        self.assertEqual(updated_tweet["data"]["reply_count"], 2)
+        self.assertEqual(updated_tweet["data"]["like_count"], 3)
+
+    # Find and delete test case
     # def test_3_find_delete(self):
     #     tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
     #     tweet_update = Database.db["tweet_updates"].find_one(
@@ -139,7 +174,13 @@ class TestDatabase(TestCase):
     #     Database.db["tweets"].delete_one({"_id": tweet["_id"]})
     #     Database.db["tweet_updates"].delete_one({"_id": tweet_update["_id"]})
 
-    #     tweet = Database.db["tweets"].find_one({"data.id": "
+    #     tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
+    #     tweet_update = Database.db["tweet_updates"].find_one(
+    #         {"imeta.oid": "1234567890"}
+    #     )
+
+    #     self.assertEqual(tweet, None)
+    #     self.assertEqual(tweet_update, None)
 
 
 """
