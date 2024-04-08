@@ -138,6 +138,11 @@ class TestDatabase(TestCase):
     #     tweet = Database.db["tweets"].find_one({"data.id": "
 
 
+"""
+Create a tweet using the encoder. Set username, set contents, set... Then upload it.
+"""
+
+
 # Main function
 if __name__ == "__main__":
     Config.init()
