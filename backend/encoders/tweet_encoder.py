@@ -10,7 +10,7 @@ import pytz
 
 
 class Tweet(DataEncoder):
-    def __init__(self, as_json=None, changes_json=None, ignore_required=False) -> None:
+    def __init__(self, as_json:dict=None, changes_json=None, ignore_required=False) -> None:
         self._object = {}
         self._includes = {}
         self._meta = MetaData()
