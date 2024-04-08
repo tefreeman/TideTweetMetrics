@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { ChartData, ChartOptions} from 'chart.js';
+import { ChartData, ChartOptions, Chart} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
+import { Colors } from 'chart.js';
+
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
@@ -9,6 +11,12 @@ import {BaseChartDirective} from 'ng2-charts';
   styleUrl: './bar-chart.component.scss'
 })
 export class BarChartComponent {
+
+
+  constructor() {
+    Chart.register(Colors);
+  }
+
 
   type = 'bar';
 
@@ -24,14 +32,42 @@ export class BarChartComponent {
       }
     ]
   };
-
     options: ChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 1.5,
+      resizeDelay: 300,
+      
+      plugins: {
+        colors: {
+          enabled: true,
+          forceOverride: true
+        },
+        
+      },
+
       scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'X Axis',
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        },
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Y Axis',
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
         }
       }
     };
   }
-
-
