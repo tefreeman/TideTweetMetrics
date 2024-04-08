@@ -1,7 +1,7 @@
 from bson import ObjectId
 from pymongo import MongoClient
-from encoders.tweet_encoder import Tweet
-from encoders.profile_encoder import Profile
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
 import datetime
 from backend.config import Config
 
