@@ -2,12 +2,12 @@ import { NgFor, NgIf,} from '@angular/common';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../core/services/auth.service';
 import { inject } from '@angular/core';
-import { GraphRequest, GraphService } from '../graph/graph.service';
-import { DatacardComponent } from './datacard/datacard.component';
+import { GraphRequest, GraphService } from '../core/services/graph.service';
+import { DatacardComponent } from '../data-displays/datacard/datacard.component';
 import {MatDividerModule} from '@angular/material/divider';
-import { BarChartComponent } from './graphs/bar-chart/bar-chart.component';
+import { BarChartComponent } from '../data-displays/graphs/bar-chart/bar-chart.component';
 import { fromEvent, Subscription, tap, throttleTime } from 'rxjs';
 
 interface Card {
