@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { GraphRequest, GraphService, MetricValue } from '../../graph/graph.service';
+import { GraphRequest, GraphService, MetricValue } from '../../core/services/graph.service';
 import { MatCard } from '@angular/material/card';
 import { StaticValueComponent } from './static-value/static-value.component';
 @Component({
