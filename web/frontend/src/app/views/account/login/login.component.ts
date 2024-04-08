@@ -1,15 +1,16 @@
-import { Component, HostListener, inject } from '@angular/core';
-import { AuthService } from '../../auth.service';
+import { Component, HostListener, inject} from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
 import { FormControl, Validators, FormGroup, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule, MatCardTitle } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink} from '@angular/router';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+
 @Component({
-  selector: 'app-register',
+  selector: 'app-login',
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -18,15 +19,19 @@ import { MatGridList, MatGridTile } from '@angular/material/grid-list';
     ReactiveFormsModule,
     MatCardModule,
     MatButton,
+    RouterLink,
     MatGridList,
     MatGridTile
   ],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
 })
-export class RegisterComponent {
+export class LoginComponent {
   private _service = inject(AuthService);
+  errorMessage = '';
+
   public cols: number = 2;
+
   constructor(private router: Router) {
     this.adjustGridColumns(window.innerWidth);
   }
@@ -40,31 +45,20 @@ export class RegisterComponent {
     // Example: Switch to 1 column if the width is less than 600px
     this.cols = innerWidth < 600 ? 1 : 2;
   }
-  // Define a custom validator to ensure that the two password fields match
-  passwordsMatchValidator: ValidatorFn = (group: AbstractControl<any, any>): ValidationErrors | null => {
-    const password1 = group.get('password1')!.value;
-    const password2 = group.get('password2')!.value;
-    return password1 === password2 ? null : { notMatching: true };
-  }
 
-
-  signupForm = new FormGroup({
+  loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password1: new FormControl('', [Validators.required, Validators.minLength(9)]),
-    password2: new FormControl('', [Validators.required, Validators.minLength(9)]),
-  }, { validators: this.passwordsMatchValidator });
-
-  errorMessage = '';
-
+    password: new FormControl('', [Validators.required, Validators.minLength(9)]),
+  })
 
   onSubmit(): void {
-    if (this.signupForm.valid) {
-      const { email, password1 } = this.signupForm.value;
+    if (this.loginForm.valid) {
+      const { email, password } = this.loginForm.value;
       this._service
-        .signup(email!, password1!)
-        .then(() => this.router.navigate(['/']))
+        .login(email!, password!)
+        .then(() => this.router.navigate(['/dashboard']))
         .catch((error) => {
-          console.error('Login Failed', error);
+          console.error('User creation failed!', error);
           this.errorMessage = 'User creation failed! Please try again.';
         });
     } else {

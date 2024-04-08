@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './account/register/register.component';
-import { MainViewComponent } from './main-view/main-view.component';
-import { LoginComponent } from './account/login/login.component';
-import { AuthGuard } from './auth.guard';
-import { HomeComponent } from './home/home.component';
+import { RegisterComponent } from './views/account/register/register.component';
+import { MainViewComponent } from './views/main-view/main-view.component';
+import { LoginComponent } from './views/account/login/login.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { HomeComponent } from './views/home/home.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MetricValue } from '../../../graph/graph.service';
+import { MetricValue } from '../../../core/services/graph.service';
 import { MatCardActions, MatCardHeader, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatDivider } from '@angular/material/divider';

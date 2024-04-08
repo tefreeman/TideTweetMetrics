@@ -15,7 +15,7 @@ import {
 
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { GraphService, Metrics } from './graph/graph.service';
+import { GraphService, Metrics } from './graph.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements OnDestroy{
