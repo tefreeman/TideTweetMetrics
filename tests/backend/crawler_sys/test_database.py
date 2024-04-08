@@ -87,8 +87,8 @@ class TestDatabase(TestCase):
         if self._init_flag:
             return
 
-        Database.init_database("TestDB")
-        sleep(2)
+        Database.init_database("TestDB", True)
+        sleep(0.5)
         collections = Database.db.list_collection_names()
         print(f"The database contains {len(collections)} collections.")
         self.assertEqual(len(collections), 9, "Database should contain 9 collections.")
@@ -125,7 +125,7 @@ class TestDatabase(TestCase):
         Database.upsert_tweets([curTweet])
         dbTweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
         self.assertEqual(dbTweet["data"]["text"], "This is a tweet")
-
+   
     def test_2_update_tweet(self):
         # Create a dummy tweet object
         curMD = MetaData()
@@ -159,8 +159,7 @@ class TestDatabase(TestCase):
         _update_tweet(curTweet)
 
         
-        dbTweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
-        original_tweet = Tweet(as_json=dbTweet, ignore_required=True)
+        original_tweet = Database.get_tweet_by_id("1234567890")        
         update_id = original_tweet.get_meta_ref().get_update_id()
         updated_tweet = Database.db["tweet_updates"].find_one({"_id": update_id})
         
@@ -204,5 +203,4 @@ if __name__ == "__main__":
     try:
         unittest.main()
     finally:
-        Database.client.drop_database("TestDB")
         Database.client.close()
