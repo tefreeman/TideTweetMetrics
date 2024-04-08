@@ -1,7 +1,8 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { GraphRequest, GraphService, MetricValue } from '../../core/services/graph.service';
 import { MatCard } from '@angular/material/card';
+
 import { StaticValueComponent } from './static-value/static-value.component';
+import { GraphRequest } from '../../core/interfaces/graphs-interface';
 @Component({
   selector: 'app-datacard',
   standalone: true,
@@ -11,15 +12,12 @@ import { StaticValueComponent } from './static-value/static-value.component';
 })
 export class DatacardComponent implements OnInit {
   @Input({required: true}) graphRequest!: GraphRequest;
-  graphService: GraphService = inject(GraphService);
 
-  metricValues: MetricValue[] = [];
 
   constructor() {
   }
 
   ngOnInit(): void {
-    this.metricValues = this.graphService.getMetricData(this.graphRequest.stat_name, this.graphRequest.owners);
-    console.log(this.metricValues);
+
   }
 }
