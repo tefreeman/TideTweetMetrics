@@ -9,7 +9,7 @@ client = None
 db = None
 
 
-def init_database(name=None):
+def init_database(name: str =None, start_fresh=False):
     global client, db
     client = MongoClient(
         Config.db_host(),
@@ -21,8 +21,14 @@ def init_database(name=None):
     db = client[db_name]
 
     collection_names = db.list_collection_names()
-    if len(collection_names) == 0:
+    if start_fresh and "test" in name.lower():
+        client.drop_database(db_name)
         _init_collections()
+    elif start_fresh and "test" not in name.lower():
+        print("NOT DROPPING DB: NEEDS TEST IN DB NAME")
+    else:
+        if len(collection_names) == 0:
+            _init_collections()
 
 
 def _init_collections():
@@ -76,6 +82,17 @@ def get_crawl_list() -> list[str]:
 
     return list(usernames)
 
+def get_tweet_by_id(tweet_id: str) -> Tweet:
+    collection = db["tweets"]
+    tweet = collection.find_one({"data.id": tweet_id})
+    return Tweet(as_json=tweet, ignore_required=True) #TODO: fix tihs 
+
+def get_tweets_by_user(username: str) -> list[dict]:
+    collection = db["tweets"]
+    tweets = []
+    for tweet in collection.find({"data.user.screen_name": username}):
+        tweets.append(tweet)
+    return tweets
 
 def add_crawl_summary(summary: dict):
     collection = db["crawl_summaries"]
