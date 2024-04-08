@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { MetricContainer } from '../classes/metric-container';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { HttpClient } from '@angular/common/http';
 import { MetricsInterface } from '../interfaces/metrics-interface';
@@ -13,14 +13,14 @@ export class MetricService {
   private _auth_service= inject(AuthService);
   
   public MetricContainer: MetricContainer = new MetricContainer();
-  public subject = new Subject<void>();
+  public subject = new BehaviorSubject<number>(0);
 
   constructor() {
     if(this.loadFromLocalStorage()) {
-      this.subject.next();
+      this.subject.next(1);
     } else {
       this.getChartData();
-      this.subject.next();
+      this.subject.next(1);
     }
   }
 
