@@ -1,6 +1,19 @@
-<!-- dashboard.component.html -->
-<mat-grid-list cols="2" rowHeight="2:1">
+
+<h1 class="mat-h1" style="text-align: center;">University of Alabama Stats</h1>
+<mat-divider></mat-divider>
+<mat-grid-list [cols]="data_cols" rowHeight="200px" gutterSize="16px">
   <mat-grid-tile *ngFor="let graphRequest of graphs">
-    <app-datacard [graphRequest]="graphRequest"></app-datacard>
+    <app-datacard style="width: 80%;" [graphRequest]="graphRequest"></app-datacard>
   </mat-grid-tile>
 </mat-grid-list>
+<mat-divider></mat-divider>
+
+
+<mat-grid-list [cols]="graph_cols" rowHeight="3:2">
+  <mat-grid-tile *ngFor="let graphRequest of graphs">
+    <mat-card style="width: 100%; padding: 24px; margin: 24px;">
+    <app-bar-chart style="width: 100%"></app-bar-chart>
+  </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+

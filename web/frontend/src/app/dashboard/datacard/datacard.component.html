@@ -1,5 +1,5 @@
 <mat-card>
 @if (graphRequest.type === "display") {
-  <app-static-value [owner]="graphRequest.owners[0]" [value]="metricValues[0]"></app-static-value>
+  <app-static-value [owner]="graphRequest.owners[0]" [value]="metricValues[0]" [metric]="graphRequest.stat_name"></app-static-value>
 }
 </mat-card>

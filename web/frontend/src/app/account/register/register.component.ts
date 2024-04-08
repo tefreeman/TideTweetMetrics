@@ -1,12 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { AuthService } from '../../auth.service';
 import { FormControl, Validators, FormGroup, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
+import { MatCardModule, MatCardTitle } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -16,15 +17,29 @@ import { Router } from '@angular/router';
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatButton
+    MatButton,
+    MatGridList,
+    MatGridTile
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   private _service = inject(AuthService);
+  public cols: number = 2;
+  constructor(private router: Router) {
+    this.adjustGridColumns(window.innerWidth);
+  }
 
-  constructor(private router: Router) {}
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.adjustGridColumns(event.target.innerWidth);
+  }
+
+  adjustGridColumns(innerWidth: number) {
+    // Example: Switch to 1 column if the width is less than 600px
+    this.cols = innerWidth < 600 ? 1 : 2;
+  }
   // Define a custom validator to ensure that the two password fields match
   passwordsMatchValidator: ValidatorFn = (group: AbstractControl<any, any>): ValidationErrors | null => {
     const password1 = group.get('password1')!.value;
