@@ -14,8 +14,8 @@ import {
 } from '@angular/fire/auth';
 
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { GraphService, Metrics } from './graph/graph.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements OnDestroy{
@@ -25,6 +25,7 @@ export class AuthService implements OnDestroy{
   private _storage = inject(Storage);
   private _auth = inject(Auth);
   private httpclient = inject(HttpClient);
+  private _graphService = inject(GraphService);
 
   authState$ = authState(this._auth);
   user$ = user(this._auth);
@@ -57,8 +58,9 @@ export class AuthService implements OnDestroy{
   getChartData(): void {
     console.log('getting chart data')
     getDownloadURL(ref(this._storage, 'ex_metric_out.json')).then((url) => {
-      this.httpclient.get(url).subscribe((data) => {
-        console.log(data);
+      this.httpclient.get<Metrics>(url).subscribe((data) => {
+        console.log("fired!", data);
+        this._graphService.setMetrics(data);
       });
   });
 }
