@@ -1,39 +1,47 @@
+"""
+stats.py
+
+This module contains functions for calculating various Twitter metrics.
+
+Functions:
+    - username_in_database: Checks if a username exists in the database.
+    - get_crawl_list: Retrieves a list of usernames from the crawl list collection.
+    - get_crawl_list_size: Retrieves the number of documents in the crawl list collection.
+    - get_profiles: Retrieves profile documents for specified usernames.
+    - get_avg_profile_data: Retrieves average public metric values for specified profiles.
+    - get_profile_tweet_metrics: Retrieves tweet metrics for a given username.
+    - get_all_profile_tweet_metrics: Retrieves tweet metrics for all profiles within a specified time period.
+    - get_post_length_metric: Explores correlation between tweet length and tweet performance.
+
+Usage:
+    - See individual function docstrings for usage examples.
+"""
+
 from pymongo import MongoClient
 import numpy as np
 import datetime
 
-
-# Username Verification
 def username_in_database(db, username):
+    """Checks if a username exists in the database."""
     collection = db["profiles"]
-    # If username is found, return true; else return false
     return collection.find_one({"username": username}) is not None
 
-
-# crawl_list functions
-
-
-## Return list of "username" from crawl_list collection
 def get_crawl_list(db=None):
+    """Retrieves a list of usernames from the crawl list collection."""
     if db is None:
         return "Error: No database specified in get_crawl_list() function"
     collection = db["profiles"]
     return [{"username": x["username"], "name": x["name"]} for x in collection.find({})]
 
-
-## Return number of documents in crawl_list collection
 def get_crawl_list_size(db=None):
+    """Retrieves the number of documents in the crawl list collection."""
     if db is None:
         return "Error: No database specified in get_crawl_list_size() function"
     collection = db["crawl_list"]
     return collection.count_documents({})
 
-
-# Profile Functions
-
-
-## Returns a list of complete profile documents for the specified usernames.
 def get_profiles(db=None, usernames=None):
+    """Retrieves profile documents for specified usernames."""
     if db is None:
         return "Error: No database specified in get_profile_name() function"
     collection = db["profiles"]
@@ -51,13 +59,10 @@ def get_profiles(db=None, usernames=None):
 
     return user_profiles
 
-
-## For a list of usernames, a dictionary of the average public metric values is returned.
 def get_avg_profile_data(db=None, usernames=None):
+    """Retrieves average public metric values for specified profiles."""
     if db is None:
-        raise Exception(
-            "Error: No database specified in get_profiles_avg_followers_count() function"
-        )
+        raise Exception("Error: No database specified in get_profiles_avg_followers_count() function")
 
     profiles = get_profiles(db=db, usernames=usernames)
 
@@ -79,27 +84,8 @@ def get_avg_profile_data(db=None, usernames=None):
         "like_count": likes_cnt / len(profiles),
     }
 
-
-# Tweet Functions
-
-
-## Returns either all tweets from a given username or all tweets from a given username within a specified time period.
-def _get_all_tweets_for_profile(db=None, username=None, time_period=None):
-    if db is None:
-        return "Error: No database specified in get_all_tweets_for_profile() function"
-
-    tweets_collection = db["tweets"]
-    if time_period is None:
-        return tweets_collection.find({"data.author_id": username})
-    else:
-        tp = datetime.datetime.now() - datetime.timedelta(weeks=time_period)
-        return tweets_collection.find(
-            {"data.author_id": username, "data.created_at": {"$gte": tp}}
-        )
-
-
-## Returns average stats per tweet for a given username (and time period, if specified).
 def get_profile_tweet_metrics(db=None, username=None, time_period=None):
+    """Retrieves tweet metrics for a given username."""
     if db is None:
         return "Error: No database specified in get_profile_name() function"
 
@@ -134,9 +120,8 @@ def get_profile_tweet_metrics(db=None, username=None, time_period=None):
         "avg_quote_count": total_quote_count / tweet_count,
     }
 
-
-## For a given time period, tweet metrics for all profiles are calculated.
 def get_all_profile_tweet_metrics(db=None, time_period=None):
+    """Retrieves tweet metrics for all profiles within a specified time period."""
     if db is None:
         return "Error: No database specified in get_profile_name() function"
 
@@ -152,9 +137,8 @@ def get_all_profile_tweet_metrics(db=None, time_period=None):
 
     return metrics
 
-
-## Used to explore correlation between tweet length and tweet performance.
 def get_post_length_metric(db=None, time_period=None):
+    """Explores correlation between tweet length and tweet performance."""
     if db is None:
         return "Error: No database specified in get_post_length_metric() function"
 
@@ -167,11 +151,8 @@ def get_post_length_metric(db=None, time_period=None):
             db=db, username=profile["username"], time_period=time_period
         )
         for tweet in tweets:
-            # Fix the indexing logic
             index = min(len(tweet["data"]["text"]), 499)
-            post_lengths_metric[index]["likes"] += tweet["data"]["public_metrics"][
-                "like_count"
-            ]
+            post_lengths_metric[index]["likes"] += tweet["data"]["public_metrics"]["like_count"]
             post_lengths_metric[index]["count"] += 1
 
     results = {}
@@ -184,10 +165,8 @@ def get_post_length_metric(db=None, time_period=None):
             item["count"] for item in post_lengths_metric[i : i + step_size]
         )
 
-        # Calculate likes divided by count for each range, avoiding division by zero
         metric = total_likes / total_count if total_count else 0
 
-        # Construct the key representing the range
         if i + step_size >= 500:
             key = f"{i}+"
         else:
@@ -196,14 +175,3 @@ def get_post_length_metric(db=None, time_period=None):
         results[key] = {"avg_likes": metric, "count": total_count}
 
     return results
-
-
-# Main function (for testing purposes)
-if __name__ == "__main__":
-    client = MongoClient(
-        "73.58.28.154",
-        port=27017,
-        username="Admin",
-        password="***REMOVED***",
-    )
-    db = client["twitter_v2"]
