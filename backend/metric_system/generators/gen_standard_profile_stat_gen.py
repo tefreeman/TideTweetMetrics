@@ -3,6 +3,7 @@ import numpy as np
 from backend.metric_system.metric import MetricGenerator, Metric, DependentMetric
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
+import logging
 
 # Define statistics names along with their corresponding functions.
 _STAT_NAMES = [
@@ -43,8 +44,10 @@ class StandardProfileStatGenerator(MetricGenerator):
                 arr = profile_plus.get_tweet_property(tweet_property)
                 
                 if len(arr) == 0:
+                    logging.debug(f"Skipping metric {tweet_property}_{stat_name} due to no tweet_property")
                     continue
-    
+                
+                logging.debug(f"Creating metric {tweet_property}_{stat_name}")
                 metric.set_data(stat_func(arr))
                 metrics.append(metric)
                 
