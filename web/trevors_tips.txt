@@ -1,0 +1,17 @@
+gMaking text look good!
+<span class=".mat-h1"></span>
+<h1 class=.mat-h1"></g1>
+CSS CLASSES
+.mat-headline-1 	headline-1 	None
+.mat-headline-2 	headline-2 	None
+.mat-headline-3 	headline-3 	None
+.mat-headline-4 	headline-4 	None
+.mat-h1 or .mat-headline-5 	
+.mat-h2 or .mat-headline-6 	
+.mat-h3 or .mat-subtitle-1 
+.mat-h4 or .mat-body-1 
+.mat-h5 
+.mat-h6 
+.mat-body 
+.mat-body-strong 
+.mat-small or .mat-caption\
