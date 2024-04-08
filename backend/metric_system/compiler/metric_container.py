@@ -12,7 +12,7 @@ class MetricContainer:
             self._metrics[metric.get_metric_name()] = {}
             logging.debug(f"Added {metric.get_metric_name()} to list of metrics")
         else:
-            logging.warning(f"Metric {metric.get_metric_name()} already added to list of metrics. Original is being replaced.")
+            logging.debub(f"Metric {metric.get_metric_name()} already added to list of metrics")
             
         self._metrics[metric.get_metric_name()][metric.get_owner()] = metric
     
