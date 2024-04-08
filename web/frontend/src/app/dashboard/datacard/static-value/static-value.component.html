@@ -1,2 +1,11 @@
-<h2>{{owner}}</h2>
-<p>{{value}}</p>
+
+<mat-grid-list cols="2" gutterSize="4px">
+  <mat-grid-tile colspan="1">
+    <div style="text-align: center;">
+      <h2 class="mat-h2">Total Likes Aquired</h2>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1">
+  <p class="bold-number">{{value}}</p>
+  </mat-grid-tile>
+</mat-grid-list>
