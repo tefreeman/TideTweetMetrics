@@ -1,4 +1,7 @@
 
+<div style="margin-left: 16px; margin-right: 16px">
+
+
 <h1 class="mat-h1" style="text-align: center;">University of Alabama Stats</h1>
 <mat-divider></mat-divider>
 <mat-grid-list [cols]="data_cols" rowHeight="200px" gutterSize="16px">
@@ -9,11 +12,14 @@
 <mat-divider></mat-divider>
 
 
-<mat-grid-list [cols]="graph_cols" rowHeight="3:2">
+<mat-grid-list [cols]="graph_cols" rowHeight="" gutterSize="16px">
   <mat-grid-tile *ngFor="let graphRequest of graphs">
-    <mat-card style="width: 100%; padding: 24px; margin: 24px;">
-    <app-bar-chart style="width: 100%"></app-bar-chart>
-  </mat-card>
+
+    <mat-card style="margin: 24px; width: 95%; height: 95%;">
+    <app-bar-chart style="width:100%; height: 100%;"></app-bar-chart>
+    </mat-card>
   </mat-grid-tile>
 </mat-grid-list>
 
+
+</div>

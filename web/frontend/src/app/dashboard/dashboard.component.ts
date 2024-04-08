@@ -8,8 +8,9 @@ import { DatacardComponent } from '../data-displays/datacard/datacard.component'
 import {MatDividerModule} from '@angular/material/divider';
 import { BarChartComponent } from '../data-displays/graphs/bar-chart/bar-chart.component';
 import { fromEvent, Subscription, tap, throttleTime } from 'rxjs';
-import { GraphRequest } from '../core/interfaces/graphs-interface';
+import { GraphDataInterface, GraphRequestInterface } from '../core/interfaces/graphs-interface';
 import { MetricService } from '../core/services/metric.service';
+import { GraphService } from '../core/services/graph.service';
 
 interface Card {
   title: string;
@@ -30,18 +31,31 @@ interface Card {
 export class DashboardComponent implements OnInit, OnDestroy{
   _auth = inject(AuthService);
   _metric_service = inject(MetricService);
+  _graph_service = inject(GraphService);
 
   public graph_cols: number = 2;
   public data_cols: number = 4;
 
-  graphs: GraphRequest[] = [
-    {owners: ['user'], stat_name: 'metric1', type: 'display'},
-    {owners: ['user'], stat_name: 'metric1', type: 'display'},
-  ]
+  graphs: GraphDataInterface[] = [];
+
+  graphsRequest: GraphRequestInterface[] = [
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+  ];
+
   private eventSub: Subscription;
+
   ngOnInit() {
 
+  this._metric_service.subject.subscribe((val) => {
+    if (val == 1) {
+    this._graph_service.getMetricsForGraphs(this.graphsRequest, this._metric_service).forEach((graph) => {
+      this.graphs.push(graph);
+      console.log('Graphs:', this.graphs);
+    });
   }
+  });
+  
+}
 
   ngOnDestroy(): void {
     this.eventSub.unsubscribe(); // don't forget to unsubscribe
