@@ -23,8 +23,8 @@ export interface GraphRequest {
 
 
 export class GraphService {
-  private _metrics: Metrics = {"tweet_count-sum": {"alabama_cs": 1000, "auburn_cs": 2000}, "tweet_count-avg": {"alabama_cs": 100, "auburn_cs": 200}, "tweet_count-max": {"alabama_cs": 10000, "auburn_cs": 20000}, "tweet_count-min": {"alabama_cs": 10, "auburn_cs": 20}, "tweet_count_std": {"alabama_cs": 100, "auburn_cs": 200}, "tweet_count_var": {"alabama_cs": 10000, "auburn_cs": 20000}};
-  private _graphRequests: GraphRequest[] = [{stat_name: "tweet_count-sum", owners: ["alabama_cs"], type: "display"}];
+  private _metrics: Metrics = {"tweet_count-sum": {"alabama_cs": 1000, "auburn_cs": 2000}, "tweet_count-avg": {"alabama_cs": 354, "auburn_cs": 200}, "tweet_count-max": {"alabama_cs": 5141, "auburn_cs": 20000}, "tweet_count-min": {"alabama_cs": 10, "auburn_cs": 20}, "tweet_count_std": {"alabama_cs": 100, "auburn_cs": 200}, "tweet_count_var": {"alabama_cs": 10000, "auburn_cs": 20000}};
+  private _graphRequests: GraphRequest[] = [{stat_name: "tweet_count-sum", owners: ["alabama_cs"], type: "display"}, {stat_name: "tweet_count-avg", owners: ["alabama_cs"], type: "display"},{stat_name: "tweet_count-sum", owners: ["alabama_cs"], type: "display"}, {stat_name: "tweet_count-avg", owners: ["alabama_cs"], type: "display"}];
   constructor() { }
 
 

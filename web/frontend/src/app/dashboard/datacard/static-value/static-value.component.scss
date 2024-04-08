@@ -1,0 +1,15 @@
+
+
+$impactful-number-display: (
+  font-size: 2.0rem, // Large font size for impact
+  font-weight: 900, // Bold weight for emphasis
+  line-height: 1.2 // Adjusted line height for readability
+);
+
+// Apply the styles directly
+.bold-number {
+  font-size: map-get($impactful-number-display, font-size);
+  font-weight: map-get($impactful-number-display, font-weight);
+  line-height: map-get($impactful-number-display, line-height);
+  font-family: Roboto
+}

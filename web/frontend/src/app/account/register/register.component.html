@@ -1,41 +1,56 @@
-<div class="mat-typography">
-<mat-card fxLayout="center center">
-  <mat-card-title class="mat-headline-3">Sign up</mat-card-title>
-  <mat-card-content>
-  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-    <p>
-    <mat-form-field>
-      <mat-label>Enter your email</mat-label>
-      <input matInput
-            placeholder="pat@example.com"
-            formControlName="email"
-            required>
-    </mat-form-field>
-  </p>
-    <p>
-    <mat-form-field>
-      <mat-label>Enter a password</mat-label>
-      <input matInput
-            type="password"
-            placeholder=""
-            formControlName="password1"
-            required>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field>
-      <mat-label>Confirm Password</mat-label>
-      <input matInput
-            type="password"
-            placeholder=""
-            formControlName="password2"
-            required>
-    </mat-form-field>
-  </p>
-    <div class="button">
-      <button mat-flat-button type="submit" [disabled]="!signupForm.valid" color="primary">Submit</button>
-    </div>
-  </form>
-</mat-card-content>
-</mat-card>
-</div>
+
+<mat-grid-list [cols]="cols" rowHeight="fit" gutterSize="4px" style="height: 100%">
+  <mat-grid-tile colspan="1">
+    <img src="assets/img/ttm_logo.png" alt="University of Alabama Logo" style="margin-left: auto; margin-right: auto; width: 100%; height: 100%; object-fit: contain;">
+    </mat-grid-tile>
+<mat-grid-tile>
+  <mat-card colspan="1" style="padding: 4px;">
+    <span style="text-align: center;">
+    <mat-card-title class="mat-headline-5">Register</mat-card-title>
+    </span>
+    <mat-card-content >
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <p>
+        <mat-form-field style="min-width: 300px">
+          <mat-label>Enter your email</mat-label>
+          <input matInput
+                placeholder="pat@example.com"
+                formControlName="email"
+                required>
+        </mat-form-field>
+      </p>
+        <p>
+        <mat-form-field style="min-width: 300px">
+          <mat-label>Enter a password</mat-label>
+          <input matInput
+                type="password"
+                placeholder=""
+                formControlName="password1"
+                required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="min-width: 300px">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput
+                type="password"
+                placeholder=""
+                formControlName="password2"
+                required>
+        </mat-form-field>
+      </p>
+
+      <div class="button-container">
+        <button mat-flat-button type="submit" [disabled]="!signupForm.valid" color="primary">Submit</button>
+      </div>
+
+
+    </form>
+  </mat-card-content>
+  </mat-card>
+</mat-grid-tile>
+
+</mat-grid-list>
+
+
+

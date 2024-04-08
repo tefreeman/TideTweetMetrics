@@ -1,4 +1,4 @@
-import { Component, inject} from '@angular/core';
+import { Component, HostListener, inject} from '@angular/core';
 import { AuthService } from '../../auth.service';
 import { FormControl, Validators, FormGroup, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink} from '@angular/router';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,10 @@ import { Router, RouterLink} from '@angular/router';
     ReactiveFormsModule,
     MatCardModule,
     MatButton,
-    RouterLink],
+    RouterLink,
+    MatGridList,
+    MatGridTile
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -26,7 +30,21 @@ export class LoginComponent {
   private _service = inject(AuthService);
   errorMessage = '';
 
-  constructor(private router: Router) {}
+  public cols: number = 2;
+
+  constructor(private router: Router) {
+    this.adjustGridColumns(window.innerWidth);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.adjustGridColumns(event.target.innerWidth);
+  }
+
+  adjustGridColumns(innerWidth: number) {
+    // Example: Switch to 1 column if the width is less than 600px
+    this.cols = innerWidth < 600 ? 1 : 2;
+  }
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),

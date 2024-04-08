@@ -1,7 +1,51 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@include mat.core();
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+$crimson-palette: (
+  900: #900f0f,
+  800: #9f1919,
+  700: #ac201f,
+  600: #bd2924,
+  500: #cb3225,
+  400: #cb443f,
+  300: #c76563,
+  200: #d98e8d,
+  100: #f2c6c9,
+  50: #fae8ea,
+
+  contrast: (
+    900: white,
+    800: white,
+    700: white,
+    600: white,
+    500: white,
+    400: white,
+    300: white,
+    200: black,
+    100: black,
+    50: black,
+  ),
+);
+
+$my-primary: mat.define-palette($crimson-palette, 900);
+$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The "warn" palette is optional and defaults to red if not specified.
+$my-warn: mat.define-palette(mat.$red-palette);
+
+$my-theme: mat.define-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+   warn: $my-warn,
+ ),
+ typography: mat.define-typography-config(),
+ density: 0,
+));
+@include mat.core-theme($my-theme);
+@include mat.all-component-themes($my-theme);
