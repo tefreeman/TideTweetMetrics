@@ -2,23 +2,7 @@
   flex: 1 1 auto;
 }
 
-.custom-toolbar {
-  background-color: rgba(21,26,45,255); /* Change the background color to a desired color */
-  color: white; /* Change the text color to ensure readability */
-  display: flex; /* Use flexbox for layout */
-  justify-content: center; /* Center items horizontally */
-  align-items: center; /* Center items vertically */
-  font-family: 'Helvetica', sans-serif; /* Change the font family */
-  font-size: 15px; /* Change the font size */
-  font-weight: bold; /* Make the text bold */
-  border-bottom: 4px solid rgba(15, 20, 35, 255); /* Add a bottom border */
-}
-.logo-container {
-  flex: 1; /* Expand to take up available space */
+.mat-toolbar {
   display: flex;
-  justify-content: center; /* Center items horizontally */
-  align-items: center; /* Center items vertically */
+  justify-content: space-between;
 }
-
-
-
