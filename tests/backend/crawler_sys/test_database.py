@@ -1,5 +1,6 @@
 from unittest import TestCase
 import unittest
+from bson import ObjectId
 from pymongo import MongoClient
 from backend.config import Config
 from backend.encoders.tweet_encoder import Tweet
@@ -8,7 +9,7 @@ from backend.encoders.profile_encoder import Profile
 from backend.crawler_sys import database as Database
 from unittest import TestCase
 from backend.crawler_sys.database import _update_tweet
-
+from time import sleep
 
 # def init_database(name=None):
 #     global client, db
@@ -87,6 +88,7 @@ class TestDatabase(TestCase):
             return
 
         Database.init_database("TestDB")
+        sleep(2)
         collections = Database.db.list_collection_names()
         print(f"The database contains {len(collections)} collections.")
         self.assertEqual(len(collections), 9, "Database should contain 9 collections.")
@@ -154,12 +156,20 @@ class TestDatabase(TestCase):
 
         curTweet = Tweet(as_json=tweet, ignore_required=True)
         # Call the _update_tweet() function
-        updated_tweet = _update_tweet(curTweet)
+        _update_tweet(curTweet)
 
+        
+        dbTweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
+        original_tweet = Tweet(as_json=dbTweet, ignore_required=True)
+        update_id = original_tweet.get_meta_ref().get_update_id()
+        updated_tweet = Database.db["tweet_updates"].find_one({"_id": update_id})
+        
+        
+        
         # Assert that the tweet has been updated correctly
-        self.assertEqual(updated_tweet["data"]["retweet_count"], 1)
-        self.assertEqual(updated_tweet["data"]["reply_count"], 2)
-        self.assertEqual(updated_tweet["data"]["like_count"], 3)
+        self.assertEqual(updated_tweet["retweet_count"], 1)
+        self.assertEqual(updated_tweet["reply_count"], 2)
+        self.assertEqual(updated_tweet["like_count"], 3)
 
     # Find and delete test case
     # def test_3_find_delete(self):
@@ -191,4 +201,8 @@ Create a tweet using the encoder. Set username, set contents, set... Then upload
 # Main function
 if __name__ == "__main__":
     Config.init()
-    unittest.main()
+    try:
+        unittest.main()
+    finally:
+        Database.client.drop_database("TestDB")
+        Database.client.close()
