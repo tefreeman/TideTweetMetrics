@@ -162,9 +162,7 @@ class TestDatabase(TestCase):
         original_tweet = Database.get_tweet_by_id("1234567890")        
         update_id = original_tweet.get_meta_ref().get_update_id()
         updated_tweet = Database.db["tweet_updates"].find_one({"_id": update_id})
-        
-        
-        
+
         # Assert that the tweet has been updated correctly
         self.assertEqual(updated_tweet["retweet_count"], 1)
         self.assertEqual(updated_tweet["reply_count"], 2)
@@ -200,6 +198,7 @@ Create a tweet using the encoder. Set username, set contents, set... Then upload
 # Main function
 if __name__ == "__main__":
     Config.init()
+    Database.client.drop_database("TestDB")
     try:
         unittest.main()
     finally:
