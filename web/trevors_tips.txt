@@ -1,6 +1,9 @@
-gMaking text look good!
-<span class=".mat-h1"></span>
-<h1 class=.mat-h1"></g1>
+Making text look good!
+
+Example:
+    <span class=".mat-h1"></span>
+    <h1 class=.mat-h1"></g1>
+
 CSS CLASSES
 .mat-headline-1 	headline-1 	None
 .mat-headline-2 	headline-2 	None
