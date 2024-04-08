@@ -4,11 +4,12 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
 import { AuthService } from '../core/services/auth.service';
 import { inject } from '@angular/core';
-import { GraphRequest, GraphService } from '../core/services/graph.service';
 import { DatacardComponent } from '../data-displays/datacard/datacard.component';
 import {MatDividerModule} from '@angular/material/divider';
 import { BarChartComponent } from '../data-displays/graphs/bar-chart/bar-chart.component';
 import { fromEvent, Subscription, tap, throttleTime } from 'rxjs';
+import { GraphRequest } from '../core/interfaces/graphs-interface';
+import { MetricService } from '../core/services/metric.service';
 
 interface Card {
   title: string;
@@ -23,18 +24,21 @@ interface Card {
   standalone: true,
   imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
+  providers: [MetricService]
 })
 export class DashboardComponent implements OnInit, OnDestroy{
   _auth = inject(AuthService);
-  _graphService = inject(GraphService);
-  graphs: GraphRequest[] = []
+  _metric_service = inject(MetricService);
+
   public graph_cols: number = 2;
   public data_cols: number = 4;
 
+  graphs: GraphRequest[] = [
+    {owners: ['user'], stat_name: 'metric1', type: 'display'},
+    {owners: ['user'], stat_name: 'metric1', type: 'display'},
+  ]
   private eventSub: Subscription;
-
-
   ngOnInit() {
 
   }
@@ -58,23 +62,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.data_cols = Math.max(1, Math.floor(clampedWidth / baseWidth));
   }
   constructor(){
-    this.graphs = this._graphService.getGraphRequests();
     this.adjustGraphGridCols(window.innerWidth);
-
     this.eventSub = fromEvent(window, 'resize').pipe(
       throttleTime(300), // emits once, then ignores subsequent emissions for 300ms, repeat...
       tap<any>(event => {this.adjustGraphGridCols(event.target.innerWidth); this.adjustDataCols(event.target.innerWidth);})
     ).subscribe();
   }
 
-  tryGetFile(): void {
-    this._auth.getChartData();
-  }
 
-  test(): void {
-    this._graphService.getStatKeys().forEach((stat) => {
-      console.log(stat);
-    });
-  }
+
 
 }

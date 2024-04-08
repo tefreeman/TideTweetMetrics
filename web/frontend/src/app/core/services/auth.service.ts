@@ -15,7 +15,7 @@ import {
 
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { GraphService, Metrics } from './graph.service';
+import { GraphService} from './graph.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements OnDestroy{
@@ -55,15 +55,6 @@ export class AuthService implements OnDestroy{
     });
   }
 
-  getChartData(): void {
-    console.log('getting chart data')
-    getDownloadURL(ref(this._storage, 'ex_metric_out.json')).then((url) => {
-      this.httpclient.get<Metrics>(url).subscribe((data) => {
-        console.log("fired!", data);
-        this._graphService.setMetrics(data);
-      });
-  });
-}
   ngOnDestroy() {
     // when manually subscribing to an observable remember to unsubscribe in ngOnDestroy
 
