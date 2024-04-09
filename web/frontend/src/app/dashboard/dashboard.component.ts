@@ -31,10 +31,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
 
   constructor(){
-  this._displayProcessor.displayables$.subscribe((displayables) => {
-    this.graphs = displayables;
-
-  });
+   this._displayProcessor.displayables$.subscribe((displayables) => {
+     this.graphs = displayables;
+   });
 }
 
   ngOnInit() {
@@ -44,7 +43,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   }
 
- 
+
 
 
 
