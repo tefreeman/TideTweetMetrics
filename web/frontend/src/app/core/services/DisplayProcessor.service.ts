@@ -20,16 +20,15 @@ constructor() {
     this._metricsService.metricContainer$,
     this._displayReqService.requests$
   ]).subscribe(([metricContainer, requests]) => {
-
     console.log('Processing requests', requests, metricContainer);
     this.processRequests(metricContainer, requests);
   });
 }
 
 private processRequests(metricContainer: any, requests: any) {
+  const displayables = [];
   for (let request of requests) {
     let data = metricContainer.getMetricData(request.stat_name, request.owners);
-    const displayables = [];
     if (data.length > 0) {
       displayables.push({ ...request, values: data });
     } else {
