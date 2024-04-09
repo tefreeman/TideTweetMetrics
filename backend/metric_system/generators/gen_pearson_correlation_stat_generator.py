@@ -10,7 +10,7 @@ class PearsonCorrelationProfileStatGenerator(MetricGenerator):
         
         self.prop_list = ["tweet_likes"] # add properties from the  ProfileWithTweetProperties Class
         # Generate output names for Pearson correlation between all pairs of properties
-        stat_names_out = [f"pearson_{prop1}_vs_{prop2}" for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:])]
+        stat_names_out = [f"pearson-{prop1}-vs-{prop2}" for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:])]
         
         
         super().__init__(stat_names_out)
@@ -23,7 +23,7 @@ class PearsonCorrelationProfileStatGenerator(MetricGenerator):
         prop_list = profile_plus.get_properties_list()
         
         for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:]):
-            metric_name = f"pearson_{prop1}_vs_{prop2}"
+            metric_name = f"pearson-{prop1}-vs-{prop2}"
             arr1 = profile_plus.get_tweet_property(prop1)
             arr2 = profile_plus.get_tweet_property(prop2)
             

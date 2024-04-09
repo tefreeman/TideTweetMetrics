@@ -1,3 +1,4 @@
+from backend.metric_system.generators.gen_standard_profile_stat_over_time import StandardProfileStatOverTimeGenerator
 from backend.metric_system.metric import ComputableMetric, Metric, MetricGenerator
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 from backend.metric_system.metrics.metric_word_frequency import WordFrequencyMetric
@@ -18,7 +19,7 @@ smc = StatMetricCompiler()
 smc.add_metric(GenLikesPerFollower())
 smc.add_metric(StandardProfileStatGenerator())
 smc.add_metric(WordFrequencyMetric())
-
+smc.add_metric(StandardProfileStatOverTimeGenerator())
 smc.add_metric(PearsonCorrelationProfileStatGenerator())
 smc.process()
 
