@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MetricValue } from '../../../core/interfaces/metrics-interface';
+import { T_MetricValue } from '../../../core/interfaces/metrics-interface';
 import { MatCardActions, MatCardHeader, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatDivider } from '@angular/material/divider';
@@ -14,7 +14,7 @@ import { MatDivider } from '@angular/material/divider';
 export class StaticValueComponent {
   @Input({required: true}) owner!: string;
   @Input({required: true}) metric!: string;
-  @Input({required: true}) value!: MetricValue;
+  @Input({required: true}) value!: T_MetricValue;
 
   constructor() {}
 

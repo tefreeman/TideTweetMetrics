@@ -8,7 +8,7 @@ import { DatacardComponent } from '../data-displays/datacard/datacard.component'
 import {MatDividerModule} from '@angular/material/divider';
 import { BarChartComponent } from '../data-displays/graphs/bar-chart/bar-chart.component';
 import { fromEvent, Subscription, tap, throttleTime } from 'rxjs';
-import { GraphDataInterface, GraphRequestInterface } from '../core/interfaces/graphs-interface';
+import { I_GraphDataInterface, I_DisplayableRequest } from '../core/interfaces/displayable-interface';
 import { MetricService } from '../core/services/metric.service';
 import { GraphService } from '../core/services/graph.service';
 
@@ -36,9 +36,15 @@ export class DashboardComponent implements OnInit, OnDestroy{
   public graph_cols: number = 2;
   public data_cols: number = 4;
 
-  graphs: GraphDataInterface[] = [];
+  graphs: I_GraphDataInterface[] = [];
 
-  graphsRequest: GraphRequestInterface[] = [
+  graphsRequest: I_DisplayableRequest[] = [
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
     {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
   ];
 
@@ -55,7 +61,11 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
   });
   
-}
+  this._auth.getProfileDoc().subscribe((user) => {
+    console.log('User:', user);
+
+});
+  }
 
   ngOnDestroy(): void {
     this.eventSub.unsubscribe(); // don't forget to unsubscribe

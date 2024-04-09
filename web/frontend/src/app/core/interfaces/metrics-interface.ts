@@ -1,14 +1,14 @@
 
 type NumberOrString = Number | string;
-export type MetricValue = NumberOrString | Array<NumberOrString>
+export type T_MetricValue = NumberOrString | Array<NumberOrString>
 
 
-export interface MetricOwners {
-    [owner: string]: MetricValue
+export interface I_MetricOwners {
+    [owner: string]: T_MetricValue
   };
 
-export interface MetricsInterface {
-  [stat_name: string]: MetricOwners
+export interface I_MetricsInterface {
+  [stat_name: string]: I_MetricOwners
 }
 
 
