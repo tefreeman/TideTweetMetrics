@@ -327,6 +327,8 @@ section {
     margin: 0;
 }
 
+
+
 /* --------- 2.2 Logo ---------- */
 
 #logo {
@@ -516,7 +518,7 @@ section {
 
 #header.nav-solid nav a {
     border-bottom: 3px solid;
-    border-color: #fff;
+    border-color: #000000;
     -webkit-transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
     -o-transition: all 0.3s ease-out;
@@ -539,7 +541,7 @@ section {
 
 #header.nav-solid .social-icons a:hover {
     opacity: 1;
-    color: #e4473c;
+    color: black;
 }
 
 /* Responsive Nav Styling */
@@ -553,7 +555,7 @@ section {
     display: inline-block;
     width: 38px;
     height: 71px;
-    color: #111;
+    color: white;
     cursor: pointer;
     text-transform: uppercase;
     font-size: 22px;
@@ -2383,22 +2385,23 @@ a:hover, #header.nav-solid nav a:hover {
 /* Transparent Navigation Color on a Banner */
 
 #header nav a, #header i {
-    color:#fff;
+    color:white;
 }
 
 
 /* Navigation Colors when the Navigation is sticky and solid */ 
 
-#header.nav-solid, #header.nav-solid a, #header.nav-solid i, #nav-mobile ul li a {
-    color:#333;
+#header.nav-solid nav a, #header.nav-solid a, #header.nav-solid i, #nav-mobile ul li a {
+    color: black;
 }
 
 
 /* Navigation Active State */
 
 #header.nav-solid .active {
-    color: #b30838;
+    color: #b30838 !important;
     border-color: #b30838;
+    opacity: 50%
 }    
 
 
