@@ -15,7 +15,7 @@ import {
 
 import { Router } from '@angular/router';
 import { from, map, Observable, of, switchMap } from 'rxjs';
-import { I_Profile } from '../interfaces/profile-interface';
+import { I_FileVersion, I_Profile } from '../interfaces/profile-interface';
 
 
 
@@ -35,7 +35,18 @@ export class AuthService implements OnDestroy{
   }
 
 
-  
+  getFileVersion(file_id: string): Observable<I_FileVersion | null> {
+    return <Observable<I_FileVersion | null>>this.user$.pipe(
+      switchMap((user) => {
+        if (!user) {
+          // If there's no user, return an observable that emits null
+          return of(null);
+        }
+        const userDocRef = doc(this._firestore, `file_versions/${file_id}`);
+        return docData(userDocRef, { idField: 'id' });
+      })
+    );
+  }
 
   getProfileDoc(): Observable<I_Profile | null> {
     return <Observable<I_Profile | null>>this.user$.pipe(

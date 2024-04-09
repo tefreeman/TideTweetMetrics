@@ -9,7 +9,7 @@ import { MetricService } from './metric.service';
 
 
 export class GraphService {
-  
+
   constructor() {
 
   }
@@ -17,7 +17,7 @@ export class GraphService {
   getMetricsForGraphs(graphs: I_DisplayableRequest[], metric_service: MetricService) {
     let metrics: I_GraphDataInterface[] = []
     for (let graph of graphs) {
-      let graphData = metric_service.MetricContainer.getMetricData(graph.stat_name, graph.owners);
+      let graphData = metric_service.metricContainer.getMetricData(graph.stat_name, graph.owners);
       if (graphData.length > 0) {
         metrics.push({ ...graph, values: graphData });
       } else {
