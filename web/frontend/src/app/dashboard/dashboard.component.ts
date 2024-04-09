@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
 
-  this._metric_service.subject.subscribe((val) => {
+  this._metric_service.metricUpdateSubject.subscribe((val) => {
     if (val == 1) {
     this._graph_service.getMetricsForGraphs(this.graphsRequest, this._metric_service).forEach((graph) => {
       this.graphs.push(graph);
@@ -53,7 +53,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     });
   }
   });
-  
+
   this._auth.getProfileDoc().subscribe((user) => {
     console.log('User:', user);
 
