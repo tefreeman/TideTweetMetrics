@@ -26,7 +26,7 @@ def build_metrics(output_file: str):
         with open(output_file, "w") as f:
             f.write(metric_json)
     
-    # see ex_sample_output.json for an example of the output
+    # see ex_metric_output.json for an example of the output
     return metric_json
 
 
