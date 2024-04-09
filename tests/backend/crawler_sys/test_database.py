@@ -95,7 +95,7 @@ class TestDatabase(TestCase):
         self._init_flag = True
 
     # Insert tweet test case
-    def test_1_insert_tweet(self):
+    def test_1_upsert_tweets(self):
         curMD = MetaData()
         curMD.set_errors([])
         curMD.set_as_new()
@@ -125,7 +125,8 @@ class TestDatabase(TestCase):
         Database.upsert_tweets([curTweet])
         dbTweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
         self.assertEqual(dbTweet["data"]["text"], "This is a tweet")
-   
+
+    # Find and update tweet test case
     def test_2_update_tweet(self):
         # Create a dummy tweet object
         curMD = MetaData()
@@ -158,8 +159,7 @@ class TestDatabase(TestCase):
         # Call the _update_tweet() function
         _update_tweet(curTweet)
 
-        
-        original_tweet = Database.get_tweet_by_id("1234567890")        
+        original_tweet = Database.get_tweet_by_id("1234567890")
         update_id = original_tweet.get_meta_ref().get_update_id()
         updated_tweet = Database.db["tweet_updates"].find_one({"_id": update_id})
 
@@ -168,26 +168,48 @@ class TestDatabase(TestCase):
         self.assertEqual(updated_tweet["reply_count"], 2)
         self.assertEqual(updated_tweet["like_count"], 3)
 
-    # Find and delete test case
-    # def test_3_find_delete(self):
-    #     tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
-    #     tweet_update = Database.db["tweet_updates"].find_one(
-    #         {"imeta.oid": "1234567890"}
-    #     )
+    # Find and delete tweet test case
+    def test_3_find_delete(self):
+        tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
+        tweet_update = Database.db["tweet_updates"].find_one(
+            {"imeta.oid": "1234567890"}
+        )
 
-    #     self.assertNotEqual(tweet, None)
-    #     self.assertNotEqual(tweet_update, None)
+        self.assertNotEqual(tweet, None)
+        self.assertNotEqual(tweet_update, None)
 
-    #     Database.db["tweets"].delete_one({"_id": tweet["_id"]})
-    #     Database.db["tweet_updates"].delete_one({"_id": tweet_update["_id"]})
+        Database.db["tweets"].delete_one({"_id": tweet["_id"]})
+        Database.db["tweet_updates"].delete_one({"_id": tweet_update["_id"]})
 
-    #     tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
-    #     tweet_update = Database.db["tweet_updates"].find_one(
-    #         {"imeta.oid": "1234567890"}
-    #     )
+        tweet = Database.db["tweets"].find_one({"data.id": "1234567890"})
+        tweet_update = Database.db["tweet_updates"].find_one(
+            {"imeta.oid": "1234567890"}
+        )
 
-    #     self.assertEqual(tweet, None)
-    #     self.assertEqual(tweet_update, None)
+        self.assertEqual(tweet, None)
+        self.assertEqual(tweet_update, None)
+
+    # Insert profile test case
+    def test_4_upsert_twitter_profile(self):
+        curMD = MetaData()
+        curMD.set_errors([])
+        curMD.set_as_new()
+        profile = {
+            "username": "TestUser",
+            "name": "Test User",
+            "description": "This is a test user.",
+            "public_metrics": {
+                "followers_count": 0,
+                "following_count": 0,
+                "tweet_count": 0,
+                "listed_count": 0,
+            },
+            "imeta": curMD.to_json_dict(),
+        }
+        curProfile = Profile(as_json=profile, ignore_required=True)
+        Database.upsert_twitter_profile(curProfile)
+        dbProfile = Database.db["profiles"].find_one({"username": "TestUser"})
+        self.assertEqual(dbProfile["name"], "Test User")
 
 
 """
