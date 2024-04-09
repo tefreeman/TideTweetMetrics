@@ -15,7 +15,9 @@ class MetaData(DataEncoder):
     # Attaches the imeta to the object
     def attach(self, object: dict):
         if "imeta" in object:
-            raise Exception("imeta already exists in object")
+            # TODO: Trevor, check this
+            # raise Exception("imeta already exists in object")
+            pass
 
         object["imeta"] = self.to_json_dict()
 
@@ -65,7 +67,9 @@ class MetaData(DataEncoder):
         self._object["version"] = version
 
     def _set_version_to_current(self):
-        self._object["version"] = "" #TODO: Implement versioning should be set to config.get_version()
+        self._object["version"] = (
+            ""  # TODO: Implement versioning should be set to config.get_version()
+        )
 
     def set_backup_file_id(self, backup_file_id):
         self._object["bfi"] = backup_file_id
@@ -80,7 +84,7 @@ class MetaData(DataEncoder):
     def _changes_from_json_dict(self) -> dict:
         raise Exception("Metadata does not support this method")
 
-    #TODO fix "zid". Should be set to config.get_zid()
+    # TODO fix "zid". Should be set to config.get_zid()
     def _to_json_dict(self):
         self._object["errors"] = self._errors_to_json()
         self._object["zid"] = ""

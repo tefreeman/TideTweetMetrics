@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class Profile(DataEncoder):
-    def __init__(self, as_json=None, changes_json=None) -> None:
+    def __init__(self, as_json=None, changes_json=None, ignore_required=False) -> None:
         """
         Initialize a Profile object.
 
@@ -15,6 +15,7 @@ class Profile(DataEncoder):
         self._object = {}
         self._set_fields = set()
         self._meta = MetaData()
+        self.ignore_required = ignore_required
         self._required_fields = {
             "name",
             "description",
@@ -38,6 +39,8 @@ class Profile(DataEncoder):
         """
         Raise an exception if any required fields are missing.
         """
+        if self.ignore_required:
+            return
         if not self._required_fields.issubset(self._set_fields):
             missing_fields = self._required_fields - self._set_fields
 
