@@ -12,13 +12,6 @@ import { I_GraphDataInterface, I_DisplayableRequest } from '../core/interfaces/d
 import { MetricService } from '../core/services/metric.service';
 import { GraphService } from '../core/services/graph.service';
 
-interface Card {
-  title: string;
-  subtitle: string;
-  content: string;
-  image: string;
-}
-
 
 @Component({
   selector: 'app-dashboard',
@@ -39,13 +32,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
   graphs: I_GraphDataInterface[] = [];
 
   graphsRequest: I_DisplayableRequest[] = [
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
-    {"owners": ["alabama_cs"], "stat_name": "tweet_count_sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_count-sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_likes-mean", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_likes-sum", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_words-mean", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_photos-mean", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_hashtags-mean", "type": "display"},
+    {"owners": ["alabama_cs"], "stat_name": "tweet_urls-mean", "type": "display"},
   ];
 
   private eventSub: Subscription;

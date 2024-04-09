@@ -11,5 +11,6 @@ $impactful-number-display: (
   font-size: map-get($impactful-number-display, font-size);
   font-weight: map-get($impactful-number-display, font-weight);
   line-height: map-get($impactful-number-display, line-height);
-  font-family: Roboto
+  font-family: Roboto;
+  margin: 0px;
 }
