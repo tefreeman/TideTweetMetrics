@@ -6,16 +6,16 @@ class GenLikesPerFollower(MetricGenerator, DependentMetric):
         MetricGenerator.__init__(self, stat_names_out=["likes_per_follower"])
         DependentMetric.__init__(self,)
         
-        self.add_dependency("tweet_likes_mean")
+        self.add_dependency("tweet_likes-mean")
         
         
     def generate_metrics(self, stat_helper):
         metrics = []
         
-        tweet_likes_mean_metrics = self.get_metric("tweet_likes_mean")
+        tweet_likes_mean_metrics = self.get_metric("tweet_likes-mean")
         for profile_plus in stat_helper.get_all_profiles().values():
             if profile_plus.get_username() not in tweet_likes_mean_metrics:
-                logging.debug(f"{profile_plus.get_username()} not in tweet_likes_mean_metrics. Moving to next profile")
+                logging.debug(f"{profile_plus.get_username()} not in tweet_likes_mean-metrics. Moving to next profile")
                 continue
             else:
                 logging.debug(f"{profile_plus.get_username} is in tweet_likes_mean_metrics.")

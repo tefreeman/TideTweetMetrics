@@ -111,10 +111,10 @@ class StatMetricCompiler:
         visited = set()
         result = []
 
-        def visit(metric: Metric):
-            logging.debug(f"Visiting {metric.get_metric_name}")
+        def visit(metric: Metric | MetricGenerator):
+            #logging.debug(f"Visiting {metric.get_metric_name()}")
             if metric in visited:
-                logging.debug(f"{metric.get_metric_name} already visited")
+                #logging.debug(f"{metric.get_metric_name} already visited")
                 return
             visited.add(metric)
             
@@ -122,7 +122,7 @@ class StatMetricCompiler:
                 for dep_name in metric.get_dependencies():
                     if dep_name in name_to_metric:
                         visit(name_to_metric[dep_name])
-            logging.debug(f"Adding {metric.get_metric_name}")
+            #logging.debug(f"Adding {metric.get_metric_name()}")
             result.append(metric)
 
         logging.info("Visiting each metric")

@@ -4,7 +4,6 @@ import numpy as np
 from datetime import datetime
 import logging
 
-
 def _default_property_extractor():
        return (
             ("tweet_likes", lambda tweet: tweet.get_like_count()),
@@ -78,9 +77,9 @@ class ProfileWithTweetProperties(Profile):
         
         self._count += len(tweets)
 
-    def get_tweets_between_dates(self, start_date: datetime, end_date: datetime):
+    def get_index_between_dates(self, start_date: datetime, end_date: datetime) -> tuple[int, int]:
         if not self._is_sorted:
-            np.sort(self._tweet_hour_epoch_times)
+            self._tweet_hour_epoch_times.sort()
             self._is_sorted = True
             
         start_epoch = int(start_date.timestamp() / 60)
@@ -93,7 +92,7 @@ class ProfileWithTweetProperties(Profile):
         end_index = np.searchsorted(self._tweet_hour_epoch_times, end_epoch)
         logging.debug(f"end index = {end_index}")
         
-        return self._tweet_data_matrix[:, start_index:end_index]
+        return start_index, end_index
     
     @staticmethod
     def get_properties_list():
