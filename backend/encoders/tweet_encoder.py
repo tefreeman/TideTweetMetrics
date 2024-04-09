@@ -10,7 +10,9 @@ import pytz
 
 
 class Tweet(DataEncoder):
-    def __init__(self, as_json:dict=None, changes_json=None, ignore_required=False) -> None:
+    def __init__(
+        self, as_json: dict = None, changes_json=None, ignore_required=False
+    ) -> None:
         self._object = {}
         self._includes = {}
         self._meta = MetaData()
@@ -27,7 +29,7 @@ class Tweet(DataEncoder):
         }
 
         if as_json != None:
-            self.from_json_dict(as_json)
+            self._from_json_dict(as_json)
         if changes_json != None:
             self.changes_from_json_dict(changes_json)
 
@@ -93,7 +95,6 @@ class Tweet(DataEncoder):
 
     def get_post_date(self):
         return self._object["created_at"]
-    
 
     def set_author(self, username: str):
         if username.startswith("@"):
