@@ -2,7 +2,7 @@ from backend.encoders.profile_encoder import Profile
 from backend.encoders.tweet_encoder import Tweet
 import numpy as np
 from datetime import datetime
-
+import logging
 
 def _default_property_extractor():
        return (
@@ -51,6 +51,7 @@ class ProfileWithTweetProperties(Profile):
         required_capacity = self._count + new_tweet_count
         
         if required_capacity > current_capacity:
+            logging.debug(f"required_capacity ({required_capacity}) > current_capacity ({current_capacity})")
             self._tweet_hour_epoch_times = np.hstack((self._tweet_hour_epoch_times, np.zeros(new_tweet_count, dtype=np.int32)))
             additional_columns_needed = required_capacity - current_capacity
             additional_columns = np.zeros((len(ProfileWithTweetProperties._properties_to_extract), additional_columns_needed), dtype=np.int16)
@@ -69,23 +70,29 @@ class ProfileWithTweetProperties(Profile):
             tweet_index = tweet_cnt + self._count
             for prop_i, item in enumerate(ProfileWithTweetProperties._properties_to_extract):
                 extractor_function = item[1]
+                logging.debug(f"_tweet_data_matrix[{prop_i}][{tweet_index}] is being set")
                 self._tweet_data_matrix[prop_i][tweet_index] = extractor_function(tweet)
+                logging.debug(f"epoch_time = {int(tweet.get_post_date().timestamp() / 60)}")
                 self._tweet_hour_epoch_times[tweet_index] = int(tweet.get_post_date().timestamp() / 60)
         
         self._count += len(tweets)
 
-    def get_tweets_between_dates(self, start_date: datetime, end_date: datetime):
+    def get_index_between_dates(self, start_date: datetime, end_date: datetime) -> tuple[int, int]:
         if not self._is_sorted:
-            np.sort(self._tweet_hour_epoch_times)
+            self._tweet_hour_epoch_times.sort()
             self._is_sorted = True
             
         start_epoch = int(start_date.timestamp() / 60)
+        logging.debug(f"start epoch = {start_epoch}")
         end_epoch = int(end_date.timestamp() / 60)
+        logging.debug(f"end epoch = {end_epoch}")
         
         start_index = np.searchsorted(self._tweet_hour_epoch_times, start_epoch)
+        logging.debug(f"start index = {start_index}")
         end_index = np.searchsorted(self._tweet_hour_epoch_times, end_epoch)
+        logging.debug(f"end index = {end_index}")
         
-        return self._tweet_data_matrix[:, start_index:end_index]
+        return start_index, end_index
     
     @staticmethod
     def get_properties_list():
