@@ -198,7 +198,6 @@ Create a tweet using the encoder. Set username, set contents, set... Then upload
 # Main function
 if __name__ == "__main__":
     Config.init()
-    Database.client.drop_database("TestDB")
     try:
         unittest.main()
     finally:
