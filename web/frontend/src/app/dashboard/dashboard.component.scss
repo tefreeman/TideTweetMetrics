@@ -5,7 +5,7 @@
     display: grid;
     gap: 16px;
     grid-template-rows: repeat(2, auto-fit);
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     justify-content: center;
 }
 

@@ -53,11 +53,13 @@ class StandardProfileStatOverTimeGenerator(MetricGenerator):
                     start_index, end_index = profile_plus.get_index_between_dates(start_date, end_date)
                     year_arr = arr[start_index:end_index]
                     if len(year_arr) == 0:
-                        yearly_stats.append(0)
+                        yearly_stats.append((year, 0))
                     else:
-                        yearly_stats.append(stat_func(year_arr))
+                        yearly_stats.append((year, stat_func(year_arr)))
                 
                 metric.set_data(yearly_stats)
+
+
                 metrics.append(metric)
                 
     
