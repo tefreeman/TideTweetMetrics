@@ -3,7 +3,7 @@ import { MetricContainer } from '../classes/metric-container';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { HttpClient } from '@angular/common/http';
-import { MetricsInterface } from '../interfaces/metrics-interface';
+import { I_MetricsInterface } from '../interfaces/metrics-interface';
 import { AuthService } from './auth.service';
 
 
@@ -28,7 +28,7 @@ export class MetricService {
   getChartData(): void {
     console.log('getting chart data from db')
     getDownloadURL(ref(this._storage, 'ex_metric_out.json')).then((url) => {
-      this.httpclient.get<MetricsInterface>(url).subscribe((data) => {
+      this.httpclient.get<I_MetricsInterface>(url).subscribe((data) => {
         this.MetricContainer.setMetrics(data);
         this.saveMetrics();
       });
