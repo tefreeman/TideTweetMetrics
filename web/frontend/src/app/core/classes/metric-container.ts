@@ -1,12 +1,12 @@
-import { MetricsInterface, MetricValue, MetricOwners } from "../interfaces/metrics-interface";
+import { I_MetricsInterface, T_MetricValue, I_MetricOwners } from "../interfaces/metrics-interface";
 
 export class MetricContainer {
-    _metrics: MetricsInterface = {}
+    _metrics: I_MetricsInterface = {}
 
     constructor() {}
 
 
-    setMetrics(metrics: MetricsInterface): void {
+    setMetrics(metrics: I_MetricsInterface): void {
         this._metrics = metrics;
         console.log('metrics set', this._metrics)
     }
@@ -27,8 +27,8 @@ export class MetricContainer {
         return 0;
     }
 
-    getMetricData(stat_name: string, owners: string[]): MetricValue[] {
-        let metrics: MetricValue[] = []
+    getMetricData(stat_name: string, owners: string[]): T_MetricValue[] {
+        let metrics: T_MetricValue[] = []
         for (let owner of owners) {
           if (this._metrics && this._metrics[stat_name] && this._metrics[stat_name][owner])
             metrics.push(this._metrics[stat_name][owner]);
@@ -36,7 +36,7 @@ export class MetricContainer {
         return metrics;
     }
 
-    getJson(): MetricsInterface {
+    getJson(): I_MetricsInterface {
         return this._metrics;
     }
 }

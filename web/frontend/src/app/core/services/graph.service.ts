@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GraphDataInterface, GraphRequestInterface } from '../interfaces/graphs-interface';
+import { I_GraphDataInterface, I_DisplayableRequest } from '../interfaces/displayable-interface';
 import { MetricService } from './metric.service';
 
 
@@ -14,8 +14,8 @@ export class GraphService {
 
   }
 
-  getMetricsForGraphs(graphs: GraphRequestInterface[], metric_service: MetricService) {
-    let metrics: GraphDataInterface[] = []
+  getMetricsForGraphs(graphs: I_DisplayableRequest[], metric_service: MetricService) {
+    let metrics: I_GraphDataInterface[] = []
     for (let graph of graphs) {
       let graphData = metric_service.MetricContainer.getMetricData(graph.stat_name, graph.owners);
       if (graphData.length > 0) {
