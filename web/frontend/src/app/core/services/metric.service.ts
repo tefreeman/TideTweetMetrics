@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Subscription, from } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, from } from 'rxjs';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -18,13 +18,13 @@ export class MetricService {
   private _httpClient = inject(HttpClient);
   private _authService = inject(AuthService);
   private _localStorageService = inject(LocalStorageService);
-
-  public metricContainer: MetricContainer = new MetricContainer();
-  public metricUpdateSubject = new BehaviorSubject<number>(0);
-
+  private metricContainer: MetricContainer = new MetricContainer();
   private metricsSubscription!: Subscription; // Store the subscription
-
   private metricFileId = 'metrics_json';
+
+  public metricContainer$ = new Subject<MetricContainer>();
+
+
   constructor() {
     this.initMetrics();
   }
@@ -70,6 +70,6 @@ export class MetricService {
 
   setMetrics(metrics: I_MetricsInterface): void {
     this.metricContainer.setMetrics(metrics);
-    this.metricUpdateSubject.next(1);
+    this.metricContainer$.next(this.metricContainer);
   }
 }

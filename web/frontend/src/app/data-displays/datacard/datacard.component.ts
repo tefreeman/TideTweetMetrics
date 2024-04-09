@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 
 import { StaticValueComponent } from './static-value/static-value.component';
-import { I_GraphDataInterface, I_DisplayableRequest } from '../../core/interfaces/displayable-interface';
+import { I_DisplayableData, I_DisplayableRequest } from '../../core/interfaces/displayable-interface';
 import { KeyTranslatorService } from '../../core/services/key-translator.service';
 @Component({
   selector: 'app-datacard',
@@ -12,7 +12,7 @@ import { KeyTranslatorService } from '../../core/services/key-translator.service
   styleUrl: './datacard.component.scss'
 })
 export class DatacardComponent implements OnInit {
-  @Input({required: true}) graphRequest!: I_GraphDataInterface;
+  @Input({required: true}) graphRequest!: I_DisplayableData;
 
   keyTranslatorService = inject(KeyTranslatorService);
   

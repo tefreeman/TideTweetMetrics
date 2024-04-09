@@ -2,20 +2,27 @@ import { Component } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
 
-
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
   imports: [AgChartsAngular],
   templateUrl: './bar-chart.component.html',
-  styleUrl: './bar-chart.component.scss'
+  styleUrl: './bar-chart.component.scss',
 })
 export class BarChartComponent {
-
   // Chart Options
   public chartOptions: AgChartOptions;
   constructor() {
-    this.chartOptions = {
+    this.chartOptions = this.make_chart();
+  }
+
+  make_chart(): AgChartOptions {
+    return {
+      theme: 'ag-material',
+
+      title: {
+        "text": "Ice Cream Sales by Month"
+      },
       // Data: Data to be displayed in the chart
       data: [
         { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
@@ -26,7 +33,34 @@ export class BarChartComponent {
         { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
       ],
       // Series: Defines which chart type and data to use
-      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
+      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }],
+
+      axes: [
+        {
+          type: 'number',
+          position: 'left',
+          title: {
+            text: 'Ice Cream Sales',
+          },
+          tick: {interval: 100000},
+          gridLine: {
+            //width: 0,
+            style: [
+              {
+                stroke: 'rgba(0,0,0,0.5)',
+                lineDash: [4, 2],
+              },
+            ],
+          },
+        },
+        {
+          type: 'category',
+          position: 'bottom',
+          title: {
+            text: 'Month',
+          },
+        },
+      ],
     };
   }
 }

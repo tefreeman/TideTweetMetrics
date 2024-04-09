@@ -6,7 +6,7 @@ export interface I_DisplayableRequest {
     type: "display" | "line" | "bar";
   }
 
-export interface I_GraphDataInterface extends I_DisplayableRequest {
+export interface I_DisplayableData extends I_DisplayableRequest {
   values: T_MetricValue[];
 }
   
