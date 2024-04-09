@@ -21,11 +21,12 @@ def build_metrics(output_file: str):
     smc.process()
 
 
-    json = smc.to_json()
+    metric_json = smc.to_json()
     if output_file:
         with open(output_file, "w") as f:
-            f.write(json)
-            
-    return json
+            f.write(metric_json)
+    
+    # see ex_sample_output.json for an example of the output
+    return metric_json
 
 
