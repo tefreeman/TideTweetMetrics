@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from backend.encoders.tweet_encoder import Tweet
 from pymongo import ASCENDING
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
+import logging
 
 class TweetAnalyticsHelper:
     def __init__(self, limit_for_debug=False) -> None:
@@ -39,12 +40,14 @@ class TweetAnalyticsHelper:
             
             tweets = None
             if self._limit_for_debug:
+                logging.debug(f"Debug limit is set to True. Retrieving first 20 tweets from {profile_stat.get_username()} only")
                 tweets = list(
                     self._tweets_col.find({"data.author_id": profile_stat.get_username()}).sort(
                         "data.created_at", ASCENDING
                     ).limit(20)
                 )
             else:
+                logging.debug(f"Retrieving all tweets from {profile_stat.get_username()} by date ascending")
                 tweets = list(
                     self._tweets_col.find({"data.author_id": profile_stat.get_username()}).sort(
                         "data.created_at", ASCENDING
