@@ -9,7 +9,7 @@ client = None
 db = None
 
 
-def init_database(name: str =None, start_fresh=False):
+def init_database(name: str = None, start_fresh=False):
     global client, db
     client = MongoClient(
         Config.db_host(),
@@ -82,10 +82,12 @@ def get_crawl_list() -> list[str]:
 
     return list(usernames)
 
+
 def get_tweet_by_id(tweet_id: str) -> Tweet:
     collection = db["tweets"]
     tweet = collection.find_one({"data.id": tweet_id})
-    return Tweet(as_json=tweet, ignore_required=True) #TODO: fix tihs 
+    return Tweet(as_json=tweet, ignore_required=True)  # TODO: fix tihs
+
 
 def get_tweets_by_user(username: str) -> list[dict]:
     collection = db["tweets"]
@@ -93,6 +95,7 @@ def get_tweets_by_user(username: str) -> list[dict]:
     for tweet in collection.find({"data.user.screen_name": username}):
         tweets.append(tweet)
     return tweets
+
 
 def add_crawl_summary(summary: dict):
     collection = db["crawl_summaries"]
@@ -136,6 +139,12 @@ def _update_profile(profile: Profile):
         {"$set": {"imeta.uid": result.inserted_id}},
     )
     return result
+
+
+def get_profile_by_username(username: str) -> Profile:
+    collection = db["profiles"]
+    profile = collection.find_one({"username": username})
+    return Profile(as_json=profile, ignore_required=True)
 
 
 def upsert_tweets(tweets: list[Tweet]) -> list[ObjectId]:
