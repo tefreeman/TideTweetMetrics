@@ -211,10 +211,55 @@ class TestDatabase(TestCase):
         dbProfile = Database.db["profiles"].find_one({"username": "TestUser"})
         self.assertEqual(dbProfile["name"], "Test User")
 
+    # Update profile test case
+    def test_5_update_profile(self):
+        curMD = MetaData()
+        curMD.set_errors([])
+        curMD.set_as_new()
+        profile = {
+            "username": "TestUser",
+            "name": "Test User",
+            "description": "This is a test user.",
+            "public_metrics": {
+                "followers_count": 1,
+                "following_count": 2,
+                "tweet_count": 3,
+                "listed_count": 4,
+            },
+            "imeta": curMD.to_json_dict(),
+        }
+        curProfile = Profile(as_json=profile, ignore_required=True)
+        Database.upsert_twitter_profile(curProfile)
 
-"""
-Create a tweet using the encoder. Set username, set contents, set... Then upload it.
-"""
+        original_profile = Database.get_profile_by_username("TestUser")
+        update_id = original_profile.get_meta_ref().get_update_id()
+        updated_profile = Database.db["profile_updates"].find_one({"_id": update_id})
+
+        self.assertEqual(updated_profile["followers_count"], 1)
+        self.assertEqual(updated_profile["following_count"], 2)
+        self.assertEqual(updated_profile["tweet_count"], 3)
+        self.assertEqual(updated_profile["listed_count"], 4)
+
+    # Find and delete profile test case
+    def test_6_find_delete(self):
+        profile = Database.db["profiles"].find_one({"username": "TestUser"})
+        profile_update = Database.db["profile_updates"].find_one(
+            {"imeta.oid": "TestUser"}
+        )
+
+        self.assertNotEqual(profile, None)
+        self.assertNotEqual(profile_update, None)
+
+        Database.db["profiles"].delete_one({"_id": profile["_id"]})
+        Database.db["profile_updates"].delete_one({"_id": profile_update["_id"]})
+
+        profile = Database.db["profiles"].find_one({"username": "TestUser"})
+        profile_update = Database.db["profile_updates"].find_one(
+            {"imeta.oid": "TestUser"}
+        )
+
+        self.assertEqual(profile, None)
+        self.assertEqual(profile_update, None)
 
 
 # Main function
