@@ -6,6 +6,7 @@ from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAn
 import json
 from backend.metric_system.compiler.np_seralizer import numpy_json_serializer
 from backend.metric_system.compiler.metric_container import MetricContainer
+import logging
 
     
 class StatMetricCompiler:
@@ -33,18 +34,23 @@ class StatMetricCompiler:
     def add_metric(self, metric: tuple[Metric | ComputableMetric]):
         if isinstance(metric, Metric):
             if isinstance(metric, OverTweetMetric):
+                logging.debug("metric is an OverTweetMetric")
                 self._over_tweet_metrics.append(metric)
             elif isinstance(metric, ComputableMetric):
                 self._unprocessed_metrics.append(metric)
+                logging.debug("metric is a ComputableMetric")
             else:
                 self._processed_metrics.add_metric(metric)
+                logging.debug("metric is neither a ComputableMetric, OverTweetMetric, or MetricGenerator")
         elif isinstance(metric, MetricGenerator):
             self._unprocessed_metrics.append(metric)
+            logging.debug("metric is a MetricGenerator")
         else:    
             raise TypeError("Invalid metric type")
     
     def add_metrics(self, metrics: list[Metric | ComputableMetric]):
         for metric in metrics:
+            logging.debug(f"Adding {metric.get_metric_name()}")
             self.add_metric(metric)
                     
         
@@ -64,21 +70,26 @@ class StatMetricCompiler:
                 
                 
     def process(self):
+        logging.info("Processing tweets")
         self._process_tweets()
         
+        logging.info("Ordering metrics with topological sort")
         ordered_metrics: list[Metric] = self.topological_sort(self._unprocessed_metrics)
         
-        
+
         for metric in ordered_metrics:
             if isinstance(metric, DependentMetric):
+                logging.debug("Handing a DependentMetric")
                 metric.set_metric_container(self._processed_metrics)
                 
             if isinstance(metric, MetricGenerator):
+                logging.debug("Handling a MetricGenerator")
                 metrics = metric.generate_and_validate(self._tweet_analytics_helper)
                 for metric in metrics:
                     self._processed_metrics.add_metric(metric)
                     
             elif isinstance(metric, ComputableMetric):
+                logging.debug("Handling a ComputableMetric")
                 metric.final_update(self._tweet_analytics_helper) 
                 self._processed_metrics.add_metric(metric)
             
@@ -87,6 +98,7 @@ class StatMetricCompiler:
         # Create a mapping from each metric name/alias to the Metric object
         name_to_metric = {}
         
+        logging.info("creating map from each metric name to its metric object")
         for metric in metrics:
             
             if isinstance(metric, Metric):
@@ -99,8 +111,10 @@ class StatMetricCompiler:
         visited = set()
         result = []
 
-        def visit(metric: Metric):
+        def visit(metric: Metric | MetricGenerator):
+            #logging.debug(f"Visiting {metric.get_metric_name()}")
             if metric in visited:
+                #logging.debug(f"{metric.get_metric_name} already visited")
                 return
             visited.add(metric)
             
@@ -108,8 +122,10 @@ class StatMetricCompiler:
                 for dep_name in metric.get_dependencies():
                     if dep_name in name_to_metric:
                         visit(name_to_metric[dep_name])
+            #logging.debug(f"Adding {metric.get_metric_name()}")
             result.append(metric)
 
+        logging.info("Visiting each metric")
         for metric in metrics:
             visit(metric)
 
@@ -121,6 +137,4 @@ class StatMetricCompiler:
             for owner, metric in owner_metrics.items():
                 owner_metrics[owner] = metric.get_data()
             
-
-                
         return json.dumps(self._processed_metrics.get_metrics(), default=numpy_json_serializer)
