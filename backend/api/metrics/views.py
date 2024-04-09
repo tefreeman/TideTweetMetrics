@@ -1,3 +1,23 @@
+"""
+views.py
+
+This module contains Django views for handling HTTP requests related to Twitter metrics and functionalities.
+
+Functions:
+    - index: Default view.
+    - getAccountList: Retrieves a list of accounts.
+    - getAccount: Retrieves profile information for an account.
+    - getAccountsAllAverage: Retrieves average public metric values for all profiles.
+    - test: Retrieves tweet metrics for all profiles within a specified time period.
+    - getPostLengthMetric: Retrieves tweet performance metrics based on tweet length.
+    - get_random_tweet: Retrieves a random tweet.
+    - set_random_tweet: Sets a random tweet for a user.
+    - get_user_responses_count: Retrieves the count of user responses.
+
+Usage:
+    - See individual function docstrings for usage examples.
+"""
+
 from bson import json_util
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -15,16 +35,18 @@ client = MongoClient(hostname, port, username=username, password=password)
 db = client['twitter_v2']
 
 def index(request):
+    """Default view."""
     return HttpResponse("Nothing here. Add \"/metric_name\" to the URL to get a metric.")
 
 def getAccountList(request):
-    return HttpResponse(json.dumps(get_crawl_list(db)),
-            content_type='application/json; charset=utf8')
+    """Retrieves a list of accounts."""
+    return HttpResponse(json.dumps(get_crawl_list(db)), content_type='application/json; charset=utf8')
 
 def getAccount(request, account_username):
-    return HttpResponse(json.dumps(get_profiles(db, [account_username])),
-            content_type='application/json; charset=utf8')
+    """Retrieves profile information for an account."""
+    return HttpResponse(json.dumps(get_profiles(db, [account_username])), content_type='application/json; charset=utf8')
 
+# Uncomment the following lines if you want to use this view
 """
 def getAccounts(request):
     usernames = request.GET.getlist("usernames", None)
@@ -37,30 +59,30 @@ def getAccounts(request):
 """
 
 def getAccountsAllAverage(request):
-    return HttpResponse(json.dumps(get_avg_profile_data(db)),
-            content_type='application/json; charset=utf8')
+    """Retrieves average public metric values for all profiles."""
+    return HttpResponse(json.dumps(get_avg_profile_data(db)), content_type='application/json; charset=utf8')
     
 def test(request, lookback_weeks):
+    """Retrieves tweet metrics for all profiles within a specified time period."""
     try:
         weeks = int(lookback_weeks)
     except Exception as e:
         return HttpResponse("Error: " + str(e))
     
-    return HttpResponse(json.dumps(get_all_profile_tweet_metrics(db, weeks)),
-            content_type='application/json; charset=utf8')
+    return HttpResponse(json.dumps(get_all_profile_tweet_metrics(db, weeks)), content_type='application/json; charset=utf8')
     
 def getPostLengthMetric(request):
-    return HttpResponse(json.dumps(get_post_length_metric(db=db)),
-            content_type='application/json; charset=utf8')
+    """Retrieves tweet performance metrics based on tweet length."""
+    return HttpResponse(json.dumps(get_post_length_metric(db=db)), content_type='application/json; charset=utf8')
     
 def get_random_tweet(request):
-    return HttpResponse(json.dumps(get_rand_tweet(db_edu=db, db_non_edu=client["twitter_nonedu"])),
-                        content_type='application/json; charset=utf8')
+    """Retrieves a random tweet."""
+    return HttpResponse(json.dumps(get_rand_tweet(db_edu=db, db_non_edu=client["twitter_nonedu"])), content_type='application/json; charset=utf8')
     
 def set_random_tweet(request, id, uid, flag):
-    return HttpResponse(json.dumps(set_rand_tweet(edu_db=db, db_non_edu=client["twitter_nonedu"], update_db=client["user_responses"], id=id, is_edu_bool=flag, uid=uid)),
-                        content_type='application/json; charset=utf8')
+    """Sets a random tweet for a user."""
+    return HttpResponse(json.dumps(set_rand_tweet(edu_db=db, db_non_edu=client["twitter_nonedu"], update_db=client["user_responses"], id=id, is_edu_bool=flag, uid=uid)), content_type='application/json; charset=utf8')
     
 def get_user_responses_count(request):
-    return HttpResponse(json.dumps(get_user_responses_cnt(client["user_responses"])),
-                        content_type='application/json; charset=utf8')
+    """Retrieves the count of user responses."""
+    return HttpResponse(json.dumps(get_user_responses_cnt(client["user_responses"])), content_type='application/json; charset=utf8')
