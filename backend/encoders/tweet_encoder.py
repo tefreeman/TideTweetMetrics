@@ -27,6 +27,24 @@ class Tweet(DataEncoder):
             "entities",
             "attachments",
         }
+        self._public_metric_keys = {
+            "retweet_count",
+            "reply_count",
+            "like_count",
+            "quote_count"
+        }
+        self._entity_keys = {
+            "annotations",
+            "cashtags",
+            "hashtags",
+            "mentions",
+            "urls"
+        }
+        self._attachment_keys = {
+            "photos",
+            "videos",
+            "cards"
+        }
 
         if as_json != None:
             self._from_json_dict(as_json)
@@ -47,7 +65,17 @@ class Tweet(DataEncoder):
         self._includes = data["includes"]
         self._meta = MetaData(as_json=data["imeta"])
         for field in data["data"].keys():
-            self._set_fields.add(field)
+            if field == "public_metrics":
+                if data["data"]["public_metrics"].keys() >= self._public_metric_keys:
+                    self._set_fields.add("public_metrics")
+            elif field == "entities":
+                if data["data"]["entities"].keys() >= self._entity_keys:
+                    self._set_fields.add("entities")
+            elif field == "attachments":
+                if data["data"]["attachments"].keys() >= self._attachment_keys:
+                    self._set_fields.add("attachments")
+            else:
+                self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
         pass
