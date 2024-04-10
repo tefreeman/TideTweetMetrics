@@ -74,6 +74,10 @@ class Config:
     @staticmethod
     def email_key() -> str:
         return Config.__CONFIG["EMAIL"]["KEY"]
+    
+    @staticmethod
+    def api_secret_key() -> str:
+        return Config.__CONFIG["API"]["SECRET_KEY"]
 
     @staticmethod
     def get_backup_dir() -> str:
