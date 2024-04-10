@@ -135,6 +135,20 @@ class Tweet(DataEncoder):
     def get_quote_count(self):
         return self._object["public_metrics"]["quote_count"]
 
+    # Example of how to call the set_entities function
+
+    """
+        tweet = Tweet()
+        content_links = [
+            {"text": "@user1", "href": "https://twitter.com/user1"},
+            {"text": "#hashtag1", "href": "https://twitter.com/hashtag/hashtag1"},
+            {"text": "$cashtag1", "href": "https://twitter.com/cashtag/cashtag1"},
+            {"text": "https://example.com", "href": "https://example.com"},
+        ]
+        content_text = "This is a tweet with @user1, #hashtag1, $cashtag1, and a link https://example.com"
+        tweet.set_entities(content_links, content_text)
+    """
+
     def set_entities(self, content_links, content_text: str):
         entities = {
             "annotations": [],
