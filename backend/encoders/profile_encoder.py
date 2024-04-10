@@ -28,6 +28,12 @@ class Profile(DataEncoder):
             "profile_image_url",
             "public_metrics",
         }
+        self._public_metric_keys = {
+            "followers_count",
+            "following_count",
+            "tweet_count",
+            "like_count"
+        }
 
         if as_json != None:
             self.from_json_dict(as_json)
@@ -87,7 +93,11 @@ class Profile(DataEncoder):
         self._object = data
         self._meta = MetaData(data["imeta"])
         for field in data.keys():
-            self._set_fields.add(field)
+            if field == "public_metrics":
+                if data["public_metrics"].keys >= self._public_metric_keys:
+                    self._set_fields.add(field)
+            else:
+                self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
         """
