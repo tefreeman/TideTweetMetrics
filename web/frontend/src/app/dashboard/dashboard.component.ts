@@ -13,12 +13,12 @@ import { MetricService } from '../core/services/metric.service';
 import { GraphService } from '../core/services/graph.service';
 import { DisplayRequestService } from '../core/services/DisplayRequest.service';
 import { DisplayProcessorService } from '../core/services/DisplayProcessor.service';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent],
+  imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent, MatSidenavModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService]
