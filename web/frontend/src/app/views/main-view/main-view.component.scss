@@ -2,3 +2,13 @@
     width: 20rem;
     background-color: #fff;
 }
+
+.example-button-row {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.example-button-row .mat-mdc-button-base {
+    margin: 3rem; 
+}
