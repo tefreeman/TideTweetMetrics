@@ -22,5 +22,8 @@
         "RAW_DIR": "backup_raw_data",
         "DIR": "backups"
     },
+    "API": {
+        "SECRET_KEY": "django-insecure-ttd_=9ok@7l!+_p*1v7tyv+0!fv)0=jkuf!z-3!3kq4xoko@ip"
+    },
     "VERSION": "0.0.1"
 }
