@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 import unittest
 from bson import ObjectId
@@ -12,11 +13,14 @@ from backend.metric_system.build import build_metrics
 from unittest import TestCase
 from backend.crawler_sys.database import _update_tweet
 from time import sleep
+from datetime import datetime   
+import numpy as np
 
 
 class TestMetricSystem(TestCase):
     _init_flag = False
-
+    _metrics = None
+    
     # Initialize the database, if it doesn't exist
     # Add a couple tweets and a couple profiles
     def test_0_init_database(self):
@@ -37,21 +41,28 @@ class TestMetricSystem(TestCase):
         tweet = {
             "data": {
                 "id": "1111111001",
-                "text": "1st Tweet for test_metric_system",
-                "created_at": "2021-10-10T10:10:10.000Z",
+                "text": "1st Tweet for test_metric_system. This is a test tweet for students. I have to keep typing so that the system finds",
+                "created_at": datetime.now(),
                 "author_id": "1234567890",
                 "public_metrics": {
                     "retweet_count": 10,
                     "reply_count": 5,
-                    "like_count": 0,
+                    "like_count": 2,
+                    "quote_count": 2
                 },
                 "entities": {
                     "mentions": [],
                     "urls": [],
                     "hashtags": [],
+                    "cashtags": [],
                     "annotations": [],
                 },
-                "attachments": {"media_keys": []},
+                "attachments": {
+                    "photos": [],
+                    "videos": [],
+                    "cards": [],
+                    },
+                "referenced_tweet": {}
             },
             "includes": {},
             "imeta": curMD.to_json_dict(),
@@ -59,7 +70,7 @@ class TestMetricSystem(TestCase):
         curTweet = Tweet(as_json=tweet, ignore_required=True)
         Database.upsert_tweets([curTweet])
         dbTweet = Database.db["tweets"].find_one({"data.id": "1111111001"})
-        self.assertEqual(dbTweet["data"]["text"], "1st Tweet for test_metric_system")
+        self.assertEqual(dbTweet["data"]["id"], "1111111001")
 
         # Add second tweet
         curMD = MetaData()
@@ -69,20 +80,26 @@ class TestMetricSystem(TestCase):
             "data": {
                 "id": "1111111002",
                 "text": "2nd Tweet for test_metric_system",
-                "created_at": "2021-10-10T10:10:10.000Z",
+                "created_at": datetime.now(),
                 "author_id": "1234567890",
                 "public_metrics": {
-                    "retweet_count": 20,
-                    "reply_count": 10,
-                    "like_count": 5,
+                    "retweet_count": 30,
+                    "reply_count": 6,
+                    "like_count": 3,
+                    "quote_count": 1
                 },
                 "entities": {
-                    "mentions": [],
-                    "urls": [],
-                    "hashtags": [],
-                    "annotations": [],
+                    "mentions": [""],
+                    "urls": [""],
+                    "hashtags": [""],
+                    "cashtags": [""],
+                    "annotations": [""],
                 },
-                "attachments": {"media_keys": []},
+                "attachments": {
+                    "photos": [""],
+                    "videos": [""],
+                    "cards": [""],},
+                "referenced_tweet": {}
             },
             "includes": {},
             "imeta": curMD.to_json_dict(),
@@ -97,76 +114,52 @@ class TestMetricSystem(TestCase):
         curMD.set_errors([])
         curMD.set_as_new()
         profile = {
-            "username": "test_profile_1",
+            "username": "1234567890",
             "name": "Test Profile 1",
-            "id": "1111112001",
-            "created_at": "2021-10-10T10:10:10.000Z",
+            "created_at": datetime.now(),
+            "description": "Test Profile 1 Description",
+            "location": "Test Profile 1 Location",
+            "verified": False,
             "public_metrics": {
                 "followers_count": 10,
                 "following_count": 5,
-                "tweet_count": 0,
-                "listed_count": 0,
+                "tweet_count": 3,
+                "like_count": 3,
             },
+            "profile_image_url": "https://test_profile_1.com",
+            "url": "https://test_profile_1.com",
             "imeta": curMD.to_json_dict(),
         }
         curProfile = Profile(as_json=profile, ignore_required=True)
         Database.upsert_twitter_profile(curProfile)
-        dbProfile = Database.db["profiles"].find_one({"username": "test_profile_1"})
+        dbProfile = Database.db["profiles"].find_one({"username": "1234567890"})
         self.assertEqual(dbProfile["name"], "Test Profile 1")
 
-        # Add second profile
-        curMD = MetaData()
-        curMD.set_errors([])
-        curMD.set_as_new()
-        profile = {
-            "username": "test_profile_2",
-            "name": "Test Profile 2",
-            "id": "1111112002",
-            "created_at": "2021-10-10T10:10:10.000Z",
-            "public_metrics": {
-                "followers_count": 20,
-                "following_count": 10,
-                "tweet_count": 5,
-                "listed_count": 5,
-            },
-            "imeta": curMD.to_json_dict(),
-        }
-        curProfile = Profile(as_json=profile, ignore_required=True)
-        Database.upsert_twitter_profile(curProfile)
-        dbProfile = Database.db["profiles"].find_one({"username": "test_profile_2"})
-        self.assertEqual(dbProfile["name"], "Test Profile 2")
+       
 
     # Call the build_metrics function and verify the the returned statistics are correct
     def test_1_build_metrics(self):
         Config.overwrite_db_name("TestDB")
-        output_file = ""
-        metrics = build_metrics(output_file)
-        self.assertIsNotNone(metrics)
-        print(metrics)
-
-    # Delete the tweets and profiles that we created
-    def test_9_delete_tweets_profiles(self):
-        # Delete the first tweet
-        Database.db["tweets"].delete_one({"data.id": "1111111001"})
-        dbTweet = Database.db["tweets"].find_one({"data.id": "1111111001"})
-        self.assertIsNone(dbTweet)
-
-        # Delete the second tweet
-        Database.db["tweets"].delete_one({"data.id": "1111111002"})
-        dbTweet = Database.db["tweets"].find_one({"data.id": "1111111002"})
-        self.assertIsNone(dbTweet)
-
-        # Delete the first profile
-        Database.db["profiles"].delete_one({"username": "test_profile_1"})
-        dbProfile = Database.db["profiles"].find_one({"username": "test_profile_1"})
-        self.assertIsNone(dbProfile)
-
-        # Delete the second profile
-        Database.db["profiles"].delete_one({"username": "test_profile_2"})
-        dbProfile = Database.db["profiles"].find_one({"username": "test_profile_2"})
-        self.assertIsNone(dbProfile)
+        output_file = "ex_testing_metic_out.json"
+        metric_json_str = build_metrics(output_file)
+        TestMetricSystem._metrics = json.loads(metric_json_str)
+        self.assertIsNotNone(TestMetricSystem._metrics)
 
 
+    def test_2_gen_likes_per_follower(self):
+        
+        statement = "likes_per_follower" in TestMetricSystem._metrics
+        self.assertTrue("likes_per_follower" in TestMetricSystem._metrics)
+        
+        likes_per_follower = TestMetricSystem._metrics["likes_per_follower"]
+        
+        self.assertTrue("1234567890" in likes_per_follower)
+        self.assertTrue("_global" in likes_per_follower)
+        
+        # compute the expected values and assert
+        
+        self.assertEqual(likes_per_follower["1234567890"], 0.5)
+        
 # main
 if __name__ == "__main__":
     Config.init()

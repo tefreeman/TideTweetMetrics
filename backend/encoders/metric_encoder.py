@@ -17,6 +17,7 @@ class MetricEncoder:
             self.max_dimension = 0 # 0 = scalar
             
         self._dataset = data
+        
     def get_dataset(self) -> list[tuple]:
         return self._dataset
     
