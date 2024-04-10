@@ -86,6 +86,8 @@ class Profile(DataEncoder):
         """
         self._object = data
         self._meta = MetaData(data["imeta"])
+        for field in data.keys():
+            self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
         """
