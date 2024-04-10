@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.corpus import words
 import nltk
+import logging
 
 
 class WordFrequencyMetric(OverTweetMetric):
@@ -21,10 +22,12 @@ class WordFrequencyMetric(OverTweetMetric):
     
     def tweet_update(self, tweet):
         self.count += 1
+        logging.debug("Filtering words of tweet")
         words = word_tokenize(tweet.get_text())
         filtered_text = [word for word in words if word.lower() not in self.stop_words]
         
         filtered_english_words = [word for word in filtered_text if word in self.english_words]
+        logging.debug("Iterating through filtered words to determine count of each word")
         for word in filtered_english_words:
             if word in self.words:
                 self.words[word] += 1
@@ -32,6 +35,7 @@ class WordFrequencyMetric(OverTweetMetric):
                 self.words[word] = 1
                 
     def final_update(self, stat_helper):
+        logging.debug("Setting data to list of relevant words sorted by use (most to least)")
         values = [(key, val) for key, val in self.words.items()]
         values.sort(key=lambda x: x[1], reverse=True)
 
