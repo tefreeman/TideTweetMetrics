@@ -30,7 +30,8 @@ class TestMetricSystem(TestCase):
 
     # Initialize the database, if it doesn't exist
     # Add a couple tweets and a couple profiles
-    def test_0_init_database(self):
+    def setUp(self):
+
         if self._init_flag:
             return
 
@@ -42,27 +43,27 @@ class TestMetricSystem(TestCase):
         self._init_flag = True
 
         # Add a couple profiles using the helper
-        helper_obj = helper.TestMetricSystemHelper()
-        profile1 = helper_obj.ReturnProfile1()
-        profile2 = helper_obj.ReturnProfile2()
+        self.helper_obj = helper.TestMetricSystemHelper()
+        self.profile1 = self.helper_obj.ReturnProfile1()
+        self.profile2 = self.helper_obj.ReturnProfile2()
 
         # Add three tweets for each profile
-        tweet1 = helper_obj.ReturnP1Tweet1()
-        tweet2 = helper_obj.ReturnP1Tweet2()
-        tweet3 = helper_obj.ReturnP1Tweet3()
-        tweet4 = helper_obj.ReturnP2Tweet1()
-        tweet5 = helper_obj.ReturnP2Tweet2()
-        tweet6 = helper_obj.ReturnP2Tweet3()
+        self.tweet1 = self.helper_obj.ReturnP1Tweet1()
+        self.tweet2 = self.helper_obj.ReturnP1Tweet2()
+        self.tweet3 = self.helper_obj.ReturnP1Tweet3()
+        self.tweet4 = self.helper_obj.ReturnP2Tweet1()
+        self.tweet5 = self.helper_obj.ReturnP2Tweet2()
+        self.tweet6 = self.helper_obj.ReturnP2Tweet3()
 
         # Insert the profiles and tweets into the database
-        Database.upsert_twitter_profile(profile1)
-        Database.upsert_twitter_profile(profile2)
-        Database.upsert_tweet(tweet1)
-        Database.upsert_tweet(tweet2)
-        Database.upsert_tweet(tweet3)
-        Database.upsert_tweet(tweet4)
-        Database.upsert_tweet(tweet5)
-        Database.upsert_tweet(tweet6)
+        Database.upsert_twitter_profile(self.profile1)
+        Database.upsert_twitter_profile(self.profile2)
+        Database.upsert_tweet(self.tweet1)
+        Database.upsert_tweet(self.tweet2)
+        Database.upsert_tweet(self.tweet3)
+        Database.upsert_tweet(self.tweet4)
+        Database.upsert_tweet(self.tweet5)
+        Database.upsert_tweet(self.tweet6)
 
         # Verify that each tweet and profile is there, one-by-one
         self.assertIsNotNone(Database.get_tweet_by_id("1111111001"))
@@ -75,7 +76,7 @@ class TestMetricSystem(TestCase):
         self.assertIsNotNone(Database.get_profile_by_username("2nd_profile"))
 
     # Call the build_metrics function and verify the the returned statistics are correct
-    def test_1_build_metrics(self):
+    def test_01_build_metrics(self):
         Config.overwrite_db_name("TestDB")
         output_file = "ex_testing_metic_out.json"
         metric_json_str = build_metrics(output_file)
@@ -95,6 +96,17 @@ class TestMetricSystem(TestCase):
     #     # compute the expected values and assert
 
     #     self.assertEqual(likes_per_follower["1234567890"], 0.5)
+
+    def test_99_teardown(self):
+        # Delete the specific tweets and profiles from the database
+        Database.db["profiles"].delete_one({"username": self.profile1.get_username()})
+        Database.db["profiles"].delete_one({"username": self.profile2.get_username()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet2.get_id()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet3.get_id()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet4.get_id()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet5.get_id()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet6.get_id()})
+        Database.db["tweets"].delete_one({"data.id": self.tweet1.get_id()})
 
 
 # main
