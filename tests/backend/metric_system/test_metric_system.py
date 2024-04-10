@@ -17,6 +17,12 @@ from time import sleep
 from datetime import datetime
 import numpy as np
 
+# import nltk
+
+# nltk.download("stopwords")
+# nltk.download("punkt")
+# nltk.download("words")
+
 
 class TestMetricSystem(TestCase):
     _init_flag = False
@@ -69,12 +75,12 @@ class TestMetricSystem(TestCase):
         self.assertIsNotNone(Database.get_profile_by_username("2nd_profile"))
 
     # Call the build_metrics function and verify the the returned statistics are correct
-    # def test_1_build_metrics(self):
-    #     Config.overwrite_db_name("TestDB")
-    #     output_file = "ex_testing_metic_out.json"
-    #     metric_json_str = build_metrics(output_file)
-    #     TestMetricSystem._metrics = json.loads(metric_json_str)
-    #     self.assertIsNotNone(TestMetricSystem._metrics)
+    def test_1_build_metrics(self):
+        Config.overwrite_db_name("TestDB")
+        output_file = "ex_testing_metic_out.json"
+        metric_json_str = build_metrics(output_file)
+        TestMetricSystem._metrics = json.loads(metric_json_str)
+        self.assertIsNotNone(TestMetricSystem._metrics)
 
     # def test_2_gen_likes_per_follower(self):
 
