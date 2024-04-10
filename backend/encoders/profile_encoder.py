@@ -94,7 +94,7 @@ class Profile(DataEncoder):
         self._meta = MetaData(data["imeta"])
         for field in data.keys():
             if field == "public_metrics":
-                if data["public_metrics"].keys >= self._public_metric_keys:
+                if data["public_metrics"].keys() >= self._public_metric_keys:
                     self._set_fields.add(field)
             else:
                 self._set_fields.add(field)
