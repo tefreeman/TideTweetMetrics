@@ -78,7 +78,7 @@ class TestMetricSystem(TestCase):
     # Call the build_metrics function and verify the the returned statistics are correct
     def test_01_build_metrics(self):
         Config.overwrite_db_name("TestDB")
-        output_file = "ex_testing_metic_out.json"
+        output_file = "ex_testing_metric_out.json"
         metric_json_str = build_metrics(output_file)
         TestMetricSystem._metrics = json.loads(metric_json_str)
         self.assertIsNotNone(TestMetricSystem._metrics)
