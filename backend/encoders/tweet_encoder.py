@@ -46,6 +46,8 @@ class Tweet(DataEncoder):
         self._object = data["data"]
         self._includes = data["includes"]
         self._meta = MetaData(as_json=data["imeta"])
+        for field in data.keys():
+            self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
         pass
