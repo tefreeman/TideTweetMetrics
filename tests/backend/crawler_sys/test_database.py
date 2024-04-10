@@ -20,7 +20,7 @@ class TestDatabase(TestCase):
         if self._init_flag:
             return
 
-        Database.init_database("TestDB", True)
+        Database.init_database("TestDB", start_fresh=True)
         sleep(0.5)
         collections = Database.db.list_collection_names()
         print(f"The database contains {len(collections)} collections.")
