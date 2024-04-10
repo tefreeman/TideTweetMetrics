@@ -4,6 +4,8 @@ from backend.encoders.metric_encoder import MetricEncoder
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
 from backend.metric_system.compiler.metric_container import MetricContainer
 
+# All needed logging for this file is covered by raised exceptions
+
 
 from abc import ABC, abstractmethod
 
