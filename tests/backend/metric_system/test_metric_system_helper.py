@@ -143,7 +143,7 @@ class TestMetricSystemHelper:
         profile1.set_description("Test Profile 1 Description")
         profile1.set_location("Test Profile 1 Location")
         profile1.set_verified(False)
-        profile1.set_public_metrics("1000", "1000", "1000", "1000")
+        profile1.set_public_metrics("1000", "2000", "3500", "4500")
         profile1.set_profile_image_url("https://test_profile_1.com")
         profile1.set_url("https://test_profile_1.com")
         return profile1
@@ -156,7 +156,7 @@ class TestMetricSystemHelper:
         profile2.set_description("Test Profile 2 Description")
         profile2.set_location("Test Profile 2 Location")
         profile2.set_verified(False)
-        profile2.set_public_metrics("2000", "2000", "2000", "2000")
+        profile2.set_public_metrics("5500", "6500", "8000", "9000")
         profile2.set_profile_image_url("https://test_profile_2.com")
         profile2.set_url("https://test_profile_2.com")
         return profile2
