@@ -72,7 +72,9 @@ class TestMetricSystemHelper:
     def ReturnP2Tweet1(self) -> Tweet:
         tweet1 = Tweet()
         tweet1.set_id("1111112001")
-        tweet1.set_text("1st Tweet for 2nd profile for test_metric_system")
+        tweet1.set_text(
+            "1st Tweet for 2nd profile for test_metric_system. This is random text to create more variation."
+        )
         tweet1.set_post_date("Mar 10, 2024 · 07:30 PM UTC")
         tweet1.set_author("2nd_profile")
         tweet1.set_public_metrics("40", "40", "40", "40")
@@ -91,7 +93,9 @@ class TestMetricSystemHelper:
     def ReturnP2Tweet2(self) -> Tweet:
         tweet2 = Tweet()
         tweet2.set_id("1111112002")
-        tweet2.set_text("2nd Tweet for 2nd profile for test_metric_system")
+        tweet2.set_text(
+            "2nd Tweet for 2nd profile for test_metric_system. This is random text to create more variation. And now I am writing even more."
+        )
         tweet2.set_post_date("Mar 10, 2024 · 08:30 PM UTC")
         tweet2.set_author("2nd_profile")
         tweet2.set_public_metrics("50", "50", "50", "50")
@@ -110,7 +114,9 @@ class TestMetricSystemHelper:
     def ReturnP2Tweet3(self) -> Tweet:
         tweet3 = Tweet()
         tweet3.set_id("1111112003")
-        tweet3.set_text("3rd Tweet for 2nd profile for test_metric_system")
+        tweet3.set_text(
+            "3rd Tweet for 2nd profile for test_metric_system. This is random text to create more variation. And now I am writing even more. It will be interesting to see what nltk does with this."
+        )
         tweet3.set_post_date("Mar 10, 2024 · 09:30 PM UTC")
         tweet3.set_author("2nd_profile")
         tweet3.set_public_metrics("60", "60", "60", "60")
