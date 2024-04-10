@@ -12,7 +12,7 @@ class TestMetricSystemHelper:
         tweet1.set_text(
             "1st Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic."
         )
-        tweet1.set_post_date("Mar 10, 2024 · 04:30 PM UTC")
+        tweet1.set_post_date("Mar 10, 2020 · 04:30 PM UTC")
         tweet1.set_author("1st_profile")
         tweet1.set_public_metrics("10", "10", "10", "10")
         content_links = [
@@ -33,7 +33,7 @@ class TestMetricSystemHelper:
         tweet2.set_text(
             "2nd Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic. Extra text."
         )
-        tweet2.set_post_date("Mar 10, 2024 · 05:30 PM UTC")
+        tweet2.set_post_date("Mar 10, 2020 · 05:30 PM UTC")
         tweet2.set_author("1st_profile")
         tweet2.set_public_metrics("20", "20", "20", "20")
         content_links = [
@@ -54,7 +54,7 @@ class TestMetricSystemHelper:
         tweet3.set_text(
             "3rd Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic. Extra text. Extra text."
         )
-        tweet3.set_post_date("Mar 10, 2024 · 06:30 PM UTC")
+        tweet3.set_post_date("Mar 10, 2021 · 06:30 PM UTC")
         tweet3.set_author("1st_profile")
         tweet3.set_public_metrics("30", "30", "30", "30")
         content_links = [
@@ -75,7 +75,7 @@ class TestMetricSystemHelper:
         tweet1.set_text(
             "1st Tweet for 2nd profile for test_metric_system. This is random text to create more variation."
         )
-        tweet1.set_post_date("Mar 10, 2024 · 07:30 PM UTC")
+        tweet1.set_post_date("Mar 10, 2021 · 07:30 PM UTC")
         tweet1.set_author("2nd_profile")
         tweet1.set_public_metrics("40", "40", "40", "40")
         content_links = [
@@ -96,7 +96,7 @@ class TestMetricSystemHelper:
         tweet2.set_text(
             "2nd Tweet for 2nd profile for test_metric_system. This is random text to create more variation. And now I am writing even more."
         )
-        tweet2.set_post_date("Mar 10, 2024 · 08:30 PM UTC")
+        tweet2.set_post_date("Mar 10, 2022 · 08:30 PM UTC")
         tweet2.set_author("2nd_profile")
         tweet2.set_public_metrics("50", "50", "50", "50")
         content_links = [
@@ -117,7 +117,7 @@ class TestMetricSystemHelper:
         tweet3.set_text(
             "3rd Tweet for 2nd profile for test_metric_system. This is random text to create more variation. And now I am writing even more. It will be interesting to see what nltk does with this."
         )
-        tweet3.set_post_date("Mar 10, 2024 · 09:30 PM UTC")
+        tweet3.set_post_date("Mar 10, 2022 · 09:30 PM UTC")
         tweet3.set_author("2nd_profile")
         tweet3.set_public_metrics("60", "60", "60", "60")
         content_links = [
