@@ -9,7 +9,6 @@ from backend.config import Config
 
 
 def build_metrics(output_file: str):
-    Config.init()
     smc = StatMetricCompiler()
     smc.add_metric(GenLikesPerFollower())
     smc.add_metric(StandardProfileStatGenerator())
