@@ -36,13 +36,15 @@ class TestProfileEncoder(unittest.TestCase):
             }
         }"""
 
-    # def test_json_to_dict(self):
-    #     profile_dict = json.loads(self.getMockJSONProfileString())
-    #     encoded_profile = Profile(as_json=profile_dict)
-    #     decoded_json_dict = encoded_profile.to_json_dict()
-    #     t1 = json.loads(self.getMockJSONProfileString())
-    #     t2 = decoded_json_dict
-    #     self.assertEqual(t1, t2)
+    def test_json_to_dict(self):
+        profile_dict = json.loads(self.getMockJSONProfileString())
+        encoded_profile = Profile(as_json=profile_dict)
+        decoded_json_dict = encoded_profile.to_json_dict()
+        t1 = json.loads(self.getMockJSONProfileString())
+        t2 = decoded_json_dict
+        print(t1)
+        print(t2)
+        self.assertEqual(t1, t2)
 
     def test_set_and_get_name(self):
         profile_dict = json.loads(self.getMockJSONProfileString())
