@@ -227,7 +227,9 @@ class Tweet(DataEncoder):
     # We will implement it as an object
     # https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
 
-    def set_refenced_tweet(self, referenced_tweet_id, tweet_type: ReferencedTweetType):
+    def set_referenced_tweet(
+        self, referenced_tweet_id, tweet_type: ReferencedTweetType
+    ):
         if isinstance(tweet_type, ReferencedTweetType) == False:
             raise ValueError("tweet_type must be an instance of ReferencedTweetType")
 

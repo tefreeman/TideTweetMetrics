@@ -3,6 +3,7 @@ import unittest
 from encoders.tweet_encoder import *
 import datetime
 
+
 class TestTweetEncoder(unittest.TestCase):
 
     def setUp(self):
@@ -18,7 +19,10 @@ class TestTweetEncoder(unittest.TestCase):
 
     def test_post_date(self):
         self.tweet.set_post_date("Feb 03, 2024 · 12:00 PM UTC")
-        self.assertEqual(self.tweet.get_post_date(), datetime.datetime(2024, 2, 3, 12, 0, tzinfo=datetime.timezone.utc))
+        self.assertEqual(
+            self.tweet.get_post_date(),
+            datetime.datetime(2024, 2, 3, 12, 0, tzinfo=datetime.timezone.utc),
+        )
 
     def test_author(self):
         self.tweet.set_author("abc")
@@ -27,17 +31,17 @@ class TestTweetEncoder(unittest.TestCase):
     def test_public_metrics(self):
         self.tweet.set_public_metrics("20", "10", "50", "5")
         resp = self.tweet.get_public_metrics()
-        self.assertEqual(resp['retweet_count'], 20)
-        self.assertEqual(resp['reply_count'], 10)
-        self.assertEqual(resp['like_count'], 50)
-        self.assertEqual(resp['quote_count'], 5)
+        self.assertEqual(resp["retweet_count"], 20)
+        self.assertEqual(resp["reply_count"], 10)
+        self.assertEqual(resp["like_count"], 50)
+        self.assertEqual(resp["quote_count"], 5)
 
     def test_entities(self):
         content_links = [
             {"text": "@samgaines"},
             {"text": "#fine"},
             {"text": "$GOOG"},
-            {"text": "Google", "href": "http://google.com"}
+            {"text": "Google", "href": "http://google.com"},
         ]
         content_text = "Hey @samgaines, you're looking #fine on this Thursday afternoon. $GOOG is trending. Google"
         self.tweet.set_entities(content_links, content_text)
@@ -63,9 +67,10 @@ class TestTweetEncoder(unittest.TestCase):
     def test_referenced_tweet(self):
         id = "1256"
         type = ReferencedTweetType.RETWEET
-        self.tweet.set_refenced_tweet(id, type)
+        self.tweet.set_referenced_tweet(id, type)
         self.assertEqual(self.tweet.get_referenced_tweet()["id"], id)
         self.assertEqual(self.tweet.get_referenced_tweet()["type"], "retweeted")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
