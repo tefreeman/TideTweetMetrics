@@ -9,7 +9,9 @@ class TestMetricSystemHelper:
     def ReturnP1Tweet1(self) -> Tweet:
         tweet1 = Tweet()
         tweet1.set_id("1111111001")
-        tweet1.set_text("1st Tweet for 1st profile for test_metric_system")
+        tweet1.set_text(
+            "1st Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic."
+        )
         tweet1.set_post_date("Mar 10, 2024 · 04:30 PM UTC")
         tweet1.set_author("1st_profile")
         tweet1.set_public_metrics("10", "10", "10", "10")
@@ -28,7 +30,9 @@ class TestMetricSystemHelper:
     def ReturnP1Tweet2(self) -> Tweet:
         tweet2 = Tweet()
         tweet2.set_id("1111111002")
-        tweet2.set_text("2nd Tweet for 1st profile for test_metric_system")
+        tweet2.set_text(
+            "2nd Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic. Extra text."
+        )
         tweet2.set_post_date("Mar 10, 2024 · 05:30 PM UTC")
         tweet2.set_author("1st_profile")
         tweet2.set_public_metrics("20", "20", "20", "20")
@@ -47,7 +51,9 @@ class TestMetricSystemHelper:
     def ReturnP1Tweet3(self) -> Tweet:
         tweet3 = Tweet()
         tweet3.set_id("1111111003")
-        tweet3.set_text("3rd Tweet for 1st profile for test_metric_system")
+        tweet3.set_text(
+            "3rd Tweet for 1st profile for test_metric_system. Disney is cool. Elon Musk is epic. Extra text. Extra text."
+        )
         tweet3.set_post_date("Mar 10, 2024 · 06:30 PM UTC")
         tweet3.set_author("1st_profile")
         tweet3.set_public_metrics("30", "30", "30", "30")
