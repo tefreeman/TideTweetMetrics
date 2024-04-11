@@ -3,6 +3,7 @@ import numpy as np
 from backend.metric_system.metric import MetricGenerator, Metric, DependentMetric
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
+from backend.metric_system.helpers.key_map import create_key
 import logging
 from datetime import datetime
 # Define statistics names along with their corresponding functions.
@@ -15,9 +16,9 @@ _STAT_NAMES = [
 
 class StandardProfileStatOverTimeGenerator(MetricGenerator):
     def __init__(self) -> None:
-        self.prop_list = ["tweet_likes", "tweet_count"]
-        stat_names_out = [f"{prop}-{stat_name}-yearly" for prop in self.prop_list for stat_name, _ in _STAT_NAMES]
-        super().__init__(stat_names_out) 
+        self.property_list = ["tweet_likes", "tweet_count"]
+        expected_metric_names = [create_key(prop, stat_name, "yearly") for prop in self.property_list for stat_name, _ in _STAT_NAMES]
+        super().__init__(expected_metric_names) 
         
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> List[Metric]:
         return self.gen_standard_stats_for_all_profiles(stat_helper)
@@ -31,9 +32,9 @@ class StandardProfileStatOverTimeGenerator(MetricGenerator):
     def gen_standard_stats_for_profile(self, profile_plus: ProfileWithTweetProperties) -> List[Metric]:
         metrics = []
         
-        for tweet_property in self.prop_list:
+        for tweet_property in self.property_list:
             for stat_name, stat_func in _STAT_NAMES:
-                metric = Metric(profile_plus.get_username(), f"{tweet_property}-{stat_name}-yearly")
+                metric = Metric(profile_plus.get_username(), create_key(tweet_property, stat_name, "yearly"))
                
                 arr = profile_plus.get_tweet_property(tweet_property)
                 
