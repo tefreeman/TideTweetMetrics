@@ -2,6 +2,7 @@ import numpy as np
 from backend.metric_system.metric import MetricGenerator, Metric, DependentMetric
 from backend.metric_system.helpers.profile.profile_with_tweet_properties import ProfileWithTweetProperties
 from backend.metric_system.helpers.profile.tweet_analytics_helper import TweetAnalyticsHelper
+from backend.metric_system.helpers.key_map import create_key, GLOBAL_PROFILE_NAME
 from itertools import product
 import logging
 
@@ -10,20 +11,20 @@ class PearsonCorrelationProfileStatGenerator(MetricGenerator):
         
         self.prop_list = ["tweet_likes"] # add properties from the  ProfileWithTweetProperties Class
         # Generate output names for Pearson correlation between all pairs of properties
-        stat_names_out = [f"pearson-{prop1}-vs-{prop2}" for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:])]
+        expected_metric_names = [create_key("pearson", prop1, "vs", prop2) for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:])]
         
-        
-        super().__init__(stat_names_out)
+        # Calls the __init__ method of the MetricGenerator class
+        super().__init__(expected_metric_names)
         
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> list[Metric]:
-        return self.gen_pearson_correlations_for_profile(stat_helper.get_profile("_global"))
+        return self.gen_pearson_correlations_for_profile(stat_helper.get_profile(GLOBAL_PROFILE_NAME))
     
     def gen_pearson_correlations_for_profile(self, profile_plus: ProfileWithTweetProperties) -> list[Metric]:
         metrics = []
         prop_list = profile_plus.get_properties_list()
         
         for prop1, prop2 in product(self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:]):
-            metric_name = f"pearson-{prop1}-vs-{prop2}"
+            metric_name = create_key("pearson", prop1, "vs", prop2)
             arr1 = profile_plus.get_tweet_property(prop1)
             arr2 = profile_plus.get_tweet_property(prop2)
             

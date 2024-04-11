@@ -1,6 +1,6 @@
 import numpy as np
 
-
+# This function is used to serialize numpy objects to JSON
 def numpy_json_serializer(obj):
     if isinstance(obj, np.integer):
         return int(obj)
