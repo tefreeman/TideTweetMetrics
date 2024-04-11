@@ -4,6 +4,8 @@ import numpy as np
 from datetime import datetime
 import logging
 
+# This is the tweet properties that is extracted from the tweet database
+# and stored in Np arrays
 def _default_property_extractor():
        return (
             ("tweet_likes", lambda tweet: tweet.get_like_count()),
@@ -105,6 +107,7 @@ class ProfileWithTweetProperties(Profile):
             tweet_count=self.get_tweet_count() + other_profile.get_tweet_count(),
             like_count=self.get_like_count() + other_profile.get_like_count(),
         )
+    
     def get_tweet_property(self, property_name: str):
         return self._tweet_data_matrix[ProfileWithTweetProperties._property_to_index[property_name]]
     
