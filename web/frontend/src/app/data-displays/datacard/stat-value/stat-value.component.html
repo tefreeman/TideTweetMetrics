@@ -2,10 +2,10 @@
 <mat-grid-list cols="2" gutterSize="4px">
   <mat-grid-tile colspan="1">
     <div style="text-align: center;">
-      <h2 class="mat-h2" style="margin: 0px">{{metric}}</h2>
+      <h2 class="mat-h2" style="margin: 0px">{{metric_name}}</h2>
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="1">
-  <p class="bold-number">{{value | number: '1.0-2' }}</p>
+  <p class="bold-number">{{ data | number: '1.0-2' }}</p>
   </mat-grid-tile>
 </mat-grid-list>

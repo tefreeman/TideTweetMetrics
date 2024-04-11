@@ -7,18 +7,18 @@ import { inject } from '@angular/core';
 import { DatacardComponent } from '../data-displays/datacard/datacard.component';
 import {MatDividerModule} from '@angular/material/divider';
 import { BarChartComponent } from '../data-displays/graphs/bar-chart/bar-chart.component';
-import { fromEvent, Subscription, tap, throttleTime } from 'rxjs';
+import { fromEvent, Observable, Subscription, tap, throttleTime } from 'rxjs';
 import { I_DisplayableData, I_DisplayableRequest } from '../core/interfaces/displayable-interface';
 import { MetricService } from '../core/services/metric.service';
 import { GraphService } from '../core/services/graph.service';
 import { DisplayRequestService } from '../core/services/DisplayRequest.service';
 import { DisplayProcessorService } from '../core/services/DisplayProcessor.service';
 import {MatSidenavModule} from '@angular/material/sidenav';
-
+import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent, MatSidenavModule],
+  imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent, MatSidenavModule, AsyncPipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService]
@@ -26,17 +26,30 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 export class DashboardComponent implements OnInit, OnDestroy{
   _displayProcessor = inject(DisplayProcessorService);
 
-  graphs: I_DisplayableData[] = [];
+  displayableDataArr$: Observable<I_DisplayableData[]>;
 
 
+  test_displayed_data: I_DisplayableData = {
+    stat_name: "tweet_likes-mean",
+    owners: ["alabama_cs"],
+    type: "stat-value",
+    values: [1]
+  
+  }
 
+  test_displayed_data2: I_DisplayableData = {
+    stat_name: "tweet_likes-sum",
+    owners: ["alabama_cs"],
+    type: "stat-trend",
+    values: [10]
+  
+  }
   constructor(){
-   this._displayProcessor.displayables$.subscribe((displayables) => {
-     this.graphs = displayables;
-   });
+    this.displayableDataArr$ = this._displayProcessor.displayables$;
 }
 
   ngOnInit() {
+    
   }
 
   ngOnDestroy(): void {
