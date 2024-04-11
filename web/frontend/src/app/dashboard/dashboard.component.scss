@@ -4,10 +4,10 @@
     margin: 16px;
     display: grid;
     gap: 16px;
-    grid-template-rows: repeat(2, auto-fit);
+    grid-template-rows: repeat(auto-fit, auto-fit);
     grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     justify-content: center;
-    padding: 10rem 10rem 0rem 10rem;
+    /*padding: 10rem 10rem 0rem 10rem;*/
 }
 
 .graphContainer {
@@ -16,11 +16,14 @@
     gap: 32px;
     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
     justify-content: center;
-    padding: 0rem 10rem 0rem 10rem;
+    /*padding: 0rem 10rem 0rem 10rem;*/
 }
 
-.graphItem--double {
+.graphItemCol--double {
     grid-column: span 2; /* Make this item span two columns */
 }
 
+.graphItemRow--double {
+    grid-row: span 2; /* Make this item span two columns */
+}
   
