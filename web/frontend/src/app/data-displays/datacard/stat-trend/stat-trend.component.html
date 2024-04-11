@@ -1,0 +1,8 @@
+<div style="height: 100%">
+<p>
+  {{lastPoint.toString() + " vs " + nowPoint.toString() }}
+</p>
+<span *ngIf="nowPoint > lastPoint">
+  <mat-icon>arrow_upward</mat-icon>
+</span>
+</div>

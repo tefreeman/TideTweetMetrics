@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StaticValueComponent } from './static-value.component';
+import { StatValueComponent } from './stat-value.component';
 
 describe('StaticValueComponent', () => {
-  let component: StaticValueComponent;
-  let fixture: ComponentFixture<StaticValueComponent>;
+  let component: StatValueComponent;
+  let fixture: ComponentFixture<StatValueComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StaticValueComponent]
+      imports: [StatValueComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(StaticValueComponent);
+    fixture = TestBed.createComponent(StatValueComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,16 +1,27 @@
 
 
 <div class="dataCardContainer">
-  <div *ngFor="let graphRequest of graphs">
-    <app-datacard [graphRequest]="graphRequest"></app-datacard>
-  </div>
+  <!-- <div *ngFor="let displayableData of displayableDataArr$ | async">
+    <app-datacard [displayableData]="displayableData"></app-datacard>
+  </div> -->
+
+  <!-- <app-datacard class="graphItemCol--double" [displayableData]="test_displayed_data"></app-datacard> -->
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data2"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+
+
 </div>
 
 
 
 
 <div class="graphContainer">
-  <div *ngFor="let graphRequest of graphs">
+  <div *ngFor="let displayableData of displayableDataArr$ | async">
     <mat-card>
     <app-bar-chart></app-bar-chart>
     </mat-card>
