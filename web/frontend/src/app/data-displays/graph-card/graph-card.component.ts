@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { I_DisplayableData } from '../../core/interfaces/displayable-interface';
-import { MaterialModule } from '../../material/material.module';
+import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgIf } from '@angular/common';
 
 @Component({
