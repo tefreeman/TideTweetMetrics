@@ -22,8 +22,10 @@ let test_displayed_data2: I_DisplayableData = {
   providedIn: 'root'
 })
 export class MockDataService {
+  public overrideProfile = false;
   constructor() { 
   }
+
 
   getMockData(): I_DisplayableData[] {
     return [test_displayed_data, test_displayed_data2];
