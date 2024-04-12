@@ -1,19 +1,22 @@
 @use '@angular/material' as mat;
 
-$impactful-number-display: (
-  font-size: 2.0rem, // Large font size for impact
-  font-weight: 900, // Bold weight for emphasis
-  line-height: 1.2 // Adjusted line height for readability
-);
 
-// Apply the styles directly
-.bold-number {
-  font-size: map-get($impactful-number-display, font-size);
-  font-weight: map-get($impactful-number-display, font-weight);
-  line-height: map-get($impactful-number-display, line-height);
-  margin: 0px;
+.card{
+  padding: 1rem 1.5rem 0rem;
 }
 
+.card-title{
+  font-weight: bold;
+  letter-spacing: -.3px; 
+  color: #999;
+  margin-bottom: 0rem;
+}
+
+.card-value{
+  font-size: 17px; 
+  font-weight: 600;
+  letter-spacing: -.3px; 
+}
 
 
 
