@@ -38,6 +38,13 @@ let test_displayed_data5: I_DisplayableData = {
   values: [10]
 }
 
+let test_displayed_data6: I_DisplayableData = {
+  stat_name: "tweet_likes-sum",
+  owners: ["alabama_cs"],
+  type: "stat-comparison",
+  values: [10]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -48,7 +55,7 @@ export class MockDataService {
 
 
   getMockData(): I_DisplayableData[] {
-    return [test_displayed_data, test_displayed_data2, test_displayed_data3, test_displayed_data4, test_displayed_data5];
+    return [test_displayed_data, test_displayed_data2, test_displayed_data3, test_displayed_data4, test_displayed_data5, test_displayed_data6];
   }
 
 
