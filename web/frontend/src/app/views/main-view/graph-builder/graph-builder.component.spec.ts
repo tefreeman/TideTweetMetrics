@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { SideNavComponent } from './side-nav.component';
+import { GraphBuilderComponent } from './graph-builder.component';
 
-describe('SideNavComponent', () => {
-  let component: SideNavComponent;
-  let fixture: ComponentFixture<SideNavComponent>;
+describe('GraphBuilderComponent', () => {
+  let component: GraphBuilderComponent;
+  let fixture: ComponentFixture<GraphBuilderComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SideNavComponent ]
+      declarations: [ GraphBuilderComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SideNavComponent);
+    fixture = TestBed.createComponent(GraphBuilderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

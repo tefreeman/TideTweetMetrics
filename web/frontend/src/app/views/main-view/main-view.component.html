@@ -1,24 +1,22 @@
 <mat-sidenav-container>
-	<mat-sidenav #sidenav>
-	  <mat-nav-list>
-		<a 
-		   mat-list-item  
-		   [routerLink]="" 
-		   (click)="sidenav.toggle()"> {{"This is a login test"}}</a>
-	  </mat-nav-list>
-	</mat-sidenav>
-	<mat-sidenav-content>
-	  <div style="height: 100vh;">
-		  <mat-toolbar color="primary">
-			<button  mat-icon-button 
-					 aria-label="Menu"
-					 (click)="sidenav.open()">
-			<mat-icon>menu</mat-icon>
-		  </button>  
-	</mat-toolbar>
-	 <router-outlet> </router-outlet> 
-	  </div>
-	</mat-sidenav-content>
-  </mat-sidenav-container>
-
-
+  <mat-sidenav #sidenav style="margin-top: 64px">
+    <mat-nav-list>
+      <a
+        *ngFor="let nav of navRoutes"
+        [routerLink]="nav.route"
+        mat-list-item
+        (click)="sidenav.toggle()"
+        >{{ nav.name }}</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div style="height: 100vh">
+      <mat-toolbar color="primary">
+	<button mat-icon-button aria-label="Menu" (click)="sidenav.open()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </mat-toolbar>
+      <router-outlet> </router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
 import { NgIf } from '@angular/common';
-import { MaterialModule } from '../../../material/material.module';
+import { MaterialModule } from '../../../core/modules/material/material.module';
 
 @Component({
   selector: 'app-stat-trend',
