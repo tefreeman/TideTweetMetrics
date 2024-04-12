@@ -3,7 +3,7 @@ import { StatValueComponent } from './stat-value/stat-value.component';
 import { I_DisplayableData, I_DisplayableRequest } from '../../core/interfaces/displayable-interface';
 import { NgIf } from '@angular/common';
 import { StatTrendComponent } from './stat-trend/stat-trend.component';
-import { MaterialModule } from '../../material/material.module';
+import { MaterialModule } from '../../core/modules/material/material.module';
 
 @Component({
   selector: 'app-datacard',
