@@ -13,22 +13,42 @@ let test_displayed_data: I_DisplayableData = {
 let test_displayed_data2: I_DisplayableData = {
   stat_name: "tweet_likes-sum",
   owners: ["alabama_cs"],
+  type: "stat-value",
+  values: [10]
+}
+
+let test_displayed_data3: I_DisplayableData = {
+  stat_name: "tweet_likes-sum",
+  owners: ["alabama_cs"],
   type: "stat-trend",
   values: [10]
+}
 
+let test_displayed_data4: I_DisplayableData = {
+  stat_name: "tweet_likes-sum",
+  owners: ["alabama_cs"],
+  type: "stat-value",
+  values: [10]
+}
+
+let test_displayed_data5: I_DisplayableData = {
+  stat_name: "tweet_likes-sum",
+  owners: ["alabama_cs"],
+  type: "stat-trend",
+  values: [10]
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockDataService {
-  public overrideProfile = false;
+  public overrideProfile = true;
   constructor() { 
   }
 
 
   getMockData(): I_DisplayableData[] {
-    return [test_displayed_data, test_displayed_data2];
+    return [test_displayed_data, test_displayed_data2, test_displayed_data3, test_displayed_data4, test_displayed_data5];
   }
 
 
