@@ -83,6 +83,7 @@ class Config:
     def get_backup_dir() -> str:
         return Config.__CONFIG["BACKUP"]["DIR"]
 
+    @staticmethod
     def get_raw_backup_dir() -> str:
         return Config.__CONFIG["BACKUP"]["RAW_DIR"]
 

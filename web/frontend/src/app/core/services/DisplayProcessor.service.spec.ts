@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { DisplayProcessorService } from './DisplayProcessor.service';
+import { DisplayProcessorService } from './display-processor.service';
 
 describe('Service: DisplayProcessor', () => {
   beforeEach(() => {

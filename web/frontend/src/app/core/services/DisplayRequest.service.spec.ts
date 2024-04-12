@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { DisplayRequestService } from './DisplayRequest.service';
+import { DisplayRequestService } from './display-request.service';
 
 describe('Service: DisplayRequest', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { MetricService } from './metric.service';
-import { DisplayRequestService } from './DisplayRequest.service';
+import { DisplayRequestService } from './display-request.service';
 import { I_DisplayableData } from '../interfaces/displayable-interface';
 import { combineLatestWith, Subject } from 'rxjs';
 import { combineLatest } from 'rxjs';
@@ -17,7 +17,7 @@ public displayables$ = new Subject<I_DisplayableData[]>();
 
 constructor() {
   combineLatest([
-    this._metricsService.metricContainer$,
+    this._metricsService.getMetricContainer$(),
     this._displayReqService.requests$
   ]).subscribe(([metricContainer, requests]) => {
     console.log('Processing requests', requests, metricContainer);
