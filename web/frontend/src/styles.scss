@@ -2,11 +2,12 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
+
 html, body { 
   height: 100%;
   background-color: #f7f7f7;
- }
-body { margin: 0; font-family: 'Open Sans', sans-serif; }
+}
+
 
 
 $crimson-palette: (
@@ -64,9 +65,13 @@ $my-complementary: (
 
 $my-primary: mat.define-palette($crimson-palette, 900);
 $my-accent: mat.define-palette($my-complementary, 500);
-
 // The "warn" palette is optional and defaults to red if not specified.
 $my-warn: mat.define-palette(mat.$red-palette);
+
+$my-typography: mat.define-typography-config(
+  $font-family: 'Open Sans',
+);
+
 
 $my-theme: mat.define-light-theme((
  color: (
@@ -74,7 +79,7 @@ $my-theme: mat.define-light-theme((
    accent: $my-accent,
    warn: $my-warn,
  ),
- typography: mat.define-typography-config(),
+ typography: $my-typography,
  density: 0,
 ));
 @include mat.core-theme($my-theme);
