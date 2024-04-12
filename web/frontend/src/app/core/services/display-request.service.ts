@@ -26,7 +26,12 @@ export class DisplayRequestService {
 private initRequests(): void {
     this.getRequests$().subscribe(requests => {
         this.requests = requests;
-        this.requests = this.requests.concat(this._mockDataService.getMockData());
+        if (this._mockDataService.overrideProfile == true)
+          this.requests = this._mockDataService.getMockData();
+        else
+          this.requests = this.requests.concat(this._mockDataService.getMockData());
+
+
         this.requests$.next(this.requests); // Emit a copy of the requests array
     });
 }
