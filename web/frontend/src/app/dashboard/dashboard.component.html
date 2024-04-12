@@ -1,20 +1,20 @@
 
 
 <div class="dataCardContainer">
-  <!-- <div *ngFor="let displayableData of displayableDataArr$ | async">
+ <div *ngFor="let displayableData of displayableDataArr$ | async">
     <app-datacard [displayableData]="displayableData"></app-datacard>
-  </div> -->
+ 
 
-  <!-- <app-datacard class="graphItemCol--double" [displayableData]="test_displayed_data"></app-datacard> -->
-  <app-datacard class="graphItemCol--double"[displayableData]="test_displayed_data"></app-datacard>
+  <!-- <app-datacard class="graphItemCol--double"[displayableData]="test_displayed_data"></app-datacard>
   <app-datacard [displayableData]="test_displayed_data2"></app-datacard>
   <app-datacard [displayableData]="test_displayed_data"></app-datacard>
   <app-datacard [displayableData]="test_displayed_data"></app-datacard>
   <app-datacard [displayableData]="test_displayed_data"></app-datacard>
   <app-datacard [displayableData]="test_displayed_data"></app-datacard>
-  <app-datacard [displayableData]="test_displayed_data"></app-datacard>
+  <app-datacard [displayableData]="test_displayed_data"></app-datacard> -->
 
 
+</div>
 </div>
 
 
@@ -22,9 +22,7 @@
 
 <div class="graphContainer">
   <div *ngFor="let displayableData of displayableDataArr$ | async">
-    <mat-card>
-    <app-bar-chart></app-bar-chart>
-    </mat-card>
+    <app-graph-card [displayableData]="displayableData"></app-graph-card>
   </div>
 </div>
 

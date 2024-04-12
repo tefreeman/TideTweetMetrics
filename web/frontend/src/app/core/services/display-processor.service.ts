@@ -4,12 +4,13 @@ import { DisplayRequestService } from './display-request.service';
 import { I_DisplayableData } from '../interfaces/displayable-interface';
 import { combineLatestWith, Subject } from 'rxjs';
 import { combineLatest } from 'rxjs';
+import { GraphProcessorService } from './graph-processor.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DisplayProcessorService {
-
+private _graphService = inject(GraphProcessorService);
 private _metricsService = inject(MetricService);
 private _displayReqService = inject(DisplayRequestService);
 
@@ -35,6 +36,10 @@ private processRequests(metricContainer: any, requests: any) {
       console.log('No data for request', request);
     }
     this.displayables$.next(displayables);
+  }
+
+  for (let displayable of displayables) {
+    displayable.type = this._graphService.convert(displayable);
   }
 }
 
