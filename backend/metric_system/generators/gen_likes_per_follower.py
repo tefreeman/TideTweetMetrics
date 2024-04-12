@@ -21,7 +21,7 @@ class GenLikesPerFollower(MetricGenerator, DependentMetric):
         
         for profile_plus in stat_helper.get_all_profiles().values():
             if profile_plus.get_username() not in tweet_likes_mean_metrics:
-                logging.debug(f"{profile_plus.get_username()} not in tweet_likes_mean-metrics. Moving to next profile")
+                logging.debug(f"{profile_plus.get_username()} not in tweet_likes_mean_metrics. Moving to next profile")
                 continue
             
             average_likes_per_tweet = tweet_likes_mean_metrics[profile_plus.get_username()].get_data()
