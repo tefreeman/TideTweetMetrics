@@ -36,6 +36,9 @@ export class AuthService implements OnDestroy{
 
 
   getFileVersion(file_id: string): Observable<I_FileVersion | null> {
+    if (!file_id) {
+      throw new Error('Invalid file ID');
+    }
     return <Observable<I_FileVersion | null>>this.user$.pipe(
       switchMap((user) => {
         if (!user) {
@@ -67,14 +70,11 @@ export class AuthService implements OnDestroy{
         if (!user) {
           // If there's no user, throw an error or handle it as you see fit
           throw new Error('No authenticated user. Cannot set user document.');
-          // Alternatively, return an Observable that indicates an error or a null operation
-          // return throwError(() => new Error('No authenticated user.'));
-          // return of(null);
         }
         const userDocRef = doc(this._firestore, `profiles/${user.uid}`)
 
         // Convert the Firestore set operation (a Promise) into an Observable
-        return from(setDoc(userDocRef, userData, { merge: true }));
+        return from(setDoc(userDocRef, userData, { merge: true })).pipe(map(() => undefined))
       })
     );
   }

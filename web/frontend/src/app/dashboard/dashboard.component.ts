@@ -11,8 +11,8 @@ import { fromEvent, Observable, Subscription, tap, throttleTime } from 'rxjs';
 import { I_DisplayableData, I_DisplayableRequest } from '../core/interfaces/displayable-interface';
 import { MetricService } from '../core/services/metric.service';
 import { GraphService } from '../core/services/graph.service';
-import { DisplayRequestService } from '../core/services/DisplayRequest.service';
-import { DisplayProcessorService } from '../core/services/DisplayProcessor.service';
+import { DisplayRequestService } from '../core/services/display-request.service';
+import { DisplayProcessorService } from '../core/services/display-processor.service';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { AsyncPipe } from '@angular/common';
 @Component({
