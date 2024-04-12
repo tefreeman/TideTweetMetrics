@@ -17,6 +17,7 @@ from backend.metric_system.compiler.metric_container import MetricContainer
 import logging
 
 
+
 class StatMetricCompiler:
     def __init__(self, debug_mode=False) -> None:
         self.debug_mode = debug_mode

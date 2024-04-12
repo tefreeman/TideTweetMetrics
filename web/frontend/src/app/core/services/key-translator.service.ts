@@ -33,6 +33,7 @@ export class KeyTranslatorService {
     "tweet_chars": {full: "Tweet Characters", abr: "TC", desc: "Tweet Characters value"},
     "tweet_words": {full: "Tweet Words", abr: "TW", desc: "Tweet Words value"},
     "tweet_annotations": {full: "Tweet Annotations", abr: "TA", desc: "Tweet Annotations value"},
+    
   };
 
   private _translationFixes: I_KeyTranslator = {
