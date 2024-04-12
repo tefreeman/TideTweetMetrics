@@ -1,10 +1,11 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
+import { MaterialModule } from '../../../material/material.module';
 
 @Component({
   standalone: true,
   selector: 'app-stat-comparsion',
-  imports: [],
+  imports: [MaterialModule],
   templateUrl: './stat-comparsion.component.html',
   styleUrls: ['./stat-comparsion.component.css']
   

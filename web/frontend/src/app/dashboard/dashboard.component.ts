@@ -15,10 +15,12 @@ import { DisplayRequestService } from '../core/services/display-request.service'
 import { DisplayProcessorService } from '../core/services/display-processor.service';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { AsyncPipe } from '@angular/common';
+import { MaterialModule } from '../material/material.module';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatGridListModule, MatCardModule, NgFor, DatacardComponent,MatDividerModule, BarChartComponent, MatSidenavModule, AsyncPipe],
+  imports: [NgFor, DatacardComponent, BarChartComponent, AsyncPipe, MaterialModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService]
