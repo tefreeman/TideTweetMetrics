@@ -1,7 +1,5 @@
 import { Component, inject } from '@angular/core';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import { MaterialModule } from '../../material/material.module';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { timeout } from 'rxjs';
@@ -9,7 +7,7 @@ import { timeout } from 'rxjs';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule],
+  imports: [MaterialModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
