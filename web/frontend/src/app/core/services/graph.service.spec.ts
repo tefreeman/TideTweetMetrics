@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { GraphService } from './graph.service';
+import { GraphProcessorService } from './graph-processor.service';
 
 describe('GraphService', () => {
-  let service: GraphService;
+  let service: GraphProcessorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(GraphService);
+    service = TestBed.inject(GraphProcessorService);
   });
 
   it('should be created', () => {
