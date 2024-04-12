@@ -1,16 +1,5 @@
-.custom-sidenav {
-    width: 20rem;
-    background-color: #fff;
-}
-
-.example-button-row {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-}
-
-.example-button-row .mat-mdc-button-base {
-    margin: 1.5rem 1rem 0rem 1rem; 
-    width: 100%; 
-}
-
+.content-container {
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 25px;
+  }
