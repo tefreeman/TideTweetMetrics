@@ -1,3 +1,11 @@
+<div class="page-border" data-wow-duration="0.7s" data-wow-delay="0.2s">
+  <div class="top-border wow fadeInDown animated" style="visibility: visible; animation-name: fadeInDown;"></div>
+  <div class="right-border wow fadeInRight animated" style="visibility: visible; animation-name: fadeInRight;"></div>
+  <div class="bottom-border wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;"></div>
+  <div class="left-border wow fadeInLeft animated" style="visibility: visible; animation-name: fadeInLeft;"></div>
+</div>
+
+<div id="wrapper">
 <mat-sidenav-container>
   <mat-sidenav #sidenav style="margin-top: 64px">
     <mat-nav-list>
@@ -9,14 +17,17 @@
         >{{ nav.name }}</a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content [style.background-color]="'#f4f4f4'">
     <div style="height: 100vh">
-      <mat-toolbar color="primary">
-	<button mat-icon-button aria-label="Menu" (click)="sidenav.open()">
-          <mat-icon>menu</mat-icon>
+      <!-- Add a class to the toolbar -->
+      <mat-toolbar class="custom-toolbar">
+        <button mat-icon-button aria-label="Menu" (click)="sidenav.open()">
+          <!-- Use Font Awesome icon for the menu -->
+          <i class="fa fa-bars fa-1x"></i>
         </button>
       </mat-toolbar>
       <router-outlet> </router-outlet>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+</div>
