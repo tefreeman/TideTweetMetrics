@@ -1,9 +1,5 @@
 @use '@angular/material' as mat;
 
-// Use the default configuration.
-$my-typography: mat.define-typography-config();
-@include mat.typography-hierarchy($my-typography);
-
 $impactful-number-display: (
   font-size: 2.0rem, // Large font size for impact
   font-weight: 900, // Bold weight for emphasis

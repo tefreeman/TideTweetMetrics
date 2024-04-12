@@ -3,7 +3,7 @@
 @include mat.core();
 
 
-html, body { 
+html, body {
   height: 100%;
   background-color: #f7f7f7;
 }
@@ -82,7 +82,9 @@ $my-theme: mat.define-light-theme((
  typography: $my-typography,
  density: 0,
 ));
+
 @include mat.core-theme($my-theme);
+@include mat.typography-hierarchy($my-theme);
 @include mat.all-component-themes($my-theme);
 
 
