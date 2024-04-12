@@ -8,20 +8,16 @@ import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink} from '@angular/router';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MaterialModule } from '../../../material/material.module';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    MatFormFieldModule,
-    MatInputModule,
+    MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatButton,
     RouterLink,
-    MatGridList,
-    MatGridTile
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'

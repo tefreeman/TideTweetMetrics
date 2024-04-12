@@ -8,18 +8,14 @@ import { MatButton } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MaterialModule } from '../../../material/material.module';
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
-    MatFormFieldModule,
-    MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatButton,
-    MatGridList,
-    MatGridTile
+    MaterialModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']

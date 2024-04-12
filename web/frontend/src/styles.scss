@@ -8,13 +8,6 @@ html, body {
  }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-// override material inline style to allow mini nav state
-mat-sidenav[style] {
-  visibility: visible !important;
-}
-.mat-drawer {
-  transform: none !important;
-}
 
 $crimson-palette: (
   900: #900f0f,
