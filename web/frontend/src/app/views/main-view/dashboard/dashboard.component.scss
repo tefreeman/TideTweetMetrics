@@ -42,7 +42,7 @@
     margin-left: 100px; 
     margin-right: 100px;
     display: grid;
-    gap: 20px;
+    gap: 50px;
 
     // You can change the first number to adjust the column size for the graphs. RADICAL!
     grid-template-columns: repeat(3, minmax(15rem, 1fr));
@@ -51,13 +51,13 @@
 }
 
 // Switch grid column size based on windows
-@media screen and (max-width: 2300px) {
+@media screen and (max-width: 2100px) {
     .graphContainer {
 
         grid-template-columns: repeat(2, minmax(15rem, 1fr))
     }
 }
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1500px) {
     .graphContainer {
         grid-template-columns: repeat(1, minmax(15rem, 1fr))
     }
