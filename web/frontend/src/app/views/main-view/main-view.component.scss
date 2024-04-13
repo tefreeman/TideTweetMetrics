@@ -54,3 +54,23 @@
   padding: 15px 0;
   position: relative;
 }
+
+.custom-background {
+  position: relative;
+  background-color: #f4f4f4; /* Set the background color */
+}
+
+.background-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 265px; /* Adjust the height as needed */
+  z-index: -1; /* Ensure it's behind other content */
+}
+
+.background-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the entire container */
+}
