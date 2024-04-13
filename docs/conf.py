@@ -21,7 +21,14 @@ author = "Trevor Freeman, Travis Nguyen, Sam Gaines, EJ Yohannan"
 extensions = ["sphinx.ext.autodoc"]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "**/backend/api/api/*",
+    "**backend.api*",
+    "**tests.test*",
+]
 
 
 # -- Options for HTML output -------------------------------------------------
