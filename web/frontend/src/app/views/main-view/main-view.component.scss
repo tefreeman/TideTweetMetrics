@@ -1,24 +1,12 @@
 
-
   .custom-toolbar {
     border-top: 8px solid #a51e36; /* Add a red border line */
     background-color: white;
   }
 
-  .page-border {
-    position: fixed;
-    z-index: 999999;
-    pointer-events: none;
-}
-
-.page-border .bottom-border, .page-border .left-border, .page-border .right-border, .page-border .top-border {
-    background: #f3f3ef;
-    position: fixed;
-    z-index: 9999;
-}
-
 .page-border > .top-border, .page-border > .right-border, .page-border > .bottom-border, .page-border > .left-border {
     padding: 11px;
+    position: fixed;
     background: #ccc;
 }
 
@@ -57,7 +45,7 @@
 
 .custom-background {
   position: relative;
-  background-color: #f4f4f4; /* Set the background color */
+  background-color: #f4f4f4; 
 }
 
 .background-image-container {
@@ -65,12 +53,12 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 265px; /* Adjust the height as needed */
-  z-index: -1; /* Ensure it's behind other content */
+  height: 265px;
+  z-index: -1; 
 }
 
 .background-image-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image covers the entire container */
+  object-fit: cover;
 }
