@@ -1,4 +1,52 @@
-.container {
-  width: 300px; /* Set the desired width */
-  height: 200px; /* Set the desired height */
+@use '@angular/material' as mat;
+
+.card{
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem 0rem;
+}
+
+.card-title{
+  font-weight: bold;
+  letter-spacing: -.3px; 
+  color: #999;
+  margin-bottom: 0rem;
+}
+
+.card-value{
+  font-size: 25px; 
+  font-weight: 600;
+  letter-spacing: -.3px; 
+  margin-bottom: 0rem;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: .3rem;
+  height: 100%; 
+  background-color: #a51e36;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+    align-self:flex-end;
+}
+
+.card-footer{
+    font-size: 11px; 
+    color: #bbb;
+    margin-top: .3rem;
+    margin-bottom: .2rem;
 }

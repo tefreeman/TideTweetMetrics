@@ -2,7 +2,7 @@
 <div class="dashboardContainer">
   <h2 class = "title">Dashboard</h2>
   <div class="dataCardContainer">
-    <div *ngFor="let displayableData of displayableDataArr$ | async">
+    <div class = "" *ngFor="let displayableData of displayableDataArr$ | async">
       <app-datacard [displayableData]="displayableData"></app-datacard>
       <!-- class="graphItemCol--double"-->
     </div>
