@@ -165,7 +165,7 @@ class MetaData(DataEncoder):
         :param errors: A list of errors.
         :type errors: list
         """
-        self._errors = [error for error in errors if error is not None]
+        self._errors = [error for error in errors if error != None]
 
     def _set_version(self, version):
         """
