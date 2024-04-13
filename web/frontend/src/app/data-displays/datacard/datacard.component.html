@@ -8,7 +8,7 @@
     <app-stat-trend [displayableData]="displayableData"></app-stat-trend>
   </ng-container>
 
-  <ng-container *ngIf="displayableData?.type === 'stat-comparison'">
+  <ng-container *ngIf="displayableData?.type === 'stat-comp'">
     <app-stat-comp [displayableData]="displayableData" ></app-stat-comp>
   </ng-container>
 </mat-card>

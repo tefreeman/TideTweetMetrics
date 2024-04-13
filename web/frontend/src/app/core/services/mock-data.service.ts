@@ -41,7 +41,7 @@ let test_displayed_data5: I_DisplayableData = {
 let test_displayed_data6: I_DisplayableData = {
   stat_name: "tweet_likes-sum",
   owners: ["alabama_cs"],
-  type: "stat-comparison",
+  type: "stat-comp",
   values: [10]
 }
 
