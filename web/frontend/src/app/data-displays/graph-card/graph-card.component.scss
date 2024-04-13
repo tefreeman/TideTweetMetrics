@@ -12,10 +12,10 @@
   .card::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: .3rem;
-    height: 100%; 
+    bottom: 0; /* Move the line to the bottom */
+    left: 0; /* Keep the line at the left edge of the card */
+    width: 100%; /* Set the width to cover the entire bottom */
+    height: .3rem; /* Set the height of the line */
     background-color: #a51e36;
   }
   
