@@ -46,6 +46,8 @@
 .custom-background {
   position: relative;
   background-color: #f4f4f4; 
+  overflow-y: auto;
+  height: calc(100vh - 30px); 
 }
 
 .background-image-container {
@@ -62,3 +64,4 @@
   height: 100%;
   object-fit: cover;
 }
+
