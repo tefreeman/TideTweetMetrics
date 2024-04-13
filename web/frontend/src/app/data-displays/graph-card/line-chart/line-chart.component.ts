@@ -19,7 +19,7 @@ export class LineChartComponent{
     const myTheme: AgChartTheme = {
       baseTheme: 'ag-default',
       palette: {
-          fills: ['#5C2983', '#0076C5', '#21B372', '#FDDE02', '#F76700', '#D30018'],
+          fills: ['#a51e3', '#0076C5', '#21B372', '#FDDE02', '#F76700', '#D30018'],
           strokes: ['black'],
       },
       overrides: {
