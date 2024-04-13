@@ -1,9 +1,9 @@
-<mat-card class="elevation" *ngIf="displayableData" style="height: 100%">
+<mat-card class="card" *ngIf="displayableData" style="height: 100%">
   <ng-container *ngIf="displayableData?.type === 'graph-pie'">
     <p> This is a pie graph </p>
   </ng-container>
 
-  <ng-container *ngIf="displayableData?.type === 'graph-line'">
+  <ng-container class="card" *ngIf="displayableData?.type === 'graph-line'">
     <p> This is a line graph </p>
   </ng-container>
 
