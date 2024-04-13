@@ -37,6 +37,13 @@
     
 }
 
+.dataCardContainer app-datacard {
+    display: flex;
+    flex-direction: column;
+    height: 7rem;  // Fixed height for all cards; adjust as needed
+    justify-content: space-between; // Keeps content spaced out
+}
+
 .graphContainer {
     margin-top: 40px;
     margin-left: 100px; 
