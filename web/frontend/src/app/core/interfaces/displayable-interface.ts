@@ -1,6 +1,6 @@
 import { T_MetricValue } from "./metrics-interface";
 
-export type T_GraphType =  "stat-value" | "stat-trend" | "stat-comparison" | "graph-line" | "graph-bar" | "graph-pie" |"display" | "auto";
+export type T_GraphType =  "stat-value" | "stat-trend" | "stat-comparison" | "stat-comp" | "graph-line" | "graph-bar" | "graph-pie" |"display" | "auto";
 export interface I_DisplayableRequest {
     stat_name: string;
     owners: string[];
