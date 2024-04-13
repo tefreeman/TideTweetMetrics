@@ -7,15 +7,18 @@
 .page-border > .top-border, .page-border > .right-border, .page-border > .bottom-border, .page-border > .left-border {
     position: fixed;
     background: #ccc;
+    padding: 10px;
 }
 
 .page-border .bottom-border, .page-border .top-border {
     width: 100%;
+    padding: 10px;
     left: 0;
 }
 
 .page-border .left-border, .page-border .right-border {
     height: 100%;
+    padding: 10px;
     top: 0;
 }
 
@@ -35,6 +38,8 @@
     left: 0;
 }
 #wrapper {
+  margin:0 15px;
+  padding: 15px 0;
   position: relative;
 }
 
