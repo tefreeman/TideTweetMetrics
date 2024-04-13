@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { MetricService } from './metric.service';
 import { DisplayRequestService } from './display-request.service';
-import { I_DisplayableData } from '../interfaces/displayable-interface';
+import { I_DisplayableData, I_DisplayableRequest } from '../interfaces/displayable-interface';
 import { combineLatestWith, Observable, Subject, switchMap, tap } from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { GraphProcessorService } from './graph-processor.service';
+import { MetricContainer } from '../classes/metric-container';
 
 @Injectable({
   providedIn: 'root'
@@ -30,16 +31,12 @@ constructor() {
   );
 }
 
-private processRequests(metricContainer: any, requests: any): Observable<I_DisplayableData[]> {
+private processRequests(metricContainer: MetricContainer, requests: I_DisplayableRequest[]): Observable<I_DisplayableData[]> {
   return new Observable(observer => {
     const displayables: I_DisplayableData[] = [];
     for (let request of requests) {
-      let data = metricContainer.getMetricData(request.stat_name, request.owners);
-      if (data.length > 0) {
-        displayables.push({ ...request, values: data });
-      } else {
-        console.log('No data for request', request);
-      }
+      let output = metricContainer.getMetricData(request);
+        displayables.push(output);
     }
     for (let displayable of displayables) {
       displayable.type = this._graphService.convert(displayable);
@@ -47,5 +44,6 @@ private processRequests(metricContainer: any, requests: any): Observable<I_Displ
     observer.next(displayables);
   });
 }
+ 
 
 }

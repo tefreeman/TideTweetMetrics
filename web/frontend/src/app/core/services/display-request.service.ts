@@ -12,7 +12,6 @@ import { MockDataService } from './mock-data.service';
 })
 export class DisplayRequestService {
   private _auth_service = inject(AuthService);
-  private _metric_service = inject(MetricService);
   _mockDataService = inject(MockDataService);
   private requests: I_DisplayableRequest[] = [];
   public requests$ = new BehaviorSubject<I_DisplayableRequest[]>([]);

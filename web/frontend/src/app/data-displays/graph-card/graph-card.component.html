@@ -5,12 +5,12 @@
   </ng-container>
 
   <ng-container class="card" *ngIf="displayableData?.type === 'graph-line'">
-    <app-line-chart></app-line-chart>
+    <app-line-chart [displayableData]="displayableData" ></app-line-chart>
   </ng-container>
 
 
   <ng-container *ngIf="displayableData?.type === 'graph-bar'">
-    <app-bar-chart></app-bar-chart>
+    <app-bar-chart [displayableData]="displayableData"></app-bar-chart>
   </ng-container>
 </mat-card>
 
