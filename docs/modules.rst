@@ -5,4 +5,3 @@ TideTweetMetrics
    :maxdepth: 4
 
    backend
-   tests

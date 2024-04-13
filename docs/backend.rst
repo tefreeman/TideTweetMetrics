@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   backend.api
    backend.encoders
    backend.metric_system
 
