@@ -18,9 +18,11 @@
 }
 
 .graphContainer {
-    margin: 16px;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top : 0px;
     display: grid;
-    gap: 32px;
+    gap: 4px;
     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
     justify-content: center;
     

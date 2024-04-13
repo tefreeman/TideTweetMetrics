@@ -10,13 +10,14 @@ import { DisplayProcessorService } from '../../../core/services/display-processo
 import { AsyncPipe } from '@angular/common';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { GraphCardComponent } from '../../../data-displays/graph-card/graph-card.component';
+import { CommonModule } from '@angular/common';
 import { DisplayRequestService } from '../../../core/services/display-request.service';
 import { MockDataService } from '../../../core/services/mock-data.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, DatacardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent],
+  imports: [NgFor, DatacardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService]
