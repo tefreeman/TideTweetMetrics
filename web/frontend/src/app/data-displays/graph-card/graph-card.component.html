@@ -4,13 +4,13 @@
   </ng-container>
 
   <ng-container class="card" *ngIf="displayableData?.type === 'graph-line'">
-    <p> This is a line graph </p>
+    <app-line-chart></app-line-chart>
   </ng-container>
 
 
 
   <ng-container *ngIf="displayableData?.type === 'graph-bar'">
-    <p> This is a bar graph </p>
+    <app-bar-chart></app-bar-chart>
   </ng-container>
 </mat-card>
 

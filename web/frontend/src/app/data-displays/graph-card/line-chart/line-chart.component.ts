@@ -7,7 +7,7 @@ import { AgChartOptions } from 'ag-charts-community';
   imports: [AgChartsAngular],
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.css']
+  styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent{
 
