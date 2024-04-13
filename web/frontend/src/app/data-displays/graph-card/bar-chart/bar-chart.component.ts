@@ -57,8 +57,8 @@ export class BarChartComponent {
         { type: 'bar', xKey: 'month', yKey: '7' },
         { type: 'bar', xKey: 'month', yKey: '8' },
         { type: 'bar', xKey: 'month', yKey: '9' },
-        { type: 'bar', xKey: 'month', yKey: '10' }, // new series 10
-        { type: 'bar', xKey: 'month', yKey: '11' }, // new series 11
+        { type: 'bar', xKey: 'month', yKey: '10' }, 
+        { type: 'bar', xKey: 'month', yKey: '11' }, 
     ],
   }
 
