@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
+import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
 
 @Component({
   standalone: true,
@@ -12,6 +13,7 @@ import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-commun
   styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent{
+  @Input({required: true}) displayableData!: I_DisplayableData;
 
   public chartOptions: AgChartOptions;
   constructor() {
