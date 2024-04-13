@@ -39,7 +39,7 @@ export class LineChartComponent{
     this.chartOptions = {
       theme: myTheme,
       title: {
-        text: "whoop",
+        text: "Title",
       },
       data: [
         { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
