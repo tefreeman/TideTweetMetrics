@@ -4,6 +4,14 @@ from datetime import datetime
 
 
 class Profile(DataEncoder):
+    """
+    Represents a user profile, encapsulating both the static and dynamic aspects
+    of a user's information on a social media platform. This class extends the
+    DataEncoder to handle serialization of profile data and offers methods for
+    initializing from JSON, setting, updating, and retrieving profile attributes,
+    and ensuring the presence of required fields before operations are performed.
+    """
+
     def __init__(self, as_json=None, changes_json=None, ignore_required=False) -> None:
         """
         Initialize a Profile object.
