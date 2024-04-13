@@ -7,6 +7,7 @@ import { HomeComponent } from './views/home/home.component';
 import { DashboardComponent } from './views/main-view/dashboard/dashboard.component';
 import { GraphBuilderComponent } from './views/main-view/graph-builder/graph-builder.component';
 import { OptimizerComponent } from './views/main-view/optimizer/optimizer.component';
+import { MyProfileComponent } from './views/main-view/my-profile/my-profile.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -30,6 +31,11 @@ export const routes: Routes = [
       {
       path: 'optimizer',
       component: OptimizerComponent,
+      canActivate: [AuthGuard],
+      },
+      {
+      path: 'my-profile',
+      component: MyProfileComponent,
       canActivate: [AuthGuard],
       }
   ]
