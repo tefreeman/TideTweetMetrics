@@ -18,13 +18,15 @@
 }
 
 .graphContainer {
-    margin-left: 100px;
-    margin-right: 100px;
+    margin-top: 40px; /* Adjust margin to match the spacing of the cards */
+    margin-left: 100px; /* Adjust margin to match the spacing of the cards */
+    margin-right: 100px; /* Adjust margin to match the spacing of the cards */
     display: grid;
-    gap: 8px;
-    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 20px;
+    grid-template-columns: repeat(2, minmax(15rem, 1fr));
+    grid-auto-flow: dense;
     justify-content: center;
-    
+ 
 }
 
 .graphItemCol--double {

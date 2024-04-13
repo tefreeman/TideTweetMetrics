@@ -1,20 +1,21 @@
 <div class="dashboardContainer">
   <h2 class="title">Dashboard</h2>
+
+  <!-- Render cards -->
   <div class="dataCardContainer">
-    <div *ngFor="let displayableData of displayableDataArr$ | async">
-      <!-- Add conditions to check if displayableData is a card -->
-      <ng-container *ngIf="displayableData.type === 'stat-value' || displayableData.type === 'stat-trend' || displayableData.type === 'stat-comp'">
+    <ng-container *ngFor="let displayableData of displayableDataArr$ | async">
+      <ng-container *ngIf="isCard(displayableData)">
         <app-datacard [displayableData]="displayableData"></app-datacard>
       </ng-container>
-    </div>
+    </ng-container>
   </div>
 
+  <!-- Render graphs -->
   <div class="graphContainer">
-    <div *ngFor="let displayableData of displayableDataArr$ | async">
-      <!-- Add a condition to check if displayableData is a graph -->
-      <ng-container *ngIf="displayableData.type === 'graph-line' || displayableData.type === 'graph-bar'">
+    <ng-container *ngFor="let displayableData of displayableDataArr$ | async">
+      <ng-container *ngIf="isGraph(displayableData)">
         <app-graph-card [displayableData]="displayableData"></app-graph-card>
       </ng-container>
-    </div>
+    </ng-container>
   </div>
 </div>

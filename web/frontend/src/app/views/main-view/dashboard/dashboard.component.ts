@@ -37,6 +37,18 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   }
 
+  isCard(displayableData: I_DisplayableData): boolean {
+    return displayableData.type === 'stat-value' || 
+           displayableData.type === 'stat-trend' || 
+           displayableData.type === 'stat-comp';
+  }
+
+
+  isGraph(displayableData: I_DisplayableData): boolean {
+    return displayableData.type === 'graph-line' || 
+           displayableData.type === 'graph-bar';
+  }
+
 
 
 
