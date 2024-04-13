@@ -6,33 +6,35 @@
 </div>
 
 <div id="wrapper">
-<mat-sidenav-container>
-  <mat-sidenav #sidenav style="margin-top: 64px">
-    <mat-nav-list>
-      <a
-        *ngFor="let nav of navRoutes"
-        [routerLink]="nav.route"
-        mat-list-item
-        (click)="sidenav.toggle()"
-        >{{ nav.name }}</a>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content class="custom-background" >
-    <div class="background-image-container ">
-      <img src="../../../assets/home-images/banner-images/image.png" alt="Background Image">
-    </div>
-    <!-- was 300vh need a better way to scale webpage size if cards over run-->
-    <div style="height: 100vh">
-      
-      <!-- Add a class to the toolbar -->
-      <mat-toolbar class="custom-toolbar">
-        <button mat-icon-button aria-label="Menu" (click)="sidenav.open()" style="color: white">
-          <!-- Use Font Awesome icon for the menu -->
-          <i class="fa fa-bars fa-1x"></i>
-        </button>
-      </mat-toolbar>
-      <router-outlet> </router-outlet>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav style="margin-top: 64px">
+      <mat-nav-list>
+        <a
+          *ngFor="let nav of navRoutes"
+          [routerLink]="nav.route"
+          mat-list-item
+          (click)="sidenav.toggle()"
+          >{{ nav.name }}</a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="custom-background">
+      <div class="background-image-container">
+        <img src="../../../assets/home-images/banner-images/image.png" alt="Background Image">
+      </div>
+      <!-- was 300vh need a better way to scale webpage size if cards over run-->
+      <div style="height: 100vh">
+        <mat-toolbar class="custom-toolbar">
+          <button mat-icon-button aria-label="Menu" (click)="sidenav.open()" style="color: white">
+            <i class="fa fa-bars fa-1x"></i>
+          </button>
+
+          <!-- TODO: Add logout mechanic to button-->
+          <button mat-icon-button aria-label="Logout" style="color: white;  margin-left: auto;">
+            <i class="fa fa-sign-out fa-1x"></i>
+          </button>
+        </mat-toolbar>
+        <router-outlet> </router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>

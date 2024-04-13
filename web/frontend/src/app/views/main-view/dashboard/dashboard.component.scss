@@ -5,6 +5,17 @@
     color: white;
 }
   
+.title-container {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: space-between; /* Space elements horizontally */
+}
+
+.update-button {
+    margin-right: 100px;
+    margin-bottom: 15px;
+    align-self: flex-end;
+  }
 
 .dataCardContainer {
     margin-left: 100px;
