@@ -32,7 +32,7 @@ class Profile(DataEncoder):
             "followers_count",
             "following_count",
             "tweet_count",
-            "like_count"
+            "like_count",
         }
 
         if as_json != None:
