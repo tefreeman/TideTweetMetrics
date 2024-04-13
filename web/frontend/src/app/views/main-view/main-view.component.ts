@@ -3,6 +3,7 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgFor } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-main-view',
@@ -13,6 +14,8 @@ import { NgFor } from '@angular/common';
 })
 export class MainViewComponent {
 
+  constructor(private authService: AuthService) {}
+  
   navRoutes = [
     {name:'Dashboard', route:'home'},
     {name:'Graph Builder', route:'graph-builder'},  //Add more here as needed
@@ -25,5 +28,9 @@ export class MainViewComponent {
 
     public toggleMenu() {
       this.isExpanded = !this.isExpanded;
+    }
+
+    signout(){
+      this.authService.signout();
     }
 }
