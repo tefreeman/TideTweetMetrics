@@ -55,7 +55,7 @@ let test_displayed_data7: I_DisplayableData = {
 let test_displayed_data8: I_DisplayableData = {
   stat_name: "tweet_likes-sum",
   owners: ["alabama_cs"],
-  type: "graph-line",
+  type: "graph-bar",
   values: [10]
 }
 

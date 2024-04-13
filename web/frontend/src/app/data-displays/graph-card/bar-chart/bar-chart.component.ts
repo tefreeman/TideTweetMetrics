@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions } from 'ag-charts-community';
-
+import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
-  imports: [AgChartsAngular],
+  imports: [AgChartsAngular,AgChartsAngular],
   templateUrl: './bar-chart.component.html',
   styleUrl: './bar-chart.component.scss',
 })
@@ -13,17 +12,32 @@ export class BarChartComponent {
   // Chart Options
   public chartOptions: AgChartOptions;
   constructor() {
-    this.chartOptions = this.make_chart();
-  }
-
-  make_chart(): AgChartOptions {
-    return {
-      theme: 'ag-material',
-
-      title: {
-        "text": "Ice Cream Sales by Month"
+    
+    const myTheme: AgChartTheme = {
+      baseTheme: 'ag-default',
+      palette: {
+          fills: ['#a51e3', '#0076C5', '#21B372', '#FDDE02', '#F76700', '#D30018'],
+          strokes: ['black'],
       },
-      // Data: Data to be displayed in the chart
+      overrides: {
+        common: {
+          title: {
+            fontSize: 13,
+            fontWeight: 'bold',
+            fontFamily: 'Open Sans',
+            color: '#999',
+  
+          },
+
+        },
+      }
+  };
+
+    this.chartOptions = {
+      theme: myTheme,
+      title: {
+        text: "whoop",
+      },
       data: [
         { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
         { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
@@ -34,33 +48,7 @@ export class BarChartComponent {
       ],
       // Series: Defines which chart type and data to use
       series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }],
-
-      axes: [
-        {
-          type: 'number',
-          position: 'left',
-          title: {
-            text: 'Ice Cream Sales',
-          },
-          tick: {interval: 100000},
-          gridLine: {
-            //width: 0,
-            style: [
-              {
-                stroke: 'rgba(0,0,0,0.5)',
-                lineDash: [4, 2],
-              },
-            ],
-          },
-        },
-        {
-          type: 'category',
-          position: 'bottom',
-          title: {
-            text: 'Month',
-          },
-        },
-      ],
-    };
+    }
   }
+
 }
