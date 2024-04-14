@@ -10,6 +10,15 @@ import pytz
 
 
 class Tweet(DataEncoder):
+    """
+    Represents a tweet object and provides methods to manipulate and access its data.
+
+    Args:
+        as_json (dict, optional): A dictionary representing the tweet object in JSON format. Defaults to None.
+        changes_json (dict, optional): A dictionary representing the changes made to the tweet object in JSON format. Defaults to None.
+        ignore_required (bool, optional): If True, ignores the required fields check. Defaults to False.
+    """
+
     def __init__(
         self, as_json: dict = None, changes_json=None, ignore_required=False
     ) -> None:
@@ -31,20 +40,10 @@ class Tweet(DataEncoder):
             "retweet_count",
             "reply_count",
             "like_count",
-            "quote_count"
+            "quote_count",
         }
-        self._entity_keys = {
-            "annotations",
-            "cashtags",
-            "hashtags",
-            "mentions",
-            "urls"
-        }
-        self._attachment_keys = {
-            "photos",
-            "videos",
-            "cards"
-        }
+        self._entity_keys = {"annotations", "cashtags", "hashtags", "mentions", "urls"}
+        self._attachment_keys = {"photos", "videos", "cards"}
 
         if as_json != None:
             self._from_json_dict(as_json)
@@ -52,6 +51,12 @@ class Tweet(DataEncoder):
             self.changes_from_json_dict(changes_json)
 
     def ensure_required_fields_set(self):
+        """
+        Checks if all the required fields are set.
+
+        Raises:
+            IncompleteBuildException: If any required field is missing.
+        """
         if self.ignore_required:
             return
         if not self._required_fields.issubset(self._set_fields):
@@ -61,6 +66,12 @@ class Tweet(DataEncoder):
             )
 
     def _from_json_dict(self, data: dict):
+        """
+        Initializes the tweet object from a JSON dictionary.
+
+        Args:
+            data (dict): A dictionary representing the tweet object in JSON format.
+        """
         self._object = data["data"]
         self._includes = data["includes"]
         self._meta = MetaData(as_json=data["imeta"])
@@ -78,15 +89,33 @@ class Tweet(DataEncoder):
                 self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
+        """
+        Updates the tweet object with changes from a JSON dictionary.
+
+        Args:
+            data (dict): A dictionary representing the changes made to the tweet object in JSON format.
+        """
         pass
 
     def _to_json_dict(self) -> dict:
+        """
+        Converts the tweet object to a JSON dictionary.
+
+        Returns:
+            dict: A dictionary representing the tweet object in JSON format.
+        """
         self.ensure_required_fields_set()
         return_object = {"data": self._object, "includes": self._includes}
         self._meta.attach(return_object)
         return return_object
 
     def _changes_to_json_dict(self) -> dict:
+        """
+        Converts the changes made to the tweet object to a JSON dictionary.
+
+        Returns:
+            dict: A dictionary representing the changes made to the tweet object in JSON format.
+        """
         self.ensure_required_fields_set()
         metrics = self._object["public_metrics"]
         metrics["timestamp"] = datetime.now()
@@ -94,6 +123,15 @@ class Tweet(DataEncoder):
         return metrics
 
     def _extract_id_from_url(self, url: str) -> str:
+        """
+        Extracts the tweet ID from a tweet URL.
+
+        Args:
+            url (str): The URL of the tweet.
+
+        Returns:
+            str: The tweet ID.
+        """
         match = re.search(r"/status/(\d+)", url)
         if match:
             return match.group(1)
@@ -101,21 +139,51 @@ class Tweet(DataEncoder):
             return url
 
     def set_id(self, url: str | None):
+        """
+        Sets the ID of the tweet.
+
+        Args:
+            url (str | None): The URL of the tweet. If None, the ID is not set.
+        """
         self._object["id"] = self._extract_id_from_url(url)
         if url != None or url != "":
             self._set_fields.add("id")
 
     def get_id(self) -> str | None:
+        """
+        Returns the ID of the tweet.
+
+        Returns:
+            str | None: The ID of the tweet.
+        """
         return self._object["id"]
 
     def set_text(self, text: str):
+        """
+        Sets the text of the tweet.
+
+        Args:
+            text (str): The text of the tweet.
+        """
         self._object["text"] = text
         self._set_fields.add("text")
 
     def get_text(self) -> str:
+        """
+        Returns the text of the tweet.
+
+        Returns:
+            str: The text of the tweet.
+        """
         return self._object["text"]
 
     def set_post_date(self, date: str):
+        """
+        Sets the post date of the tweet.
+
+        Args:
+            date (str): The post date of the tweet in the format "%b %d, %Y · %I:%M %p".
+        """
         date_format = "%b %d, %Y · %I:%M %p"
         parsed_date = datetime.strptime(date.split(" UTC")[0], date_format)
         parsed_date = parsed_date.replace(tzinfo=pytz.UTC)
@@ -124,9 +192,21 @@ class Tweet(DataEncoder):
             self._set_fields.add("created_at")
 
     def get_post_date(self):
+        """
+        Returns the post date of the tweet.
+
+        Returns:
+            datetime: The post date of the tweet.
+        """
         return self._object["created_at"]
 
     def set_author(self, username: str):
+        """
+        Sets the author of the tweet.
+
+        Args:
+            username (str): The username of the author.
+        """
         if username.startswith("@"):
             username = username[1:]
         self._object["author_id"] = username.lower()
@@ -134,9 +214,24 @@ class Tweet(DataEncoder):
             self._set_fields.add("author_id")
 
     def get_author(self):
+        """
+        Returns the author of the tweet.
+
+        Returns:
+            str: The username of the author.
+        """
         return self._object["author_id"]
 
     def set_public_metrics(self, retweet_count, reply_count, like_count, quote_count):
+        """
+        Sets the public metrics of the tweet.
+
+        Args:
+            retweet_count (int): The number of retweets.
+            reply_count (int): The number of replies.
+            like_count (int): The number of likes.
+            quote_count (int): The number of quotes.
+        """
         self._object["public_metrics"] = {}
         self._object["public_metrics"]["retweet_count"] = int(
             retweet_count.replace(",", "")
@@ -151,35 +246,70 @@ class Tweet(DataEncoder):
         self._set_fields.add("public_metrics")
 
     def get_public_metrics(self):
+        """
+        Returns the public metrics of the tweet.
+
+        Returns:
+            dict: A dictionary containing the public metrics of the tweet.
+        """
         return self._object["public_metrics"]
 
     def get_like_count(self):
+        """
+        Returns the number of likes of the tweet.
+
+        Returns:
+            int: The number of likes.
+        """
         return self._object["public_metrics"]["like_count"]
 
     def get_retweet_count(self):
+        """
+        Returns the number of retweets of the tweet.
+
+        Returns:
+            int: The number of retweets.
+        """
         return self._object["public_metrics"]["retweet_count"]
 
     def get_reply_count(self):
+        """
+        Returns the number of replies of the tweet.
+
+        Returns:
+            int: The number of replies.
+        """
         return self._object["public_metrics"]["reply_count"]
 
     def get_quote_count(self):
+        """
+        Returns the number of quotes of the tweet.
+
+        Returns:
+            int: The number of quotes.
+        """
         return self._object["public_metrics"]["quote_count"]
 
-    # Example of how to call the set_entities function
-
-    """
-        tweet = Tweet()
-        content_links = [
-            {"text": "@user1", "href": "https://twitter.com/user1"},
-            {"text": "#hashtag1", "href": "https://twitter.com/hashtag/hashtag1"},
-            {"text": "$cashtag1", "href": "https://twitter.com/cashtag/cashtag1"},
-            {"text": "https://example.com", "href": "https://example.com"},
-        ]
-        content_text = "This is a tweet with @user1, #hashtag1, $cashtag1, and a link https://example.com"
-        tweet.set_entities(content_links, content_text)
-    """
-
     def set_entities(self, content_links, content_text: str):
+        """
+        Sets the entities of the tweet.
+
+        Args:
+            content_links (list): A list of dictionaries representing the content links in the tweet.
+            content_text (str): The text of the tweet.
+
+        Example:
+            tweet = Tweet()
+
+            content_links = [
+                {"text": "@user1", "href": "https://twitter.com/user1"},
+                {"text": "#hashtag1", "href":"https://twitter.com/hashtag/hashtag1"},
+                {"text": "$cashtag1", "href":"https://twitter.com/cashtag/cashtag1"},
+                {"text": "https://example.com", "href":"https://example.com"},
+            ]
+            content_text = "This is a tweet with @user1, #hashtag1, $cashtag1, and a link https://example.com"
+            tweet.set_entities(content_links, content_text)
+        """
         entities = {
             "annotations": [],
             "cashtags": [],
@@ -230,24 +360,68 @@ class Tweet(DataEncoder):
         self._set_fields.add("entities")
 
     def get_entities(self):
+        """
+        Returns the entities of the tweet.
+
+        Returns:
+            dict: A dictionary containing the entities of the tweet.
+        """
         return self._object["entities"]
 
     def get_annotations(self):
+        """
+        Returns the annotations of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the annotations in the tweet.
+        """
         return self._object["entities"]["annotations"]
 
     def get_cashtags(self):
+        """
+        Returns the cashtags of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the cashtags in the tweet.
+        """
         return self._object["entities"]["cashtags"]
 
     def get_hashtags(self):
+        """
+        Returns the hashtags of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the hashtags in the tweet.
+        """
         return self._object["entities"]["hashtags"]
 
     def get_mentions(self):
+        """
+        Returns the mentions of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the mentions in the tweet.
+        """
         return self._object["entities"]["mentions"]
 
     def get_urls(self):
+        """
+        Returns the URLs of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the URLs in the tweet.
+        """
         return self._object["entities"]["urls"]
 
     def set_attachments(self, photos, videos, cards):
+        """
+        Sets the attachments of the tweet.
+
+        Args:
+            photos (list): A list of dictionaries representing the photos in the tweet.
+            videos (list): A list of dictionaries representing the videos in the tweet.
+            cards (list): A list of dictionaries representing the cards in the tweet.
+        """
         self._object["attachments"] = {}
         self._object["attachments"]["photos"] = photos
         self._object["attachments"]["videos"] = videos
@@ -255,25 +429,63 @@ class Tweet(DataEncoder):
         self._set_fields.add("attachments")
 
     def get_photos(self):
+        """
+        Returns the photos of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the photos in the tweet.
+        """
         return self._object["attachments"]["photos"]
 
     def get_videos(self):
+        """
+        Returns the videos of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the videos in the tweet.
+        """
         return self._object["attachments"]["videos"]
 
     def get_cards(self):
+        """
+        Returns the cards of the tweet.
+
+        Returns:
+            list: A list of dictionaries representing the cards in the tweet.
+        """
         return self._object["attachments"]["cards"]
 
     def get_attachments(self):
-        return self._object["attachments"]
+        """
+        Returns the attachments of the tweet.
 
-    # Version 2 of the Twitter API has a new field called "referenced_tweets" that can be set
-    # For some reason this field is an array and an object in Twitter API docs
-    # We will implement it as an object
-    # https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
+        Returns:
+            dict: A dictionary containing the attachments of the tweet.
+        """
+        return self._object["attachments"]
 
     def set_referenced_tweet(
         self, referenced_tweet_id, tweet_type: ReferencedTweetType
     ):
+        """
+        Sets the referenced tweet for the current tweet.
+
+        Parameters:
+            referenced_tweet_id (str): The ID of the referenced tweet.
+            tweet_type (ReferencedTweetType): The type of the referenced tweet.
+
+        Raises:
+            ValueError: If tweet_type is not an instance of ReferencedTweetType.
+
+        Returns:
+            None
+
+        Note:
+            Version 2 of the Twitter API has a new field called "referenced_tweets" that can be set.
+            For some reason, this field is an array and an object in the Twitter API docs.
+            We will implement it as an object.
+            https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
+        """
         if isinstance(tweet_type, ReferencedTweetType) == False:
             raise ValueError("tweet_type must be an instance of ReferencedTweetType")
 
