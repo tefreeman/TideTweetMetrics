@@ -1,0 +1,30 @@
+<div class="dashboardContainer">
+  <div class="title-container">
+    <h2 class="title">Dashboard</h2>
+    <button mat-raised-button class="update-button" color = "primary" aria-label="Update">
+      Update
+    </button>
+  </div>
+
+  <!-- Render cards -->
+  <div class="dataCardContainer">
+    <ng-container *ngFor="let displayableData of displayableDataArr$ | async">
+      <ng-container *ngIf="isCard(displayableData)">
+        <app-datacard [displayableData]="displayableData"></app-datacard>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Render graphs -->
+  <div class="graphContainer">
+    <ng-container *ngFor="let displayableData of displayableDataArr$ | async">
+      <ng-container *ngIf="isGraph(displayableData)">
+        <app-graph-card [displayableData]="displayableData"></app-graph-card>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="footer">
+ 
+</div>

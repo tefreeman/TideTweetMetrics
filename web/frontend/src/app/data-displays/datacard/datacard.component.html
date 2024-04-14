@@ -1,16 +1,15 @@
-<mat-card *ngIf="displayableData" style="height: 100%">
+<mat-card class="elevation" *ngIf="displayableData" style="height: 100%">
   <ng-container *ngIf="displayableData?.type === 'stat-value'">
     <app-stat-value [displayableData]="displayableData"></app-stat-value>
   </ng-container>
+  
 
   <ng-container *ngIf="displayableData?.type === 'stat-trend'">
     <app-stat-trend [displayableData]="displayableData"></app-stat-trend>
   </ng-container>
 
-
-
-  <ng-container *ngIf="displayableData?.type === 'stat-comparsion'">
-    <app-stat-value [displayableData]="displayableData"></app-stat-value>
+  <ng-container *ngIf="displayableData?.type === 'stat-comp'">
+    <app-stat-comp [displayableData]="displayableData" ></app-stat-comp>
   </ng-container>
 </mat-card>
 

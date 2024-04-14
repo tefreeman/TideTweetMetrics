@@ -1,0 +1,21 @@
+// Remove empty ruleset for mat-card
+@use '@angular/material' as mat;
+
+
+  .card{
+    padding: 1rem 1.5rem 0rem;
+    @include mat.elevation(10);
+
+  }
+  
+  
+  .card::before {
+    content: "";
+    position: absolute;
+    bottom: 0; /* Move the line to the bottom */
+    left: 0; /* Keep the line at the left edge of the card */
+    width: 100%; /* Set the width to cover the entire bottom */
+    height: .3rem; /* Set the height of the line */
+    background-color: #a51e36;
+  }
+  
