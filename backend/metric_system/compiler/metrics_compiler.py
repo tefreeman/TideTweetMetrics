@@ -17,8 +17,17 @@ from backend.metric_system.compiler.metric_container import MetricContainer
 import logging
 
 
-
 class StatMetricCompiler:
+    """
+    Compiler for computing and generating metrics based on tweet data.
+
+    This class is responsible for processing metrics, connecting to the database,
+    adding metrics, and generating the final JSON representation of the computed metrics.
+
+    Args:
+        debug_mode (bool, optional): Flag to enable debug mode. Defaults to False.
+    """
+
     def __init__(self, debug_mode=False) -> None:
         self.debug_mode = debug_mode
 
@@ -31,6 +40,12 @@ class StatMetricCompiler:
         self._over_tweet_metrics: list[OverTweetMetric] = []
 
     def _connect_to_database(self):
+        """
+        Connects to the database using the configuration settings.
+
+        Returns:
+            MongoClient: The connected MongoDB client.
+        """
         return MongoClient(
             Config.db_host(),
             port=Config.db_port(),
@@ -39,6 +54,15 @@ class StatMetricCompiler:
         )[Config.db_name()]
 
     def add_metric(self, metric: tuple[Metric | ComputableMetric]):
+        """
+        Adds a metric to the compiler. Valid metric types are Metric, ComputableMetric, and MetricGenerator.
+
+        Args:
+            metric (tuple[Metric | ComputableMetric]): The metric to add.
+
+        Raises:
+            TypeError: If the metric type is invalid.
+        """
         if isinstance(metric, Metric):
             if isinstance(metric, OverTweetMetric):
                 logging.debug("metric is an OverTweetMetric")
@@ -58,10 +82,23 @@ class StatMetricCompiler:
             raise TypeError("Invalid metric type")
 
     def add_metrics(self, metrics: list[Metric | ComputableMetric]):
+        """
+        Adds multiple metrics to the compiler using the add_metric method.
+
+        Args:
+            metrics (list[Metric | ComputableMetric]): The metrics to add.
+        """
         for metric in metrics:
             self.add_metric(metric)
 
     def process(self):
+        """
+        Processes the metrics, using set_metric_container for DependentMetric,
+        _process_metric_generator for MetricGenerator, and _process_computable_metric for ComputableMetric.
+
+        This method performs the processing of metrics by calling the necessary
+        methods to generate and compute the metrics.
+        """
         self._process_tweets()
 
         ordered_metrics = self.topological_sort(self._unprocessed_metrics)
@@ -82,15 +119,33 @@ class StatMetricCompiler:
                 continue
 
     def _process_metric_generator(self, metric_generator: MetricGenerator) -> None:
+        """
+        Processes a MetricGenerator metric.
+
+        Args:
+            metric_generator (MetricGenerator): The MetricGenerator metric to process.
+        """
         metrics = metric_generator.generate_and_validate(self._tweet_analytics_helper)
         for metric in metrics:
             self._processed_metrics.add_metric(metric)
 
     def _process_computable_metric(self, computable_metric: ComputableMetric) -> None:
+        """
+        Processes a ComputableMetric metric.
+
+        Args:
+            computable_metric (ComputableMetric): The ComputableMetric metric to process.
+        """
         computable_metric.final_update(self._tweet_analytics_helper)
         self._processed_metrics.add_metric(computable_metric)
 
     def _process_tweets(self):
+        """
+        Processes the tweets.
+
+        This method retrieves the tweets from the database and updates the OverTweetMetrics
+        based on the tweet data.
+        """
         logging.info("Processing tweets")
         db = self._connect_to_database()
         tweets_cursor = (
@@ -106,13 +161,19 @@ class StatMetricCompiler:
 
         self._unprocessed_metrics.extend(self._over_tweet_metrics)
 
-    """
-    takes a list of Metric or MetricGenerator objects and returns a list of these objects in topological order.
-    Topological order is a linear ordering of vertices in a directed graph where for every directed edge from
-    vertex A to vertex B, A comes before B in the ordering. This solves the dependencies between metrics problem.
-    """
-
     def topological_sort(self, metrics: list[Metric]) -> list[Metric | MetricGenerator]:
+        """
+        Performs topological sorting on a list of metrics.
+
+        Topological order is a linear ordering of vertices in a directed graph where for every directed edge from
+        vertex A to vertex B, A comes before B in the ordering. This solves the dependencies between metrics problem.
+
+        Args:
+            metrics (list[Metric]): The list of metrics to perform topological sorting on.
+
+        Returns:
+            list[Metric | MetricGenerator]: The list of metrics in topological order.
+        """
         # Create a mapping from each metric name/alias to the Metric object
         name_to_metric = {}
 
@@ -150,6 +211,12 @@ class StatMetricCompiler:
         return result
 
     def to_json(self):
+        """
+        Generates the final JSON representation of the computed metrics.
+
+        Returns:
+            str: The JSON representation of the computed metrics.
+        """
         self._processed_metrics.remove_error_metrics()
         for owner_metrics in self._processed_metrics.get_metrics().values():
             for owner, metric in owner_metrics.items():
