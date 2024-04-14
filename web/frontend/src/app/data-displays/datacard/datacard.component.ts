@@ -1,16 +1,16 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { MatCard } from '@angular/material/card';
-
-import { StatValueComponent } from './stat-value/stat-value.component';
 import { I_DisplayableData, I_DisplayableRequest } from '../../core/interfaces/displayable-interface';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
 import { NgIf } from '@angular/common';
+import { MaterialModule } from '../../core/modules/material/material.module';
 import { StatTrendComponent } from './stat-trend/stat-trend.component';
+import { StatValueComponent } from './stat-value/stat-value.component';
+import { StatCompComponent } from './stat-comp/stat-comp.component';
+
 
 @Component({
   selector: 'app-datacard',
   standalone: true,
-  imports: [MatCard, StatValueComponent, NgIf, StatTrendComponent],
+  imports: [StatValueComponent, NgIf, StatTrendComponent, MaterialModule, StatCompComponent],
   templateUrl: './datacard.component.html',
   styleUrl: './datacard.component.scss'
 })

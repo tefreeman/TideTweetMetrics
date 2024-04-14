@@ -35,35 +35,39 @@ tide_path = str(current_script_path.parents[2])
 if tide_path not in sys.path:
     sys.path.append(tide_path + "/types/")
 
-from tweet_encoder import Tweet
-from profile_encoder import Profile
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
+
 
 class MetricEncoder:
     pass
 
-hostname =  "73.58.28.154"
+
+hostname = "73.58.28.154"
 port = 27017
 username = "Admin"
 password = "We420?Z4!"
 
 client = MongoClient(hostname, port, username=username, password=password)
-db = client['twitter_v2']
+db = client["twitter_v2"]
+
 
 class Metric:
     """
     Base class for defining metrics and their calculations.
     """
+
     def __init__(self, update_over_tweets=False, update_over_profiles=False):
         self.MetricEncoder = MetricEncoder()
         self._update_over_tweets = update_over_tweets
         self._update_over_profiles = update_over_profiles
-    
+
     def UpdateByTweet(self, tweet: Tweet):
         pass
 
     def UpdateByProfile(self, profile: Profile):
         pass
-    
+
     def tweetFilter(self, tweet: Tweet):
         return True  # Default filter returns True
 
@@ -74,32 +78,35 @@ class Metric:
         """
         Must be implemented in derived classes.
         """
-        raise NotImplementedError("FinalUpdate method must be implemented in derived classes.")
+        raise NotImplementedError(
+            "FinalUpdate method must be implemented in derived classes."
+        )
 
     def GetEncoder(self):
         return self.MetricEncoder
+
 
 class StatMetricCompiler:
     """
     Compiles and processes metrics based on tweets and profiles.
     """
+
     def __init__(self):
         self.tweetRowMetrics = []
         self.profileRowMetrics = []
         self.allMetrics = []
 
-        self.tweets_cursor = db['tweets'].find({})
-        self.profiles_cursor = db['profiles'].find({})
-        
+        self.tweets_cursor = db["tweets"].find({})
+        self.profiles_cursor = db["profiles"].find({})
+
     def AddMetric(self, metric: Metric):
         self.allMetrics.append(metric)
-        
+
         if metric._update_over_tweets:
             self.tweetRowMetrics.append(metric)
-        
+
         if metric._update_over_profiles:
             self.profileRowMetrics.append(metric)
-            
 
     def Process(self):
         for tweet in self.tweets_cursor:
@@ -115,10 +122,12 @@ class StatMetricCompiler:
             metric.FinalUpdate(None, None)  # Placeholder for actual stats arguments
         return [metric.GetEncoder() for metric in self.allMetrics]
 
+
 class AverageLikesMetric(Metric):
     """
     Calculates the average number of likes per tweet.
     """
+
     def __init__(self, accounts=None):
         super().__init__(update_over_tweets=True)
         self.total_likes = 0
@@ -134,7 +143,7 @@ class AverageLikesMetric(Metric):
             return True
         else:
             return tweet.get_author() in self.accounts
-        
+
     def FinalUpdate(self, tweet_stats, profile_stats):
         if self.total_tweets > 0:
             self.average_likes = self.total_likes / self.total_tweets
@@ -142,7 +151,8 @@ class AverageLikesMetric(Metric):
             self.average_likes = 0
 
     def GetEncoder(self):
-        return {'average_likes': self.average_likes}
+        return {"average_likes": self.average_likes}
+
 
 test = StatMetricCompiler()
 test.AddMetric(AverageLikesMetric())

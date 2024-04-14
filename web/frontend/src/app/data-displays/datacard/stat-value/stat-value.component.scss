@@ -1,16 +1,28 @@
+@use '@angular/material' as mat;
 
+.card{
+  padding: 1rem 1.5rem 0rem;
+}
 
-$impactful-number-display: (
-  font-size: 2.0rem, // Large font size for impact
-  font-weight: 900, // Bold weight for emphasis
-  line-height: 1.2 // Adjusted line height for readability
-);
+.card-title{
+  font-weight: bold;
+  letter-spacing: -.3px; 
+  color: #999;
+  margin-bottom: 0rem;
+}
 
-// Apply the styles directly
-.bold-number {
-  font-size: map-get($impactful-number-display, font-size);
-  font-weight: map-get($impactful-number-display, font-weight);
-  line-height: map-get($impactful-number-display, line-height);
-  font-family: Roboto;
-  margin: 0px;
+.card-value{
+  font-size: 1.5rem; 
+  font-weight: 600;
+  letter-spacing: -.3px; 
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: .3rem;
+  height: 100%; 
+  background-color: #a51e36;
 }

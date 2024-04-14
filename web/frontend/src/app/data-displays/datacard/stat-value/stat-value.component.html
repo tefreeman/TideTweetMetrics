@@ -1,11 +1,12 @@
 
-<mat-grid-list cols="2" gutterSize="4px">
-  <mat-grid-tile colspan="1">
-    <div style="text-align: center;">
-      <h2 class="mat-h2" style="margin: 0px">{{metric_name}}</h2>
-    </div>
-  </mat-grid-tile>
-  <mat-grid-tile colspan="1">
-  <p class="bold-number">{{ data | number: '1.0-2' }}</p>
-  </mat-grid-tile>
-</mat-grid-list>
+  <div class="card"> 
+        <h5 class = "card-title">{{metric_name}}</h5>
+        <h2 class = "card-value">{{ data | number: '1.0-2' }}</h2>
+  </div>
+
+
+
+
+
+
+

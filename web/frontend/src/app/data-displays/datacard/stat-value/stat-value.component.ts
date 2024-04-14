@@ -30,7 +30,7 @@ export class StatValueComponent implements OnInit{
 
 
   ngOnInit() {
-    this.data = Number(this.displayableData['values'][0]);
+    this.data = Object.values(this.displayableData['owners'])[0] as number;
     this.metric_name = this.keyTranslatorService.translateKey(this.displayableData['stat_name']);
 
     console.log(this.metric_name)
