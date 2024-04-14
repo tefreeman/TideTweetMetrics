@@ -75,7 +75,6 @@ class PearsonCorrelationProfileStatGenerator(MetricGenerator):
 
         """
         metrics = []
-        prop_list = profile_plus.get_properties_list()
 
         for prop1, prop2 in product(
             self.prop_list, ProfileWithTweetProperties.get_properties_list()[1:]
