@@ -1,29 +1,37 @@
 import { Component } from '@angular/core';
-import { HeaderComponent } from "../../shared/header/header.component";
-import { DashboardComponent } from "../../dashboard/dashboard.component";
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatButtonModule} from '@angular/material/button';
+import { DashboardComponent } from "./dashboard/dashboard.component";
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { SideNavComponent } from './side-nav/side-nav.component';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatNavList } from '@angular/material/list';
+import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgFor } from '@angular/common';
-
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-main-view',
     standalone: true,
     templateUrl: './main-view.component.html',
     styleUrl: './main-view.component.scss',
-    imports: [HeaderComponent, RouterLink, DashboardComponent, MatToolbar, MatNavList, NgFor, MatSidenavModule, MatButtonModule, MatTooltipModule, MatIconModule, RouterOutlet, SideNavComponent]
+    imports: [MaterialModule, RouterLink, RouterOutlet, DashboardComponent,NgFor]
 })
 export class MainViewComponent {
+
+  constructor(private authService: AuthService) {}
+  
+  navRoutes = [
+    {name:'Dashboard', route:'home'},
+    {name:'Graph Builder', route:'graph-builder'},  //Add more here as needed
+    {name:'Optimizer', route:'optimizer'},
+    {name:'My Profile', route:'my-profile'},
+
+  ];
+
 
     public isExpanded = false;
 
     public toggleMenu() {
       this.isExpanded = !this.isExpanded;
+    }
+
+    signout(){
+      this.authService.signout();
     }
 }

@@ -1,5 +1,5 @@
 
-type NumberOrString = Number | string;
+type NumberOrString = Number; // may need to change this to include astring later
 export type T_MetricValue = NumberOrString | Array<NumberOrString>
 
 
