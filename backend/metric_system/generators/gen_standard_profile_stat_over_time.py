@@ -105,7 +105,7 @@ class StandardProfileStatOverTimeGenerator(MetricGenerator):
                 current_year = datetime.now().year
                 yearly_stats = []
 
-                for year in range(current_year - 9, current_year - 1):
+                for year in range(current_year - 9, current_year):
                     start_date = datetime(year, 1, 1)
                     end_date = datetime(year + 1, 1, 1)
                     start_index, end_index = profile_plus.get_index_between_dates(
