@@ -51,8 +51,8 @@ export class MetricContainer {
       
       if (displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
         const isTop = displayable.ownersConfig.type === 'top';
-
-        ownerData = this.sortAndSlice(ownerData, displayable.ownersConfig.count!, isTop);
+        const cutOff = displayable.ownersConfig.count! + displayable.ownersConfig.owners.length;
+        ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
       }
     
       const ownerObject = ownerData.reduce((obj, item) => {
