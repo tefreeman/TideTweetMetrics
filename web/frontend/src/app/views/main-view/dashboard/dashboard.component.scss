@@ -38,6 +38,8 @@
 }
 
 .dataCardContainer app-datacard {
+    position: relative; // Ensure this for proper z-index management
+    transition: transform 300ms ease;
     display: flex;
     flex-direction: column;
     height: 7rem;  // Fixed height for all cards; adjust as needed
@@ -68,5 +70,18 @@
     .graphContainer {
         grid-template-columns: repeat(1, minmax(15rem, 1fr))
     }
+
+
+::ng-deep .cdk-drag-placeholder {
+    opacity: 0;
+}
+
+::ng-deep .cdk-drag-preview {
+    box-shadow: 0 5px 5px rgba(0,0,0,0.5);
+}
+
+::ng-deep .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
 }
 
