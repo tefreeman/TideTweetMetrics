@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { I_DisplayableData, I_GraphBarData, I_GraphLineData, T_DisplayableData } from '../../core/interfaces/displayable-interface';
+import { IDisplayableStats, I_GraphBarData, I_GraphLineData, T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgIf } from '@angular/common';
 import { LineChartComponent } from './line-chart/line-chart.component';
@@ -12,21 +12,21 @@ import { BarChartComponent } from './bar-chart/bar-chart.component';
   styleUrls: ['./graph-card.component.scss']
 })
 export class GraphCardComponent implements OnInit {
-  @Input({required: true}) displayableData!: T_DisplayableData;
+  @Input({required: true}) displayableData!: T_DisplayableDataType;
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  isLineGraph(data: T_DisplayableData): data  is I_GraphLineData {
+  isLineGraph(data: T_DisplayableDataType): data  is I_GraphLineData {
     return data.type === "graph-line";
   }
 
-  isBarGraph(data: T_DisplayableData): data is I_GraphBarData {
+  isBarGraph(data: T_DisplayableDataType): data is I_GraphBarData {
     return data.type === "graph-bar";
   }
 
-  isPieGraph(data: T_DisplayableData) {}
+  isPieGraph(data: T_DisplayableDataType) {}
 
 }

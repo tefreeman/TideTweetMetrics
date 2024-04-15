@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_DisplayableData, I_GraphLineData } from '../../../core/interfaces/displayable-interface';
+import { IDisplayableStats, I_GraphLineData } from '../../../core/interfaces/displayable-interface';
 
 @Component({
   standalone: true,
