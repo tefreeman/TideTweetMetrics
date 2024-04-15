@@ -42,15 +42,6 @@
     position: relative;
 }
 
-.card-title::after {
-    content: '';
-    position: absolute;
-    bottom: -5px; /* Adjust the distance from the text */
-    left: 0;
-    width: 40%; /* Adjust the width of the line */
-    height: 3px; /* Adjust the thickness of the line */
-    background-color: #a51e36; /* Set the color of the line */
-}
 
 .card-text{
     font-weight: bold;
