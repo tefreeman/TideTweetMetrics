@@ -1,3 +1,17 @@
-<p>
-  optimizer works!
-</p>
+<div class="dashboardContainer">
+  <div class="title-container">
+    <h2 class="title">Optimizer</h2>
+  </div>
+
+  <mat-card class="card-container">
+    <mat-form-field class="card-content">
+      <mat-label>Clearable input</mat-label>
+      <input matInput type="text" [(ngModel)]="value">
+      @if (value) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+  </mat-card>
+</div>

@@ -35,14 +35,14 @@
     width: 20%; 
     display: inline-block; 
     text-align: left; 
-    margin-bottom: 1.5rem;   
+    margin-bottom: 1rem;   
     position: relative;
 }
 
 
 .card-text{
     font-weight: bold;
-    font-size: 15px; 
+    font-size: 12px; 
     letter-spacing: -.3px; 
     width: 9rem; 
     display: inline-block; 
@@ -51,7 +51,7 @@
 }
 .card-text2{
     font-weight: bold;
-    font-size: 15px; 
+    font-size: 12px; 
     letter-spacing: -.3px; 
     width: auto; 
     margin-left: 2rem;
@@ -62,7 +62,7 @@
     width: 20rem;
     height: 4rem;
     line-height: 0px;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 
@@ -79,7 +79,8 @@
 .change-button {
     margin-bottom: 1rem;
     margin-left: 1rem; 
-    letter-spacing: -.3px; 
+    letter-spacing: -.3px;
+    font-size: 12px;
 }
 
 .approve-card{
@@ -90,7 +91,7 @@
 }
 
 .text{
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: -.3px; 
 }
 .text2{
@@ -121,7 +122,7 @@
 }
   
   .mat-panel-description {
-    font-size: 14px; 
+    font-size: 12px; 
   }
   
 
