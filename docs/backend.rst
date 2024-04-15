@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   backend.crawler_sys
    backend.encoders
    backend.metric_system
 
