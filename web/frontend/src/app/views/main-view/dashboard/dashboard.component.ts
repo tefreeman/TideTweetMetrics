@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
 
   
-  // TODO: write custom logic for proper card placement
+  // ISSUE:  The drop function needs to be modified to handle the CSS grid layout. MoveItemInArray is not sufficient.
   drop(event: CdkDragDrop<T_DisplayableDataType[]>) {
     console.log(event);
     moveItemInArray(this.displayableDataArr, event.previousIndex, event.currentIndex);

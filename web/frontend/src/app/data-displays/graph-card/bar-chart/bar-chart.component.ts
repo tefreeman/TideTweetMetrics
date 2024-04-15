@@ -22,7 +22,7 @@ export class BarChartComponent implements OnInit {
   }
 
 ngOnInit(): void {
-    this.chartOptions = this.graphMakerService.create_bar_chart(this.displayableData);
+    this.chartOptions = this.graphMakerService.createBarChart(this.displayableData);
     console.log(this.chartOptions);
 }
 }
