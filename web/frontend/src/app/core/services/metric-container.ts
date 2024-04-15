@@ -30,7 +30,10 @@ export class MetricContainer {
 
     getMetricData(displayable: I_DisplayableRequest): IDisplayableStats {
         let ownerData: I_OwnerData[] = [];
+        
+
         let owners = this.getOwnersForStat(displayable.stat_name);
+
         if (displayable.ownersConfig.type === 'all' || displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
           for (let owner of owners) {
             if (this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner]) {
@@ -68,6 +71,17 @@ export class MetricContainer {
               
               return bValue - aValue; // Ascending sort
             }).slice(0, displayable.ownersConfig.count);
+          }
+
+          if (displayable.ownersConfig.owners.length> 0) {
+            for (let owner of displayable.ownersConfig.owners) {
+              if (this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner]) {
+                ownerData.push({
+                  owner: owner,
+                  value: this._metrics[displayable.stat_name][owner]
+                });
+              }
+            }
           }
 
 
