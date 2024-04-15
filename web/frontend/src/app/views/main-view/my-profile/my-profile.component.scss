@@ -1,21 +1,19 @@
 .title{
-    margin-left: 100px;
     margin-top: 70px;
-    margin-bottom: 15px;
     font-weight: bolder;
     color: white;
     font-size: 25px !important;
+    margin-bottom: -20px;
 }
 
 .grid-container {
     display: grid;
     grid-template-columns: 1fr;
     gap: 40px;
-    margin-left: 100px;
-    margin-right: 100px;
-    max-width: 50%;
-    
+    margin: 0px auto;
+    max-width: 25%;
 }
+
 
 .card-container::before {
     content: "";
@@ -56,7 +54,7 @@
     font-weight: bold;
     font-size: 15px; 
     letter-spacing: -.3px; 
-    width: 150px; 
+    width: auto; 
     margin-left: 2rem;
     margin-top: 2rem;
 }
