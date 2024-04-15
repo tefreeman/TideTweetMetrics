@@ -1,21 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { MetricService } from './metric.service';
-import { DisplayRequestService } from './display-request.service';
-import { I_DisplayableData, I_DisplayableRequest, T_DisplayableData } from '../interfaces/displayable-interface';
+import { DisplayRequestManagerService } from './display-request-manager.service';
+import { IDisplayableStats, I_DisplayableRequest, T_DisplayableDataType } from '../interfaces/displayable-interface';
 import { combineLatestWith, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { combineLatest } from 'rxjs';
-import { GraphProcessorService } from './graph-processor.service';
+import { DisplayableProcessorService } from './displayable-processor.service';
 import { MetricContainer } from './metric-container';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DisplayProcessorService {
-private _graphService = inject(GraphProcessorService);
+export class DisplayableProviderService {
+private _graphService = inject(DisplayableProcessorService);
 private _metricsService = inject(MetricService);
-private _displayReqService = inject(DisplayRequestService);
+private _displayReqService = inject(DisplayRequestManagerService);
 
-public displayables$: Observable<T_DisplayableData[]>;
+public displayables$: Observable<T_DisplayableDataType[]>;
 
 constructor() {
   this.displayables$ = combineLatest([
@@ -31,8 +31,8 @@ constructor() {
   );
 }
 
-private processRequests(metricContainer: MetricContainer, requests: I_DisplayableRequest[]): T_DisplayableData[] {
-  const displayables: T_DisplayableData[] = [];
+private processRequests(metricContainer: MetricContainer, requests: I_DisplayableRequest[]): T_DisplayableDataType[] {
+  const displayables: T_DisplayableDataType[] = [];
   for (let request of requests) {
     let output = metricContainer.getMetricData(request);
     displayables.push(this._graphService.convert(output));
