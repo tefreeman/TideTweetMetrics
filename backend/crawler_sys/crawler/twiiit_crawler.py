@@ -9,9 +9,9 @@ from selenium.webdriver.common.by import By
 from crawler.crawler import Crawler  # hmmmm
 import urllib.request
 
-from encoders.tweet_encoder import Tweet
-from encoders.profile_encoder import Profile
-from encoders.twitter_api_encoder import ReferencedTweetType
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
+from backend.encoders.twitter_api_encoder import ReferencedTweetType
 
 
 from urllib.parse import urlparse

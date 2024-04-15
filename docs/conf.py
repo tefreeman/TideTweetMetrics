@@ -25,9 +25,9 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    "**/backend/api/api/*",
     "**backend.api*",
     "**tests.test*",
+    "**crawler_sys.tests*",
 ]
 
 
