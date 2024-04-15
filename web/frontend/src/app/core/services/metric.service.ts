@@ -9,6 +9,7 @@ import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { I_MetricsInterface } from '../interfaces/metrics-interface';
 import { AuthService } from './auth.service';
 import { LocalStorageService } from './local-storage.service';
+import { KeyTranslatorService } from './key-translator.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ export class MetricService {
   private _httpClient = inject(HttpClient);
   private _authService = inject(AuthService);
   private _localStorageService = inject(LocalStorageService);
+  private _keyTranslatorService = inject(KeyTranslatorService);
   private metricFileId = 'metrics_json';
 
   constructor() {
@@ -46,6 +48,12 @@ export class MetricService {
       map(metrics => {
         if (metrics) {
           metricContainer.setMetrics(metrics);
+
+          const metricNames: any = {};
+          for(const metricName in metrics) {
+            metricNames[metricName] = this._keyTranslatorService.translateKey(metricName);
+          }
+          console.log(metricNames);
         }
         return metricContainer;
       }),

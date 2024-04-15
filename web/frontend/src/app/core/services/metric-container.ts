@@ -1,15 +1,15 @@
 import { IDisplayableStats, I_DisplayableRequest, I_OwnerConfig, I_OwnerData } from "../interfaces/displayable-interface";
-import { I_MetricsInterface, T_MetricValue, I_MetricOwners } from "../interfaces/metrics-interface";
+import { I_MetricsInterface, T_MetricValue, I_MetricOwners } from '../interfaces/metrics-interface';
+import { KeyTranslatorService } from "./key-translator.service";
 
 export class MetricContainer {
     _metrics: I_MetricsInterface = {}
-
     constructor() {}
-
 
     setMetrics(metrics: I_MetricsInterface): void {
         this._metrics = metrics;
         console.log('metrics set', this._metrics)
+
     }
 
     getStatKeys(): string[] {
@@ -51,8 +51,8 @@ export class MetricContainer {
       
       if (displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
         const isTop = displayable.ownersConfig.type === 'top';
-
-        ownerData = this.sortAndSlice(ownerData, displayable.ownersConfig.count!, isTop);
+        const cutOff = displayable.ownersConfig.count! + displayable.ownersConfig.owners.length;
+        ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
       }
     
       const ownerObject = ownerData.reduce((obj, item) => {
@@ -85,3 +85,5 @@ export class MetricContainer {
         return this._metrics;
     }
 }
+
+
