@@ -1,6 +1,8 @@
 import json
 from backend.crawler_sys.utils.backup import next_zip_num, init_backup_dirs
 import os
+
+
 class Config:
     __CONFIG = None
     _next_backup_zip_id = None
@@ -17,6 +19,9 @@ class Config:
     @staticmethod
     def db_name() -> str:
         return Config.__CONFIG["DB"]["NAME"]
+
+    def overwrite_db_name(new_name: str) -> None:
+        Config.__CONFIG["DB"]["NAME"] = new_name
 
     @staticmethod
     def db_host() -> str:
@@ -65,15 +70,20 @@ class Config:
     @staticmethod
     def max_profile_tweet_crawl_depth() -> int:
         return Config.__CONFIG["CRAWLER"]["MAX_TWEET_CRAWL_DEPTH"]
-    
+
     @staticmethod
     def email_key() -> str:
         return Config.__CONFIG["EMAIL"]["KEY"]
+    
+    @staticmethod
+    def api_secret_key() -> str:
+        return Config.__CONFIG["API"]["SECRET_KEY"]
 
     @staticmethod
     def get_backup_dir() -> str:
         return Config.__CONFIG["BACKUP"]["DIR"]
 
+    @staticmethod
     def get_raw_backup_dir() -> str:
         return Config.__CONFIG["BACKUP"]["RAW_DIR"]
 

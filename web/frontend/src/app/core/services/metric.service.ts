@@ -1,52 +1,66 @@
-import { inject, Injectable } from '@angular/core';
-import { MetricContainer } from '../classes/metric-container';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject, from, Observable, throwError } from 'rxjs';
+import { switchMap, catchError, tap, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+import { MetricContainer } from './metric-container';
 import { HttpClient } from '@angular/common/http';
+import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { I_MetricsInterface } from '../interfaces/metrics-interface';
 import { AuthService } from './auth.service';
+import { LocalStorageService } from './local-storage.service';
 
-
+@Injectable({
+  providedIn: 'root',
+})
 export class MetricService {
   private _storage = inject(Storage);
-  private httpclient = inject(HttpClient);
-  private _auth_service= inject(AuthService);
-  
-  public MetricContainer: MetricContainer = new MetricContainer();
-  public subject = new BehaviorSubject<number>(0);
+  private _httpClient = inject(HttpClient);
+  private _authService = inject(AuthService);
+  private _localStorageService = inject(LocalStorageService);
+  private metricFileId = 'metrics_json';
 
   constructor() {
-    if(this.loadFromLocalStorage()) {
-      this.subject.next(1);
-    } else {
-      this.getChartData();
-      this.subject.next(1);
-    }
+
   }
 
-
-  getChartData(): void {
-    console.log('getting chart data from db')
-    getDownloadURL(ref(this._storage, 'ex_metric_out.json')).then((url) => {
-      this.httpclient.get<I_MetricsInterface>(url).subscribe((data) => {
-        this.MetricContainer.setMetrics(data);
-        this.saveMetrics();
-      });
-  });
-}
-  loadFromLocalStorage(): Boolean {
-    
-    let metrics = localStorage.getItem('metrics');
-    if (metrics) {
-      console.log('getting chart data from local storage')
-      this.MetricContainer.setMetrics(JSON.parse(metrics));
-      return true;
-    }
-    return false;
+  public getMetricContainer$(): Observable<MetricContainer> {
+    const metricContainer = new MetricContainer();
+    // Transforming the entire flow into a single observable that can be subscribed to from a component
+    return this._authService.getFileVersion(this.metricFileId).pipe(
+      switchMap(fileVer => {
+        if (!fileVer) {
+          console.error('No file version found for ', this.metricFileId);
+          return throwError(() => new Error('No file version found'));
+        }
+        console.log(fileVer);
+        const result = this._localStorageService.getItem<I_MetricsInterface>('metrics_json', fileVer.version);
+        if (result) {
+          console.log('Getting data from local storage');
+          return of(result);
+        } else {
+          console.log('Getting new data from db');
+          return this.fetchChartData(fileVer.version);
+        }
+      }),
+      map(metrics => {
+        if (metrics) {
+          metricContainer.setMetrics(metrics);
+        }
+        return metricContainer;
+      }),
+      catchError(error => {
+        console.error('Error fetching metrics: ', error);
+        return throwError(() => new Error(error));
+      })
+    );
   }
 
-  saveMetrics(): void {
-    localStorage.setItem('metrics', JSON.stringify(this.MetricContainer.getJson()));
-    localStorage.setItem('metricsVersion', "1.0.0");
+  private fetchChartData(version: string): Observable<I_MetricsInterface> {
+    return from(getDownloadURL(ref(this._storage, 'ex_metric_out.json'))).pipe(
+      switchMap(url => this._httpClient.get<I_MetricsInterface>(url)),
+      tap(data => this._localStorageService.setItem(this.metricFileId, data, version))
+    );
   }
+
 }

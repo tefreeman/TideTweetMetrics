@@ -1,6 +1,6 @@
 import unittest
 
-from crawler_sys.encoders.profile_encoder import *
+from backend.encoders.profile_encoder import *
 
 class TestProfileEncoder(unittest.TestCase):
 

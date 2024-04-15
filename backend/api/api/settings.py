@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from backend.config import Config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ttd_=9ok@7l!+_p*1v7tyv+0!fv)0=jkuf!z-3!3kq4xoko@ip'
+SECRET_KEY = Config.api_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
