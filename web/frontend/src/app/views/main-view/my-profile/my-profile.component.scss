@@ -8,10 +8,9 @@
 
 .grid-container {
     display: grid;
-
-    gap: 40px;
+    gap: 2rem;
     margin: 0px auto;
-    width: 25%;
+    max-width: 50rem;
 }
 
 
@@ -45,7 +44,7 @@
     font-weight: bold;
     font-size: 15px; 
     letter-spacing: -.3px; 
-    width: 150px; 
+    width: 9rem; 
     display: inline-block; 
     text-align: right; 
     margin-right: 2rem;
@@ -132,8 +131,8 @@
 
   .delete-button {
     padding: 0;
-    width: 24px; /* Adjust the width as needed */
-    height: 24px; /* Adjust the height as needed */
+    width: 1.5rem; /* Adjust the width as needed */
+    height: 1.5rem; /* Adjust the height as needed */
   }
 
   .account-details {
@@ -165,8 +164,8 @@
 .decline-button {
   border: none;
   cursor: pointer;
-  height: 24px; /* adjust height as needed */
-  width: 24px; /* adjust width as needed */
+  height: 1.5rem; /* adjust height as needed */
+  width: 1.5rem; /* adjust width as needed */
   border-radius: 50%; /* make the button circular */
   margin-left: 1rem;
 }
