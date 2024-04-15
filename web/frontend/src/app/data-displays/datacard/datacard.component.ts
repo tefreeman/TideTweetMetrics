@@ -5,12 +5,12 @@ import { MaterialModule } from '../../core/modules/material/material.module';
 import { StatTrendComponent } from './stat-trend/stat-trend.component';
 import { StatValueComponent } from './stat-value/stat-value.component';
 import { StatCompComponent } from './stat-comp/stat-comp.component';
-
+import {CdkDrag} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-datacard',
   standalone: true,
-  imports: [StatValueComponent, NgIf, StatTrendComponent, MaterialModule, StatCompComponent, NgSwitch],
+  imports: [StatValueComponent, NgIf, StatTrendComponent, MaterialModule, StatCompComponent, NgSwitch, CdkDrag],
   templateUrl: './datacard.component.html',
   styleUrl: './datacard.component.scss'
 })
