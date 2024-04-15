@@ -3,7 +3,7 @@ import { BehaviorSubject, from, Observable, throwError } from 'rxjs';
 import { switchMap, catchError, tap, map } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { MetricContainer } from '../classes/metric-container';
+import { MetricContainer } from './metric-container';
 import { HttpClient } from '@angular/common/http';
 import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { I_MetricsInterface } from '../interfaces/metrics-interface';

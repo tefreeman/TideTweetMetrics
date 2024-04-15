@@ -3,9 +3,9 @@ import { I_DisplayableData, I_DisplayableRequest } from '../interfaces/displayab
 
 
 let test_displayed_data: I_DisplayableRequest = {
-  stat_name: "tweet_likes-mean",
+  stat_name: "tweet_likes-sum-yearly",
   ownersConfig: {type: "specific", owners: ["alabama_cs"]},
-  type: "stat-value",
+  type: "stat-trend",
 }
 
 let test_displayed_data1: I_DisplayableRequest = {
