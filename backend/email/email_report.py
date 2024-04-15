@@ -1,4 +1,5 @@
 from backend.config import Config
+import logging
 
 Config.init()
 key = Config.email_key()
@@ -21,7 +22,7 @@ def send_report(addresses: list[str]) -> None:
         print(response.body)
         print(response.headers)
     except Exception as e:
-        print(e.message)
+        logging.error(e.message)
 
 if __name__ == "__main__":
     send_report(["samuelmgaines@gmail.com"])
