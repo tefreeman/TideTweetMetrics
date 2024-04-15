@@ -1,51 +1,44 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  I_DisplayableData,
+  IDisplayableStats,
   I_DisplayableRequest,
   I_GraphBarData,
   I_GraphLineData,
   I_StatCompData,
   I_StatTrendData,
   I_StatValueData,
-  T_DisplayableData,
+  T_DisplayableDataType,
   T_GraphType,
 } from '../interfaces/displayable-interface';
-import { DisplayProcessorService } from './display-processor.service';
-import { first } from 'rxjs';
 import { T_MetricValue } from '../interfaces/metrics-interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GraphProcessorService {
+export class DisplayableProcessorService {
   constructor() {}
 
-  convert(data: I_DisplayableData): T_DisplayableData {
+  convert(data: IDisplayableStats): T_DisplayableDataType {
     if (data.type === 'display' || data.type === 'auto') {
       return this.decisionTree(data);
     }
-    
+
     if (data.type === 'stat-value') {
       return this.toStatValue(data);
-    }
-    else if (data.type === 'stat-comp') {
+    } else if (data.type === 'stat-comp') {
       return this.toStatComparison(data);
-    }
-    else if (data.type === 'stat-trend') {
+    } else if (data.type === 'stat-trend') {
       return this.toStatTrend(data);
-    }
-    else if (data.type === 'graph-bar') {
+    } else if (data.type === 'graph-bar') {
       return this.toGraphBar(data);
-    }
-    else if (data.type === 'graph-line') {
+    } else if (data.type === 'graph-line') {
       return this.toGraphLine(data);
-    }
-    else {
+    } else {
       throw new Error('Invalid data type');
     }
   }
 
-  decisionTree(data: I_DisplayableData): T_DisplayableData {
+  decisionTree(data: IDisplayableStats): T_DisplayableDataType {
     const ownerCount = Object.keys(data.owners).length;
     //TODO: fix
     const firstOwner = Object.values(data.owners)[0];
@@ -56,7 +49,7 @@ export class GraphProcessorService {
         : 1
       : 1;
 
-      // TODO: upgrade this to a switch statement
+    // TODO: upgrade this to a switch statement
     if (Array.isArray(firstOwner)) {
       if (Array.isArray(firstOwner[0])) {
         dataPoints = firstOwner[0].length;
@@ -89,7 +82,7 @@ export class GraphProcessorService {
     return this.toGraphLine(data);
   }
 
-  private toStatValue(data: I_DisplayableData): I_StatValueData {
+  private toStatValue(data: IDisplayableStats): I_StatValueData {
     if (Object.keys(data.owners).length != 1) {
       throw new Error('Invalid data for stat-value');
     }
@@ -103,7 +96,7 @@ export class GraphProcessorService {
     };
   }
 
-  private toStatComparison(data: I_DisplayableData): I_StatCompData {
+  private toStatComparison(data: IDisplayableStats): I_StatCompData {
     if (Object.keys(data.owners).length != 2) {
       throw new Error('Invalid data for stat-comparison');
     }
@@ -116,7 +109,7 @@ export class GraphProcessorService {
     };
   }
 
-  private toStatTrend(data: I_DisplayableData): I_StatTrendData {
+  private toStatTrend(data: IDisplayableStats): I_StatTrendData {
     if (Object.keys(data.owners).length != 1) {
       throw new Error('Invalid data for stat-trend');
     }
@@ -147,22 +140,21 @@ export class GraphProcessorService {
     }
   }
 
-  private toGraphBar(data: I_DisplayableData): I_GraphBarData {
-  return {
-    type: 'graph-bar',
-    metricName: data.stat_name,
-    values: Object.values(data.owners),
-    owners: Object.keys(data.owners),
-  };
-}
+  private toGraphBar(data: IDisplayableStats): I_GraphBarData {
+    return {
+      type: 'graph-bar',
+      metricName: data.stat_name,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
 
-private toGraphLine(data: I_DisplayableData): I_GraphLineData {
-  return {
-    type: 'graph-line',
-    metricName: data.stat_name,
-    values: Object.values(data.owners),
-    owners: Object.keys(data.owners),
-  };
-}
-
+  private toGraphLine(data: IDisplayableStats): I_GraphLineData {
+    return {
+      type: 'graph-line',
+      metricName: data.stat_name,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
 }
