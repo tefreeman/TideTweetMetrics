@@ -1,49 +1,59 @@
-<div class="title-container">
-  <h2 class="title">Profile</h2>
-</div>
+
+<h2 class="title">Profile</h2>
+
 
 <div class="grid-container">
-<mat-card class ="card-container">
-  <div class="container-content">
-    <h3 class="my-account">My Account</h3>
-    <div class="input-container">
-      <span class="content">Username</span>
-      <mat-form-field class="input" color="primary">
-        <input matInput maxlength="10" placeholder="Username">
-        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
-      </mat-form-field>
-      <button mat-button color="primary">Change</button>
+  <mat-card class="card-container">
+    <div class="card">
+      <h3 class="card-title">My Account</h3>
+      <div class="input-container">
+        <span class="card-text">Username</span>
+        <mat-form-field class="input" color="primary">
+          <input matInput maxlength="10" placeholder="Username">
+          <mat-hint align="end" class="small-text">{{input.value.length}}/10</mat-hint>
+        </mat-form-field>
+        <button mat-button color="primary">Change</button>
+      </div>
+      <div class="input-container">
+        <span class="card-text">Password</span>
+        <mat-form-field class="input" color="primary">
+          <input matInput #input minlength="8" type="password" placeholder="New Password">
+          <mat-hint align="start" class="small-text">Minimum: 8</mat-hint>
+          <mat-hint align="end" class="small-text">Characters: {{input.value.length}}</mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="input-container">
+        <span class="card-text">Confirm Password</span>
+        <mat-form-field class="input" color="primary">
+          <input matInput #confirmInput minlength="8" type="password" placeholder="Confirm Password">
+        </mat-form-field>
+        <button mat-button color="primary">Change</button>
+      </div>
     </div>
-    <div class="input-container">
-      <span class="content">Password</span>
-      <mat-form-field class="input" color="primary">
-        <input matInput maxlength="10" type="password" placeholder="New Password">
-        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
-      </mat-form-field>
-      <button mat-button color="primary">Change</button>
-    </div>
-  </div>
-</mat-card>
+  </mat-card>
+  
+  
 
-<mat-card>
-  <div class="container-content">
-    <h3 class="my-account">Admin</h3>
-    <div class="input-container">
-      <span class="content">Username</span>
-      <mat-form-field class="input" color="primary">
-        <input matInput maxlength="10" placeholder="Username">
-        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
-      </mat-form-field>
-      <button mat-button color="primary">Change</button>
+  <mat-card class ="card-container">
+    <div class="card">
+      <h3 class="card-title" style="margin-bottom: 1rem;">E-mail Report</h3>
+      <div class=""input-container>
+        <span class="card-text">Email</span>
+        <span class="email">example&#64;example.com</span>
+      </div>
+      <div class="input-container">
+        <span class="card-text">Opt in for e-mail reports</span>
+        <mat-checkbox class="checkbox" color="primary">
+        </mat-checkbox>
+      </div>
     </div>
-    <div class="input-container">
-      <span class="content">Password</span>
-      <mat-form-field class="input" color="primary">
-        <input matInput maxlength="10" type="password" placeholder="New Password">
-        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
-      </mat-form-field>
-      <button mat-button color="primary">Change</button>
+  </mat-card>
+
+  <mat-card class ="card-container">
+    <div class="card">
+      <h3 class="card-title">Admin</h3>
+      
     </div>
-  </div>
-</mat-card>
+  </mat-card>
+
 </div>
