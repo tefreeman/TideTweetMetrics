@@ -1,0 +1,36 @@
+.title{
+    margin-left: 100px;
+    margin-top: 70px;
+    margin-bottom: 15px;
+    font-weight: bolder;
+    color: white;
+    font-size: 25px !important;
+}
+
+.title-container {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: space-between; /* Space elements horizontally */
+}
+
+.card-container {
+    margin-left: 100px;
+    margin-right: 100px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    grid-auto-flow: dense;
+    justify-content: center;
+    
+}
+
+.my-account{
+    font-weight: bold;
+    letter-spacing: -.3px; 
+    color: #999;
+    margin-bottom: 0rem;
+}
+
+.container-wrapper {
+    margin: 0.5rem 2rem;
+}
