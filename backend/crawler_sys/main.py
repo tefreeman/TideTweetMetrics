@@ -1,7 +1,6 @@
 from scheduler import CrawlerScheduler
 import database as db
 from backend.config import Config
-from encoders.tweet_encoder import Tweet
 
 
 from utils.backup import (
