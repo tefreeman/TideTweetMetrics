@@ -3,7 +3,7 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { inject } from '@angular/core';
 import { DatacardComponent } from '../../../data-displays/datacard/datacard.component';
 import { BarChartComponent } from '../../../data-displays/graph-card/bar-chart/bar-chart.component';
-import { Observable,} from 'rxjs';
+import { Observable, Subscription,} from 'rxjs';
 import { I_DisplayableData, I_DisplayableRequest, T_DisplayableData } from '../../../core/interfaces/displayable-interface';
 import { MetricService } from '../../../core/services/metric.service';
 import { DisplayProcessorService } from '../../../core/services/display-processor.service';
@@ -11,30 +11,40 @@ import { AsyncPipe } from '@angular/common';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { GraphCardComponent } from '../../../data-displays/graph-card/graph-card.component';
 import { CommonModule } from '@angular/common';
-import { DisplayRequestService } from '../../../core/services/display-request.service';
-import { MockDataService } from '../../../core/services/mock-data.service';
-
+import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, DatacardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule],
+  imports: [NgFor, DatacardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule, CdkDrag, CdkDropList],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService]
 })
 export class DashboardComponent implements OnInit, OnDestroy{
   _displayProcessor = inject(DisplayProcessorService);
-  displayableDataArr$: Observable<T_DisplayableData[]>;
+  displayableDataArr: T_DisplayableData[] = [];
 
+  subscription: any;
   constructor(){
-    this.displayableDataArr$ = this._displayProcessor.displayables$;
 }
 
   ngOnInit() {
+    this.subscription = this._displayProcessor.displayables$.subscribe((data) => {
+      console.log(data);
+      this.displayableDataArr = data;
+    
+    })
   }
 
   ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
+  
+  // TODO: write custom logic for proper card placement
+  drop(event: CdkDragDrop<T_DisplayableData[]>) {
+    console.log(event);
+    moveItemInArray(this.displayableDataArr, event.previousIndex, event.currentIndex);
   }
 
   isCard(displayableData: T_DisplayableData): boolean {
