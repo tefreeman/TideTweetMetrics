@@ -7,6 +7,7 @@ from .meta_encoder import MetaData
 from datetime import datetime
 import re
 import pytz
+import logging
 
 
 class Tweet(DataEncoder):
@@ -58,12 +59,14 @@ class Tweet(DataEncoder):
             IncompleteBuildException: If any required field is missing.
         """
         if self.ignore_required:
+            logging.info("required fields are being ignored")
             return
         if not self._required_fields.issubset(self._set_fields):
             missing_fields = self._required_fields - self._set_fields
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
+        logging.debug("required fields are set")
 
     def _from_json_dict(self, data: dict):
         """
@@ -78,14 +81,24 @@ class Tweet(DataEncoder):
         for field in data["data"].keys():
             if field == "public_metrics":
                 if data["data"]["public_metrics"].keys() >= self._public_metric_keys:
+                    logging.debug("setting field public_metrics")
                     self._set_fields.add("public_metrics")
+                else:
+                    logging.warning("public_metrics does not contain all required parts")
             elif field == "entities":
                 if data["data"]["entities"].keys() >= self._entity_keys:
+                    logging.debug("setting field entities")
                     self._set_fields.add("entities")
+                else:
+                    logging.warning("entities does not contain all required parts")
             elif field == "attachments":
                 if data["data"]["attachments"].keys() >= self._attachment_keys:
+                    logging.debug("setting field attachments")
                     self._set_fields.add("attachments")
+                else:
+                    logging.warning("attachments does not contain all required parts")
             else:
+                logging.debug(f"setting field {field}")
                 self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
@@ -136,6 +149,7 @@ class Tweet(DataEncoder):
         if match:
             return match.group(1)
         else:
+            logging.warning("Match not found. Returning url")
             return url
 
     def set_id(self, url: str | None):
@@ -146,8 +160,10 @@ class Tweet(DataEncoder):
             url (str | None): The URL of the tweet. If None, the ID is not set.
         """
         self._object["id"] = self._extract_id_from_url(url)
-        if url != None or url != "":
+        if url != None and url != "":
             self._set_fields.add("id")
+        else:
+            logging.warning("url is None or blank. id is not being set")
 
     def get_id(self) -> str | None:
         """
@@ -190,6 +206,8 @@ class Tweet(DataEncoder):
         self._object["created_at"] = parsed_date
         if date != None and date != "":
             self._set_fields.add("created_at")
+        else:
+            logging.warning("date is either None or blank. created_at is not being added.")
 
     def get_post_date(self):
         """
@@ -212,6 +230,8 @@ class Tweet(DataEncoder):
         self._object["author_id"] = username.lower()
         if username != None and username != "":
             self._set_fields.add("author_id")
+        else:
+            logging.warning("username is either None or blank. author_id is not being added")
 
     def get_author(self):
         """
@@ -319,6 +339,7 @@ class Tweet(DataEncoder):
         }
         for content_link in content_links:
             if content_link["text"][0] == "@":
+                logging.debug(f"adding mention {content_link["text"]}")
                 entities["mentions"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -328,6 +349,7 @@ class Tweet(DataEncoder):
                     }
                 )
             elif content_link["text"][0] == "#":
+                logging.debug(f"adding hashtag {content_link["text"]}")
                 entities["hashtags"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -337,6 +359,7 @@ class Tweet(DataEncoder):
                     }
                 )
             elif content_link["text"][0] == "$":
+                logging.debug(f"adding cashtag {content_link["text"]}")
                 entities["cashtags"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -347,6 +370,7 @@ class Tweet(DataEncoder):
                 )
             else:
                 display_url = content_link["text"]
+                logging.debug(f"adding url with display {display_url}")
                 entities["urls"].append(
                     {
                         "url": content_link["href"],
@@ -492,8 +516,11 @@ class Tweet(DataEncoder):
         self._object["referenced_tweet"] = {}
 
         if tweet_type.value != "none":
+            logging.debug(f"referenced tweet found with id {referenced_tweet_id} and type {tweet_type.value}")
             self._object["referenced_tweet"]["id"] = referenced_tweet_id
             self._object["referenced_tweet"]["type"] = tweet_type.value
+        else:
+            logging.debug("no referenced tweets")
 
         self._set_fields.add("referenced_tweet")
 

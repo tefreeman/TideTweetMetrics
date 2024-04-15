@@ -1,6 +1,7 @@
 from .twitter_api_encoder import DataEncoder, IncompleteBuildException
 from .meta_encoder import MetaData
 from datetime import datetime
+import logging
 
 
 class Profile(DataEncoder):
@@ -54,6 +55,7 @@ class Profile(DataEncoder):
         Raise an exception if any required fields are missing.
         """
         if self.ignore_required:
+            logging.info("required fields are being ignored")
             return
         if not self._required_fields.issubset(self._set_fields):
             missing_fields = self._required_fields - self._set_fields
@@ -61,6 +63,7 @@ class Profile(DataEncoder):
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
+        logging.debug("required fields are set")
 
     def _to_json_dict(self) -> dict:
         """
@@ -103,8 +106,12 @@ class Profile(DataEncoder):
         for field in data.keys():
             if field == "public_metrics":
                 if data["public_metrics"].keys() >= self._public_metric_keys:
+                    logging.debug("setting field public_metrics")
                     self._set_fields.add(field)
+                else:
+                    logging.warning("public_metrics does not contain all required parts")
             else:
+                logging.debug(f"setting field {field}")
                 self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
