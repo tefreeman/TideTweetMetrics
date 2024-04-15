@@ -7,7 +7,7 @@
   <div cdkDropList [cdkDropListData]="displayableDataArr"  class="dataCardContainer" (cdkDropListDropped)="drop($event)">
     <ng-container *ngFor="let displayableData of displayableDataArr;  let i = index">
       <ng-container *ngIf="isCard(displayableData)">
-        <app-datacard  cdkDrag [displayableData]="displayableData"></app-datacard>
+        <app-datacard cdkDrag [displayableData]="displayableData"></app-datacard>
       </ng-container>
     </ng-container>
   </div>
