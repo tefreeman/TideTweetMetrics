@@ -2,7 +2,6 @@ from datetime import datetime
 from .error_sys import Error
 from .twitter_api_encoder import DataEncoder
 
-
 class MetaData(DataEncoder):
     """
     Class representing metadata for an object.

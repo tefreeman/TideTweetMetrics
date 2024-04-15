@@ -1,4 +1,5 @@
 import json
+import logging
 
 
 class MetricEncoder:
@@ -46,10 +47,13 @@ class MetricEncoder:
         """
         if isinstance(data, list):
             if isinstance(data[0], tuple):
+                logging.debug(f"max diminsion is being set to {len(data[0])}")
                 self.max_dimension_dimension = len(data[0])
             else:
+                logging.debug("max diminsion is being set to 1")
                 self.max_dimension = 1
         else:
+            logging.debug("max diminsion is being set to 0 (representing a scalar)")
             self.max_dimension = 0  # 0 = scalar
 
         self._dataset = data
