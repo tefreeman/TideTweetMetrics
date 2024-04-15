@@ -9,9 +9,6 @@ class TestTweetEncoder(unittest.TestCase):
     def getMockJSONTweetString(self):
         return """
         {
-          "_id": {
-            "$oid": "65d2e37e0b65a258f77ba546"
-          },
           "data": {
             "id": "1684952349687615488",
             "text": "A group of @UAFS students studying through a remote campus program offered by @UArkELEG and @CSCE_uark  are designing a lunar rover for @NASA 's upcoming mission to the moon. The rover assists astronauts during their lunar exploration.",
@@ -87,8 +84,12 @@ class TestTweetEncoder(unittest.TestCase):
     def test_json_to_dict(self):
         tweet_dict = json.loads(self.getMockJSONTweetString())
         encoded_tweet = Tweet(as_json=tweet_dict)
-        decoded_json_string = encoded_tweet.to_json_dict()
-        self.assertEqual(json.loads(self.getMockJSONTweetString()), decoded_json_string)
+        print()
+        print(tweet_dict)
+        decoded_json_dict = encoded_tweet.to_json_dict()
+        print()
+        print(decoded_json_dict)
+        self.assertEqual(json.loads(self.getMockJSONTweetString()), decoded_json_dict)
 
     def test_get_and_set_id(self):
         tweet_dict = json.loads(self.getMockJSONTweetString())

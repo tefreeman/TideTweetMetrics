@@ -1,16 +1,17 @@
 import threading
 import queue
 from urllib.parse import urlparse
-from crawler.twiiit_crawler import Twiiit_Crawler
-from crawler.crawler import Crawler  # hmmm
+from backend.crawler_sys.crawler.twiiit_crawler import Twiiit_Crawler
+from backend.crawler_sys.crawler.crawler import Crawler  # hmmm
 import time
-from twitter_mirrors_manager import TwitterMirrorManager
-from utils.summary_report import SummaryReport
+from backend.crawler_sys.twitter_mirrors_manager import TwitterMirrorManager
+from backend.crawler_sys.utils.summary_report import SummaryReport
 import database as db
 import utils.backup as Backup
 from backend.config import Config
 from utils.link_handler import LinkHandler
 import logging
+
 
 class CrawlerScheduler:
     def __init__(self, accounts: list[str], crawler_thread_count: int) -> None:

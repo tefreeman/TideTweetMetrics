@@ -2,24 +2,25 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
-html, body { 
+
+html, body {
   height: 100%;
-  background-color: #f7f7f7;
- }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+  margin: 0px;
+}
+
 
 
 $crimson-palette: (
-  900: #900f0f,
-  800: #9f1919,
-  700: #ac201f,
-  600: #bd2924,
-  500: #cb3225,
-  400: #cb443f,
-  300: #c76563,
-  200: #d98e8d,
-  100: #f2c6c9,
-  50: #fae8ea,
+  900: #a51e36,
+  800: #a9282a,
+  700: #b62d30,
+  600: #c73636,
+  500: #d63e38,
+  400: #d44e4f,
+  300: #cd6d6f,
+  200: #dd9597,
+  100: #f4cacf,
+  50: #faeaed,
 
   contrast: (
     900: white,
@@ -29,17 +30,48 @@ $crimson-palette: (
     500: white,
     400: white,
     300: white,
-    200: black,
-    100: black,
-    50: black,
+    200: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    50: rgba(black, 0.87),
   ),
 );
 
-$my-primary: mat.define-palette($crimson-palette, 900);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$my-complementary: (
+  900: #174f4b,
+  800: #1b6c69,
+  700: #1b7c7a,
+  600: #1d8c8b,
+  500: #209999,
+  400: #34a9ab,
+  300: #55b8bb,
+  200: #85ccd0,
+  100: #b5e0e2,
+  50: #e2f2f4,
 
+  contrast: (
+    900: white,
+    800: white,
+    700: white,
+    600: white,
+    500: white,
+    400: white,
+    300: white,
+    200: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    50: rgba(black, 0.87),
+  ),
+);
+
+
+$my-primary: mat.define-palette($crimson-palette, 900);
+$my-accent: mat.define-palette($my-complementary, 500);
 // The "warn" palette is optional and defaults to red if not specified.
 $my-warn: mat.define-palette(mat.$red-palette);
+
+$my-typography: mat.define-typography-config(
+  $font-family: 'Open Sans',
+);
+
 
 $my-theme: mat.define-light-theme((
  color: (
@@ -47,8 +79,12 @@ $my-theme: mat.define-light-theme((
    accent: $my-accent,
    warn: $my-warn,
  ),
- typography: mat.define-typography-config(),
+ typography: $my-typography,
  density: 0,
 ));
+
 @include mat.core-theme($my-theme);
+@include mat.typography-hierarchy($my-theme);
 @include mat.all-component-themes($my-theme);
+
+

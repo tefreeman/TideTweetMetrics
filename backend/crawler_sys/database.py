@@ -9,7 +9,14 @@ client = None
 db = None
 
 
-def init_database(name: str =None, start_fresh=False):
+def init_database(name: str = None, start_fresh=False):
+    """
+    Initialize the database connection and create necessary collections if they don't exist.
+
+    Args:
+        name (str, optional): Name of the database. Defaults to None.
+        start_fresh (bool, optional): Whether to start with a fresh test-database (name must contain "test"). Defaults to False.
+    """
     global client, db
     client = MongoClient(
         Config.db_host(),
@@ -32,6 +39,9 @@ def init_database(name: str =None, start_fresh=False):
 
 
 def _init_collections():
+    """
+    Initialize the necessary collections in the database.
+    """
     old_db = client["twitter"]
 
     db.create_collection("crawl_list")
@@ -72,6 +82,12 @@ def _init_collections():
 
 
 def get_crawl_list() -> list[str]:
+    """
+    Get the list of usernames to crawl.
+
+    Returns:
+        list[str]: List of usernames.
+    """
     collection = db["crawl_list"]
     usernames = set()
     for user in collection.find():
@@ -82,28 +98,70 @@ def get_crawl_list() -> list[str]:
 
     return list(usernames)
 
+
 def get_tweet_by_id(tweet_id: str) -> Tweet:
+    """
+    Get a tweet by its ID.
+
+    Args:
+        tweet_id (str): ID of the tweet.
+
+    Returns:
+        Tweet: The tweet object.
+    """
     collection = db["tweets"]
     tweet = collection.find_one({"data.id": tweet_id})
-    return Tweet(as_json=tweet, ignore_required=True) #TODO: fix tihs 
+    return Tweet(as_json=tweet, ignore_required=True)  # TODO: fix tihs
+
 
 def get_tweets_by_user(username: str) -> list[dict]:
+    """
+    Get tweets by a specific user.
+
+    Args:
+        username (str): Username of the user.
+
+    Returns:
+        list[dict]: List of tweets.
+    """
     collection = db["tweets"]
     tweets = []
     for tweet in collection.find({"data.user.screen_name": username}):
         tweets.append(tweet)
     return tweets
 
+
 def add_crawl_summary(summary: dict):
+    """
+    Add a crawl summary to the database.
+
+    Args:
+        summary (dict): Crawl summary.
+    """
     collection = db["crawl_summaries"]
     collection.insert_one(summary)
 
 
 def get_crawl_history(acccount: str) -> list[str]:
+    """
+    Get the crawl history for an account.
+
+    Args:
+        acccount (str): Account name.
+
+    Returns:
+        list[str]: List of crawl history.
+    """
     collection = db["crawl_history"]
 
 
 def upsert_twitter_profile(profile: Profile):
+    """
+    Upsert a Twitter profile into the database.
+
+    Args:
+        profile (Profile): Profile object.
+    """
     collection = db["profiles"]
     profile_updates_col = db["profile_updates"]
 
@@ -125,6 +183,12 @@ def upsert_twitter_profile(profile: Profile):
 
 
 def _update_profile(profile: Profile):
+    """
+    Update a Twitter profile in the database.
+
+    Args:
+        profile (Profile): Profile object.
+    """
     profile_updates_col = db["profile_updates"]
     profile_col = db["profiles"]
 
@@ -138,12 +202,42 @@ def _update_profile(profile: Profile):
     return result
 
 
+def get_profile_by_username(username: str) -> Profile:
+    """
+    Get a profile by username.
+
+    Args:
+        username (str): Username of the profile.
+
+    Returns:
+        Profile: The profile object.
+    """
+    collection = db["profiles"]
+    profile = collection.find_one({"username": username})
+    return Profile(as_json=profile, ignore_required=True)
+
+
 def upsert_tweets(tweets: list[Tweet]) -> list[ObjectId]:
+    """
+    Upsert a list of tweets into the database.
+
+    Args:
+        tweets (list[Tweet]): List of tweet objects.
+
+    Returns:
+        list[ObjectId]: List of inserted or updated tweet IDs.
+    """
     results = [upsert_tweet(tweet) for tweet in tweets]
     return results
 
 
 def upsert_tweet(tweet: Tweet):
+    """
+    Upsert a tweet into the database.
+
+    Args:
+        tweet (Tweet): Tweet object.
+    """
     collection = db["tweets"]
     if collection.find_one({"data.id": tweet.get_id()}) != None:
         return _update_tweet(tweet).inserted_id
@@ -153,6 +247,12 @@ def upsert_tweet(tweet: Tweet):
 
 
 def _update_tweet(tweet: Tweet):
+    """
+    Update a tweet in the database.
+
+    Args:
+        tweet (Tweet): Tweet object.
+    """
     update_col = db["tweet_updates"]
     tweet_col = db["tweets"]
 
@@ -167,6 +267,12 @@ def _update_tweet(tweet: Tweet):
 
 
 def get_mirrors() -> list[dict]:
+    """
+    Get the list of mirrors.
+
+    Returns:
+        list[dict]: List of mirrors.
+    """
     collection = db["mirrors"]
     mirrors = []
     for mirror in collection.find():
@@ -186,5 +292,11 @@ def get_mirrors() -> list[dict]:
 
 
 def save_mirror(mirror: dict):
+    """
+    Save a mirror to the database.
+
+    Args:
+        mirror (dict): Mirror object.
+    """
     collection = db["mirrors"]
     collection.replace_one({"url": mirror["url"]}, mirror, upsert=True)
