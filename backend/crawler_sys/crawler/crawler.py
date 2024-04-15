@@ -2,8 +2,8 @@ from http.client import HTTPException, ResponseNotReady
 from typing import TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from encoders.tweet_encoder import Tweet
-from encoders.profile_encoder import Profile
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
 from urllib.parse import urlparse
 import database as db
 from utils.driver import create_undetected_driver
