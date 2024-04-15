@@ -7,25 +7,13 @@
     font-size: 25px !important;
 }
 
-.title-container {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    justify-content: space-between; /* Space elements horizontally */
-}
-
 .grid-container {
-    margin-top: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 40px;
     margin-left: 100px;
     margin-right: 100px;
-
-}
-
-
-.container-content {
-    margin: 2rem;
+    max-width: 33.33%;
     
 }
 
@@ -38,36 +26,57 @@
     height: .3rem;
     background-color: #a51e36;
 }
-  
 
-.my-account{
+.card {
+    margin: 2rem;
+}
+
+.card-title{
     font-weight: bold;
     letter-spacing: -.3px; 
     color: #999;
-    width: 100px; 
+    width: 150px; 
     display: inline-block; 
     text-align: right; 
     margin-bottom: 0rem;
 }
 
-.content{
+.card-text{
     font-weight: bold;
     font-size: 15px; 
     letter-spacing: -.3px; 
-    width: 100px; 
+    width: 150px; 
     display: inline-block; 
     text-align: right; 
+    margin-top: 1;
 }
 
 .input{
-    width: 25rem;
+    width: 20rem;
     height: 4rem;
     line-height: 0px;
     font-size: 12px;
     margin-left: 2rem;
 }
 
-.input-container {
-    display: absolute;
-    align-items: center; 
+.email{
+    font-size: 15px;
+    letter-spacing: -.3px; 
+    margin-left: 2rem;
 }
+
+.input-container {
+    display: flex;
+    align-items: center; 
+    margin-top: 1rem;
+}
+
+.checkbox {
+    margin-left: 1.5rem;
+}
+
+.card-container button {
+    margin-left: 1rem; 
+}
+
+
