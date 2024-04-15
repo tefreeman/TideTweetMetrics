@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
-import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
+import { I_DisplayableData, I_StatCompData } from '../../../core/interfaces/displayable-interface';
 import { NgIf } from '@angular/common';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { CommonModule } from '@angular/common';
@@ -13,14 +13,14 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './stat-comp.component.scss'
 })
 export class StatCompComponent {
-  @Input({required: true}) displayableData!: I_DisplayableData;
+  @Input({required: true}) displayableData!: I_StatCompData;
   private keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
 
-  stat_name = ""
-  stat_one: number = 0;
-  owner_one: string = "";
-  stat_two: number = 0;
-  owner_two: string = "";
+  metricName = ""
+  statOne: number = 0;
+  ownerOne: string = "";
+  statTwo: number = 0;
+  ownerTwo: string = "";
 
 
   
@@ -29,11 +29,11 @@ export class StatCompComponent {
   }
 
  ngOnInit() {
-  this.stat_name = this.keyTranslatorService.translateKey(this.displayableData['stat_name']);
-  this.stat_one = Object.values(this.displayableData['owners'])[0] as number;
-  this.stat_two = Object.values(this.displayableData['owners'])[1] as number;
-  this.owner_one = Object.keys(this.displayableData['owners'])[0];
-  this.owner_two = Object.keys(this.displayableData['owners'])[1];
+  this.metricName = this.keyTranslatorService.translateKey(this.displayableData['metricName']);
+  this.statOne = this.displayableData.values[0] as number;
+  this.statTwo = this.displayableData.values[1] as number;
+  this.ownerOne = this.displayableData.owners[0];
+  this.ownerTwo = this.displayableData.owners[1];
  }
 
 }
