@@ -4,7 +4,7 @@ import { inject } from '@angular/core';
 import { DatacardComponent } from '../../../data-displays/datacard/datacard.component';
 import { BarChartComponent } from '../../../data-displays/graph-card/bar-chart/bar-chart.component';
 import { Observable,} from 'rxjs';
-import { I_DisplayableData, I_DisplayableRequest } from '../../../core/interfaces/displayable-interface';
+import { I_DisplayableData, I_DisplayableRequest, T_DisplayableData } from '../../../core/interfaces/displayable-interface';
 import { MetricService } from '../../../core/services/metric.service';
 import { DisplayProcessorService } from '../../../core/services/display-processor.service';
 import { AsyncPipe } from '@angular/common';
@@ -24,7 +24,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
 })
 export class DashboardComponent implements OnInit, OnDestroy{
   _displayProcessor = inject(DisplayProcessorService);
-  displayableDataArr$: Observable<I_DisplayableData[]>;
+  displayableDataArr$: Observable<T_DisplayableData[]>;
 
   constructor(){
     this.displayableDataArr$ = this._displayProcessor.displayables$;
@@ -37,14 +37,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   }
 
-  isCard(displayableData: I_DisplayableData): boolean {
+  isCard(displayableData: T_DisplayableData): boolean {
     return displayableData.type === 'stat-value' || 
            displayableData.type === 'stat-trend' || 
            displayableData.type === 'stat-comp';
   }
 
 
-  isGraph(displayableData: I_DisplayableData): boolean {
+  isGraph(displayableData: T_DisplayableData): boolean {
     return displayableData.type === 'graph-line' || 
            displayableData.type === 'graph-bar';
   }

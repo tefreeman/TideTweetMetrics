@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
+import { I_DisplayableData, I_GraphBarData } from '../../../core/interfaces/displayable-interface';
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
@@ -10,7 +10,7 @@ import { I_DisplayableData } from '../../../core/interfaces/displayable-interfac
   styleUrl: './bar-chart.component.scss',
 })
 export class BarChartComponent {
-  @Input({required: true}) displayableData!: I_DisplayableData;
+  @Input({required: true}) displayableData!: I_GraphBarData;
   // Chart Options
   public chartOptions: AgChartOptions;
   constructor() {

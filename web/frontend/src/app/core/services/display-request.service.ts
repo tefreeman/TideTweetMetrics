@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { MetricService } from './metric.service';
 import { BehaviorSubject, combineLatestWith, filter, first, map, Observable, Subject, take } from 'rxjs';
-import { MetricContainer } from '../classes/metric-container';
+import { MetricContainer } from './metric-container';
 import { I_DisplayableRequest } from '../interfaces/displayable-interface';
 import { MockDataService } from './mock-data.service';
 
@@ -13,6 +13,7 @@ import { MockDataService } from './mock-data.service';
 export class DisplayRequestService {
   private _auth_service = inject(AuthService);
   _mockDataService = inject(MockDataService);
+  
   private requests: I_DisplayableRequest[] = [];
   public requests$ = new BehaviorSubject<I_DisplayableRequest[]>([]);
 

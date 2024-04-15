@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_DisplayableData } from '../../../core/interfaces/displayable-interface';
+import { I_DisplayableData, I_GraphLineData } from '../../../core/interfaces/displayable-interface';
 
 @Component({
   standalone: true,
@@ -13,7 +13,7 @@ import { I_DisplayableData } from '../../../core/interfaces/displayable-interfac
   styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent{
-  @Input({required: true}) displayableData!: I_DisplayableData;
+  @Input({required: true}) displayableData!: I_GraphLineData;
 
   public chartOptions: AgChartOptions;
   constructor() {
