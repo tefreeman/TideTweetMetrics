@@ -3,5 +3,6 @@ export interface I_KeyTranslator {
         "abr"?: string;
         "full": string;
         "desc"?: string;
+        "order": number;
     };
 }
