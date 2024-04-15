@@ -10,7 +10,7 @@ import { MockDataService } from './mock-data.service';
 @Injectable({
   providedIn: 'root',
 })
-export class DisplayRequestService {
+export class DisplayRequestManagerService {
   private _auth_service = inject(AuthService);
   _mockDataService = inject(MockDataService);
   

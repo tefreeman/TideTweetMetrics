@@ -1,16 +1,16 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { DisplayRequestService } from './display-request.service';
+import { DisplayRequestManagerService } from './display-request-manager.service';
 
 describe('Service: DisplayRequest', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DisplayRequestService]
+      providers: [DisplayRequestManagerService]
     });
   });
 
-  it('should ...', inject([DisplayRequestService], (service: DisplayRequestService) => {
+  it('should ...', inject([DisplayRequestManagerService], (service: DisplayRequestManagerService) => {
     expect(service).toBeTruthy();
   }));
 });

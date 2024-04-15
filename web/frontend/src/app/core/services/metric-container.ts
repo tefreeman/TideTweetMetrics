@@ -1,4 +1,4 @@
-import { I_DisplayableData, I_DisplayableRequest, I_OwnerConfig, I_OwnerData } from "../interfaces/displayable-interface";
+import { IDisplayableStats, I_DisplayableRequest, I_OwnerConfig, I_OwnerData } from "../interfaces/displayable-interface";
 import { I_MetricsInterface, T_MetricValue, I_MetricOwners } from "../interfaces/metrics-interface";
 
 export class MetricContainer {
@@ -28,7 +28,7 @@ export class MetricContainer {
         return 0;
     }
 
-    getMetricData(displayable: I_DisplayableRequest): I_DisplayableData {
+    getMetricData(displayable: I_DisplayableRequest): IDisplayableStats {
         let ownerData: I_OwnerData[] = [];
         let owners = this.getOwnersForStat(displayable.stat_name);
         if (displayable.ownersConfig.type === 'all' || displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {

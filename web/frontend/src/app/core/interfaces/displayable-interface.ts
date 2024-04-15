@@ -15,7 +15,7 @@ export interface I_DisplayableRequest {
     type: T_GraphType;
   }
 
-export interface I_DisplayableData extends I_DisplayableRequest {
+export interface IDisplayableStats extends I_DisplayableRequest {
   owners: { [owner: string]: T_MetricValue}
 }
 
@@ -61,4 +61,4 @@ export interface I_GraphLineData {
   owners: Array<string>;
 }
 
-export type  T_DisplayableData = I_StatValueData | I_StatTrendData | I_StatCompData | I_GraphBarData | I_GraphLineData;
+export type  T_DisplayableDataType = I_StatValueData | I_StatTrendData | I_StatCompData | I_GraphBarData | I_GraphLineData;
