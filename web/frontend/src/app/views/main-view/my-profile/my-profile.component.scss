@@ -20,10 +20,10 @@
 .card-container::before {
     content: "";
     position: absolute;
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    height: .3rem;
+    top: 0;
+    left: 0;
+    width: .3rem;
+    height: 100%;
     background-color: #a51e36;
 }
 
