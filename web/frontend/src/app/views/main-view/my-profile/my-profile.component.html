@@ -1,7 +1,7 @@
 
 <h2 class="title">Profile</h2>
 
-
+<!-- TODO: Hook up buttons. Put username placeholder to actual username. Hook up approved account list-->
 <div class="grid-container">
   <mat-card class="card-container">
     <div class="card">
@@ -12,7 +12,8 @@
           <input matInput maxlength="10" placeholder="Username">
           <mat-hint align="end" class="small-text">{{input.value.length}}/10</mat-hint>
         </mat-form-field>
-        <button mat-button color="primary">Change</button>
+        <button mat-button color="primary" class="change-button">Change</button>
+
       </div>
       <div class="input-container">
         <span class="card-text">Password</span>
@@ -27,7 +28,7 @@
         <mat-form-field class="input" color="primary">
           <input matInput #confirmInput minlength="8" type="password" placeholder="Confirm Password">
         </mat-form-field>
-        <button mat-button color="primary">Change</button>
+        <button mat-button color="primary" class="change-button">Change</button>
       </div>
     </div>
   </mat-card>
