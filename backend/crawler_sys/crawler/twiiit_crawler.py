@@ -9,9 +9,9 @@ from selenium.webdriver.common.by import By
 from crawler.crawler import Crawler  # hmmmm
 import urllib.request
 
-from encoders.tweet_encoder import Tweet
-from encoders.profile_encoder import Profile
-from encoders.twitter_api_encoder import ReferencedTweetType
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
+from backend.encoders.twitter_api_encoder import ReferencedTweetType
 
 
 from urllib.parse import urlparse
@@ -151,7 +151,9 @@ class Twiiit_Crawler(Crawler):
     def detected_html_not_loaded(self, max_wait=15) -> Error | None:
         try:
             # Wait for the presence of the container element
-            element_present = EC.presence_of_element_located((By.CLASS_NAME, "container"))
+            element_present = EC.presence_of_element_located(
+                (By.CLASS_NAME, "container")
+            )
             WebDriverWait(self.driver, max_wait).until(element_present)
         except TimeoutException as e:
             # Create Error object
@@ -161,7 +163,7 @@ class Twiiit_Crawler(Crawler):
         error_div = self.driver.find_elements(By.CLASS_NAME, "error-panel")
         if len(error_div) > 0:
             return Error("ErrorPanelFound")
-        
+
         # If no errors found, return None
         return None
 
@@ -182,7 +184,9 @@ class Twiiit_Crawler(Crawler):
     # Parse and stores quoted tweet info
     def _parse_quoted_tweet(self, quote_ele: WebElement):
         # Extracting link
-        link = self.find_attribute_or_none(quote_ele, By.CLASS_NAME, "quote-link", "href")
+        link = self.find_attribute_or_none(
+            quote_ele, By.CLASS_NAME, "quote-link", "href"
+        )
 
         # Extracting user information
         fullname_text = self.find_text_or_none(quote_ele, By.CLASS_NAME, "fullname")
@@ -205,7 +209,9 @@ class Twiiit_Crawler(Crawler):
         content_links_list = self._parse_links(content_links_ele)
 
         # Extracting pictures if avaliable
-        quote_media_container_ele = self.find_element_or_none(quote_ele, By.CLASS_NAME, "quote-media-container")
+        quote_media_container_ele = self.find_element_or_none(
+            quote_ele, By.CLASS_NAME, "quote-media-container"
+        )
         if quote_media_container_ele != None:
             pictures_ele = quote_media_container_ele.find_elements(
                 By.CLASS_NAME, "still-image"
@@ -295,14 +301,24 @@ class Twiiit_Crawler(Crawler):
             return None, [Error("ProfileNotFound")]
 
         # Extract profile information
-        fullname_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-fullname")
-        username_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-card-username")
+        fullname_text = self.find_text_or_none(
+            profile_ele, By.CLASS_NAME, "profile-card-fullname"
+        )
+        username_text = self.find_text_or_none(
+            profile_ele, By.CLASS_NAME, "profile-card-username"
+        )
         bio_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-bio")
-        location_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-location")
-        website_text = self.find_text_or_none(profile_ele, By.CLASS_NAME, "profile-website")
+        location_text = self.find_text_or_none(
+            profile_ele, By.CLASS_NAME, "profile-location"
+        )
+        website_text = self.find_text_or_none(
+            profile_ele, By.CLASS_NAME, "profile-website"
+        )
 
         # Extract join data
-        join_date_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-joindate")
+        join_date_ele = self.find_element_or_none(
+            profile_ele, By.CLASS_NAME, "profile-joindate"
+        )
         join_date_text = (
             self.find_attribute_or_none(join_date_ele, By.TAG_NAME, "span", "title")
             if join_date_ele
@@ -310,17 +326,29 @@ class Twiiit_Crawler(Crawler):
         )
 
         # Check if profile is verified
-        verified_profile_bool = bool(profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue"))
+        verified_profile_bool = bool(
+            profile_ele.find_elements(By.CLASS_NAME, "icon-ok.verified-icon.blue")
+        )
 
         # Extract profile picutre
-        profile_pic_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-card-avatar")
-        profile_pic, pic_errors = (self._parse_profile_pic(profile_pic_ele) if profile_pic_ele else (None, None))
+        profile_pic_ele = self.find_element_or_none(
+            profile_ele, By.CLASS_NAME, "profile-card-avatar"
+        )
+        profile_pic, pic_errors = (
+            self._parse_profile_pic(profile_pic_ele)
+            if profile_pic_ele
+            else (None, None)
+        )
         if pic_errors:
             profile_errors.append(pic_errors)
 
         # Extract profile statistics
-        stat_container_ele = self.find_element_or_none(profile_ele, By.CLASS_NAME, "profile-statlist")
-        tweets_cnt, following_cnt, follower_cnt, likes_cnt, stat_err = (self._parse_profile_stats(stat_container_ele))
+        stat_container_ele = self.find_element_or_none(
+            profile_ele, By.CLASS_NAME, "profile-statlist"
+        )
+        tweets_cnt, following_cnt, follower_cnt, likes_cnt, stat_err = (
+            self._parse_profile_stats(stat_container_ele)
+        )
         if stat_err:
             profile_errors.append(stat_err)
 
@@ -383,7 +411,9 @@ class Twiiit_Crawler(Crawler):
             tweet_error_list: list[Error] = []
 
             # Extract tweet attributes
-            link_text = self.find_attribute_or_none(tweet, By.CLASS_NAME, "tweet-link", "href")
+            link_text = self.find_attribute_or_none(
+                tweet, By.CLASS_NAME, "tweet-link", "href"
+            )
             fullname_text = self.find_text_or_none(tweet, By.CLASS_NAME, "fullname")
             username_text = self.find_text_or_none(tweet, By.CLASS_NAME, "username")
             date_text = self._extract_date(tweet)
@@ -432,19 +462,25 @@ class Twiiit_Crawler(Crawler):
             json_tweet.set_text(content_text)
             json_tweet.set_post_date(date_text)
             json_tweet.set_author(username_text)
-            json_tweet.set_public_metrics(retweet_count, comment_count, heart_count, quote_count)
+            json_tweet.set_public_metrics(
+                retweet_count, comment_count, heart_count, quote_count
+            )
             json_tweet.set_entities(content_links_list, content_text)
             json_tweet.set_attachments(pictures_list, videos_list, cards_list)
             json_tweet.get_meta_ref().set_errors(tweet_error_list)
 
             # Set reference tweet
             if is_retweet:
-                json_tweet.set_refenced_tweet(link_text, ReferencedTweetType.RETWEET)
+                json_tweet.set_referenced_tweet(link_text, ReferencedTweetType.RETWEET)
             elif is_quote:
-                quote_link_text = self.find_attribute_or_none(quotes[0], By.CLASS_NAME, "quote-link", "href")
-                json_tweet.set_refenced_tweet(quote_link_text, ReferencedTweetType.QUOTED)
+                quote_link_text = self.find_attribute_or_none(
+                    quotes[0], By.CLASS_NAME, "quote-link", "href"
+                )
+                json_tweet.set_referenced_tweet(
+                    quote_link_text, ReferencedTweetType.QUOTED
+                )
             else:
-                json_tweet.set_refenced_tweet("", ReferencedTweetType.NONE)
+                json_tweet.set_referenced_tweet("", ReferencedTweetType.NONE)
 
             # Append to list
             json_tweets.append(json_tweet)

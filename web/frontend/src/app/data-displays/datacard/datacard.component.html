@@ -1,5 +1,17 @@
-<mat-card>
-@if (graphRequest.type === "display") {
-  <app-static-value [owner]="graphRequest.owners[0]" [value]="value" [metric]="statName"></app-static-value>
-}
+<mat-card class="elevation" *ngIf="displayableData" style="height: 100%">
+
+  <ng-container *ngIf="isStatValue(displayableData)">
+    <app-stat-value [displayableData]="displayableData"></app-stat-value>
+  </ng-container>
+  
+
+  <ng-container *ngIf="isStatTrend(displayableData)">
+    <app-stat-trend [displayableData]="displayableData"></app-stat-trend>
+  </ng-container>
+
+  <ng-container *ngIf="isStatComp(displayableData)">
+    <app-stat-comp [displayableData]="displayableData" ></app-stat-comp>
+  </ng-container>
 </mat-card>
+
+

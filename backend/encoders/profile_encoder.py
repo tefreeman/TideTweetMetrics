@@ -1,10 +1,19 @@
 from .twitter_api_encoder import DataEncoder, IncompleteBuildException
 from .meta_encoder import MetaData
 from datetime import datetime
+import logging
 
 
 class Profile(DataEncoder):
-    def __init__(self, as_json=None, changes_json=None) -> None:
+    """
+    Represents a user profile, encapsulating both the static and dynamic aspects
+    of a user's information on a social media platform. This class extends the
+    DataEncoder to handle serialization of profile data and offers methods for
+    initializing from JSON, setting, updating, and retrieving profile attributes,
+    and ensuring the presence of required fields before operations are performed.
+    """
+
+    def __init__(self, as_json=None, changes_json=None, ignore_required=False) -> None:
         """
         Initialize a Profile object.
 
@@ -15,6 +24,7 @@ class Profile(DataEncoder):
         self._object = {}
         self._set_fields = set()
         self._meta = MetaData()
+        self.ignore_required = ignore_required
         self._required_fields = {
             "name",
             "description",
@@ -27,6 +37,12 @@ class Profile(DataEncoder):
             "profile_image_url",
             "public_metrics",
         }
+        self._public_metric_keys = {
+            "followers_count",
+            "following_count",
+            "tweet_count",
+            "like_count",
+        }
 
         if as_json != None:
             self.from_json_dict(as_json)
@@ -38,12 +54,16 @@ class Profile(DataEncoder):
         """
         Raise an exception if any required fields are missing.
         """
+        if self.ignore_required:
+            logging.info("required fields are being ignored")
+            return
         if not self._required_fields.issubset(self._set_fields):
             missing_fields = self._required_fields - self._set_fields
 
             raise IncompleteBuildException(
                 f"Missing required fields before build: {missing_fields}"
             )
+        logging.debug("required fields are set")
 
     def _to_json_dict(self) -> dict:
         """
@@ -83,6 +103,16 @@ class Profile(DataEncoder):
         """
         self._object = data
         self._meta = MetaData(data["imeta"])
+        for field in data.keys():
+            if field == "public_metrics":
+                if data["public_metrics"].keys() >= self._public_metric_keys:
+                    logging.debug("setting field public_metrics")
+                    self._set_fields.add(field)
+                else:
+                    logging.warning("public_metrics does not contain all required parts")
+            else:
+                logging.debug(f"setting field {field}")
+                self._set_fields.add(field)
 
     def _changes_from_json_dict(self, data: dict):
         """

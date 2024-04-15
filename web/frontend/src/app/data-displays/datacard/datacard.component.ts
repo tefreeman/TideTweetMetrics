@@ -1,29 +1,39 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { MatCard } from '@angular/material/card';
+import { IDisplayableStats, I_DisplayableRequest, I_StatCompData, I_StatTrendData, I_StatValueData, T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
+import { NgIf, NgSwitch } from '@angular/common';
+import { MaterialModule } from '../../core/modules/material/material.module';
+import { StatTrendComponent } from './stat-trend/stat-trend.component';
+import { StatValueComponent } from './stat-value/stat-value.component';
+import { StatCompComponent } from './stat-comp/stat-comp.component';
+import {CdkDrag} from '@angular/cdk/drag-drop';
 
-import { StaticValueComponent } from './static-value/static-value.component';
-import { I_GraphDataInterface, I_DisplayableRequest } from '../../core/interfaces/displayable-interface';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
 @Component({
   selector: 'app-datacard',
   standalone: true,
-  imports: [MatCard, StaticValueComponent],
+  imports: [StatValueComponent, NgIf, StatTrendComponent, MaterialModule, StatCompComponent, NgSwitch, CdkDrag],
   templateUrl: './datacard.component.html',
   styleUrl: './datacard.component.scss'
 })
 export class DatacardComponent implements OnInit {
-  @Input({required: true}) graphRequest!: I_GraphDataInterface;
+  @Input({required: true}) displayableData!: T_DisplayableDataType;
 
-  keyTranslatorService = inject(KeyTranslatorService);
+
   
-  statName: string = "";
-  value: number = 0;
   constructor() {
   }
 
-  ngOnInit(): void {
-    this.statName = this.keyTranslatorService.translateKey(this.graphRequest.stat_name);
-    this.value = Number(this.graphRequest.values[0]);
-    console.log(this.statName);
+  ngOnInit(): void {}
+
+  isStatValue(data: T_DisplayableDataType): data is I_StatValueData {
+    return data.type === "stat-value";
   }
+
+  isStatTrend(data: T_DisplayableDataType): data is I_StatTrendData {
+    return data.type === "stat-trend";
+  }
+
+  isStatComp(data: T_DisplayableDataType): data is I_StatCompData {
+    return data.type === "stat-comp";
+  }
+
 }
