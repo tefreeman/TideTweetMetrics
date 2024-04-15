@@ -84,7 +84,9 @@ class Tweet(DataEncoder):
                     logging.debug("setting field public_metrics")
                     self._set_fields.add("public_metrics")
                 else:
-                    logging.warning("public_metrics does not contain all required parts")
+                    logging.warning(
+                        "public_metrics does not contain all required parts"
+                    )
             elif field == "entities":
                 if data["data"]["entities"].keys() >= self._entity_keys:
                     logging.debug("setting field entities")
@@ -207,7 +209,9 @@ class Tweet(DataEncoder):
         if date != None and date != "":
             self._set_fields.add("created_at")
         else:
-            logging.warning("date is either None or blank. created_at is not being added.")
+            logging.warning(
+                "date is either None or blank. created_at is not being added."
+            )
 
     def get_post_date(self):
         """
@@ -231,7 +235,9 @@ class Tweet(DataEncoder):
         if username != None and username != "":
             self._set_fields.add("author_id")
         else:
-            logging.warning("username is either None or blank. author_id is not being added")
+            logging.warning(
+                "username is either None or blank. author_id is not being added"
+            )
 
     def get_author(self):
         """
@@ -339,7 +345,7 @@ class Tweet(DataEncoder):
         }
         for content_link in content_links:
             if content_link["text"][0] == "@":
-                logging.debug(f"adding mention {content_link["text"]}")
+                logging.debug(f"adding mention {content_link['text']}")
                 entities["mentions"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -349,7 +355,7 @@ class Tweet(DataEncoder):
                     }
                 )
             elif content_link["text"][0] == "#":
-                logging.debug(f"adding hashtag {content_link["text"]}")
+                logging.debug(f"adding hashtag {content_link['text']}")
                 entities["hashtags"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -359,7 +365,7 @@ class Tweet(DataEncoder):
                     }
                 )
             elif content_link["text"][0] == "$":
-                logging.debug(f"adding cashtag {content_link["text"]}")
+                logging.debug(f"adding cashtag {content_link['text']}")
                 entities["cashtags"].append(
                     {
                         "tag": content_link["text"][1:],
@@ -516,7 +522,9 @@ class Tweet(DataEncoder):
         self._object["referenced_tweet"] = {}
 
         if tweet_type.value != "none":
-            logging.debug(f"referenced tweet found with id {referenced_tweet_id} and type {tweet_type.value}")
+            logging.debug(
+                f"referenced tweet found with id {referenced_tweet_id} and type {tweet_type.value}"
+            )
             self._object["referenced_tweet"]["id"] = referenced_tweet_id
             self._object["referenced_tweet"]["type"] = tweet_type.value
         else:
