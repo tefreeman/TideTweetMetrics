@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_GraphBarData, T_DisplayableGraph } from '../interfaces/displayable-interface';
+import { I_GraphBarData, I_GraphLineData, T_DisplayableGraph, T_GraphType } from '../interfaces/displayable-interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,20 +10,41 @@ export class GraphMakerService {
 
   constructor() { }
 
-  
-  create_bar_chart(data: I_GraphBarData): AgChartOptions {
+  getGraphStructure(graphData: T_DisplayableGraph) {
+    const dataDimension = Array.isArray(graphData.values[0]) ? graphData.values[0].length : 1;
+    const ownerCount = graphData.owners.length;
+    const dataPoints =  graphData.values.length;
+
+    return {dataDimension, ownerCount, dataPoints}
+  }
+
+  createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
     const chartOptions = {
-      theme: this.get_theme(),
+      theme: this.getTheme(),
       title: {
-        text: data.metricName,
+        text: graphLineData.metricName,
       },
-      data: this.get_bar_data(data),
-      series: this.get_bar_series(data),
+      data: this.getLineData(graphLineData),
+      series: this.getLineSeries(graphLineData),
     }
 
     return chartOptions;
   }
-  get_theme(): AgChartTheme {
+  
+  createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
+    const chartOptions = {
+      theme: this.getTheme(),
+      title: {
+        text: graphBarData.metricName,
+      },
+      data: this.getBarData(graphBarData),
+      series: this.getBarSeries(graphBarData),
+    }
+
+    return chartOptions;
+  }
+
+  getTheme(): AgChartTheme {
     return {
       baseTheme: 'ag-default',
       palette: {
@@ -42,7 +63,7 @@ export class GraphMakerService {
     };
   }
 
-  get_bar_data(graphBarData: I_GraphBarData): any[] {
+  getBarData(graphBarData: I_GraphBarData): any[] {
     const chartData: any[] = []
     for (let i = 0; i < graphBarData.owners.length; i++) {
       const data: any = {}
@@ -53,7 +74,26 @@ export class GraphMakerService {
     return chartData;
   }
 
-  get_bar_series(data: I_GraphBarData): any[] {
+  getBarSeries(data: I_GraphBarData): any[] {
+    return [{ type: 'bar', xKey: 'owner', yKey:'1'}]
+  }
+
+
+  getLineData(graphBarData: I_GraphLineData): any[] {
+    const chartData: any[] = []
+    for (let i = 0; i < graphBarData.owners.length; i++) {
+      const data: any = {}
+      data["owner"] = graphBarData.owners[i];
+      data["1"] = graphBarData.values[i];
+      chartData.push(data);
+    }
+    return chartData;
+  }
+
+  getLineSeries(data: I_GraphLineData
+
+    
+  ): any[] {
     return [{ type: 'bar', xKey: 'owner', yKey:'1'}]
   }
 

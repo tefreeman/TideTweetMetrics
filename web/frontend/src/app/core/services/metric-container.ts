@@ -29,72 +29,51 @@ export class MetricContainer {
     }
 
     getMetricData(displayable: I_DisplayableRequest): IDisplayableStats {
-        let ownerData: I_OwnerData[] = [];
-        
-
-        let owners = this.getOwnersForStat(displayable.stat_name);
-
-        if (displayable.ownersConfig.type === 'all' || displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
-          for (let owner of owners) {
-            if (this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner]) {
-              ownerData.push({
-                owner: owner,
-                value: this._metrics[displayable.stat_name][owner]
-              });
-            }
-          }
+      const owners = this.getOwnersForStat(displayable.stat_name);
+      let ownerData: I_OwnerData[] = [];
+    
+      const isMetricDefined = (owner: string) => 
+        this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner];
+    
+      const addOwnerData = (owner: string) => {
+        if (isMetricDefined(owner)) {
+          ownerData.push({
+            owner: owner,
+            value: this._metrics[displayable.stat_name][owner]
+          });
         }
-
-        if (displayable.ownersConfig.type === 'specific') {
-          for (let owner of displayable.ownersConfig.owners) {
-            if (this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner]) {
-              ownerData.push({
-                owner: owner,
-                value: this._metrics[displayable.stat_name][owner]
-              });
-            }
-          }
-        }
-
-        if (displayable.ownersConfig.type === 'top') {
-            ownerData = ownerData.sort((a, b) => {
-              // Helper function to obtain the first element or return the number
-              const firstOrDirect = (val:any ) => {
-                if (Array.isArray(val)) {
-                  return val.length > 0 ? val[0] : 0; 
-                }
-                return val;
-              };
-  
-              const aValue = firstOrDirect(a.value);
-              const bValue = firstOrDirect(b.value);
-              
-              return bValue - aValue; // Ascending sort
-            }).slice(0, displayable.ownersConfig.count);
-          }
-
-          if (displayable.ownersConfig.owners.length> 0) {
-            for (let owner of displayable.ownersConfig.owners) {
-              if (this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner]) {
-                ownerData.push({
-                  owner: owner,
-                  value: this._metrics[displayable.stat_name][owner]
-                });
-              }
-            }
-          }
-
-
-        let ownerObject = ownerData.reduce((obj, item) => {
-          obj[item.owner] = item.value;
-          return obj;
-        }, {} as { [owner: string]: T_MetricValue });
-      
-        return {
-          ...displayable,
-          owners: ownerObject
-        };
+      };
+    
+      if (['all', 'top', 'bottom', 'specific'].includes(displayable.ownersConfig.type)) {
+        const source = displayable.ownersConfig.type === 'specific' ? displayable.ownersConfig.owners : owners;
+        source.forEach(addOwnerData);
       }
+      
+      if (displayable.ownersConfig.type === 'top') {
+        ownerData = this.sortAndSlice(ownerData, displayable.ownersConfig.count);
+      }
+    
+      const ownerObject = ownerData.reduce((obj, item) => {
+        obj[item.owner] = item.value;
+        return obj;
+      }, {} as { [owner: string]: T_MetricValue });
+    
+      return {
+        ...displayable,
+        owners: ownerObject
+      };
+    }
+    
+    private sortAndSlice(ownerData: I_OwnerData[], count: number): I_OwnerData[] {
+      const firstOrDirect = (val: any): number => {
+        if (Array.isArray(val)) {
+          return val.length > 0 ? val[0] : 0;
+        }
+        return val;
+      };
+      
+      return ownerData.sort((a, b) => firstOrDirect(b.value) - firstOrDirect(a.value)).slice(0, count);
+    }
       
 
 
