@@ -45,12 +45,14 @@ export class MetricContainer {
       };
     
       if (['all', 'top', 'bottom', 'specific'].includes(displayable.ownersConfig.type)) {
-        const source = displayable.ownersConfig.type === 'specific' ? displayable.ownersConfig.owners : owners;
+        const source = (displayable.ownersConfig.type === 'specific') ? displayable.ownersConfig.owners : owners;
         source.forEach(addOwnerData);
       }
       
-      if (displayable.ownersConfig.type === 'top') {
-        ownerData = this.sortAndSlice(ownerData, displayable.ownersConfig.count);
+      if (displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
+        const isTop = displayable.ownersConfig.type === 'top';
+
+        ownerData = this.sortAndSlice(ownerData, displayable.ownersConfig.count!, isTop);
       }
     
       const ownerObject = ownerData.reduce((obj, item) => {
@@ -64,16 +66,18 @@ export class MetricContainer {
       };
     }
     
-    private sortAndSlice(ownerData: I_OwnerData[], count: number): I_OwnerData[] {
+    private sortAndSlice(ownerData: I_OwnerData[], count: number, isTop: boolean): I_OwnerData[] {
       const firstOrDirect = (val: any): number => {
         if (Array.isArray(val)) {
           return val.length > 0 ? val[0] : 0;
         }
         return val;
       };
-      
-      return ownerData.sort((a, b) => firstOrDirect(b.value) - firstOrDirect(a.value)).slice(0, count);
+    
+      return ownerData.sort((a, b) => isTop ? firstOrDirect(b.value) - firstOrDirect(a.value) : firstOrDirect(a.value) - firstOrDirect(b.value))
+                     .slice(0, count);
     }
+    
       
 
 
