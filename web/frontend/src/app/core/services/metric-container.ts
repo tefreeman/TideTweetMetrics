@@ -66,7 +66,7 @@ export class MetricContainer {
               const aValue = firstOrDirect(a.value);
               const bValue = firstOrDirect(b.value);
               
-              return aValue - bValue; // Ascending sort
+              return bValue - aValue; // Ascending sort
             }).slice(0, displayable.ownersConfig.count);
           }
 
