@@ -18,7 +18,7 @@ export class KeyTranslatorService {
     "25th_percentile": {full: "25th Percentile", abr: "25th", desc: "25th Percentile value", order: 1},
     "75th_percentile": {full: "75th Percentile", abr: "75th", desc: "75th Percentile value", order: 1},
     "PCC": {full: "Pearson Correlation Coefficient", abr: "PCC", desc: "Pearson Correlation Coefficient value", order: 1},
-    "tweet_likes": {full: "Tweet Likes", abr: "TL", desc: "Tweet Likes value", order: 1},
+    "tweet_likes": {full: "Tweet Likes", abr: "TL", desc: "Tweet Likes value", order: 2},
     "tweet_retweets": {full: "Tweet Retweets", abr: "TR", desc: "Tweet Retweets value", order: 1},
     "tweet_replies": {full: "Tweet Replies", abr: "TRe", desc: "Tweet Replies value", order: 1},
     "tweet_quotes": {full: "Tweet Quotes", abr: "TQ", desc: "Tweet Quotes value", order: 1},
@@ -63,7 +63,8 @@ export class KeyTranslatorService {
         return this._translationFixes[key].full;
     }
     
-    const keys = this.splitKey(key);
+    let keys = this.splitKey(key);
+    keys.sort((a, b) => this._translationObject[a]?.order - this._translationObject[b]?.order);
     return keys.map(k => this.translateKeySingle(k)).join(" ");
   }
 
