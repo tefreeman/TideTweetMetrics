@@ -59,6 +59,15 @@
     width: 150px; 
     display: inline-block; 
     text-align: right; 
+    margin-right: 2rem;
+}
+.card-text2{
+    font-weight: bold;
+    font-size: 15px; 
+    letter-spacing: -.3px; 
+    width: 150px; 
+    margin-left: 2rem;
+    margin-top: 2rem;
 }
 
 .input{
@@ -66,14 +75,8 @@
     height: 4rem;
     line-height: 0px;
     font-size: 12px;
-    margin-left: 2rem;
 }
 
-.email{
-    font-size: 15px;
-    letter-spacing: -.3px; 
-    margin-left: 2rem;
-}
 
 .input-container {
     display: flex;
@@ -82,22 +85,39 @@
 }
 
 .checkbox {
-    margin-left: 1.5rem;
-}
-
-.card-container button {
-    margin-left: 1rem; 
+    margin-left: -.5rem;
 }
 
 .change-button {
     margin-bottom: 1rem;
+    margin-left: 1rem; 
+    letter-spacing: -.3px; 
 }
 
+.approve-card{
+    width: 100%;
+    margin-right: 2rem;
+    margin-left: 2rem;
+
+}
+
+.text{
+    font-size: 13px;
+    letter-spacing: -.3px; 
+}
+.text2{
+    font-size: 13px;
+    letter-spacing: -.3px; 
+    margin-left: 2rem;
+    display: block;
+    text-align: center;
+}
 
 //Accordion
 
 .mat-accordion {
     width: 100%;
+    margin-right: 2rem;
     margin-left: 2rem;
 }
   
@@ -135,5 +155,34 @@
   }
 
   .account-card{
-    margin-bottom: 1rem;
+    margin: 1rem;
   }
+  .account-card2{
+    margin: 2rem;
+  }
+
+
+  .accept-button {
+    background-color: #52d2a9;
+    color: white;
+  }
+  
+  .decline-button {
+    background-color: #f44156;
+    color: white;
+  }
+
+  .accept-button,
+.decline-button {
+  border: none;
+  cursor: pointer;
+  height: 24px; /* adjust height as needed */
+  width: 24px; /* adjust width as needed */
+  border-radius: 50%; /* make the button circular */
+  margin-left: 1rem;
+}
+
+.footer {
+    background-color: #f4f4f4;
+    min-height: 50px
+}
