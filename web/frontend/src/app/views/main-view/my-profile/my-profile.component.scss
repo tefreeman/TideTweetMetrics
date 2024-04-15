@@ -37,8 +37,19 @@
     color: #999;
     width: 150px; 
     display: inline-block; 
-    text-align: right; 
-    margin-bottom: 0rem;
+    text-align: left; 
+    margin-bottom: 1.5rem;   
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Adjust the distance from the text */
+    left: 0;
+    width: 40%; /* Adjust the width of the line */
+    height: 3px; /* Adjust the thickness of the line */
+    background-color: #a51e36; /* Set the color of the line */
 }
 
 .card-text{
@@ -80,3 +91,49 @@
 }
 
 
+
+
+
+//Accordion
+
+.mat-accordion {
+    width: 100%;
+    margin-left: 2rem;
+}
+  
+.mat-expansion-panel {
+    background-color: #f9f9f9; /* Match background color with card background */
+    border: none; /* Remove default border */
+    box-shadow: none; /* Remove default box shadow */
+}
+.mat-expansion-panel-header {
+    font-weight: bold;
+    background-color: #ffffff; /* Background color on hover */
+    color: #a51e36; /* Text color on hover */
+}
+  
+  .mat-panel-description {
+    font-size: 14px; 
+  }
+  
+
+  .mat-expansion-panel-content {
+    margin: 20px; 
+  }
+
+  .delete-button {
+    padding: 0;
+    width: 24px; /* Adjust the width as needed */
+    height: 24px; /* Adjust the height as needed */
+  }
+
+  .account-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .account-card{
+    margin-bottom: 1rem;
+  }
