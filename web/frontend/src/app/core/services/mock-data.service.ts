@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { I_DisplayableData, I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { IDisplayableStats, I_DisplayableRequest } from '../interfaces/displayable-interface';
 
 
 let test_displayed_data: I_DisplayableRequest = {
