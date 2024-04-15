@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_DisplayableData, I_GraphBarData } from '../../../core/interfaces/displayable-interface';
+import {I_GraphBarData } from '../../../core/interfaces/displayable-interface';
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
-  imports: [AgChartsAngular,AgChartsAngular],
+  imports: [AgChartsAngular],
   templateUrl: './bar-chart.component.html',
   styleUrl: './bar-chart.component.scss',
 })
