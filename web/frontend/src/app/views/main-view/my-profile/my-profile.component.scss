@@ -8,10 +8,10 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr;
+
     gap: 40px;
     margin: 0px auto;
-    max-width: 25%;
+    width: 25%;
 }
 
 
@@ -33,7 +33,7 @@
     font-weight: bold;
     letter-spacing: -.3px; 
     color: #999;
-    width: 150px; 
+    width: 20%; 
     display: inline-block; 
     text-align: left; 
     margin-bottom: 1.5rem;   
@@ -45,7 +45,7 @@
     font-weight: bold;
     font-size: 15px; 
     letter-spacing: -.3px; 
-    width: 150px; 
+    width: 30%; 
     display: inline-block; 
     text-align: right; 
     margin-right: 2rem;
