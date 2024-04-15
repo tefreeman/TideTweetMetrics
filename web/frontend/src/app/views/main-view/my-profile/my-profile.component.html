@@ -2,12 +2,48 @@
   <h2 class="title">Profile</h2>
 </div>
 
-  <mat-card class = "card-container">
-    <div class="container-wrapper">
-      <h3 class = "my-account"> My Account</h3>
-
-      <mat-form-field class="example-full-width">
-        <input matInput placeholder="Ex. Pizza" value="Sushi">
+<div class="grid-container">
+<mat-card class ="card-container">
+  <div class="container-content">
+    <h3 class="my-account">My Account</h3>
+    <div class="input-container">
+      <span class="content">Username</span>
+      <mat-form-field class="input" color="primary">
+        <input matInput maxlength="10" placeholder="Username">
+        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
       </mat-form-field>
+      <button mat-button color="primary">Change</button>
     </div>
-  </mat-card>
+    <div class="input-container">
+      <span class="content">Password</span>
+      <mat-form-field class="input" color="primary">
+        <input matInput maxlength="10" type="password" placeholder="New Password">
+        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
+      </mat-form-field>
+      <button mat-button color="primary">Change</button>
+    </div>
+  </div>
+</mat-card>
+
+<mat-card>
+  <div class="container-content">
+    <h3 class="my-account">Admin</h3>
+    <div class="input-container">
+      <span class="content">Username</span>
+      <mat-form-field class="input" color="primary">
+        <input matInput maxlength="10" placeholder="Username">
+        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
+      </mat-form-field>
+      <button mat-button color="primary">Change</button>
+    </div>
+    <div class="input-container">
+      <span class="content">Password</span>
+      <mat-form-field class="input" color="primary">
+        <input matInput maxlength="10" type="password" placeholder="New Password">
+        <mat-hint align="start" class="small-text">Max length is 10</mat-hint>
+      </mat-form-field>
+      <button mat-button color="primary">Change</button>
+    </div>
+  </div>
+</mat-card>
+</div>
