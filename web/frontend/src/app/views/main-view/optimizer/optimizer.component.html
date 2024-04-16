@@ -1,11 +1,16 @@
-<div class="dashboardContainer">
+
   <div class="title-container">
     <h2 class="title">Optimizer</h2>
   </div>
 
   <mat-card class="card-container">
+
+    <div class="card-content">
+      <div class = "card-title"> Welcome to the Optimizer, a powerful tool designed to enhance the quality of tweets</div>
+    </div>
+
     <mat-form-field class="card-content">
-      <mat-label>Clearable input</mat-label>
+      <mat-label class="text">Enter your tweet here</mat-label>
       <input matInput type="text" [(ngModel)]="value">
       @if (value) {
         <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
@@ -13,5 +18,27 @@
         </button>
       }
     </mat-form-field>
+
+    <div class="card-content">
+      <div class = "card-title"> Analysis</div>
+      <ul class="text">
+        <li>
+          <strong>Clarity:</strong> Ensure that your message is clear and easy to understand. Avoid jargon or overly complex language that might confuse your audience.
+        </li>
+        <li>
+          <strong>Engagement:</strong> Consider adding elements such as questions, polls, or calls to action to encourage interaction with your tweet.
+        </li>
+        <li>
+          <strong>Length:</strong> Tweets are most effective when they are concise and to the point. Aim for brevity while still conveying your intended message.
+        </li>
+        <li>
+          <strong>Tone:</strong> Pay attention to the tone of your tweet. Depending on your audience and the context, you may want to adjust the tone to be more formal, casual, humorous, or authoritative.
+        </li>
+        <li>
+          <strong>Visuals:</strong> Incorporating images, GIFs, or videos can significantly enhance the impact of your tweet and attract more attention.
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer"></div>
   </mat-card>
-</div>
