@@ -1,5 +1,5 @@
 from threading import Lock
-from encoders.profile_encoder import Profile
+from backend.encoders.profile_encoder import Profile
 from datetime import datetime
 import time
 

@@ -2,12 +2,12 @@
     "DB": {
         "HOST": "10.0.0.28",
         "PORT": 27017,
-        "NAME": "twitter_v2",
+        "NAME": "twitter_v3",
         "USER": "Admin",
         "PASSWORD": "***REMOVED***"
     },
     "CRAWLER": {
-        "NUM_THREADS": 1,
+        "NUM_THREADS": 4,
         "SLEEP_TIME": 3,
         "PROFILE_MIN_UPDATE_TIME": 18,
         "MAX_TWEET_CRAWL_DEPTH": 40,
