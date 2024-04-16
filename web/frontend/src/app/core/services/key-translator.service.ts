@@ -8,37 +8,39 @@ export class KeyTranslatorService {
 
   // TODO: ISSUE: improve the translation object to sound more natural
   private _translationObject: I_KeyTranslator = {
-    "mean": {full: "Average", abr: "Avg", desc: "Mean value", order: 1},
-    "std": {full: "Standard Deviation", abr: "SD", desc: "Standard Deviation value", order: 1},
-    "min": {full: "Minimum", abr: "Min", desc: "Minimum value", order: 1},
-    "max": {full: "Maximum", abr: "Max", desc: "Maximum value", order: 1},
-    "count": {full: "Count", abr: "C", desc: "Count value", order: 1},
-    "sum": {full: "Sum", abr: "S", desc: "Sum value, order: 1", order: 1},
-    "median": {full: "Median", abr: "Med", desc: "Median value", order: 1},
-    "25th_percentile": {full: "25th Percentile", abr: "25th", desc: "25th Percentile value", order: 1},
-    "75th_percentile": {full: "75th Percentile", abr: "75th", desc: "75th Percentile value", order: 1},
-    "PCC": {full: "Pearson Correlation Coefficient", abr: "PCC", desc: "Pearson Correlation Coefficient value", order: 1},
-    "tweet_likes": {full: "Tweet Likes", abr: "TL", desc: "Tweet Likes value", order: 2},
-    "tweet_retweets": {full: "Tweet Retweets", abr: "TR", desc: "Tweet Retweets value", order: 1},
-    "tweet_replies": {full: "Tweet Replies", abr: "TRe", desc: "Tweet Replies value", order: 1},
-    "tweet_quotes": {full: "Tweet Quotes", abr: "TQ", desc: "Tweet Quotes value", order: 1},
-    "tweet_hashtags": {full: "Tweet Hashtags", abr: "TH", desc: "Tweet Hashtags value", order: 1},
-    "tweet_cashtags": {full: "Tweet Cashtags", abr: "TC", desc: "Tweet Cashtags value", order: 1},
-    "tweet_mentions": {full: "Tweet Mentions", abr: "TM", desc: "Tweet Mentions value", order: 1},
-    "tweet_urls": {full: "Tweet URLs", abr: "TU", desc: "Tweet URLs value", order: 1},
-    "tweet_photos": {full: "Tweet Photos", abr: "TP", desc: "Tweet Photos value", order: 1},
-    "tweet_videos": {full: "Tweet Videos", abr: "TV", desc: "Tweet Videos value", order: 1},
-    "tweet_cards": {full: "Tweet Cards", abr: "TC", desc: "Tweet Cards value", order: 1},
-    "tweet_referenced_tweets": {full: "Tweet Referenced Tweets", abr: "TRT", desc: "Tweet Referenced Tweets value", order: 1},
-    "tweet_count": {full: "Tweet Count", abr: "TC", desc: "Tweet Count value", order: 1},
-    "tweet_chars": {full: "Tweet Characters", abr: "TC", desc: "Tweet Characters value", order: 1},
-    "tweet_words": {full: "Tweet Words", abr: "TW", desc: "Tweet Words value", order: 1},
-    "tweet_annotations": {full: "Tweet Annotations", abr: "TA", desc: "Tweet Annotations value", order: 1},
-    
+    "mean": { full: "Average of all", abr: "Avg", desc: "Mean value", order: 1 },
+    "std": { full: "Standard Deviation of all", abr: "SD", desc: "Standard Deviation value", order: 1 },
+    "min": { full: "Minimum of all", abr: "Min", desc: "Minimum value", order: 1 },
+    "max": { full: "Maximum of all", abr: "Max", desc: "Maximum value", order: 1 },
+    "count": { full: "Count of all", abr: "C", desc: "Count value", order: 1 },
+    "sum": { full: "Sum of all", abr: "S", desc: "Sum value, order: 1", order: 1 },
+    "median": { full: "Median of all", abr: "Med", desc: "Median value", order: 1 },
+    "25th_percentile": { full: "25th Percentile of all", abr: "25th", desc: "25th Percentile value", order: 1 },
+    "75th_percentile": { full: "75th Percentile of all", abr: "75th", desc: "75th Percentile value", order: 1 },
+    "pearson": { full: "Pearson Correlation Coefficient of", abr: "PCC", desc: "Pearson Correlation Coefficient of two stats; used globally", order: 1 },
+    "tweet_likes": { full: "Like counts", abr: "TL", desc: "Number of Likes on a given Tweet", order: 2 },
+    "tweet_retweets": { full: "Retweet counts", abr: "TR", desc: "Number of Retweets of a given Tweet", order: 2 },
+    "tweet_replies": { full: "Reply counts", abr: "TRe", desc: "Number of Replies on a given Tweet", order: 2 },
+    "tweet_quotes": { full: "Quote counts", abr: "TQ", desc: "Number of Quotes in a given Tweet", order: 2 },
+    "tweet_hashtags": { full: "Hashtag counts", abr: "TH", desc: "Number of Hashtags in a given Tweet", order: 2 },
+    "tweet_cashtags": { full: "Cashtag counts", abr: "TC", desc: "Number of Cashtags in a given Tweet", order: 2 },
+    "tweet_mentions": { full: "Mention counts", abr: "TM", desc: "Number of Mentions in a given Tweet", order: 2 },
+    "tweet_urls": { full: "URL counts", abr: "TU", desc: "Number of URLs in a given Tweet", order: 2 },
+    "tweet_photos": { full: "Photo counts", abr: "TP", desc: "Number of Photos in a given Tweet", order: 2 },
+    "tweet_videos": { full: "Video counts", abr: "TV", desc: "Number of Videos in a given Tweet", order: 2 },
+    "tweet_cards": { full: "Card counts", abr: "TC", desc: "Number of Cards in a given Tweet", order: 2 },
+    "tweet_referenced_tweets": { full: "Referenced Tweet counts", abr: "TRT", desc: "Number of Referenced Tweets in a given Tweet", order: 2 },
+    "tweet_count": { full: "'Count' counts", abr: "TC", desc: "Number of 'Counts' in a given Tweet", order: 2 },
+    "tweet_chars": { full: "Character counts", abr: "TC", desc: "Number of characters in a given Tweet", order: 2 },
+    "tweet_words": { full: "Word counts", abr: "TW", desc: "Number of words in a given Tweet", order: 2 },
+    "tweet_annotations": { full: "Annotation counts", abr: "TA", desc: "Number of annotations in a given Tweet", order: 2 },
+    "post_date_day": { full: "Post Date values", abr: "PD", desc: "What day of the week the Tweet was posted (0=Mon, 1=Tues... 6=Sun)", order: 2 },
+    "post_date_hour": { full: "Post Hour values", abr: "PH", desc: "What hour of the day the Tweet was posted (0=12am, 1=1am... 23=11pm)", order: 2 },
+    "likes_per_follower": { full: "Total Likes per Follower ratio", abr: "LPF", desc: "Sum of Tweet Likes divided by Total followers, for a given profile", order: 1 },
   };
 
   private _translationFixes: I_KeyTranslator = {
-    "tweet_count-sum": {full: "Tweet Count", abr: "TC", desc: "Tweet Count value", order: 1},
+    "tweet_count-sum": { full: "Tweet Count", abr: "TC", desc: "Tweet Count value", order: 1 },
 
   }
 
@@ -47,12 +49,12 @@ export class KeyTranslatorService {
   }
 
   public setTranslationObject(translationObject: I_KeyTranslator): void {
-      this._translationObject = translationObject;
+    this._translationObject = translationObject;
   }
 
-    splitKey(key: string): string[] {
-        return key.split("-");
-    }
+  splitKey(key: string): string[] {
+    return key.split("-");
+  }
 
   private translateKeySingle(key: string): string {
     return this._translationObject[key]?.full ?? key;
@@ -60,28 +62,28 @@ export class KeyTranslatorService {
 
   translateKey(key: string): string {
     if (this._translationFixes[key]) {
-        return this._translationFixes[key].full;
+      return this._translationFixes[key].full;
     }
-    
+
     let keys = this.splitKey(key);
     keys.sort((a, b) => this._translationObject[a]?.order - this._translationObject[b]?.order);
     return keys.map(k => this.translateKeySingle(k)).join(" ");
   }
 
   hasAbr(key: string): boolean {
-      return !!this._translationObject[key]?.abr;
+    return !!this._translationObject[key]?.abr;
   }
 
   hasDesc(key: string): boolean {
-      return !!this._translationObject[key]?.desc;
+    return !!this._translationObject[key]?.desc;
   }
 
   translateKeyAbr(key: string): string {
-      return this._translationObject[key]?.abr ?? key;
+    return this._translationObject[key]?.abr ?? key;
   }
 
   translateKeyDesc(key: string): string {
-      return this._translationObject[key]?.desc ?? key;
+    return this._translationObject[key]?.desc ?? key;
   }
 
 }
