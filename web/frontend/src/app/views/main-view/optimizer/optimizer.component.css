@@ -18,9 +18,8 @@
     color: #999;
 }
 .card-content{
-    margin: 2rem 2rem 0rem 2rem;
+    margin: 0rem 2rem;
 }
-
 
 
 .text{
@@ -38,6 +37,9 @@
     background-color: #a51e36;
   }
 
+.inner-content{
+    margin: 0rem 2rem 0rem 2rem;
+}
 
 .footer{
     margin:1rem;
