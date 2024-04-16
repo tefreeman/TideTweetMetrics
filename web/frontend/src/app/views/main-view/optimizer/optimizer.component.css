@@ -1,16 +1,44 @@
+.title-container{
+    margin: 70px auto auto auto;
+    max-width: 50rem;
+}
 .title{
-    margin-left: 100px;
-    margin-top: 70px;
-    margin-bottom: 15px;
     font-weight: bolder;
     color: white;
     font-size: 25px !important;
 }
 
 .card-container{
-    margin: 0px 100px;
+    margin: 0px auto;
+    max-width: 50rem;
+}
+.card-title{
+    font-weight: bold;
+    letter-spacing: -.3px; 
+    color: #999;
+}
+.card-content{
+    margin: 2rem 2rem 0rem 2rem;
 }
 
-.card-content{
-    margin: 2rem 2rem;
+
+
+.text{
+    font-size: 12px;
+    letter-spacing: -.3px; 
+}
+
+.card-content::before {
+    content: "";
+    position: absolute;
+    bottom: 0; /* Move the line to the bottom */
+    left: 0; /* Keep the line at the left edge of the card */
+    width: 100%; /* Set the width to cover the entire bottom */
+    height: .3rem; /* Set the height of the line */
+    background-color: #a51e36;
+  }
+
+
+.footer{
+    margin:1rem;
 }
