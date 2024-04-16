@@ -2,7 +2,6 @@ import { Component, inject, Input, OnInit} from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
 import {I_GraphBarData } from '../../../core/interfaces/displayable-interface';
-import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 import { GraphMakerService } from '../../../core/services/graph-maker.service';
 @Component({
   selector: 'app-bar-chart',
@@ -13,7 +12,7 @@ import { GraphMakerService } from '../../../core/services/graph-maker.service';
 })
 export class BarChartComponent implements OnInit {
   @Input({required: true}) displayableData!: I_GraphBarData;
-  private keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
+
   private graphMakerService: GraphMakerService = inject(GraphMakerService);
   // Chart Options
 
