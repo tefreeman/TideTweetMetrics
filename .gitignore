@@ -5,6 +5,7 @@
 /backup_raw_data/*
 /backups/*
 *.7z
+/chrome/*
 # Mac shit
 
 bin/*

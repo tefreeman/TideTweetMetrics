@@ -30,4 +30,4 @@ class LinkHandler:
             raise Exception("No domain set")
         if self._account is None:
             raise Exception("No account set")
-        return f"http://{self._domain}/{self._account}"
+        return f"{self._domain}/{self._account}"
