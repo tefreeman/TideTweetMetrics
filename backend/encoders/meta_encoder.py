@@ -1,5 +1,5 @@
 from datetime import datetime
-from utils.error_sys import Error
+from backend.crawler_sys.utils.error_sys import Error
 from .twitter_api_encoder import DataEncoder
 
 class MetaData(DataEncoder):
