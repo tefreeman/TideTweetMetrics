@@ -1,6 +1,6 @@
 import unittest
 
-from encoders.meta_encoder import *
+from backend.encoders.meta_encoder import *
 
 class TestMetaEncoder(unittest.TestCase):
 
