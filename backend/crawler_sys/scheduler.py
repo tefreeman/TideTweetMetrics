@@ -1,21 +1,20 @@
 import threading
 import queue
 from urllib.parse import urlparse
-from backend.crawler_sys.crawler.twiiit_crawler import Twiiit_Crawler
-from backend.crawler_sys.crawler.crawler import Crawler  # hmmm
+from crawler.twitter_crawler import TwitterCrawler
+from crawler.crawler import Crawler  # hmmm
 import time
-from backend.crawler_sys.twitter_mirrors_manager import TwitterMirrorManager
-from backend.crawler_sys.utils.summary_report import SummaryReport
+from backend.crawler_sys.twitter_account_manager import TwitterAccountManager
+from utils.summary_report import SummaryReport
 import database as db
 import utils.backup as Backup
 from backend.config import Config
 from utils.link_handler import LinkHandler
 import logging
 
-
 class CrawlerScheduler:
     def __init__(self, accounts: list[str], crawler_thread_count: int) -> None:
-        self._mirror_manager = TwitterMirrorManager()
+        self._account_manager = TwitterAccountManager()
         self._summary_report = SummaryReport()
         self._link_queue: queue.Queue[LinkHandler] = queue.Queue()
         self._crawler_thread_count = min(
@@ -34,13 +33,14 @@ class CrawlerScheduler:
     def start(self):
         self._summary_report.set_start_time()
         if self._crawler_thread_count == 1:
-            self.run_crawler(Twiiit_Crawler())
+            self.run_crawler(TwitterCrawler())
         else:
             self._summary_report.set_start_time()
             for _ in range(self._crawler_thread_count):
-                t = threading.Thread(target=self.run_crawler, args=(Twiiit_Crawler(),))
+                t = threading.Thread(target=self.run_crawler, args=(TwitterCrawler(),))
                 t.start()
                 self._crawler_threads.append(t)
+                time.sleep(5)
 
             for t_ in self._crawler_threads:
                 t_.join()
@@ -53,6 +53,9 @@ class CrawlerScheduler:
 
     def run_crawler(self, crawler: Crawler):
         try:
+            crawl_account = self._account_manager.get_account()
+            crawler.init_driver_to_account(crawl_account)
+           
             while not self._link_queue.empty():
                 self.wait()
 
@@ -62,27 +65,27 @@ class CrawlerScheduler:
                     self._link_queue.task_done()
                     continue
 
-                mirror = self._mirror_manager.get_mirror()
-                page_link.set_domain(mirror["url"])
+                
+                page_link.set_domain("https://www.twitter.com")
 
                 url = page_link.get()
-                results = crawler.crawl(url)
+                results = crawler.crawl(url, 10)
 
                 if len(results["errors"]) > 0:
                     print(results["errors"])
 
                     # TODO error type detection and handling
-                    self._mirror_manager.return_offline(mirror)
+                    self._account_manager.return_offline(crawl_account)
 
                     page_link.return_failure()
                     self._link_queue.put(page_link)
                     continue
 
                 # alias: BFI
-                backup_file_id = Backup.back_up_html_file(
-                    results["raw_data"], results["profile"].get_username()
-                )
-
+                # backup_file_id = Backup.back_up_html_file(
+                #     results["raw_data"], results["profile"].get_username()
+                # )
+                backup_file_id = ""
                 for tweet in results["tweets"]:
                     ref = tweet.get_meta_ref()
                     ref.set_backup_file_id(backup_file_id)
@@ -94,20 +97,12 @@ class CrawlerScheduler:
 
                 tweets_result = db.upsert_tweets(results["tweets"])
                 profile_result = db.upsert_twitter_profile(results["profile"])
-
+                
                 self._summary_report.add_data(results["profile"], tweets_result)
-
-                continue_bool = (
-                    self._summary_report.get_tweet_count(
-                        results["profile"].get_username()
-                    )
-                    < Config.max_profile_tweet_crawl_depth()
-                )
-                if results["next_url"] and continue_bool:
-                    self._link_queue.put(LinkHandler(results["next_url"]))
-
-                self._mirror_manager.return_online(mirror)
                 self._link_queue.task_done()
+                
+                crawl_account.rest(len(results["tweets"]))
+                
         except Exception as e:
             logging.exception("ThreadFault")
             self._summary_report.add_thread_fault(e.__class__.__name__, str(e))

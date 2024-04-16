@@ -1,3 +1,33 @@
-<p>
-  optimizer works!
-</p>
+
+  <div class="title-container">
+    <h2 class="title">Optimizer</h2>
+  </div>
+
+  <mat-card class="card-container">
+
+    
+    <div class="card-content">
+      <div class = "card-title" style="margin-top:2rem; margin-bottom: 1rem;"> Welcome to the Optimizer, a powerful tool designed to enhance the quality of tweets</div>
+    </div>
+
+    <mat-form-field class="card-content">
+      <mat-label class="text">Enter your tweet here</mat-label>
+      <input matInput type="text" [(ngModel)]="value">
+      @if (value) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <div class = "card-title card-content" style="margin-bottom: 1rem;"> Analysis</div>
+      <mat-card class="card-container inner-content" style="background-color: #f8f8f8; ">
+        <mat-card-content>
+          <div class = "text"> ... </div>
+        </mat-card-content>
+      </mat-card>
+
+    <div class="footer">
+      <!-- Add submit button -->
+    </div>
+  </mat-card>

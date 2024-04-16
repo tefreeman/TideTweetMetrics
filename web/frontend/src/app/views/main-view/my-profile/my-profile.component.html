@@ -1,8 +1,7 @@
 
-<h2 class="title">Profile</h2>
-
-<!-- TODO: Hook up buttons. Put username placeholder to actual username. Hook up approved account list-->
+<!-- TODO: Hook up buttons. Put username placeholder to actual username. Hook up approved account list and Opt in for Email Reports-->
 <div class="grid-container">
+  <h2 class="title">Profile</h2>
   <mat-card class="card-container">
     <div class="card">
       <h3 class="card-title" style="margin-bottom: 0">My Account</h3>
@@ -40,7 +39,7 @@
       <h3 class="card-title">E-mail Report</h3>
       <div class="input-container">
         <span class="card-text">E-mail</span>
-        <span class="email">example&#64;example.com</span>
+        <span class="text">example&#64;example.com</span>
       </div>
       <div class="input-container">
         <span class="card-text">Opt In for E-mail Reports</span>
@@ -52,17 +51,18 @@
 
   <mat-card class="card-container">
     <div class="card">
-      <h3 class="card-title">Admin</h3>
-      <div class="input-container">
+      <h3 class="card-title">Admin Control</h3>
+
+      <!-- Heres the contents of the expansion pannel TODO: Link up this to approved accounts -->
+      <div class="input-container ">
           <mat-accordion>
             <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
               <mat-expansion-panel-header>Approved Accounts</mat-expansion-panel-header>
               
-              <!-- Heres the contents of the expansion pannel TODO: Link up this to approved accounts -->
               <mat-card class="account-card">
                 <mat-card-content>
                   <div class="account-details">
-                    <span>Account Name</span>
+                    <span class="text">Account Name</span>
                     <button mat-icon-button class="delete-button" color="primary" aria-label="Delete">
                       <mat-icon>delete</mat-icon>
                     </button>
@@ -70,10 +70,10 @@
                 </mat-card-content>
               </mat-card>
 
-              <mat-card>
+              <mat-card class="account-card">
                 <mat-card-content>
                   <div class="account-details">
-                    <span>Account Name</span>
+                    <span class="text">Account Name</span>
                     <button mat-icon-button class="delete-button" color="primary" aria-label="Delete">
                       <mat-icon>delete</mat-icon>
                     </button>
@@ -84,7 +84,48 @@
             </mat-expansion-panel>
           </mat-accordion>
       </div>
+
+
+      <!-- Heres the option to approve accounts-->
+      <p class="card-text2">Requests</p>
+
+
+      <mat-card class="account-card2">
+        <mat-card-content>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="text">Account Name</span>
+            <div style="margin-right: 10px;">
+              <button class="accept-button">
+                <i class="fa fa-check fa-1x"></i>
+              </button>
+              <button class="decline-button">
+                <i class="fa fa-remove fa-1x"></i>
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="account-card2">
+        <mat-card-content>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="text">Account Name</span>
+            <div style="margin-right: 10px;">
+              <button class="accept-button">
+                <i class="fa fa-check fa-1x"></i>
+              </button>
+              <button class="decline-button">
+                <i class="fa fa-remove fa-1x"></i>
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+     
+
+
     </div>
   </mat-card>
-
 </div>
+
+<div class="footer"></div>
