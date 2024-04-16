@@ -1,6 +1,6 @@
 from threading import Lock
-from encoders.profile_encoder import Profile
-from encoders.tweet_encoder import Tweet
+from backend.encoders.profile_encoder import Profile
+from backend.encoders.tweet_encoder import Tweet
 from backend.config import Config
 import datetime
 

@@ -1,6 +1,7 @@
 from backend.metric_system.generators.gen_standard_profile_stat_over_time import (
     StandardProfileStatOverTimeGenerator,
 )
+from backend.metric_system.generators.gen_standard_profile_stat_over_time_weekly import StandardProfileStatOverWeekGeneratorWeekly
 from backend.metric_system.metrics.metric_word_frequency import WordFrequencyMetric
 from backend.metric_system.generators.gen_standard_profile_stat_gen import (
     StandardProfileStatGenerator,
@@ -31,6 +32,7 @@ def build_metrics(output_file: str):
     smc.add_metric(WordFrequencyMetric())
     smc.add_metric(StandardProfileStatOverTimeGenerator())
     smc.add_metric(PearsonCorrelationProfileStatGenerator())
+    smc.add_metric(StandardProfileStatOverWeekGeneratorWeekly())
 
     smc.process()
 
@@ -40,3 +42,4 @@ def build_metrics(output_file: str):
             f.write(metric_json)
 
     return metric_json
+

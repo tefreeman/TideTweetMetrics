@@ -1,7 +1,7 @@
 from scheduler import CrawlerScheduler
 import database as db
 from backend.config import Config
-
+from time import sleep
 
 from utils.backup import (
     compress_backups,
@@ -15,18 +15,18 @@ def crawl_job():
     Config.init()
     db.init_database()
 
-    if check_if_raw_backup_exists():
-        print(
-            "Raw backup exists, (maybe error) compressing and removing raw backup files."
-        )
-        compress_backups()
-        remove_backup_files()
+    # if check_if_raw_backup_exists():
+    #     print(
+    #         "Raw backup exists, (maybe error) compressing and removing raw backup files."
+    #     )
+    #     compress_backups()
+    #     remove_backup_files()
     accounts = db.get_crawl_list()
     crawl_scheduler = CrawlerScheduler(accounts, Config.crawler_threads())
     summary_results = crawl_scheduler.start()
     db.add_crawl_summary(summary_results)
-    compress_backups()
-    remove_backup_files()
+    # compress_backups()
+    # remove_backup_files()
 
 
 crawl_job()

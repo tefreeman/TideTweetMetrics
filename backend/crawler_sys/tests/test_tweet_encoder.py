@@ -1,6 +1,6 @@
 import unittest
 
-from encoders.tweet_encoder import *
+from backend.encoders.tweet_encoder import *
 import datetime
 
 
