@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
 import { I_GraphBarData, I_GraphLineData, T_DisplayableGraph, T_GraphType } from '../interfaces/displayable-interface';
+import { KeyTranslatorService } from './key-translator.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GraphMakerService {
 
+export class GraphMakerService {
+  private keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
 
   constructor() { }
 
@@ -19,6 +21,8 @@ export class GraphMakerService {
   }
 
   createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
+    const structure = this.getGraphStructure(graphLineData);
+
     const chartOptions = {
       theme: this.getTheme(),
       title: {
@@ -30,12 +34,13 @@ export class GraphMakerService {
 
     return chartOptions;
   }
-  
+
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
     const chartOptions = {
+
       theme: this.getTheme(),
       title: {
-        text: graphBarData.metricName,
+        text: this.keyTranslatorService.translateKey(graphBarData.metricName),
       },
       data: this.getBarData(graphBarData),
       series: this.getBarSeries(graphBarData),
@@ -45,7 +50,7 @@ export class GraphMakerService {
   }
 
   getTheme(): AgChartTheme {
-    return {
+    const theme : AgChartTheme= {
       baseTheme: 'ag-default',
       palette: {
           fills: ['#a51e36', '#ff7f7f', '#ffa07a', '#ffd700', '#9acd32', '#87ceeb', '#6a5acd', '#9370db', '#8a2be2', '#00ced1', '#32cd32']
@@ -61,6 +66,8 @@ export class GraphMakerService {
         },
       }
     };
+
+    return theme;
   }
 
   getBarData(graphBarData: I_GraphBarData): any[] {
@@ -92,9 +99,9 @@ export class GraphMakerService {
 
   getLineSeries(data: I_GraphLineData
 
-    
+
   ): any[] {
-    return [{ type: 'bar', xKey: 'owner', yKey:'1'}]
+    return [{ type: 'line', xKey: 'owner', yKey:'1'}]
   }
 
 }

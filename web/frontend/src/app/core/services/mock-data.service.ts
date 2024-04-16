@@ -70,15 +70,15 @@ let test_displayed_data9: I_DisplayableRequest = {
 
 let test_displayed_data10: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
-  ownersConfig: {type: "specific", owners: ["alabama_cs"]},
-  type: "stat-value",
+  ownersConfig: {type: "top", owners: ["alabama_cs"], count: 25},
+  type: "graph-bar",
 }
 
 
 let test_displayed_data11: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
-  ownersConfig: {type: "top", owners: ["alabama_cs"], count: 5},
-  type: "graph-bar",
+  ownersConfig: {type: "all", owners: ["alabama_cs"], count: 5},
+  type: "graph-line",
 }
 
 @Injectable({
@@ -86,7 +86,7 @@ let test_displayed_data11: I_DisplayableRequest = {
 })
 export class MockDataService {
   public overrideProfile = true;
-  constructor() { 
+  constructor() {
   }
 
 
