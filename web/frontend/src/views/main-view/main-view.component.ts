@@ -39,4 +39,8 @@ export class MainViewComponent {
     toggleEditMode(){
       this.editModeService.toggleEditMode();
     }
+
+    update(){
+      
+    }
 }
