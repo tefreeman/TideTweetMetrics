@@ -8,8 +8,15 @@ import { DashboardComponent } from './views/main-view/dashboard/dashboard.compon
 import { GraphBuilderComponent } from './views/main-view/graph-builder/graph-builder.component';
 import { OptimizerComponent } from './views/main-view/optimizer/optimizer.component';
 import { MyProfileComponent } from './views/main-view/my-profile/my-profile.component';
+import { UnauthorizedComponent } from './views/unauthorized/unauthorized.component';
+import { StartComponent } from './views/main-view/start/start.component';
+import { startGuard } from './core/guards/start.guard';
 
 export const routes: Routes = [
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent
+    },
   {path: '', component: HomeComponent},
   {path: 'dashboard', component: MainViewComponent, canActivate: [AuthGuard],
     children: [
@@ -19,24 +26,29 @@ export const routes: Routes = [
         pathMatch: 'full' 
       },
       {
+        path: 'start',
+        component: StartComponent,
+        canActivate: []
+      },
+      {
       path: 'home',
       component: DashboardComponent,
-      canActivate: [AuthGuard],
+      canActivate: [startGuard],
       },
       {
       path: 'graph-builder',
       component: GraphBuilderComponent,
-      canActivate: [AuthGuard],
+      canActivate: [startGuard],
       },
       {
       path: 'optimizer',
       component: OptimizerComponent,
-      canActivate: [AuthGuard],
+      canActivate: [startGuard],
       },
       {
       path: 'my-profile',
       component: MyProfileComponent,
-      canActivate: [AuthGuard],
+      canActivate: [startGuard],
       }
   ]
   },
