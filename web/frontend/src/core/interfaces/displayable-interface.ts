@@ -1,6 +1,6 @@
 import { T_MetricValue } from "./metrics-interface";
 
-export type T_GraphType =  "stat-value" | "stat-trend" | "stat-comparison" | "stat-comp" | "graph-line" | "graph-bar" | "graph-pie" |"display" | "auto";
+export type T_GraphType =  "stat-value" | "stat-trend" | "stat-comparison" | "stat-comp" | "graph-line" | "graph-bar" | "graph-pie" |"display" | "auto" | "edit-mode";
 export type T_OwnerType = "all" | "top" | "bottom" | "specific";
 
 export interface I_OwnerConfig {
@@ -60,6 +60,7 @@ export interface I_GraphLineData {
   values: Array<T_MetricValue>;
   owners: Array<string>;
 }
+
 
 export type T_DisplayableStat = I_StatValueData | I_StatTrendData | I_StatCompData;
 export type T_DisplayableGraph = I_GraphBarData | I_GraphLineData;

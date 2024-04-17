@@ -13,7 +13,7 @@ import { MaterialModule } from '../../core/modules/material/material.module';
 })
 export class GraphCardComponent implements OnInit {
   @Input({required: true}) displayableData!: T_DisplayableDataType;
-
+  @Input({required: true}) placeHolderForEdit!: boolean;
   constructor() { }
 
   ngOnInit() {
@@ -28,5 +28,7 @@ export class GraphCardComponent implements OnInit {
   }
 
   isPieGraph(data: T_DisplayableDataType) {}
+
+  
 
 }
