@@ -46,8 +46,8 @@
     letter-spacing: -.3px; 
     width: 9rem; 
     display: inline-block; 
-    text-align: right; 
     margin-right: 2rem;
+    margin-left: 2rem; 
 }
 .card-text2{
     font-weight: bold;
@@ -61,6 +61,7 @@
 .input{
     width: 20rem;
     height: 4rem;
+    margin-left: -5rem;
     line-height: 0px;
     font-size: 10px;
 }
@@ -184,11 +185,10 @@
   font-weight: bold;
   letter-spacing: -.3px;
   margin-bottom: 1rem;
-  margin-left: 11rem;
+  margin-left: 8rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
 }
