@@ -25,14 +25,27 @@ let test_displayed_data4: I_DisplayableRequest = {
 
 let test_displayed_data2: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
-  ownersConfig: {type: "top", owners: ["alabama_cs"], count: 25},
+  ownersConfig: {type: "bottom", owners: ["alabama_cs"], count: 12},
   type: "graph-bar",
 }
 
 
 let test_displayed_data3: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
-  ownersConfig: {type: "all", owners: ["alabama_cs"], count: 5},
+  ownersConfig: {type: "bottom", owners: ["alabama_cs"], count: 12},
+  type: "graph-line",
+}
+
+let test_displayed_data5: I_DisplayableRequest = {
+  stat_name: "tweet_likes-mean",
+  ownersConfig: {type: "all", owners: ["alabama_cs"], count: 100},
+  type: "graph-bar",
+}
+
+
+let test_displayed_data6: I_DisplayableRequest = {
+  stat_name: "tweet_likes-mean",
+  ownersConfig: {type: "all", owners: ["alabama_cs"], count: 100},
   type: "graph-line",
 }
 
@@ -46,7 +59,7 @@ export class MockDataService {
 
 
   getMockData(): I_DisplayableRequest[] {
-    return [test_displayed_data, test_displayed_data1, test_displayed_data2, test_displayed_data3,test_displayed_data4];
+    return [test_displayed_data, test_displayed_data1, test_displayed_data2, test_displayed_data3,test_displayed_data4, test_displayed_data5, test_displayed_data6];
   }
 
 
