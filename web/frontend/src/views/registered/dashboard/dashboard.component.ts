@@ -109,12 +109,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
   
-    // First, let's determine the grid capacity and current condition.
+    // grid capacity calculations
     const itemsPerRow = this.determineItemsPerRow();
     const totalRows = Math.ceil(this.positionArr.length / itemsPerRow);
     const itemsInLastRow = this.positionArr.length % itemsPerRow || itemsPerRow;
     const dropInLastRowOrBelow = this.isDropInLastRowOrBelow(dropPos, itemsPerRow, totalRows, itemsInLastRow);
   
+    // Either move the dragged item to the end or swap it with the closest item.
     if (dropInLastRowOrBelow) {
       this.moveToEnd(index);
     } else {
@@ -154,9 +155,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   
     return false;
   }
-  
+     // Move the dragged item to the end if dropped in an extra space or below the grid.
   private moveToEnd(index: number) {
-    // Move the dragged item to the end if dropped in an extra space or below the grid.
     const item = this.displayableCardArr.splice(index, 1)[0];
     this.displayableCardArr.push(item);
     
@@ -164,6 +164,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.positionArr.push(position);
   }
   
+  // Swap the dragged item with the closest item.
   private performSwap(index: number, dropPos: { x: number, y: number }) {
     let closestDistance = Number.MAX_VALUE;
     let closestIndex = -1;
