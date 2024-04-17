@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { IDisplayableStats, I_GraphLineData } from '../../../core/interfaces/displayable-interface';
-import { GraphMakerService } from '../../../core/services/graph-maker.service';
+import { AgChartOptions } from 'ag-charts-community';
+import { I_GraphLineData } from '../../core/interfaces/displayable-interface';
+import { GraphMakerService } from '../../core/services/graph-maker.service';
+
 
 @Component({
   standalone: true,

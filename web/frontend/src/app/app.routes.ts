@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './views/account/register/register.component';
-import { MainViewComponent } from './views/main-view/main-view.component';
-import { LoginComponent } from './views/account/login/login.component';
-import { AuthGuard } from './core/guards/auth.guard';
-import { HomeComponent } from './views/home/home.component';
-import { DashboardComponent } from './views/main-view/dashboard/dashboard.component';
-import { GraphBuilderComponent } from './views/main-view/graph-builder/graph-builder.component';
-import { OptimizerComponent } from './views/main-view/optimizer/optimizer.component';
-import { MyProfileComponent } from './views/main-view/my-profile/my-profile.component';
-import { UnauthorizedComponent } from './views/unauthorized/unauthorized.component';
-import { StartComponent } from './views/main-view/start/start.component';
-import { startGuard } from './core/guards/start.guard';
+import { UnauthorizedComponent } from '../views/unregistered/unauthorized/unauthorized.component';
+import { HomeComponent } from '../views/unregistered/home/home.component';
+import { MainViewComponent } from '../views/main-view/main-view.component';
+import { AuthGuard } from '../core/guards/auth.guard';
+import { StartComponent } from '../views/registered/start/start.component';
+import { DashboardComponent } from '../views/registered/dashboard/dashboard.component';
+import { startGuard } from '../core/guards/start.guard';
+import { GraphBuilderComponent } from '../views/registered/graph-builder/graph-builder.component';
+import { OptimizerComponent } from '../views/registered/optimizer/optimizer.component';
+import { MyProfileComponent } from '../views/registered/my-profile/my-profile.component';
+import { RegisterComponent } from '../views/unregistered/register/register.component';
+import { LoginComponent } from '../views/unregistered/login/login.component';
 
 export const routes: Routes = [
   {
