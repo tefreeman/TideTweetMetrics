@@ -7,18 +7,22 @@
   <div cdkDropList [cdkDropListData]="displayableDataArr"  class="dataCardContainer" (cdkDropListDropped)="drop($event)">
     <ng-container *ngFor="let displayableData of displayableDataArr;  let i = index">
       <ng-container *ngIf="isCard(displayableData)">
-        <app-stat-card cdkDrag [displayableData]="displayableData"></app-stat-card>
+        <app-stat-card cdkDrag [displayableData]="displayableData" [placeHolderForEdit]="false"></app-stat-card>
       </ng-container>
     </ng-container>
+    <!--hack need to fix-->
+    <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="displayableDataArr[0]" [placeHolderForEdit]="true"></app-stat-card>
   </div>
 
   <!-- Render graphs -->
   <div class="graphContainer">
     <ng-container *ngFor="let displayableData of displayableDataArr">
       <ng-container *ngIf="isGraph(displayableData)">
-        <app-graph-card [displayableData]="displayableData"></app-graph-card>
+        <app-graph-card [displayableData]="displayableData" [placeHolderForEdit]="false"></app-graph-card>
       </ng-container>
     </ng-container>
+    <!--hack need to fix-->
+    <app-graph-card (click)="openGraphCardDialog()" *ngIf="editMode | async" [displayableData]="displayableDataArr[0]" [placeHolderForEdit]="true"></app-graph-card>
   </div>
 </div>
 

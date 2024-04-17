@@ -16,7 +16,7 @@ import { T_DisplayableDataType, I_StatValueData, I_StatTrendData, I_StatCompData
 })
 export class StatCardComponent implements OnInit {
   @Input({required: true}) displayableData!: T_DisplayableDataType;
-
+  @Input({required: true}) placeHolderForEdit!: boolean;
 
   
   constructor() {

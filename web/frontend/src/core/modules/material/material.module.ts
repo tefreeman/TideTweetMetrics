@@ -14,7 +14,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
@@ -80,7 +80,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
   ],
   providers: [
     { provide: MatBottomSheetRef, useValue: {} },
-    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} }
+    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
   ]
 })
 export class MaterialModule { }

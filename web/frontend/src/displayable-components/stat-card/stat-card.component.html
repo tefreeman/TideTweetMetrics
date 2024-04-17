@@ -1,4 +1,6 @@
-<mat-card class="elevation" *ngIf="displayableData" style="height: 100%">
+
+
+<mat-card class="elevation" *ngIf="placeHolderForEdit == false" style="height: 8rem">
 
   <ng-container *ngIf="isStatValue(displayableData)">
     <app-stat-value [displayableData]="displayableData"></app-stat-value>
@@ -15,3 +17,11 @@
 </mat-card>
 
 
+
+<mat-card class="add-card" *ngIf="placeHolderForEdit == true" style="height: 8rem">
+
+  <div class="icon-container">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add" class="custom-icon"></mat-icon>
+  </div>
+
+</mat-card>

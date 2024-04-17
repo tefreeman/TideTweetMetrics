@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgFor } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardComponent } from '../registered/dashboard/dashboard.component';
+import { EditModeService } from '../../core/services/edit-mode.service';
 
 @Component({
     selector: 'app-main-view',
@@ -13,7 +14,7 @@ import { DashboardComponent } from '../registered/dashboard/dashboard.component'
     imports: [MaterialModule, RouterLink, RouterOutlet, DashboardComponent,NgFor]
 })
 export class MainViewComponent {
-
+  editModeService: EditModeService = inject(EditModeService);
   constructor(private authService: AuthService) {}
   
   navRoutes = [
@@ -33,5 +34,9 @@ export class MainViewComponent {
 
     signout(){
       this.authService.signout();
+    }
+
+    toggleEditMode(){
+      this.editModeService.toggleEditMode();
     }
 }
