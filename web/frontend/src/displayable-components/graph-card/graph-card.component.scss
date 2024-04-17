@@ -5,6 +5,7 @@
   .card{
     padding: 1rem 1.5rem 0rem;
     @include mat.elevation(10);
+    height: 100%;
 
   }
   
