@@ -30,25 +30,73 @@ export class GraphMakerService {
       },
       data: this.getLineData(graphLineData),
       series: this.getLineSeries(graphLineData),
+      axes: [  
+        {
+          type: 'category',
+          label: {
+            enabled: graphLineData.owners.length < 15,
+            fontSize: 10,
+            fontWeight: 'bold', 
+            fontFamily: 'Open Sans',
+          },
+          position: 'bottom',
+        },
+        {
+          type: 'number',
+          position: 'left',
+          label: {
+            fontSize: 10, // Specify font size here
+            fontWeight: 'bold', // Specify font weight here
+            fontFamily: 'Open Sans',
+            color: '#999'
+          }
+        }],
+        
+        
+      
     }
 
     return chartOptions;
   }
 
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
-    const chartOptions = {
-
+    const chartOptions: AgChartOptions = {
       theme: this.getTheme(),
+      
       title: {
         text: this.keyTranslatorService.translateKey(graphBarData.metricName),
       },
       data: this.getBarData(graphBarData),
+      
       series: this.getBarSeries(graphBarData),
-    }
+      axes: [  
+        {
+          type: 'category',
+          label: {
+            enabled: graphBarData.owners.length < 15,
+            fontSize: 10,
+            fontWeight: 'bold', 
+            fontFamily: 'Open Sans',
+          },
+          position: 'bottom',
+        },
+        {
+          type: 'number',
+          position: 'left',
+          label: {
+            fontSize: 10, // Specify font size here
+            fontWeight: 'bold', // Specify font weight here
+            fontFamily: 'Open Sans',
+            color: '#999'
+          }
+        }],
+      
 
+      
+    }
+  
     return chartOptions;
   }
-
   getTheme(): AgChartTheme {
     const theme : AgChartTheme= {
       baseTheme: 'ag-default',
@@ -82,7 +130,12 @@ export class GraphMakerService {
   }
 
   getBarSeries(data: I_GraphBarData): any[] {
-    return [{ type: 'bar', xKey: 'owner', yKey:'1'}]
+    return [{ type: 'bar', xKey: 'owner', yKey:'1',
+    formatter: ({ datum, yKey}:any) => ({
+      fillOpacity: this.getOpacity(datum[yKey], yKey, 0.4, 1, data.values),
+    }),
+      
+    }]
   }
 
 
@@ -97,11 +150,57 @@ export class GraphMakerService {
     return chartData;
   }
 
-  getLineSeries(data: I_GraphLineData
+  getOpacity(value: number, key: any, minOpacity: any, maxOpacity: any, data: any) {
+
+    const [min, max] = this.getDomain(key, data);
+    let alpha = Math.round(((value - min) / (max - min)) * 10) / 10;
+    //console.log(min, max, value);
+    return this.map(alpha, 0, 1, minOpacity, maxOpacity);
+  }
+
+  getDomain(key: string | number, data: any) {
+
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    console.log(min, max, data);
+    return [min, max];
+  }
+
+  map = (value: number, start1: number, end1: number, start2: number, end2: number) => {
+    return ((value - start1) / (end1 - start1)) * (end2 - start2) + start2;
+  };
 
 
-  ): any[] {
-    return [{ type: 'line', xKey: 'owner', yKey:'1'}]
+  getLineSeries(data: I_GraphLineData): any[] {
+    const dataLength = data.values.length;
+
+    // Define a strategy for strokeWidth based on the data size
+    let strokeWidth = this.calculateStrokeWidth(dataLength);
+
+    return [{ 
+      type: 'line', 
+      xKey: 'owner', 
+      yKey:'1',
+      strokeWidth: strokeWidth, // Use dynamic strokeWidth based on data size
+      marker: {
+        enabled: false,
+      },
+    }];
+  }
+
+  // Implement a method to calculate strokeWidth based on data size
+  calculateStrokeWidth(dataLength: number): number {
+    if (dataLength <= 10) {
+      return 4; 
+    } else if (dataLength <= 50) {
+      return 3; 
+    } 
+    else if (dataLength <= 100) {
+      return 2; 
+    } 
+    else {
+      return 1; 
+    }
   }
 
 }
