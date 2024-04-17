@@ -1,3 +1,41 @@
-:host {
-  display: block;
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20rem;
+}
+
+.card-container {
+  border-bottom: .3rem solid #a51e36;
+}
+
+.content-container {
+  margin: 3rem;
+  position: relative;
+}
+
+.text,
+.button, .button2 {
+  font-size: 12px;
+  letter-spacing: -.3px; 
+  font-weight: bold;
+
+}
+
+
+
+.button-container {
+  display: flex;
+  justify-content: space-between; 
+  margin-top: 1rem; 
+}
+
+.left-button,
+.right-button {
+  flex: 1; 
+  text-align: left; 
+}
+
+.right-button {
+  text-align: right; 
 }
