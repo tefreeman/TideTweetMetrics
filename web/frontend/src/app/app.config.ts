@@ -9,7 +9,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-
+import { getFunctions, provideFunctions } from '@angular/fire/functions';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -28,6 +28,7 @@ export const appConfig: ApplicationConfig = {
         })
       )
     ),
+    importProvidersFrom(provideFunctions(() => getFunctions())),
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideFirestore(() => getFirestore())),
     importProvidersFrom(provideStorage(() => getStorage())), provideAnimationsAsync(),
