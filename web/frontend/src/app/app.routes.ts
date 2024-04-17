@@ -11,6 +11,7 @@ import { OptimizerComponent } from '../views/registered/optimizer/optimizer.comp
 import { MyProfileComponent } from '../views/registered/my-profile/my-profile.component';
 import { RegisterComponent } from '../views/unregistered/register/register.component';
 import { LoginComponent } from '../views/unregistered/login/login.component';
+import { AnalysisBoardComponent } from '../views/registered/analysis-board/analysis-board.component';
 
 export const routes: Routes = [
   {
@@ -36,8 +37,8 @@ export const routes: Routes = [
       canActivate: [startGuard],
       },
       {
-      path: 'graph-builder',
-      component: GraphBuilderComponent,
+      path: 'analysis-board',
+      component: AnalysisBoardComponent,
       canActivate: [startGuard],
       },
       {
