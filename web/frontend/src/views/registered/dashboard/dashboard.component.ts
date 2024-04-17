@@ -246,4 +246,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(`Dialog result: ${result}`);
     });
   }
+
+
+  toggleEditMode(){
+    this.editModeService.toggleEditMode();
+  }
+
+  update(){
+    
+  }
+
+
 }
