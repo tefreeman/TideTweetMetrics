@@ -12,29 +12,32 @@
 </div>
 
 
+  <app-card-grid [data$]="getCardDisplayables()" [cardHeight]="'8rem'" [maxColSize]="'1fr'" [minColSize]="'14rem'"></app-card-grid>
+  <app-graph-grid [data$]="getGraphDisplayables()" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'14rem'"></app-graph-grid>
 
-  <!-- Render cards -->
-  <div cdkDropList [cdkDropListData]="cardGrid.dataArr" [cdkDropListDisabled]="!(editMode | async)" class="dataCardContainer" (cdkDropListDropped)="dropCard($event)">
+
+  <!-- will get rid of this eventually-->
+  <!-- <div cdkDropList [cdkDropListData]="cardGrid.dataArr" [cdkDropListDisabled]="!(editMode | async)" class="dataCardContainer" (cdkDropListDropped)="dropCard($event)">
     <ng-container *ngFor="let displayableData of cardGrid.dataArr;  let i = index">
       <ng-container *ngIf="isCard(displayableData)">
         <app-stat-card #statcard cdkDrag [displayableData]="displayableData" [placeHolderForEdit]="false"></app-stat-card>
       </ng-container>
     </ng-container>
-    <!--hack need to fix-->
+
     <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="cardGrid.dataArr[0]" [placeHolderForEdit]="true"></app-stat-card>
   </div>
 
-  <!-- Render graphs -->
+
   <div class="graphContainer">
     <ng-container *ngFor="let displayableData of graphGrid.dataArr">
       <ng-container *ngIf="isGraph(displayableData)">
         <app-graph-card [displayableData]="displayableData" [placeHolderForEdit]="false"></app-graph-card>
       </ng-container>
     </ng-container>
-    <!--hack need to fix-->
+
     <app-graph-card (click)="openGraphCardDialog()" *ngIf="editMode | async" [displayableData]="graphGrid.dataArr[0]" [placeHolderForEdit]="true"></app-graph-card>
   </div>
-</div>
+</div> -->
 
 <div class="footer">
 
