@@ -1,0 +1,30 @@
+.cdk-drag:not(.cdk-drag-preview) {
+  transform: none !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.65;
+}
+
+
+
+
+
+.dataCardContainer {
+  margin: 0rem 15rem;
+  display: grid;
+  gap: 1rem;
+  grid-auto-flow: dense;
+  justify-content: center;
+  
+}
+
+.dataCard{
+  position: relative; // Ensure this for proper z-index management
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // Keeps content spaced out
+}
+
+
+
