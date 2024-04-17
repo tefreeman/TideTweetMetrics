@@ -149,6 +149,10 @@ export class AuthService implements OnDestroy{
     });
   }
 
+  goHome(): void {
+    this.router.navigate(['/']); 
+  }
+
   sendPasswordResetEmailCurrentUser(): Promise<void> | never {
     // Attempt to retrieve the currently signed-in user
     const user = this._auth.currentUser;
