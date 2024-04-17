@@ -7,7 +7,13 @@ export class MoveableGridTilesService {
   private positionArr: { x: number; y: number; }[] = [];
 
 
-  constructor() { }
+  constructor(debug: boolean = false) {
+    if (debug) {
+    setInterval(() => {
+      console.log(this.dataArr, this.positionArr);
+    }, 1000);
+  }
+  }
 
 
   
@@ -39,13 +45,16 @@ export class MoveableGridTilesService {
     const itemsInLastRow = this.positionArr.length % itemsPerRow || itemsPerRow;
     const dropInLastRowOrBelow = this.isDropInLastRowOrBelow(dropPos, itemsPerRow, totalRows, itemsInLastRow);
   
+    // TODO: fix this logic
     // Either move the dragged item to the end or swap it with the closest item.
-    if (dropInLastRowOrBelow) {
-      this.moveToEnd(index);
-    } else {
-      this.performSwap(index, dropPos);
-    }
-  }
+  //   if (dropInLastRowOrBelow) {
+  //     this.moveToEnd(index);
+  //   } else {
+  //     this.performSwap(index, dropPos);
+  //   }
+
+    this.performSwap(index, dropPos);
+   }
   
   private determineItemsPerRow(): number {
 
