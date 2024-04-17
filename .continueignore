@@ -1,0 +1,18 @@
+# Ignore everything
+LICENSE
+README.md
+requirements.txt
+
+web/classifier/*
+**/.spec.ts
+
+
+# docs folder
+docs/*
+.venv/*
+**/firebase-cli/*
+**/ex_metric_out.json
+**/ex_testing_metric_out.json
+
+# But don't ignore this file
+!.gitignore
