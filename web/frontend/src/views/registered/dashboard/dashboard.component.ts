@@ -1,7 +1,7 @@
 import { NgFor, NgIf,} from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { inject } from '@angular/core';
-import { Observable, Subject, Subscription, debounceTime, fromEvent, takeUntil,} from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, filter, fromEvent, map, takeUntil,} from 'rxjs';
 import { IDisplayableStats, I_DisplayableRequest, T_DisplayableDataType } from '../../../core/interfaces/displayable-interface';
 import { MetricService } from '../../../core/services/metric.service';
 import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
@@ -17,12 +17,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddGraphComponent } from '../../../displayable-components/add-graph/add-graph.component';
 import { AddCardComponent } from '../../../displayable-components/add-card/add-card.component';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
+import { CardGridComponent } from '../../../displayable-components/card-grid/card-grid.component';
+import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, StatCardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule, CdkDrag, CdkDropList, AsyncPipe],
+  imports: [NgFor, StatCardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule, CdkDrag, CdkDropList, AsyncPipe, CardGridComponent, GraphGridComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService],
@@ -41,84 +43,34 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   subscription: any;
-  private destroy$ = new Subject<void>();
-  private statsCardsChangesSub!: Subscription;
-  constructor(private cdr: ChangeDetectorRef, public dialog: MatDialog, private ngZone: NgZone){
+
+  constructor(public dialog: MatDialog) {
 }
 
-  ngOnInit() {
-    this.subscription = this._displayProcessor.displayables$.subscribe((data) => {
-      this.cardGrid.dataArr = [];
-      this.graphGrid.dataArr = [];
-      data.forEach((displayable) => {
-        if (this.isCard(displayable)) {
-          this.cardGrid.dataArr.push(displayable);
-        } else if (this.isGraph(displayable)) {
-          this.graphGrid.dataArr.push(displayable);
-        }
-      });
-    
-    });
+  getCardDisplayables(): Observable<T_DisplayableDataType[]> {
+    return this._displayProcessor.displayables$.pipe(map((displayables) => displayables.filter((displayable) => this.isCard(displayable))));
+  }
+  getGraphDisplayables(): Observable<T_DisplayableDataType[]> {
+    return this._displayProcessor.displayables$.pipe(map((displayables) => displayables.filter((displayable) => this.isGraph(displayable))));
+  }
 
-    this.ngZone.runOutsideAngular(() => {
-      // Create an observable that listens to the window resize event.
-      fromEvent(window, 'resize')
-        .pipe(
-          debounceTime(300), // Debounce time in ms
-          takeUntil(this.destroy$) 
-        )
-        .subscribe((event) => {
-          this.ngZone.run(() => {
-            this.cardGrid.update(this.statCards);
-            this.graphGrid.update(this.statCards);
-          });
-        });
-    });
+  ngOnInit() {
+  
 
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-
-    if (this.statsCardsChangesSub) {
-      this.statsCardsChangesSub.unsubscribe();
-    }
-
-    this.destroy$.next();
-    this.destroy$.complete();
+  
   }
 
   ngAfterViewInit() {
     // Initial subscription
-    this.statsCardsChangesSub = this.statCards.changes.subscribe((queryList: QueryList<ElementRef>) => {
-      this.cardGrid.update(queryList);
-      this.graphGrid.update(queryList);
-      
-      // keeping views in sync
-      this.cdr.detectChanges();
-    });
-
-    // Trigger for existing elements
-    if (this.statCards.length) {
-      this.statCards.notifyOnChanges();
-    }
+  
   }
   
-  onResize() {
-    this.cardGrid.update(this.statCards);
-    this.graphGrid.update(this.statCards);
-  }
 
 
-  // ISSUE:  solved
-  dropCard(event: CdkDragDrop<T_DisplayableDataType[]>) {
-    this.cardGrid.swapClosestElements(event.previousIndex, { x: event.dropPoint.x, y: event.dropPoint.y });
-  }
-
-  dropGraph(event: CdkDragDrop<T_DisplayableDataType[]>) {
-    this.cardGrid.swapClosestElements(event.previousIndex, { x: event.dropPoint.x, y: event.dropPoint.y });
-  }
-
+  
   isCard(displayableData: T_DisplayableDataType): boolean {
     return displayableData.type === 'stat-value' || 
            displayableData.type === 'stat-trend' || 
