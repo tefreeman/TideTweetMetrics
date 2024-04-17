@@ -1,6 +1,6 @@
 # Ignore everything
 LICENSE
-README.md
+**/README.md
 requirements.txt
 
 web/classifier/*
