@@ -1,7 +1,16 @@
 <div class="dashboardContainer">
   <div class="title-container">
-    <h2 class="title" >Dashboard</h2>
-  </div>
+    <h2 class="title">Dashboard</h2>
+    <div class="button-container">
+        <button mat-button aria-label="Edit" [style.color]="'white'" (click)="toggleEditMode()">
+          <span class="text">Edit</span>
+        </button>
+        <button mat-button aria-label="Update" [style.color]="'white'" (click)="update()">
+          <span class="text">Update</span>
+        </button>
+    </div>
+</div>
+
 
 
   <!-- Render cards -->
