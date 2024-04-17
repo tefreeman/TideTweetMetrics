@@ -1,31 +1,32 @@
 <div class="dashboardContainer">
   <div class="title-container">
-    <h2 class="title">Dashboard</h2>
+    <h2 class="title" >Dashboard</h2>
   </div>
 
+
   <!-- Render cards -->
-  <div cdkDropList [cdkDropListData]="displayableDataArr"  class="dataCardContainer" (cdkDropListDropped)="drop($event)">
-    <ng-container *ngFor="let displayableData of displayableDataArr;  let i = index">
+  <div cdkDropList [cdkDropListData]="displayableCardArr" [cdkDropListDisabled]="!(editMode | async)" class="dataCardContainer" (cdkDropListDropped)="drop($event)">
+    <ng-container *ngFor="let displayableData of displayableCardArr;  let i = index">
       <ng-container *ngIf="isCard(displayableData)">
-        <app-stat-card cdkDrag [displayableData]="displayableData" [placeHolderForEdit]="false"></app-stat-card>
+        <app-stat-card #statcard cdkDrag [displayableData]="displayableData" [placeHolderForEdit]="false"></app-stat-card>
       </ng-container>
     </ng-container>
     <!--hack need to fix-->
-    <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="displayableDataArr[0]" [placeHolderForEdit]="true"></app-stat-card>
+    <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="displayableCardArr[0]" [placeHolderForEdit]="true"></app-stat-card>
   </div>
 
   <!-- Render graphs -->
   <div class="graphContainer">
-    <ng-container *ngFor="let displayableData of displayableDataArr">
+    <ng-container *ngFor="let displayableData of displayableGraphArr">
       <ng-container *ngIf="isGraph(displayableData)">
         <app-graph-card [displayableData]="displayableData" [placeHolderForEdit]="false"></app-graph-card>
       </ng-container>
     </ng-container>
     <!--hack need to fix-->
-    <app-graph-card (click)="openGraphCardDialog()" *ngIf="editMode | async" [displayableData]="displayableDataArr[0]" [placeHolderForEdit]="true"></app-graph-card>
+    <app-graph-card (click)="openGraphCardDialog()" *ngIf="editMode | async" [displayableData]="displayableGraphArr[0]" [placeHolderForEdit]="true"></app-graph-card>
   </div>
 </div>
 
 <div class="footer">
- 
+
 </div>

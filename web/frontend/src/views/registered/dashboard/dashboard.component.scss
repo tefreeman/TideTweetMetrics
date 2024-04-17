@@ -1,5 +1,10 @@
+.cdk-drag:not(.cdk-drag-preview) {
+    transform: none !important;
+  }
 
-
+  .cdk-drag-placeholder {
+    opacity: 0.65;
+  }
 
 .title{
     margin-left: 100px;
