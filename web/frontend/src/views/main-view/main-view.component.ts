@@ -19,7 +19,7 @@ export class MainViewComponent {
   
   navRoutes = [
     {name:'Dashboard', route:'home'},
-    {name:'Graph Builder', route:'graph-builder'},  //Add more here as needed
+    {name:'Analysis Board', route:'analysis-board'},  //Add more here as needed
     {name:'Optimizer', route:'optimizer'},
     {name:'My Profile', route:'my-profile'},
 
