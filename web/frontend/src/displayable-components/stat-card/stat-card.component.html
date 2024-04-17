@@ -1,6 +1,6 @@
 
 
-<mat-card class="elevation" [ngClass]="{'shake': (editMode | async) && applyClass}"  (mouseover)="onMouseOver()" (mouseleave)="onMouseLeave()" *ngIf="placeHolderForEdit == false" style="height: 8rem">
+<mat-card class="elevation" [ngClass]="{'shake': (editMode | async)}" *ngIf="placeHolderForEdit == false" style="height: 8rem">
 
   <ng-container *ngIf="isStatValue(displayableData)">
     <app-stat-value [displayableData]="displayableData"></app-stat-value>

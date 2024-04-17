@@ -6,6 +6,9 @@
     @include mat.elevation(5);
   }
 
+  .elevation:hover {
+    animation-play-state: paused;
+  }
 
   .add-card::before {
     content: "";
