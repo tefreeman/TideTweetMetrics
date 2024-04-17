@@ -9,26 +9,13 @@
         <span class="card-text">Username</span>
         <mat-form-field class="input" color="primary">
           <input matInput maxlength="10" placeholder="Username">
-          <mat-hint align="end" class="small-text">{{input.value.length}}/10</mat-hint>
         </mat-form-field>
-        <button mat-button color="primary" class="change-button">Change</button>
+
 
       </div>
-      <div class="input-container">
-        <span class="card-text">Password</span>
-        <mat-form-field class="input" color="primary">
-          <input matInput #input minlength="8" type="password" placeholder="New Password">
-          <mat-hint align="start" class="small-text">Minimum: 8</mat-hint>
-          <mat-hint align="end" class="small-text">Characters: {{input.value.length}}</mat-hint>
-        </mat-form-field>
-      </div>
-      <div class="input-container">
-        <span class="card-text">Confirm Password</span>
-        <mat-form-field class="input" color="primary">
-          <input matInput #confirmInput minlength="8" type="password" placeholder="Confirm Password">
-        </mat-form-field>
-        <button mat-button color="primary" class="change-button">Change</button>
-      </div>
+
+      
+      <button mat-stroked-button color="primary" (click)="resetMyPassword()">Change Password By Email</button>
     </div>
   </mat-card>
   
@@ -38,94 +25,59 @@
     <div class="card">
       <h3 class="card-title">E-mail Report</h3>
       <div class="input-container">
-        <span class="card-text">E-mail</span>
-        <span class="text">example&#64;example.com</span>
-      </div>
-      <div class="input-container">
         <span class="card-text">Opt In for E-mail Reports</span>
-        <mat-checkbox class="checkbox" color="primary">
+        <mat-checkbox class="checkbox" color="primary" [checked]="optInForEmailReports" (change)="updateEmailReportOptIn($event.checked)">
         </mat-checkbox>
       </div>
     </div>
   </mat-card>
 
-  <mat-card class="card-container">
+  <mat-card *ngIf="isAdmin" class="card-container">
     <div class="card">
       <h3 class="card-title">Admin Control</h3>
-
-      <!-- Heres the contents of the expansion pannel TODO: Link up this to approved accounts -->
+      
       <div class="input-container ">
           <mat-accordion>
-            <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
               <mat-expansion-panel-header>Approved Accounts</mat-expansion-panel-header>
               
-              <mat-card class="account-card">
+              <!-- Approved accounts -->
+              <ng-container *ngFor="let user of usersAndRoles; let i = index">
+              <mat-card class="account-card" *ngIf="user.role === 'user'">
                 <mat-card-content>
                   <div class="account-details">
-                    <span class="text">Account Name</span>
-                    <button mat-icon-button class="delete-button" color="primary" aria-label="Delete">
+                    <span class="text">{{ user.email }}</span> <!-- Assuming you want to display the email as the account name -->
+                    <button mat-icon-button class="delete-button" color="primary" aria-label="Delete" (click)="deleteUser(user)">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
                 </mat-card-content>
               </mat-card>
-
-              <mat-card class="account-card">
-                <mat-card-content>
-                  <div class="account-details">
-                    <span class="text">Account Name</span>
-                    <button mat-icon-button class="delete-button" color="primary" aria-label="Delete">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </mat-card-content>
-              </mat-card>
+            </ng-container>
 
             </mat-expansion-panel>
           </mat-accordion>
       </div>
 
-
-      <!-- Heres the option to approve accounts-->
+      <!-- Requests -->
       <p class="card-text2">Requests</p>
-
-
-      <mat-card class="account-card2">
+      <ng-container *ngFor="let user of usersAndRoles; let i = index">
+      <mat-card class="account-card2" *ngIf="user.role === 'unverified'">
         <mat-card-content>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="text">Account Name</span>
+            <span class="text">{{ user.email }}</span> <!-- Assuming you want to display the email as the account name -->
             <div style="margin-right: 10px;">
               <button class="accept-button">
                 <i class="fa fa-check fa-1x"></i>
               </button>
-              <button class="decline-button">
+              <button class="decline-button"  (click)="deleteUser(user)">
                 <i class="fa fa-remove fa-1x"></i>
               </button>
             </div>
           </div>
         </mat-card-content>
       </mat-card>
-
-      <mat-card class="account-card2">
-        <mat-card-content>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="text">Account Name</span>
-            <div style="margin-right: 10px;">
-              <button class="accept-button">
-                <i class="fa fa-check fa-1x"></i>
-              </button>
-              <button class="decline-button">
-                <i class="fa fa-remove fa-1x"></i>
-              </button>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-     
-
-
+    </ng-container>
     </div>
   </mat-card>
 </div>
-
-<div class="footer"></div>
