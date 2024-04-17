@@ -30,6 +30,7 @@
 
 .card-title{
     font-weight: bold;
+    font-size: 15px;
     letter-spacing: -.3px; 
     color: #999;
     width: 20%; 
@@ -46,8 +47,8 @@
     letter-spacing: -.3px; 
     width: 9rem; 
     display: inline-block; 
-    text-align: right; 
     margin-right: 2rem;
+    margin-left: 2rem; 
 }
 .card-text2{
     font-weight: bold;
@@ -59,8 +60,10 @@
 }
 
 .input{
-    width: 20rem;
+    width: 100%;
+    max-width: 35rem;
     height: 4rem;
+    margin-left: -5rem;
     line-height: 0px;
     font-size: 10px;
 }
@@ -70,6 +73,7 @@
     display: flex;
     align-items: center; 
     margin-top: 1rem;
+    
 }
 
 .checkbox {
@@ -174,4 +178,20 @@
 .footer {
     background-color: #f4f4f4;
     min-height: 50px
+}
+
+.change-button {
+  background-color: transparent; /* Based on your need, match this with your primary color if needed */
+  color: #a51e36; /* Assuming this matches mat-stroked-button's primary color */
+  border: 1px solid #a51e36; /* Simulate the stroked effect */
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: -.3px;
+  margin-bottom: 1rem;
+  margin-left: 8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
 }
