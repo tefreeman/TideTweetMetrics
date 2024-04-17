@@ -36,11 +36,5 @@ export class MainViewComponent {
       this.authService.signout();
     }
 
-    toggleEditMode(){
-      this.editModeService.toggleEditMode();
-    }
-
-    update(){
-      
-    }
+  
 }
