@@ -42,11 +42,11 @@ export class StatCardComponent implements OnInit {
     return data.type === "stat-comp";
   }
 
-  onMouseOver(): void {
+  onMouseDown(): void {
     this.applyClass = false; 
   }
 
-  onMouseLeave(): void {
+  onMouseUp(): void {
     this.applyClass = true; 
   }
 
