@@ -8,8 +8,7 @@
 
 .title{
     margin-left: 15rem;
-    margin-top: 70px;
-    margin-bottom: 15px;
+    margin-top: 5rem;
     font-weight: bolder;
     color: white;
     font-size: 25px !important;
@@ -25,17 +24,11 @@
     justify-content: space-between; /* Space elements horizontally */
 }
 
-.update-button {
-    margin-right: 100px;
-    margin-bottom: 15px;
-    align-self: flex-end;
-    
-}
 
 .dataCardContainer {
     margin: 0rem 15rem;
     display: grid;
-    gap: 20px;
+    gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
     grid-auto-flow: dense;
     justify-content: center;
@@ -54,7 +47,7 @@
 .graphContainer {
     margin: 2rem 15rem 0rem 15rem;
     display: grid;
-    gap: 50px;
+    gap: 1rem;
 
     // You can change the first number to adjust the column size for the graphs. RADICAL!
     grid-template-columns: repeat(3, minmax(15rem, 1fr));
