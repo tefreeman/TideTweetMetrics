@@ -65,3 +65,17 @@
   object-fit: cover;
 }
 
+
+/* .underline {
+  display: inline-block;
+  width: 3rem;         // Set a fixed width sufficient to accommodate the largest text
+  text-align: center;  // This centers the text within the fixed width
+  border-bottom: 3px solid #a51e36;  // Your existing underline style
+  padding-bottom: 2px;
+} */
+
+.text {
+  font-weight: bold;
+  font-size: 12px; 
+  letter-spacing: -.3px;
+}
