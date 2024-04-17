@@ -1,12 +1,10 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { T_MetricValue } from '../../../core/interfaces/metrics-interface';
 import { MatCardActions, MatCardHeader, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatDivider } from '@angular/material/divider';
 import { DecimalPipe } from '@angular/common';
-import { I_KeyTranslator } from '../../../core/interfaces/key-translator-interface';
-import { IDisplayableStats, I_StatValueData } from '../../../core/interfaces/displayable-interface';
-import { KeyTranslatorService } from '../../../core/services/key-translator.service';
+import { I_StatValueData } from '../../core/interfaces/displayable-interface';
+import { KeyTranslatorService } from '../../core/services/key-translator.service';
 
 
 @Component({

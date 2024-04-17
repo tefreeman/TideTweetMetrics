@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { DashboardComponent } from "./dashboard/dashboard.component";
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgFor } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { DashboardComponent } from '../registered/dashboard/dashboard.component';
 
 @Component({
     selector: 'app-main-view',
