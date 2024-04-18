@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { IDisplayableStats, I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { IDisplayableStats, I_DisplayableRequest, I_DisplayableRequestMap } from '../interfaces/displayable-interface';
 
 
 let test_displayed_data: I_DisplayableRequest = {
@@ -58,9 +58,27 @@ export class MockDataService {
   }
 
 
-  getMockData(): I_DisplayableRequest[] {
-    return [test_displayed_data, test_displayed_data1, test_displayed_data2, test_displayed_data3,test_displayed_data4, test_displayed_data5, test_displayed_data6];
+  getMockData(): I_DisplayableRequestMap {
+    return {
+      "home": {
+        "dashboard-graph": {
+        displayables: [
+          test_displayed_data6,
+          test_displayed_data5
+        ],
+        type: 'graph'
+      },
+
+        "dashboard-card": {
+        displayables: [
+          test_displayed_data,
+          test_displayed_data1
+        ],
+        type: 'stat'
+      },
+      // Add more mock data as needed for your use case
+    }
   }
 
-
+  }
 }

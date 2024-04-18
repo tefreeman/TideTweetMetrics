@@ -11,6 +11,8 @@ import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
 import { StatCardComponent } from '../stat-card/stat-card.component';
 import { AddGraphComponent } from '../add-graph/add-graph.component';
+import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-graph-grid',
@@ -23,31 +25,33 @@ import { AddGraphComponent } from '../add-graph/add-graph.component';
 })
 export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit { 
   @ViewChildren('graphcard', {read: ElementRef}) statCards!: QueryList<any>;
-  @Input({required: true}) data$!: Observable<any>;
   @Input({required: true}) name!: string;
+  @Input({required: true}) page!: string;
   @Input() minColSize!: string;
   @Input() maxColSize!: string;
   @Input() cardHeight!: string;
   @Input() maxCardWidth!: string;
 
   editModeService: EditModeService = inject(EditModeService);
+  displayProviderService: DisplayableProviderService = inject(DisplayableProviderService);
+
 
   public dataGrid: MoveableGridTilesService;
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
-
-
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
-
+  private type = 'graph';
 
   constructor(private cdr: ChangeDetectorRef, public dialog: MatDialog, private ngZone: NgZone) {
     this.dataGrid = new MoveableGridTilesService();
     this.destroy$ = new Subject<void>();
+
+
   }
 
   ngOnInit() {
-    this.subscription = this.data$.subscribe((data) => {
+    this.subscription = this.displayProviderService.getDisplayables(this.page, this.name, this.type).subscribe((data) => {
       this.dataGrid.dataArr = [];
 
       data.forEach((displayable: any) => {

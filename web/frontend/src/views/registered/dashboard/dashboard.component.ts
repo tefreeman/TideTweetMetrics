@@ -47,13 +47,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(public dialog: MatDialog) {
 }
 
-  getCardDisplayables(): Observable<T_DisplayableDataType[]> {
-    return this._displayProcessor.displayables$.pipe(map((displayables) => displayables.filter((displayable) => this.isCard(displayable))));
-  }
-  getGraphDisplayables(): Observable<T_DisplayableDataType[]> {
-    return this._displayProcessor.displayables$.pipe(map((displayables) => displayables.filter((displayable) => this.isGraph(displayable))));
-  }
-
   ngOnInit() {
   
 

@@ -12,8 +12,8 @@
 </div>
 
 
-  <app-card-grid [data$]="getCardDisplayables()" [name]="'Dashboard'" [cardHeight]="'8rem'" [maxColSize]="'1fr'" [minColSize]="'15rem'" [maxCardWidth]="'30rem'"></app-card-grid>
-  <app-graph-grid [data$]="getGraphDisplayables()" [name]="'Dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'28rem'"></app-graph-grid>
+  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'8rem'" [maxColSize]="'1fr'" [minColSize]="'15rem'" [maxCardWidth]="'30rem'"></app-card-grid>
+  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'28rem'"></app-graph-grid>
 
 
   <!-- will get rid of this eventually-->
