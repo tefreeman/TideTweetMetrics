@@ -12,6 +12,7 @@
       <app-graph-card
        [ngStyle]="{height: cardHeight, maxWidth: maxCardWidth}"
         class="dataCard"
+        (deleteEvent)="deleteCard(i)"
         #graphcard
         cdkDrag
         [displayableData]="displayableData"

@@ -37,7 +37,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   public dataGrid: MoveableGridTilesService;
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
   displayProviderService: DisplayableProviderService = inject(DisplayableProviderService);
-
+  displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
@@ -132,5 +132,8 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-
+  deleteCard(i: number) {
+    this.displayRequestManagerService.removeRequest(this.page, this.name, this.type, i);
+    this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
+  }
 }

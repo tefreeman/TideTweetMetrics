@@ -36,6 +36,12 @@ export class DisplayRequestManagerService {
     });
   }
 
+  public saveRequests(): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      this._auth_service.setProfileDoc({ displays: requests });
+    });
+  }
+  
   public getRequests$(): Observable<I_DisplayableRequestMap> {
     return this._auth_service.getProfileDoc().pipe(
       filter(profile => !!profile), // Only continue if profile is truthy
@@ -44,17 +50,20 @@ export class DisplayRequestManagerService {
     );
   }
 
+  private getName(type:string, name: string) {
+    return name + "-" + type;
+  }
   addRequest(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
     this.requests$.pipe(first()).subscribe(requests => {
       // Ensure the structure for page and name exists
       if (!requests[page]) {
         requests[page] = {};
       }
-      if (!requests[page][name]) {
-        requests[page][name] = { displayables: [], type };
+      if (!requests[page][this.getName(type, name)]) {
+        requests[page][this.getName(type, name)] = { displayables: [], type };
       }
       // Add the new request
-      requests[page][name].displayables.push(request);
+      requests[page][this.getName(type, name)].displayables.push(request);
       this.requests$.next({...requests}); // Emit the modified copy
     });
   }
@@ -65,30 +74,30 @@ export class DisplayRequestManagerService {
       if (!requests[page]) {
         requests[page] = {};
       }
-      if (!requests[page][name]) {
-        requests[page][name] = { displayables: [], type };
+      if (!requests[page][this.getName(type, name)]) {
+        requests[page][this.getName(type, name)] = { displayables: [], type };
       }
 
     });
   }
 
-  removeDisplay(page: string, name: string): void {
+  removeDisplay(page: string, name: string, type: string): void {
     this.requests$.pipe(first()).subscribe(requests => {
       // Ensure the structure for page and name exists
       if (!requests[page]) {
         return;
       }
-      if (!requests[page][name]) {
+      if (!requests[page][this.getName(type, name)]) {
         return;
       }
-      delete requests[page][name];
+      delete requests[page][this.getName(type, name)];
 
     });
   }
-  
-  removeRequest(page: string, name: string, index: number): void {
+
+  removeRequest(page: string, name: string, type:string, index: number): void {
     this.requests$.pipe(first()).subscribe(requests => {
-      let requestSet = requests[page]?.[name];
+      let requestSet = requests[page]?.[this.getName(type, name)];
       if (requestSet && requestSet.displayables.length > index) {
         requestSet.displayables.splice(index, 1);
         this.requests$.next({...requests}); // Emit the modified requests map
@@ -96,13 +105,15 @@ export class DisplayRequestManagerService {
     });
   }
 
-  editRequest(page: string, name: string, request: I_DisplayableRequest, index: number): void {
+  editRequest(page: string, name: string, type: string, request: I_DisplayableRequest, index: number): void {
     this.requests$.pipe(first()).subscribe(requests => {
-      let requestSet = requests[page]?.[name];
+      let requestSet = requests[page]?.[this.getName(type, name)];
       if (requestSet && requestSet.displayables.length > index) {
         requestSet.displayables[index] = request;
         this.requests$.next({...requests}); // Emit the modified requests map
       }
     });
   }
+
+
 }

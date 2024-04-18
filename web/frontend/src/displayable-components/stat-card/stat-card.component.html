@@ -2,7 +2,7 @@
 
 <mat-card class="elevation" [ngClass]="{'shake': (editMode | async)}" *ngIf="placeHolderForEdit == false">
 
-  <button *ngIf="editMode | async" mat-icon-button class="delete-icon" (click)="''">
+  <button *ngIf="editMode | async" mat-icon-button class="delete-icon" (click)="onDelete()">
     <mat-icon>close</mat-icon>
   </button>
   

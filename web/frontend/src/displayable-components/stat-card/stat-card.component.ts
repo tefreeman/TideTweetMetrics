@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { AsyncPipe, NgClass, NgIf, NgSwitch } from '@angular/common';
 import { StatTrendComponent } from '../stat-trend/stat-trend.component';
 import { StatValueComponent } from '../stat-value/stat-value.component';
@@ -8,6 +8,7 @@ import { MaterialModule } from '../../core/modules/material/material.module';
 import { T_DisplayableDataType, I_StatValueData, I_StatTrendData, I_StatCompData } from '../../core/interfaces/displayable-interface';
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { Observable } from 'rxjs';
+import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
 
 @Component({
   selector: 'app-stat-card',
@@ -18,10 +19,10 @@ import { Observable } from 'rxjs';
 })
 export class StatCardComponent implements OnInit {
   editModeService: EditModeService = inject(EditModeService);
-
   @Input({required: true}) displayableData!: T_DisplayableDataType;
   @Input({required: true}) placeHolderForEdit!: boolean;
-
+  @Output() deleteEvent = new EventEmitter<void>();
+  
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   applyClass = true; 
   
@@ -50,4 +51,7 @@ export class StatCardComponent implements OnInit {
     this.applyClass = true; 
   }
 
+  onDelete(): void {
+    this.deleteEvent.emit();
+  }
 }
