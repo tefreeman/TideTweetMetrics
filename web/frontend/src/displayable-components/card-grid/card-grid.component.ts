@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
 import { T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
 import { AddCardComponent } from '../add-card/add-card.component';
+import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
 
 @Component({
   selector: 'app-card-grid',
@@ -24,31 +25,31 @@ import { AddCardComponent } from '../add-card/add-card.component';
 
 export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit { 
   @ViewChildren('statcard', {read: ElementRef}) statCards!: QueryList<any>;
-  @Input({required: true}) data$!: Observable<any>;
   @Input() minColSize!: string;
   @Input() maxColSize!: string;
   @Input() maxCardWidth!: string;
   @Input() cardHeight!: string;
   @Input({required: true}) name!: string;
+  @Input({required: true}) page!: string;
 
   editModeService: EditModeService = inject(EditModeService);
 
   public dataGrid: MoveableGridTilesService;
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
-
+  displayProviderService: DisplayableProviderService = inject(DisplayableProviderService);
 
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
-
-
+  private type = 'card';
   constructor(private cdr: ChangeDetectorRef, public dialog: MatDialog, private ngZone: NgZone) {
     this.dataGrid = new MoveableGridTilesService();
     this.destroy$ = new Subject<void>();
+
   }
 
   ngOnInit() {
-    this.subscription = this.data$.subscribe((data) => {
+    this.subscription = this.displayProviderService.getDisplayables(this.page, this.name, this.type).subscribe((data) => {
       this.dataGrid.dataArr = [];
 
       data.forEach((displayable: any) => {

@@ -1,10 +1,10 @@
-import { I_DisplayableRequest } from "./displayable-interface";
+import { I_DisplayableRequest, I_DisplayableRequestMap } from "./displayable-interface";
 
 
 
 export interface I_Profile {
     "defaultAccount": string,
-    "displays": I_DisplayableRequest[],
+    "displays": I_DisplayableRequestMap,
     "doWantEmailReports": boolean,
 }
 

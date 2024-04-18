@@ -1,67 +1,108 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { MetricService } from './metric.service';
-import { BehaviorSubject, combineLatestWith, filter, first, map, Observable, Subject, take } from 'rxjs';
-import { MetricContainer } from './metric-container';
-import { I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { BehaviorSubject, filter, first, map, Observable } from 'rxjs';
+import { I_DisplayableRequest, I_DisplayableRequestMap } from '../interfaces/displayable-interface';
 import { MockDataService } from './mock-data.service';
-
 
 @Injectable({
   providedIn: 'root',
 })
 export class DisplayRequestManagerService {
   private _auth_service = inject(AuthService);
-  _mockDataService = inject(MockDataService);
-  
-  private requests: I_DisplayableRequest[] = [];
-  public requests$ = new BehaviorSubject<I_DisplayableRequest[]>([]);
+  private _mockDataService = inject(MockDataService);
 
+  private requests$ = new BehaviorSubject<I_DisplayableRequestMap>({});
 
   constructor() {
     this.initRequests();
-    this._mockDataService;
-}
+  }
 
-private initRequests(): void {
-    this.getRequests$().subscribe(requests => {
-        this.requests = requests;
-        if (this._mockDataService.overrideProfile == true)
-          this.requests = this._mockDataService.getMockData();
-        else
-          this.requests = this.requests.concat(this._mockDataService.getMockData());
-
-
-        this.requests$.next(this.requests); // Emit a copy of the requests array
-    });
-}
-
-public getRequests$(): Observable<I_DisplayableRequest[]> {
-    return this._auth_service.getProfileDoc().pipe(
-        filter(profile => !!profile), // Only continue if profile is truthy (not null, undefined, etc.)
-        map(profile => profile!.displays),
-        take(1) // Emit the value from the source Observable and then complete, after emitting once
+  public getRequestsByName(page: string, name: string): Observable<I_DisplayableRequest[]> {
+    return this.requests$.pipe(
+      map(requests => {
+        // Directly return the displayables if the key exists, otherwise an empty array
+        return requests[page]?.[name]?.displayables || [];
+      })
     );
-}
+  }
 
-addRequest(request: I_DisplayableRequest, index: number): void {
-    const newRequests = [...this.requests];         // Copy the array
-    newRequests.splice(index, 0, request);          // Modify the copy
-    this.requests$.next(newRequests);               // Emit the modified copy
-    this.requests = newRequests;                    // Update the internal state
-}
+  private initRequests(): void {
+    this.getRequests$().subscribe(requests => {
+      if (this._mockDataService.overrideProfile == true) {
+        this.requests$.next(this._mockDataService.getMockData());
+      } else {
+        this.requests$.next(requests);
+      }
+    });
+  }
 
-removeRequest(index: number): void {
-    const newRequests = [...this.requests];
-    newRequests.splice(index, 1);
-    this.requests$.next(newRequests);
-    this.requests = newRequests;
-}
+  public getRequests$(): Observable<I_DisplayableRequestMap> {
+    return this._auth_service.getProfileDoc().pipe(
+      filter(profile => !!profile), // Only continue if profile is truthy
+      map(profile => profile!.displays),
+      first() // Complete after the first emission
+    );
+  }
 
-editRequest(request: I_DisplayableRequest, index: number): void {
-    const newRequests = [...this.requests];
-    newRequests[index] = request;
-    this.requests$.next(newRequests);
-    this.requests = newRequests;
-}
+  addRequest(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      // Ensure the structure for page and name exists
+      if (!requests[page]) {
+        requests[page] = {};
+      }
+      if (!requests[page][name]) {
+        requests[page][name] = { displayables: [], type };
+      }
+      // Add the new request
+      requests[page][name].displayables.push(request);
+      this.requests$.next({...requests}); // Emit the modified copy
+    });
+  }
+
+  addDisplay(page: string, name: string, type: 'graph' | 'stat'): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      // Ensure the structure for page and name exists
+      if (!requests[page]) {
+        requests[page] = {};
+      }
+      if (!requests[page][name]) {
+        requests[page][name] = { displayables: [], type };
+      }
+
+    });
+  }
+
+  removeDisplay(page: string, name: string): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      // Ensure the structure for page and name exists
+      if (!requests[page]) {
+        return;
+      }
+      if (!requests[page][name]) {
+        return;
+      }
+      delete requests[page][name];
+
+    });
+  }
+  
+  removeRequest(page: string, name: string, index: number): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      let requestSet = requests[page]?.[name];
+      if (requestSet && requestSet.displayables.length > index) {
+        requestSet.displayables.splice(index, 1);
+        this.requests$.next({...requests}); // Emit the modified requests map
+      }
+    });
+  }
+
+  editRequest(page: string, name: string, request: I_DisplayableRequest, index: number): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      let requestSet = requests[page]?.[name];
+      if (requestSet && requestSet.displayables.length > index) {
+        requestSet.displayables[index] = request;
+        this.requests$.next({...requests}); // Emit the modified requests map
+      }
+    });
+  }
 }
