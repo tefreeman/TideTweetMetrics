@@ -71,7 +71,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span class="text">{{ user.email }}</span> <!-- Assuming you want to display the email as the account name -->
             <div style="margin-right: 10px;">
-              <button class="accept-button">
+              <button class="accept-button" (click)="approveUser(user)">
                 <i class="fa fa-check fa-1x"></i>
               </button>
               <button class="decline-button"  (click)="deleteUser(user)">

@@ -38,7 +38,7 @@ export class AuthService implements OnDestroy{
   }
 
 
-
+  
   adminGetAllUsersWithRoles$(): Observable<I_UserAndRole[]> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'getAllUsersWithRoles');
@@ -55,6 +55,22 @@ export class AuthService implements OnDestroy{
     );
   }
 
+  updateUserRole$(uid: string): Observable<boolean> {
+    // Create a callable function reference
+    const callable = httpsCallable(this._functions, 'updateUserRole');
+    return from(callable({ uid })).pipe(
+      map((result) => {
+        // Read result of the Cloud Function.
+        console.log(result.data);
+        return true; 
+      }),
+      catchError((error) => {
+        console.error('Error calling function:', error);
+        return throwError(false); // or return an empty array, etc., depending on your needs
+      })
+    );
+  }
+  
   deleteUserAndProfile$(uid: string): Observable<boolean> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'deleteUserAndProfile');
