@@ -2,8 +2,11 @@
   <div class="title-container">
     <h2 class="title">Dashboard</h2>
     <div>
-        <button mat-raised-button aria-label="Edit" color="primary" (click)="toggleEditMode()">
-          <span class="text">Edit</span>
+        <button *ngIf="(editMode | async)" mat-raised-button aria-label="Edit" color="accent" (click)="toggleEditMode()"  >
+          <span class="text" style="color: #A51E36">Save</span>
+        </button>
+        <button *ngIf="!(editMode | async)" mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
+          <span class="text" >Edit</span>
         </button>
         <button mat-raised-button aria-label="Update" color="primary" (click)="update()">
           <span class="text">Update</span>
@@ -12,8 +15,8 @@
 </div>
 
 
-  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'128px'" [maxColSize]="'1rem'" [minColSize]="'240px'"></app-card-grid>
-  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'160px'"></app-graph-grid>
+  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'8rem'" [maxColSize]="'1rem'" [minColSize]="'18rem'"></app-card-grid>
+  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
 
 
   <!-- will get rid of this eventually-->
