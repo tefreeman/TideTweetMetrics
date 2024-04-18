@@ -2,6 +2,11 @@
 
 <mat-card class="elevation" [ngClass]="{'shake': (editMode | async)}" *ngIf="placeHolderForEdit == false">
 
+  <button *ngIf="editMode | async" mat-icon-button class="delete-icon" (click)="''">
+    <mat-icon>close</mat-icon>
+  </button>
+  
+
   <ng-container *ngIf="isStatValue(displayableData)">
     <app-stat-value [displayableData]="displayableData"></app-stat-value>
   </ng-container>
@@ -17,11 +22,3 @@
 </mat-card>
 
 
-
-<mat-card class="add-card" *ngIf="placeHolderForEdit == true">
-
-  <div class="icon-container">
-    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add" class="custom-icon"></mat-icon>
-  </div>
-
-</mat-card>

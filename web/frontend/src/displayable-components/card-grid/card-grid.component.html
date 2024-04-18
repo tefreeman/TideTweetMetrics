@@ -10,8 +10,8 @@
   <ng-container *ngFor="let displayableData of dataGrid.dataArr; let i = index">
     <ng-container>
       <app-stat-card
-        [ngStyle]="{height: cardHeight}"
-        class="dataCard"
+        [ngStyle]="{'max-width': maxCardWidth, 'height': cardHeight}"
+        class="dataCard" 
         #statcard
         cdkDrag
         [displayableData]="displayableData"
@@ -19,6 +19,14 @@
       ></app-stat-card>
     </ng-container>
   </ng-container>
-  <!--hack need to fix-->
-  <!-- <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="dataGrid.dataArr[0]" [placeHolderForEdit]="true"></app-stat-card> -->
+
+
+   <mat-card    [ngStyle]="{'max-width': maxCardWidth, 'height': 'cardHeight'}"
+   class="card-add" (click)="openStatCardDialog()" *ngIf="editMode | async">
+    <div class="icon-container">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add" class="custom-icon"></mat-icon>
+    </div>
+  
+  </mat-card>
+  
 </div>

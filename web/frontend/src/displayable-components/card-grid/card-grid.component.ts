@@ -11,6 +11,7 @@ import { EditModeService } from '../../core/services/edit-mode.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
 import { T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
+import { AddCardComponent } from '../add-card/add-card.component';
 
 @Component({
   selector: 'app-card-grid',
@@ -26,7 +27,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input({required: true}) data$!: Observable<any>;
   @Input() minColSize!: string;
   @Input() maxColSize!: string;
+  @Input() maxCardWidth!: string;
   @Input() cardHeight!: string;
+  @Input({required: true}) name!: string;
 
   editModeService: EditModeService = inject(EditModeService);
 
@@ -105,18 +108,6 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataGrid.swapClosestElements(event.previousIndex, { x: event.dropPoint.x, y: event.dropPoint.y });
   }
 
-  isCard(displayableData: T_DisplayableDataType): boolean {
-    return displayableData.type === 'stat-value' || 
-           displayableData.type === 'stat-trend' || 
-           displayableData.type === 'stat-comp';
-  }
-
-
-  isGraph(displayableData: T_DisplayableDataType): boolean {
-    return displayableData.type === 'graph-line' || 
-           displayableData.type === 'graph-bar';
-  }
-
   get containerStyle(): {[key: string]: string} {
     const colWidth = `repeat(auto-fit, minmax(${this.minColSize}, ${this.maxColSize}))`;
   
@@ -124,4 +115,21 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
       'grid-template-columns': colWidth,
     };
   }
+
+  openStatCardDialog() {
+    
+
+    const dialogRef = this.dialog.open(AddCardComponent, {
+      height: "calc(100% - 60px)",
+      width: "calc(100% - 60px)",
+      maxWidth: "100%",
+      maxHeight: "100%"
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
+
 }
