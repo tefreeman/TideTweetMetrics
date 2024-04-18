@@ -163,7 +163,6 @@ export class GraphMakerService {
 
     const min = Math.min(...data);
     const max = Math.max(...data);
-    console.log(min, max, data);
     return [min, max];
   }
 

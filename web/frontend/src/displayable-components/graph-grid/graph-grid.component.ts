@@ -13,6 +13,7 @@ import { StatCardComponent } from '../stat-card/stat-card.component';
 import { AddGraphComponent } from '../add-graph/add-graph.component';
 import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
 import { Router } from '@angular/router';
+import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
 
 @Component({
   selector: 'app-graph-grid',
@@ -34,6 +35,7 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editModeService: EditModeService = inject(EditModeService);
   displayProviderService: DisplayableProviderService = inject(DisplayableProviderService);
+  displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
 
 
   public dataGrid: MoveableGridTilesService;
@@ -144,6 +146,11 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
+  }
+
+  deleteCard(i: number) {
+    this.displayRequestManagerService.removeRequest(this.page, this.name, this.type, i);
+    this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
 }
 
