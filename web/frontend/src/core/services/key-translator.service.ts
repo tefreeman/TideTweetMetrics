@@ -30,7 +30,7 @@ export class KeyTranslatorService {
     "tweet_videos": { full: "videos", abr: "TVid", desc: "Number of Videos in a given Tweet", order: 2 },
     "tweet_cards": { full: "cards", abr: "TCard", desc: "Number of Cards in a given Tweet", order: 2 },
     "tweet_referenced_tweets": { full: "Referenced Tweets", abr: "TRT", desc: "Number of Referenced Tweets in a given Tweet", order: 2 },
-    "tweet_count": { full: "'Count' counts", abr: "TCount", desc: "Number of counts' in a given Tweet", order: 2 },
+    "tweet_count": { full: "'Count' counts", abr: "TCount", desc: "Number of 'counts' in a given Tweet", order: 2 },
     "tweet_chars": { full: "characters", abr: "TChar", desc: "Number of characters in a given Tweet", order: 2 },
     "tweet_words": { full: "words", abr: "TWord", desc: "Number of words in a given Tweet", order: 2 },
     "tweet_annotations": { full: "annotations", abr: "TAnn", desc: "Number of annotations in a given Tweet", order: 2 },
