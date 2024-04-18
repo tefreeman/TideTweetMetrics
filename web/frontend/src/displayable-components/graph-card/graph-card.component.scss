@@ -8,7 +8,14 @@
     height: 100%;
 
   }
-  
+  .delete-icon {
+    z-index: 2;
+    position: absolute;
+    scale: 1.25;
+    right: 0;
+    top: 0;
+    color: red; /* Makes the icon red */
+  }
   
   .card::before {
     content: "";
