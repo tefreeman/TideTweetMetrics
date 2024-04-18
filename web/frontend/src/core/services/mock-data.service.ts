@@ -20,7 +20,7 @@ let test_displayed_data2: I_DisplayableRequest = {
   type: "stat-comp",
 }
 let test_displayed_data3: I_DisplayableRequest = {
-  stat_name: "tweet_retweets-mean",
+  stat_name: "tweet_retweets-median",
   ownersConfig: { type: "specific", owners: ["alabama_cs", "eecs_utk"] },
   type: "stat-comp",
 }
