@@ -8,6 +8,16 @@ export interface I_OwnerConfig {
     count?: number;
     owners: string[];
 }
+export interface I_DisplayableRequestEntry {
+  displayables: I_DisplayableRequest[];
+  type: 'graph' | 'stat';
+}
+
+export interface I_DisplayableRequestMap {
+    [page: string]: {
+      [name: string]: I_DisplayableRequestEntry;
+  }
+}
 
 export interface I_DisplayableRequest {
     stat_name: string;

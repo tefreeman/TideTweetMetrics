@@ -15,12 +15,14 @@ private _graphService = inject(DisplayableProcessorService);
 private _metricsService = inject(MetricService);
 private _displayReqService = inject(DisplayRequestManagerService);
 
-public displayables$: Observable<T_DisplayableDataType[]>;
 
 constructor() {
-  this.displayables$ = combineLatest([
+}
+
+public getDisplayables(page: string, name: string, type: string): Observable<T_DisplayableDataType[]> {
+  return  combineLatest([
     this._metricsService.getMetricContainer$(),
-    this._displayReqService.requests$
+    this._displayReqService.getRequestsByName(page, name + "-" + type)
   ]).pipe(
     tap(([metricContainer, requests]) =>
       console.log('Processing requests', requests, metricContainer)
@@ -29,8 +31,10 @@ constructor() {
       of(this.processRequests(metricContainer, requests))
     )
   );
-}
+  
+  
 
+}
 private processRequests(metricContainer: MetricContainer, requests: I_DisplayableRequest[]): T_DisplayableDataType[] {
   const displayables: T_DisplayableDataType[] = [];
   for (let request of requests) {
