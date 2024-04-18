@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 }
 
   ngOnInit() {
-  
+    
 
   }
 
@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   
   }
   
-
+  
 
   
   isCard(displayableData: T_DisplayableDataType): boolean {
@@ -116,5 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     
   }
 
+  
 
 }
