@@ -17,7 +17,7 @@ let test_displayed_data1: I_DisplayableRequest = {
 let test_displayed_data4: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
   ownersConfig: {type: "specific", owners: ["alabama_cs", "msu_egr"]},
-  type: "stat-comp",
+  type: "graph-line",
 }
 
 
@@ -64,7 +64,8 @@ export class MockDataService {
         "dashboard-graph": {
         displayables: [
           test_displayed_data6,
-          test_displayed_data5
+          test_displayed_data5,
+          test_displayed_data4
         ],
         type: 'graph'
       },
