@@ -10,6 +10,7 @@ import { MaterialModule } from '../../core/modules/material/material.module';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
 import { StatCardComponent } from '../stat-card/stat-card.component';
+import { AddGraphComponent } from '../add-graph/add-graph.component';
 
 @Component({
   selector: 'app-graph-grid',
@@ -23,9 +24,11 @@ import { StatCardComponent } from '../stat-card/stat-card.component';
 export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit { 
   @ViewChildren('graphcard', {read: ElementRef}) statCards!: QueryList<any>;
   @Input({required: true}) data$!: Observable<any>;
+  @Input({required: true}) name!: string;
   @Input() minColSize!: string;
   @Input() maxColSize!: string;
   @Input() cardHeight!: string;
+  @Input() maxCardWidth!: string;
 
   editModeService: EditModeService = inject(EditModeService);
 
@@ -122,6 +125,21 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     return {
       'grid-template-columns': colWidth,
     };
+  }
+
+  openGraphCardDialog() {
+    
+
+    const dialogRef = this.dialog.open(AddGraphComponent, {
+      height: "calc(100% - 60px)",
+      width: "calc(100% - 60px)",
+      maxWidth: "100%",
+      maxHeight: "100%"
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }
 
