@@ -1,19 +1,19 @@
 <div class="dashboardContainer">
   <div class="title-container">
     <h2 class="title">Dashboard</h2>
-    <div class="button-container">
-        <button mat-button aria-label="Edit" [style.color]="'white'" (click)="toggleEditMode()">
+    <div>
+        <button mat-raised-button aria-label="Edit" color="primary" (click)="toggleEditMode()">
           <span class="text">Edit</span>
         </button>
-        <button mat-button aria-label="Update" [style.color]="'white'" (click)="update()">
+        <button mat-raised-button aria-label="Update" color="primary" (click)="update()">
           <span class="text">Update</span>
         </button>
     </div>
 </div>
 
 
-  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'8rem'" [maxColSize]="'20rem'" [minColSize]="'15rem'"></app-card-grid>
-  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'28rem'"></app-graph-grid>
+  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'128px'" [maxColSize]="'1rem'" [minColSize]="'240px'"></app-card-grid>
+  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'160px'"></app-graph-grid>
 
 
   <!-- will get rid of this eventually-->
