@@ -71,6 +71,24 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  approveUser(user: I_UserAndRole) {
+    const userId = user.uid; // Assuming `uid` is the unique identifier for the user in your I_UserAndRole interface.
+    if (!userId) return; // Safety check
+  
+    this.authService.updateUserRole$(userId).pipe(
+      take(1)
+    ).subscribe({
+      next: (success) => {
+        console.log(`allow successful for userId ${userId}`);
+        // Filter out the user from the usersAndRoles array
+        this.usersAndRoles = this.usersAndRoles.filter(u => u.uid !== userId);
+      },
+      error: (error) => {
+        // Handle any errors here, such as showing an error message to the user
+        console.error('allow failed', error);
+      }
+    });
+  }
   resetMyPassword() {
     this.authService.sendPasswordResetEmailCurrentUser().then(() => {
     
