@@ -76,7 +76,8 @@ export class GraphMakerService {
             enabled: graphBarData.owners.length < 15,
             fontSize: 10,
             fontWeight: 'bold', 
-            fontFamily: 'Open Sans',
+            fontFamily: 'Open Sans', 
+          
           },
           position: 'bottom',
         },
