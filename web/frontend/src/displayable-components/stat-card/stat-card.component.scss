@@ -1,6 +1,14 @@
 // Remove empty ruleset for mat-card
 @use '@angular/material' as mat;
 
+.delete-icon {
+  position: absolute;
+  scale: 1.25;
+  right: 0;
+  top: 0;
+  color: red; /* Makes the icon red */
+}
+
 .elevation {
     // Adds a shadow for elevation level 2 with default color and full opacity:
     @include mat.elevation(5);
@@ -11,26 +19,6 @@
     animation-play-state: paused;
   }
 
-  .add-card::before {
-    content: "";
-    position: absolute;
-    bottom: 0; /* Move the line to the bottom */
-    left: 0; /* Keep the line at the left edge of the card */
-    width: 100%; /* Set the width to cover the entire bottom */
-    height: .3rem; /* Set the height of the line */
-    background-color: #35a51e;
-    opacity: 0.75;
-  }
-  .icon-container {
-    display: flex; /* Enable flexbox for the container */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100%; /* Make sure it occupies full parent's height */
-  }
-  
-  .custom-icon {
-    transform: scale(2);
-  }
 
   @keyframes apple-like-gentle-shake {
     0%, 100% { 
