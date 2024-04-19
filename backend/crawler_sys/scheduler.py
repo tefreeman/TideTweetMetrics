@@ -53,10 +53,12 @@ class CrawlerScheduler:
 
     def run_crawler(self, crawler: Crawler):
         try:
-            crawl_account = self._account_manager.get_account()
-            crawler.init_driver_to_account(crawl_account)
-           
+ 
             while not self._link_queue.empty():
+
+                crawl_account = self._account_manager.get_account()
+                crawler.init_driver_to_account(crawl_account)
+                
                 self.wait()
 
                 page_link = self._link_queue.get()
@@ -69,7 +71,7 @@ class CrawlerScheduler:
                 page_link.set_domain("https://www.twitter.com")
 
                 url = page_link.get()
-                results = crawler.crawl(url, 10)
+                results = crawler.crawl(url, 35)
 
                 if len(results["errors"]) > 0:
                     print(results["errors"])
@@ -101,7 +103,9 @@ class CrawlerScheduler:
                 self._summary_report.add_data(results["profile"], tweets_result)
                 self._link_queue.task_done()
                 
-                crawl_account.rest(len(results["tweets"]))
+                if crawl_account.needs_long_rest():
+                    self._account_manager.return_offline(crawl_account)
+                    break
                 
         except Exception as e:
             logging.exception("ThreadFault")

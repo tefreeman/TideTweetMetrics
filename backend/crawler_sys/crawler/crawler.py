@@ -10,14 +10,14 @@ import database as db
 from utils.driver import create_undetected_driver
 from selenium.common.exceptions import WebDriverException
 from utils.error_sys import Error
-
+import time
 
 class CrawlResults(TypedDict):
     profile: Profile
     tweets: list[Tweet]
     raw_data: str | None
     errors: list[Error]
-
+    account_needs_rest: bool 
 
 class Crawler:
     """
@@ -42,10 +42,15 @@ class Crawler:
         Args:
             account: The account to be used for authentication.
         """
+        self.account = account
+        
+        if self.driver != None:
+            self.driver.quit()
+            time.sleep(5)
         self.driver = create_undetected_driver(
             account.get_chrome_profile(), account.get_chrome_profile()
         )
-        self.account = account
+
 
     def try_load_page(self, url, errors: list[Error]) -> None:
         """
@@ -79,6 +84,7 @@ class Crawler:
         if html_not_loaded_error != None:
             errors.append(html_not_loaded_error)
             return
+        
 
     def crawl(self, url: str, tweet_count: int) -> CrawlResults:
         """
@@ -96,6 +102,7 @@ class Crawler:
             "tweets": [],
             "raw_data": None,
             "errors": [],
+            "account_needs_rest": False,
         }
 
         self.try_load_page(url, results["errors"])
@@ -103,15 +110,11 @@ class Crawler:
         if len(results["errors"]) > 0:
             return results
 
-        if self.is_logged_in() == False:
-            self.account.login(self.driver)
+        if self.is_logged_in_quick() == False:
+            self.login(self.account)
             self.try_load_page(url, results["errors"])
 
-        # results["raw_data"] = self.get_raw_data()
         self.parse_tweets_and_profile(results, tweet_count, self.account)
-
-        # results["errors"] += profile_errors
-        # results["errors"] += tweet_errors
 
         cleaned_errors = [item for item in results["errors"] if item is not None]
         results["errors"] = cleaned_errors
@@ -142,6 +145,14 @@ class Crawler:
         """
         raise NotImplementedError()
 
+    def login(self) -> None:
+        """
+        Logs into an account using the web driver.
+
+        Args:
+            account: The account to log into.
+        """
+        raise NotImplementedError()
     def is_logged_in(self) -> bool:
         """
         Checks if the user is logged in.
@@ -151,6 +162,15 @@ class Crawler:
         """
         raise NotImplementedError()
 
+    def is_logged_in_quick(self) -> bool:
+        """
+        Quickly checks if the user is logged in.
+
+        Returns:
+            True if the user is logged in, False otherwise.
+        """
+        raise NotImplementedError()
+    
     def get_raw_data(self) -> str:
         """
         Retrieves the raw HTML data of the loaded page.
@@ -175,20 +195,3 @@ class Crawler:
         """
         raise NotImplementedError()
 
-    def parse_tweets(self) -> tuple[list[Tweet], str | None]:
-        """
-        Parses tweets from the loaded page.
-
-        Returns:
-            A tuple containing the parsed tweets and any encountered errors.
-        """
-        raise NotImplementedError()
-
-    def parse_profile(self) -> Profile:
-        """
-        Parses the profile from the loaded page.
-
-        Returns:
-            The parsed profile.
-        """
-        raise NotImplementedError()

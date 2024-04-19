@@ -14,42 +14,19 @@ import json
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
 from backend.encoders.twitter_api_encoder import ReferencedTweetType
-
-
+import time
+import random
 from urllib.parse import urlparse
 from selenium.common.exceptions import NoSuchElementException
-import time
 import logging
 from utils.error_sys import Error
-
+from backend.crawler_sys.utils.random_utils import sleep_normally_distributed
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class TwitterCrawler(Crawler):
-    p_tar = {
-        "container": "css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0",
-        "name": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-adyw6z.r-135wba7.r-1vr29t4.r-1awozwy.r-6koalj.r-1udh08x",
-        "tag_name": "css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978",
-        "description": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41",
-        "header_item_container": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-16dba41.r-56xrmm",
-        "header_items": "css-1qaijid.r-bcqeeo.r-qvutc0.r-poiln3.r-4qtqp9.r-1b7u577",
-        "stats_container": "css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj",
-        "stats_items": "css-1rynq56.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-1loqt21"
-    }
-    
-    t_tar = {
-        "tweets_container_tag": "section",
-        "tweet_container_class": "css-175oi2r.r-16y2uox.r-1wbh5a2.r-1ny4l3l",
-        "time_class": "css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-1q142lx r-1w6e6rj r-9aw3ui r-3s2u2q r-1loqt21".replace(" ", "."),
-        "time_post_attrib": "datetime",
-        "time_status_attrib": "href",
-        "post_text_class": "css-1rynq56 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-bnwqim".replace(" ", "."),
-        "post_stats_class": "css-175oi2r r-1kbdv8c r-18u37iz r-1wtj0ep r-1ye8kvj r-1s2bzr4".replace(" ", "."),
-        "post_stats_data_attrib": "aria-label",
-        "quoted_tweet_class": "css-175oi2r.r-9aw3ui.r-1s2bzr4",
-        "pinned_tweet_class": "css-1rynq56 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-37j5jr r-n6v787 r-1cwl3u0 r-b88u0q".replace(" ", "."),
-        "reposted_tweet_class": "css-1qaijid r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-bcqeeo r-qvutc0 r-poiln3 r-n6v787 r-1cwl3u0 r-b88u0q".replace(" ", "."),
-        
-    }
     
     def __init__(self) -> None:
         super().__init__()
@@ -80,7 +57,18 @@ class TwitterCrawler(Crawler):
                 return False
             
             return True
-            
+    
+    def is_logged_in_quick(self) -> bool:
+        try:
+            sleep_normally_distributed(3, 1, 1)
+            element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[contains(@data-testid, 'SideNav_AccountSwitcher')]"))
+        )
+            return True
+        except TimeoutException:
+            print("Element not found within the timeout period.")
+            return False
+
     # Load data into the driver
     def driver_load_page(self, url: str):
         self.driver.get(url)
@@ -135,6 +123,45 @@ class TwitterCrawler(Crawler):
     def is_tweet(self, tweet_json: dict[str]):
     # Check if the JSON object is a tweet
         return tweet_json['entryId'].startswith('tweet-')
+
+
+    
+    def find_element_by_text_case_insensitive(self, text):
+        try:
+            # Convert both the document text and the provided text to lowercase (or uppercase)
+            lower_text = text.lower()
+            xpath_expression = f"//*[translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='{lower_text}']"
+            element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, xpath_expression))
+            )
+            return element
+        except TimeoutException:
+            logging.info(f"Element with exact text '{text}' not found within the timeout period.")
+            return None
+    
+
+    def login(self, account: Account) -> None:
+        self.driver.get("https://twitter.com/i/flow/login")
+        
+        # Wait for the username input to be clickable
+        sleep_normally_distributed(2, 1, 1)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='text']"))).click()
+        sleep_normally_distributed(3, 2, 0.5)
+        username_input = self.driver.find_element(By.CSS_SELECTOR, "input[name='text']")
+        sleep_normally_distributed(3, 2, 0.5)
+        username_input.send_keys(account.get_username())
+        
+        # Wait and click the Next button
+        sleep_normally_distributed(3, 1, 1)
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Next']/.."))).click()
+        sleep_normally_distributed(3, 1, 1)
+        # Wait for the password input to be present
+        sleep_normally_distributed(3, 2, 0.5)  
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='password']"))).send_keys(account.get_password())
+        sleep_normally_distributed(3, 2, 0.5) 
+        # Wait and click the Login button
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Log in']/.."))).click()
+        sleep_normally_distributed(5, 2, 3)
 
     def convert_json_to_tweet(self, tweet_json):
         # Initialize a new Tweet object
@@ -235,8 +262,7 @@ class TwitterCrawler(Crawler):
     def scroll_to_bottom(self):
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         
-        
-    def parse_tweets_and_profile(self, result, tweet_count: int, account: Account) -> tuple[list[Tweet], Profile]:
+    def parse_tweets_and_profile(self, result, tweet_count: int, account: Account):
         tweet_queue: Queue = self.driver.get_tweets_queue()
         tweets: list[Tweet] = []
         profile: Profile
@@ -244,30 +270,42 @@ class TwitterCrawler(Crawler):
         account.start()
         
         #self.driver.register_cdp_listeners()
+        sleep_for = account.get_minute_rest_time()
+        sleep_normally_distributed(sleep_for-(sleep_for/4),sleep_for/2, 10)
         
         
+        last_tweet_count = 0
+        empty_count = 0
+
         while len(tweets) < tweet_count:
             
-            time.sleep(account.get_batch_sleep_time(tweet_count))
-            
             if tweet_queue.empty():
-                raise Error("NoTweetsFound")
-            
-            while tweet_queue.empty() == False:
-                tweets_json = tweet_queue.get()
-                
-                for tweet in tweets_json:
-                    if not self.is_tweet(tweet):
-                        continue
-                    tweet_obj, profile_obj = self.convert_json_to_tweet(tweet)
+                empty_count =+ 1
+                if empty_count > 5:
+                    result
+            else:
+                # TODO: add a error that better describes the issue
+
+                while tweet_queue.empty() == False:
+                    tweets_json = tweet_queue.get()
                     
-                    tweets.append(tweet_obj)
-                    profile = profile_obj
-            
+                    for tweet in tweets_json:
+                        if not self.is_tweet(tweet):
+                            continue
+                        tweet_obj, profile_obj = self.convert_json_to_tweet(tweet)
+                        
+                        tweets.append(tweet_obj)
+                        profile = profile_obj
+                
+
             if len(tweets) < tweet_count:
                 self.scroll_to_bottom()
             
-
+            account.update_tweets_viewed(len(tweets)-last_tweet_count)
+            last_tweet_count = len(tweets)
+            
+            sleep_for = account.get_minute_rest_time()
+            sleep_normally_distributed(sleep_for-(sleep_for/4),sleep_for/4, 10)
             
 
         result["tweets"] = tweets
