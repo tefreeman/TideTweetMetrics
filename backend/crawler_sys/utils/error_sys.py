@@ -15,6 +15,7 @@ class Error:
         "ErrorPanelFound",
         "BadHTTPResponseCode",
         "NoHTTPResponseCode",
+        
     }
     _internet_error_set = {}
 
