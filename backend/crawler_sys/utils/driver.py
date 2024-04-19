@@ -10,13 +10,13 @@ from backend.config import Config
 from pprint import pformat
 from requests.adapters import HTTPAdapter
 from requests.sessions import Session
-
+from urllib3 import PoolManager
 
 # TODO: Implement a method to create a driver that is undetected
 # This method should return a webdriver.Chrome object
 # Create other functions as needed
 
-
+pool = PoolManager(maxsize=10)
 class CustomChromeDriver(uc.Chrome):
     def __init__(self, *args, **kwargs):
         super(CustomChromeDriver, self).__init__(*args, **kwargs)
@@ -27,10 +27,7 @@ class CustomChromeDriver(uc.Chrome):
         self._user_media_response = None
         self._tweet_response_queue: Queue = Queue()
         
-        session = Session()
-        adapter = HTTPAdapter(pool_connections=50, pool_maxsize=300)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
+
     
     def register_cdp_listeners(self):
         self.execute_cdp_cmd("Network.enable", {})
@@ -149,7 +146,7 @@ def create_undetected_driver(user_folder_name, profile_folder_name) -> webdriver
     driver = CustomChromeDriver(
         options=chrome_options,
         desired_capabilities=capabilities,
-        enable_cdp_events=True,
+        enable_cdp_events=True
     )
 
     driver.execute_cdp_cmd("Network.enable", {})

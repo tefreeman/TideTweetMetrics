@@ -17,7 +17,7 @@ class TwitterAccountManager:
             username=account["username"],
             password=account["password"],
             is_working=account["is_working"],
-            total_tweets_viewed=account["total_tweets_viewed"]
+            lifetime_views=account["total_tweets_viewed"]
         )
 
     def _load_accounts(self):
