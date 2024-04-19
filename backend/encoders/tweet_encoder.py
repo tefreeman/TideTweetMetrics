@@ -167,7 +167,6 @@ class Tweet(DataEncoder):
         else:
             logging.warning("ID is None or blank. id is not being set")
 
-
     def get_id(self) -> str | None:
         """
         Returns the ID of the tweet.
@@ -203,29 +202,34 @@ class Tweet(DataEncoder):
         Args:
             date (str): The post date of the tweet in the format "EEE MMM dd HH:mm:ss Z yyyy" or "%b %d, %Y · %I:%M %p".
         """
+
         # Define different possible formats
-        formats = ["%a %b %d %H:%M:%S %z %Y", "%b %d, %Y · %I:%M %p"]
-        
+        formats = [
+            "%a %b %d %H:%M:%S %z %Y",
+            "%b %d, %Y · %I:%M %p",
+            "%b %d, %Y · %I:%M %p %Z",  # Added this line to handle the specific input format
+        ]
+
         for date_format in formats:
             try:
                 parsed_date = datetime.strptime(date, date_format)
-                
+
                 # If the timezone information is not provided, assume UTC
-                if parsed_date.tzinfo is None or parsed_date.tzinfo.utcoffset(parsed_date) is None:
+                if (
+                    parsed_date.tzinfo is None
+                    or parsed_date.tzinfo.utcoffset(parsed_date) is None
+                ):
                     parsed_date = parsed_date.replace(tzinfo=pytz.UTC)
-                
+
                 self._object["created_at"] = parsed_date
                 if date != "" and date is not None:
                     self._set_fields.add("created_at")
-                    
+
                 return  # Exit the function once a valid format has been found and processed
             except ValueError:
                 pass  # Ignore exceptions for unmatched formats
-        
-        logging.warning(
-            "date is either None or blank. created_at is not being added."
-        )
 
+        logging.warning("date is either None or blank. created_at is not being added.")
 
     def get_post_date(self):
         """
@@ -273,13 +277,13 @@ class Tweet(DataEncoder):
             quote_count (int): The number of quotes.
         """
         self._object["public_metrics"] = {}
-        
+
         self._object["public_metrics"]["retweet_count"] = retweet_count
 
         self._object["public_metrics"]["reply_count"] = reply_count
         self._object["public_metrics"]["like_count"] = like_count
         self._object["public_metrics"]["quote_count"] = quote_count
-        
+
         self._set_fields.add("public_metrics")
 
     def get_public_metrics(self):
@@ -336,8 +340,7 @@ class Tweet(DataEncoder):
         """
         self._object["entities"] = entities
         self._set_fields.add("entities")
-        
-        
+
     def set_entities(self, content_links, content_text: str):
         """
         Sets the entities of the tweet.
