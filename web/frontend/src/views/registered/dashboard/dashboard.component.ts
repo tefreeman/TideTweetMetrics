@@ -1,7 +1,7 @@
 import { NgFor, NgIf,} from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { inject } from '@angular/core';
-import { Observable, Subject, Subscription, debounceTime, filter, fromEvent, map, takeUntil,} from 'rxjs';
+import { Observable, Subject, Subscription, catchError, debounceTime, filter, forkJoin, fromEvent, map, of, switchMap, takeUntil, tap,} from 'rxjs';
 import { IDisplayableStats, I_DisplayableRequest, T_DisplayableDataType } from '../../../core/interfaces/displayable-interface';
 import { MetricService } from '../../../core/services/metric.service';
 import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
@@ -19,6 +19,8 @@ import { AddCardComponent } from '../../../displayable-components/add-card/add-c
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 import { CardGridComponent } from '../../../displayable-components/card-grid/card-grid.component';
 import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
+import { ActivatedRoute } from '@angular/router';
+import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
 
 
 @Component({
@@ -36,24 +38,78 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
-
+  _displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
   public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
-
-
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   subscription: any;
 
-  constructor(public dialog: MatDialog) {
+  pageName$: Observable<string>;
+
+  statGrids$: Observable<{name: string, type: 'stat' | 'graph'}[]>
+  graphGrids$: Observable<{name: string, type: 'stat' | 'graph'}[]>
+
+
+
+  routeParamSubscription: Subscription | undefined;
+  gridsSubscription: Subscription | undefined;
+
+  
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
+    this.pageName$ = this.route.params.pipe(map(params => {
+      console.log(params);
+      return params['page']
+    }));
+
+    const grids$ = this.pageName$.pipe(
+      switchMap(pageName =>
+        forkJoin({
+          cards: this._displayRequestManagerService.getDisplayNames$(pageName, 'stat'),
+          graphs: this._displayRequestManagerService.getDisplayNames$(pageName, 'graph')
+        })
+      ),
+      map(({cards, graphs}) => ({
+        statGrids: cards.map(name => ({ name, type: 'stat' })),
+        graphGrids: graphs.map(name => ({ name, type: 'graph' }))
+      })),
+      tap(({statGrids, graphGrids}) => {
+        console.log(statGrids, graphGrids); // Log the grids for debugging
+      }),
+      catchError(error => {
+        console.error("Failed to load display names", error);
+        return of({statGrids: [], graphGrids: []}); // Return empty arrays on error
+      })
+    );
+  
+    // Assigning to the observables directly
+    this.statGrids$ = grids$.pipe(
+      map(grids => grids.statGrids.map(grid => ({
+          ...grid,
+          type: grid.type as 'stat' | 'graph' // Cast the type here if you're confident in its value
+      })))
+      // Correct the type assertion if necessary. For example, you may filter or enforce the type more explicitly if the automatic casting isn't safe.
+  );
+  
+  this.graphGrids$ = grids$.pipe(
+      map(grids => grids.graphGrids.map(grid => ({
+          ...grid,
+          type: grid.type as 'stat' | 'graph' // Same casting applied here
+      })))
+      // Adjust based on your actual logic and types. 
+  );
+  
 }
 
-  ngOnInit() {
-    
+ngOnInit() {
+  // You should initialize the observables here, based on the page name
 
-  }
+  // Note: 
+
+// Other initialization logic...
+}
 
   ngOnDestroy(): void {
-  
+  this.routeParamSubscription?.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -61,53 +117,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   
   }
   
-  
-
-  
-  isCard(displayableData: T_DisplayableDataType): boolean {
-    return displayableData.type === 'stat-value' || 
-           displayableData.type === 'stat-trend' || 
-           displayableData.type === 'stat-comp';
-  }
-
-
-  isGraph(displayableData: T_DisplayableDataType): boolean {
-    return displayableData.type === 'graph-line' || 
-           displayableData.type === 'graph-bar';
-  }
-
-  
-  openGraphCardDialog() {
-    
-
-    const dialogRef = this.dialog.open(AddGraphComponent, {
-      height: "calc(100% - 60px)",
-      width: "calc(100% - 60px)",
-      maxWidth: "100%",
-      maxHeight: "100%"
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
-
-  openStatCardDialog() {
-    
-
-    const dialogRef = this.dialog.open(AddCardComponent, {
-      height: "calc(100% - 60px)",
-      width: "calc(100% - 60px)",
-      maxWidth: "100%",
-      maxHeight: "100%"
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
-
-
   toggleEditMode(){
     this.editModeService.toggleEditMode();
   }

@@ -12,6 +12,7 @@ import { MyProfileComponent } from '../views/registered/my-profile/my-profile.co
 import { RegisterComponent } from '../views/unregistered/register/register.component';
 import { LoginComponent } from '../views/unregistered/login/login.component';
 import { AnalysisBoardComponent } from '../views/registered/analysis-board/analysis-board.component';
+import { dashboardGuard } from '../core/guards/dashboard.guard';
 
 export const routes: Routes = [
   {
@@ -32,11 +33,6 @@ export const routes: Routes = [
         canActivate: []
       },
       {
-      path: 'home',
-      component: DashboardComponent,
-      canActivate: [startGuard],
-      },
-      {
       path: 'analysis-board',
       component: AnalysisBoardComponent,
       canActivate: [startGuard],
@@ -50,6 +46,11 @@ export const routes: Routes = [
       path: 'my-profile',
       component: MyProfileComponent,
       canActivate: [startGuard],
+      },
+      {
+        path: ':page', // Dynamic route, `:page` can be any string.
+        component: DashboardComponent, // A new component to handle dynamic pages.
+        canActivate: [startGuard, dashboardGuard],
       }
   ]
   },

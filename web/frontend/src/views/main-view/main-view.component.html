@@ -10,12 +10,30 @@
     <mat-sidenav #sidenav >
       <mat-nav-list>
         <a
-          *ngFor="let nav of navRoutes"
+          *ngFor="let nav of staticNavRoutes"
           [routerLink]="nav.route"
           mat-list-item
           (click)="sidenav.toggle()"
           >{{ nav.name }}</a>
       </mat-nav-list>
+
+      <mat-divider></mat-divider>
+  <div mat-subheader>Custom Boards:</div>
+  <mat-nav-list>
+    <a
+      *ngFor="let nav of dynamicNavRoutes"
+      [routerLink]="nav.route"
+      mat-list-item
+      (click)="sidenav.toggle()"
+      >{{ nav.name }}</a>
+
+      <a
+      mat-list-item
+      (click)="addBoard()"
+      >
+      Add     
+      </a>
+  </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="custom-background">
       <div class="background-image-container">
