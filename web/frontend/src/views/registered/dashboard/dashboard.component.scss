@@ -1,3 +1,4 @@
+
 .cdk-drag:not(.cdk-drag-preview) {
     transform: none !important;
   }
@@ -12,6 +13,14 @@
     color: white;
     font-size: 25px !important;
 }
+
+.title-black{
+    font-weight: bolder;
+    color: black;
+    font-size: 25px !important;
+    margin-left: 64px;
+}
+
 .text {
     font-weight: bold;
     font-size: 12px; 

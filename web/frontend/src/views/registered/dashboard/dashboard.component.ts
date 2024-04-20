@@ -43,61 +43,50 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   subscription: any;
-
   pageName$: Observable<string>;
-
-  statGrids$: Observable<{name: string, type: 'stat' | 'graph'}[]>
-  graphGrids$: Observable<{name: string, type: 'stat' | 'graph'}[]>
-
-
-
+  grids$: Observable<{name: string, type: 'stat' | 'graph', order: number}[]>
   routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
   
+  
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
-    this.pageName$ = this.route.params.pipe(map(params => {
-      console.log(params);
-      return params['page']
-    }));
+    this.pageName$ = this.route.params.pipe(
+      map(params => {
+          console.log(params);
+          return params['page'];
+      })
+  );
 
-    const grids$ = this.pageName$.pipe(
+  const grids$ = this.pageName$.pipe(
       switchMap(pageName =>
-        forkJoin({
-          cards: this._displayRequestManagerService.getDisplayNames$(pageName, 'stat'),
-          graphs: this._displayRequestManagerService.getDisplayNames$(pageName, 'graph')
-        })
+          forkJoin({
+              cards: this._displayRequestManagerService.getDisplayNamesWithOrder$(pageName, 'stat'),
+              graphs: this._displayRequestManagerService.getDisplayNamesWithOrder$(pageName, 'graph')
+          })
       ),
-      map(({cards, graphs}) => ({
-        statGrids: cards.map(name => ({ name, type: 'stat' })),
-        graphGrids: graphs.map(name => ({ name, type: 'graph' }))
-      })),
-      tap(({statGrids, graphGrids}) => {
-        console.log(statGrids, graphGrids); // Log the grids for debugging
+      map(({cards, graphs}) => {
+          // Ensuring each item has `type` explicitly set as 'stat' or 'graph'
+          const statGrids = cards.map(item => ({ ...item, type: 'stat' })) as { name: string; type: "stat"; order: number; }[];
+          const graphGrids = graphs.map(item => ({ ...item, type: 'graph' })) as { name: string; type: "graph"; order: number; }[];
+          return { statGrids, graphGrids };
+      }),
+      tap(({ statGrids, graphGrids }) => {
+          console.log(statGrids, graphGrids); // Log the grids for debugging.
       }),
       catchError(error => {
-        console.error("Failed to load display names", error);
-        return of({statGrids: [], graphGrids: []}); // Return empty arrays on error
+          console.error("Failed to load display names with order", error);
+          return of({ statGrids: [], graphGrids: [] }); // Return empty arrays on error.
       })
-    );
-  
-    // Assigning to the observables directly
-    this.statGrids$ = grids$.pipe(
-      map(grids => grids.statGrids.map(grid => ({
-          ...grid,
-          type: grid.type as 'stat' | 'graph' // Cast the type here if you're confident in its value
-      })))
-
   );
-  
-  this.graphGrids$ = grids$.pipe(
-      map(grids => grids.graphGrids.map(grid => ({
-          ...grid,
-          type: grid.type as 'stat' | 'graph' // Same casting applied here
-      })))
 
-  );
-  
+      // Assuming grids$ is an Observable with a suitable structure
+      this.grids$ = grids$.pipe(
+        map(({ statGrids, graphGrids }) => 
+          [...statGrids, ...graphGrids].sort((a, b) => b.order - a.order)
+        )
+      );
+
 }
 
 ngOnInit() {
@@ -120,13 +109,11 @@ ngOnInit() {
     this._displayRequestManagerService.saveRequests();
   }
 
-  isEmptyCards$(): Observable<boolean> {
-    return this.statGrids$.pipe(map(stats => stats.length === 0));
+  isEmpty$(): Observable<boolean> {
+    return this.grids$.pipe(map(stats => stats.length === 0));
   }
   
 
-  isEmptyGraphs$(): Observable<boolean> {
-    return this.graphGrids$.pipe(map(grids => grids.length === 0));
-  }
+
 
 }

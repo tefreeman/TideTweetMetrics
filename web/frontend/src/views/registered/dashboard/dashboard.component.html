@@ -14,22 +14,20 @@
     </div>
 </div>
 
-@if (isEmptyCards$() | async) {
+@if (isEmpty$() | async) {
   <div style="background-color: rgba(140, 140, 140, .3);" >
     <h1 style="margin-top: 0px;" >EMPTY CARDSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS</h1>
   </div>
 }
 
-@if (isEmptyGraphs$() | async) {
-  <h1 style="margin-top: 300px">EMPTY GRAPHSSSSSSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS</h1>
-}
-  @for (statgrid of statGrids$ | async; track statgrid.name) {
-  <app-card-grid  [page]="(pageName$ | async)!" [name]="statgrid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
+  @for (grid of grids$ | async; track grid.name) {
+    <h2 class="title-black">{{grid.name}}</h2>
+    @if (grid.type == 'stat') {
+    <app-card-grid  [page]="(pageName$ | async)!" [name]="grid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
+    } @else {
+      <app-graph-grid [page]="(pageName$ | async)!" [name]="grid.name" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
+    }
   }
-  @for (graphGrid of graphGrids$ | async; track graphGrid.name) {
-  <app-graph-grid [page]="(pageName$ | async)!" [name]="graphGrid.name" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
-  }
-
 
 <div class="footer">
 

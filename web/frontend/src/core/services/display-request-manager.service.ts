@@ -83,7 +83,7 @@ export class DisplayRequestManagerService {
         requests[page] = {};
       }
       if (!requests[page][this.getName(type, name)]) {
-        requests[page][this.getName(type, name)] = { displayables: [], type };
+        requests[page][this.getName(type, name)] = { displayables: [], type, order: 0};
       }
       // Add the new request
       requests[page][this.getName(type, name)].displayables.push(request);
@@ -98,7 +98,7 @@ export class DisplayRequestManagerService {
         requests[page] = {};
       }
       if (!requests[page][this.getName(type, name)]) {
-        requests[page][this.getName(type, name)] = { displayables: [], type };
+        requests[page][this.getName(type, name)] = { displayables: [], type, order: 0};
       }
 
     });
@@ -113,6 +113,23 @@ export class DisplayRequestManagerService {
       })
     );
   }
+
+  getDisplayNamesWithOrder$(page: string, type: 'graph' | 'stat'): Observable<{ name: string, order: number }[]> {
+    return this.requests$.pipe(
+        take(1),
+        map(requests => {
+            const pageRequests = requests[page] || {};
+            return Object.keys(pageRequests)
+                .filter(name => pageRequests[name].type === type)
+                .map(name => ({
+                    name: this.getNonKeyName(name), // Assuming getNonKeyName transforms the name somehow
+                    order: pageRequests[name].order // Access and include the order property
+                }))
+                .sort((a, b) => a.order - b.order); // Optional: Sort by order if needed
+        })
+    );
+}
+
   removeDisplay(page: string, name: string, type: string): void {
     this.requests$.pipe(first()).subscribe(requests => {
       // Ensure the structure for page and name exists
