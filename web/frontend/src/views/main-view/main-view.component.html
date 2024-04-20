@@ -1,37 +1,36 @@
-<!-- <div class="page-border" data-wow-duration="0.7s" data-wow-delay="0.2s">
-  <div class="top-border"></div>
-  <div class="left-border"></div>
-  <div class="bottom-border"></div>
-  <div class="right-border"></div>
-</div> -->
 
 <div id="wrapper">
   <mat-sidenav-container>
-    <mat-sidenav #sidenav >
-      <mat-nav-list>
+    <mat-sidenav class="side-nav" #sidenav >
+      <div mat-subheader class="side-nav-title"><span>Tide Tweet Metrics</span></div>
+      <mat-nav-list >
         <a
           *ngFor="let nav of staticNavRoutes"
           [routerLink]="nav.route"
           mat-list-item
           (click)="sidenav.toggle()"
-          >{{ nav.name }}</a>
+          >
+            <span class="side-nav-contents">{{ nav.name }}</span>
+        </a>
       </mat-nav-list>
-
-      <mat-divider></mat-divider>
-  <div mat-subheader>Custom Boards:</div>
+  <div mat-subheader class="side-nav-subtitle">Custom Boards</div>
   <mat-nav-list>
     <a
       *ngFor="let nav of dynamicNavRoutes"
       [routerLink]="nav.route"
       mat-list-item
       (click)="sidenav.toggle()"
-      >{{ nav.name }}</a>
+      >
+      <span class="side-nav-contents">{{ nav.name }}</span>
+      </a>
 
       <a
       mat-list-item
       (click)="addBoard()"
       >
-      Add     
+      <mat-card class="add-card">
+        Add   
+      </mat-card>  
       </a>
   </mat-nav-list>
     </mat-sidenav>
