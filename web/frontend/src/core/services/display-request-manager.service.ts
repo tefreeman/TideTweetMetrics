@@ -1,165 +1,84 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { BehaviorSubject, filter, first, map, Observable, take, tap } from 'rxjs';
-import { I_DisplayableRequest, I_DisplayableRequestMap } from '../interfaces/displayable-interface';
+import { BehaviorSubject, catchError, filter, first, map, Observable, of, take, tap } from 'rxjs';
+import { I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { I_PageMap } from "../interfaces/pages-interface";
 import { MockDataService } from './mock-data.service';
+import { DashboardPageManagerService } from './dashboard-page-manager.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DisplayRequestManagerService {
-  private _auth_service = inject(AuthService);
-  private _mockDataService = inject(MockDataService);
+  private _dashboardPageManagerService = inject(DashboardPageManagerService);
 
-  private requests$ = new BehaviorSubject<I_DisplayableRequestMap>({});
 
   constructor() {
-    this.initRequests();
+
   }
 
-  public getRequestsByName(page: string, name: string): Observable<I_DisplayableRequest[]> {
-    return this.requests$.pipe(
-      map(requests => {
-        // Directly return the displayables if the key exists, otherwise an empty array
-        return requests[page]?.[name]?.displayables || [];
+  public getRequestsByName(page: string, name: string, type: string): Observable<I_DisplayableRequest[]> {
+    return this._dashboardPageManagerService.getPage$(page).pipe(
+      map(pageEntry => {
+        console.log(pageEntry, name, type)
+        return pageEntry[name]?.displayables || [];
       })
     );
   }
 
-  private initRequests(): void {
-    this.getRequests$().subscribe(requests => {
-      if (this._mockDataService.overrideProfile == true) {
-        this.requests$.next(this._mockDataService.getMockData());
-      } else {
-        this.requests$.next(requests);
+
+  addDisplayable(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
+    this._dashboardPageManagerService.getGrid$(page, name).subscribe({
+      next: (grid) => {
+        // Grid exists, update it
+        grid.displayables.push(request);
+        this._dashboardPageManagerService.updateGrid$(page, name, grid);
+      },
+      error: () => {
+        // Grid does not exist, handle the error by creating a new grid
+        // This assumes your getGrid$ is set up to throw an error if the grid doesn't exist
+        const newGrid = { displayables: [request], type, order: 0 };
+        this._dashboardPageManagerService.addGrid$(page, name, newGrid);
+      },
+      complete: () => {
+        // This block can be used for cleanup or final steps if needed
       }
     });
-  }
-  private getName(type:string, name: string) {
-    return name + "-" + type;
-  }
-
-  private getNonKeyName(name: string) {
-    return name.split('-')[0];
-  }
-
-  public saveRequests(): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      console.log("SAVING: ", requests);
-      this._auth_service.setProfileDoc({ displays: requests }).subscribe();
-    });
-  }
-  
-  public getRequests$(): Observable<I_DisplayableRequestMap> {
-    return this._auth_service.getProfileDoc().pipe(
-      filter(profile => !!profile), // Only continue if profile is truthy
-      map(profile => profile!.displays),
-      first() // Complete after the first emission
-    );
-  }
-
-  public getPageNames$(): Observable<string[]> {
-    return this.requests$.pipe(
-      map(requests => Object.keys(requests))
-    );
-  }
-
-  public addPage$(page: string): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      if (!requests[page]) { // Check if the page already exists
-        requests[page] = {}; // Add a new page to the array
-        this.requests$.next({ ...requests }); // Emit the modified copy
-      } else {
-        console.error(`Page "${page}" already exists`); // Handle edge case where page already exists
-      }
-    });
-  }
-  
-
-  addRequest(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      // Ensure the structure for page and name exists
-      if (!requests[page]) {
-        requests[page] = {};
-      }
-      if (!requests[page][this.getName(type, name)]) {
-        requests[page][this.getName(type, name)] = { displayables: [], type, order: 0};
-      }
-      // Add the new request
-      requests[page][this.getName(type, name)].displayables.push(request);
-      this.requests$.next({...requests}); // Emit the modified copy
-    });
-  }
-
-  addDisplay(page: string, name: string, type: 'graph' | 'stat'): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      // Ensure the structure for page and name exists
-      if (!requests[page]) {
-        requests[page] = {};
-      }
-      if (!requests[page][this.getName(type, name)]) {
-        requests[page][this.getName(type, name)] = { displayables: [], type, order: 0};
-      }
-
-    });
-  }
-
-  getDisplayNames$(page: string, type: 'graph' | 'stat'): Observable<string[]> {
-    return this.requests$.pipe(
-      take(1),
-      map(requests => {
-        return Object.keys(requests[page] || {}).filter(name => requests[page][name].type === type)
-        .map(name => this.getNonKeyName(name));
-      })
-    );
   }
 
   getDisplayNamesWithOrder$(page: string, type: 'graph' | 'stat'): Observable<{ name: string, order: number }[]> {
-    return this.requests$.pipe(
-        take(1),
-        map(requests => {
-            const pageRequests = requests[page] || {};
-            return Object.keys(pageRequests)
-                .filter(name => pageRequests[name].type === type)
-                .map(name => ({
-                    name: this.getNonKeyName(name), // Assuming getNonKeyName transforms the name somehow
-                    order: pageRequests[name].order // Access and include the order property
-                }))
-                .sort((a, b) => a.order - b.order); // Optional: Sort by order if needed
-        })
+    return this._dashboardPageManagerService.getPage$(page).pipe(
+      map(pageGrids => Object.entries(pageGrids || {})
+        .filter(([name, grid]) => grid.type === type)
+        .map(([name, grid]) => ({
+          name: name, // Modify as needed
+          order: grid.order
+        }))
+        .sort((a, b) => a.order - b.order)
+      ),
+
+      catchError(error => {
+        // Handle error scenario, possibly returning an empty array or a default value
+        console.log('Error fetching page:', error);
+        return of([]);
+      })
     );
-}
-
-  removeDisplay(page: string, name: string, type: string): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      // Ensure the structure for page and name exists
-      if (!requests[page]) {
-        return;
-      }
-      if (!requests[page][this.getName(type, name)]) {
-        return;
-      }
-      delete requests[page][this.getName(type, name)];
-
-    });
   }
 
-  removeRequest(page: string, name: string, type:string, index: number): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      let requestSet = requests[page]?.[this.getName(type, name)];
-      if (requestSet && requestSet.displayables.length > index) {
-        requestSet.displayables.splice(index, 1);
-        this.requests$.next({...requests}); // Emit the modified requests map
+  removeDisplayable(page: string, name: string, type: string, index: number): void {
+    this._dashboardPageManagerService.getGrid$(page, name).subscribe(grid => {
+      if (grid && grid.displayables.length > index) {
+        grid.displayables.splice(index, 1);
+        this._dashboardPageManagerService.updateGrid$(page, name, grid);
       }
     });
   }
 
-  editRequest(page: string, name: string, type: string, request: I_DisplayableRequest, index: number): void {
-    this.requests$.pipe(first()).subscribe(requests => {
-      let requestSet = requests[page]?.[this.getName(type, name)];
-      if (requestSet && requestSet.displayables.length > index) {
-        requestSet.displayables[index] = request;
-        this.requests$.next({...requests}); // Emit the modified requests map
+  editDisplayable(page: string, name: string, type: string, request: I_DisplayableRequest, index: number): void {
+    this._dashboardPageManagerService.getGrid$(page, name).subscribe(grid => {
+      if (grid && grid.displayables.length > index) {
+        grid.displayables[index] = request;
+        this._dashboardPageManagerService.updateGrid$(page, name, grid);
       }
     });
   }

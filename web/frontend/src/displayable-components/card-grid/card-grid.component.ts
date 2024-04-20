@@ -10,7 +10,7 @@ import { Observable, Subject, Subscription, debounceTime, fromEvent, takeUntil }
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
-import { T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../../core/interfaces/displayable-data-interface";
 import { AddCardComponent } from '../add-card/add-card.component';
 import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
 
@@ -133,7 +133,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteCard(i: number) {
-    this.displayRequestManagerService.removeRequest(this.page, this.name, this.type, i);
+    this.displayRequestManagerService.removeDisplayable(this.page, this.name, this.type, i);
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
 }

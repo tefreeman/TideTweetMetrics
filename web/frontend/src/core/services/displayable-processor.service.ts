@@ -1,15 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  IDisplayableStats,
+  IDisplayableData,
   I_DisplayableRequest,
+  T_GraphType,
+} from '../interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../interfaces/displayable-data-interface";
+import {
   I_GraphBarData,
   I_GraphLineData,
   I_StatCompData,
   I_StatTrendData,
-  I_StatValueData,
-  T_DisplayableDataType,
-  T_GraphType,
-} from '../interfaces/displayable-interface';
+  I_StatValueData
+} from "../interfaces/displayable-data-interface";
 import { T_MetricValue } from '../interfaces/metrics-interface';
 
 @Injectable({
@@ -18,7 +20,7 @@ import { T_MetricValue } from '../interfaces/metrics-interface';
 export class DisplayableProcessorService {
   constructor() {}
 
-  convert(data: IDisplayableStats): T_DisplayableDataType {
+  convert(data: IDisplayableData): T_DisplayableDataType {
     if (data.type === 'display' || data.type === 'auto') {
       return this.decisionTree(data);
     }
@@ -38,7 +40,7 @@ export class DisplayableProcessorService {
     }
   }
 
-  decisionTree(data: IDisplayableStats): T_DisplayableDataType {
+  decisionTree(data: IDisplayableData): T_DisplayableDataType {
     const ownerCount = Object.keys(data.owners).length;
     //TODO: fix
     const firstOwner = Object.values(data.owners)[0];
@@ -82,7 +84,7 @@ export class DisplayableProcessorService {
     return this.toGraphLine(data);
   }
 
-  private toStatValue(data: IDisplayableStats): I_StatValueData {
+  private toStatValue(data: IDisplayableData): I_StatValueData {
     if (Object.keys(data.owners).length != 1) {
       throw new Error('Invalid data for stat-value');
     }
@@ -96,7 +98,7 @@ export class DisplayableProcessorService {
     };
   }
 
-  private toStatComparison(data: IDisplayableStats): I_StatCompData {
+  private toStatComparison(data: IDisplayableData): I_StatCompData {
     if (Object.keys(data.owners).length != 2) {
       throw new Error('Invalid data for stat-comparison');
     }
@@ -109,7 +111,7 @@ export class DisplayableProcessorService {
     };
   }
 
-  private toStatTrend(data: IDisplayableStats): I_StatTrendData {
+  private toStatTrend(data: IDisplayableData): I_StatTrendData {
     if (Object.keys(data.owners).length != 1) {
       throw new Error('Invalid data for stat-trend');
     }
@@ -140,7 +142,7 @@ export class DisplayableProcessorService {
     }
   }
 
-  private toGraphBar(data: IDisplayableStats): I_GraphBarData {
+  private toGraphBar(data: IDisplayableData): I_GraphBarData {
     return {
       type: 'graph-bar',
       metricName: data.stat_name,
@@ -149,7 +151,7 @@ export class DisplayableProcessorService {
     };
   }
 
-  private toGraphLine(data: IDisplayableStats): I_GraphLineData {
+  private toGraphLine(data: IDisplayableData): I_GraphLineData {
     return {
       type: 'graph-line',
       metricName: data.stat_name,
