@@ -56,7 +56,6 @@ export class MetricContainer {
     }
 
     getMetricData(displayable: I_DisplayableRequest): IDisplayableData {
-      console.log('displayable', displayable);
       
       if (displayable.ownersParams.type === 'specific') {
         return this.addSpecificOwnerData(displayable);

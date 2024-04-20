@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, defaultIfEmpty, filter, first, map, mergeMap, of, tap } from 'rxjs';
-import { I_GridRequestEntry, I_PageEntry, I_PageMap } from '../interfaces/pages-interface';
+import { BehaviorSubject, Observable, defaultIfEmpty, distinctUntilChanged, filter, first, map, mergeMap, of, tap } from 'rxjs';
+import { I_GridRequestEntry, I_GridEntry, I_PageMap } from '../interfaces/pages-interface';
 import { AuthService } from './auth.service';
 import { MockDataService } from './mock-data.service';
 
@@ -14,6 +14,7 @@ export class DashboardPageManagerService {
   private _mockDataService = inject(MockDataService);
   private  pageMap$ = new BehaviorSubject<I_PageMap>({});
 
+  public changeDetected$ = new BehaviorSubject<null>(null);
   private unsavedChanges = false;
 
   constructor() {
@@ -22,6 +23,7 @@ export class DashboardPageManagerService {
 
 
    private emitChanges(newPageMap: I_PageMap) {
+    console.log('Emitting changes', newPageMap);
     this.pageMap$.next(newPageMap);
     this.unsavedChanges = true;
    }
@@ -29,6 +31,7 @@ export class DashboardPageManagerService {
 
    private initPages(): void {
     this.getPages$().subscribe(requests => {
+      console.log("subscribing to getPages$");
       if (this._mockDataService.overrideProfile == true) {
         this.pageMap$.next(this._mockDataService.getMockData());
       } else {
@@ -37,7 +40,7 @@ export class DashboardPageManagerService {
     });
   }
 
-  public getPage$(page: string): Observable<I_PageEntry> {
+  public getPage$(page: string): Observable<I_GridEntry> {
     return this.pageMap$.pipe(
       map(pages => pages[page]),
       filter(page => !!page),
@@ -100,6 +103,11 @@ export class DashboardPageManagerService {
       first()
     );
   }
+
+  public getGrids$(pageName: string): Observable<I_GridEntry> {
+    return this.getPage$(pageName);
+  }
+
 
   public deleteGrid$(pageName: string, gridName: string) {
     this.pageMap$.pipe(first()).subscribe(requests => {

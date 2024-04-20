@@ -1,7 +1,7 @@
 import { NgFor, NgIf,} from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { inject } from '@angular/core';
-import { Observable, Subject, Subscription, catchError, debounceTime, filter, forkJoin, fromEvent, map, of, switchMap, takeUntil, tap,} from 'rxjs';
+import { Observable, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, filter, forkJoin, fromEvent, map, of, switchMap, takeUntil, tap,} from 'rxjs';
 import { IDisplayableData, I_DisplayableRequest } from '../../../core/interfaces/displayable-interface';
 import { T_DisplayableDataType } from "../../../core/interfaces/displayable-data-interface";
 import { MetricService } from '../../../core/services/metric.service';
@@ -23,6 +23,7 @@ import { GraphGridComponent } from '../../../displayable-components/graph-grid/g
 import { ActivatedRoute } from '@angular/router';
 import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
+import {I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
 
 
 @Component({
@@ -40,13 +41,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
   _displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
+  _displayableProviderService: DisplayableProviderService = inject(DisplayableProviderService);
   _dashboardPageManagerService: DashboardPageManagerService = inject(DashboardPageManagerService);
   public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   subscription: any;
   pageName$: Observable<string>;
-  grids$: Observable<{name: string, type: 'stat' | 'graph', order: number}[]>
+  grids$: Observable<I_GridRequestEntryWithName[]>
   routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
@@ -55,40 +57,25 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
     this.pageName$ = this.route.params.pipe(
       map(params => {
-          console.log(params);
           return params['page'];
-      })
+      },
+      distinctUntilChanged()
+    )
   );
 
-  const grids$ = this.pageName$.pipe(
-      switchMap(pageName =>
-          forkJoin({
-              cards: this._displayRequestManagerService.getDisplayNamesWithOrder$(pageName, 'stat'),
-              graphs: this._displayRequestManagerService.getDisplayNamesWithOrder$(pageName, 'graph')
-          })
-      ),
-      map(({cards, graphs}) => {
-          // Ensuring each item has `type` explicitly set as 'stat' or 'graph'
-          const statGrids = cards.map(item => ({ ...item, type: 'stat' })) as { name: string; type: "stat"; order: number; }[];
-          const graphGrids = graphs.map(item => ({ ...item, type: 'graph' })) as { name: string; type: "graph"; order: number; }[];
-          return { statGrids, graphGrids };
-      }),
-      tap(({ statGrids, graphGrids }) => {
-          console.log(statGrids, graphGrids); // Log the grids for debugging.
-      }),
-      catchError(error => {
-          console.error("Failed to load display names with order", error);
-          return of({ statGrids: [], graphGrids: [] }); // Return empty arrays on error.
+  this.grids$ = this.pageName$.pipe(
+    switchMap(pageName => this._displayableProviderService.getGrids$(pageName)),
+    map(gridEntries => Object.entries(gridEntries).map(([gridName, gridDetails]) => ({
+        name: gridName,
+        displayables: gridDetails.displayables, // directly use the displayable list without mapping each
+        type: gridDetails.type,
+        order: gridDetails.order
       })
+    )),
+    map(gridArray => gridArray.sort((a, b) => a.order - b.order)), 
   );
-
-      // Assuming grids$ is an Observable with a suitable structure
-      this.grids$ = grids$.pipe(
-        map(({ statGrids, graphGrids }) => 
-          [...statGrids, ...graphGrids].sort((a, b) => b.order - a.order)
-        )
-      );
-
+  
+  
 }
 
 ngOnInit() {
