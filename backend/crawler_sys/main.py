@@ -11,6 +11,15 @@ from utils.backup import (
 
 
 def crawl_job():
+    """
+    This function is responsible for running the crawl job.
+    It initializes the configuration, initializes the database,
+    retrieves the accounts to crawl from the database, and starts
+    the crawler scheduler. Finally, it adds the crawl summary to
+    the database.
+
+    :return: None
+    """
     print("running crawl job")
     Config.init()
     db.init_database()
