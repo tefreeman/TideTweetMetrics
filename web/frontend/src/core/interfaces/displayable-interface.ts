@@ -11,6 +11,7 @@ export interface I_OwnerConfig {
 export interface I_DisplayableRequestEntry {
   displayables: I_DisplayableRequest[];
   type: 'graph' | 'stat';
+  order: number;
 }
 
 export interface I_DisplayableRequestMap {
