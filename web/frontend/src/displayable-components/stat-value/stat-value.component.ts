@@ -3,7 +3,7 @@ import { MatCardActions, MatCardHeader, MatCardContent, MatCardTitle } from '@an
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatDivider } from '@angular/material/divider';
 import { DecimalPipe } from '@angular/common';
-import { I_StatValueData } from '../../core/interfaces/displayable-interface';
+import { I_StatValueData } from "../../core/interfaces/displayable-data-interface";
 import { KeyTranslatorService } from '../../core/services/key-translator.service';
 
 

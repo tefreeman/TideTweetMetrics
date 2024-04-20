@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { I_GraphBarData, I_GraphLineData, T_DisplayableGraph, T_GraphType } from '../interfaces/displayable-interface';
+import { T_GraphType } from '../interfaces/displayable-interface';
+import { T_DisplayableGraph } from "../interfaces/displayable-data-interface";
+import { I_GraphBarData, I_GraphLineData } from "../interfaces/displayable-data-interface";
 import { KeyTranslatorService } from './key-translator.service';
 
 @Injectable({

@@ -1,4 +1,4 @@
-import { IDisplayableStats, I_DisplayableRequest, I_OwnerConfig, I_OwnerData } from "../interfaces/displayable-interface";
+import { IDisplayableData, I_DisplayableRequest, I_OwnersParams, I_OwnerData } from "../interfaces/displayable-interface";
 import { I_MetricsInterface, T_MetricValue, I_MetricOwners } from '../interfaces/metrics-interface';
 import { KeyTranslatorService } from "./key-translator.service";
 
@@ -36,12 +36,12 @@ export class MetricContainer {
     }
 
 
-    addSpecificOwnerData(displayable: I_DisplayableRequest): IDisplayableStats {
+    addSpecificOwnerData(displayable: I_DisplayableRequest): IDisplayableData {
       // Initialize an empty object to hold owner data
       let ownersObj: { [key: string]: T_MetricValue } = {};
       
       // Iterate through the list of owners specified in the displayable request
-      displayable.ownersConfig.owners.forEach((owner) => {
+      displayable.ownersParams.owners.forEach((owner) => {
         if (this.isMetricDefined(displayable.stat_name, owner)) {
             // Populate the ownersObj with data from the metrics
             ownersObj[owner] = this._metrics[displayable.stat_name][owner];
@@ -55,10 +55,9 @@ export class MetricContainer {
       };
     }
 
-    getMetricData(displayable: I_DisplayableRequest): IDisplayableStats {
-      console.log('displayable', displayable);
+    getMetricData(displayable: I_DisplayableRequest): IDisplayableData {
       
-      if (displayable.ownersConfig.type === 'specific') {
+      if (displayable.ownersParams.type === 'specific') {
         return this.addSpecificOwnerData(displayable);
       }
     
@@ -79,9 +78,9 @@ export class MetricContainer {
       });
     
       // If type is 'top' or 'bottom', sort and slice the ownerData array accordingly
-      if (displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
-        const isTop = displayable.ownersConfig.type === 'top';
-        const cutOff = displayable.ownersConfig.count ? displayable.ownersConfig.count + (displayable.ownersConfig.owners ? displayable.ownersConfig.owners.length : 0) : ownerData.length;
+      if (displayable.ownersParams.type === 'top' || displayable.ownersParams.type === 'bottom') {
+        const isTop = displayable.ownersParams.type === 'top';
+        const cutOff = displayable.ownersParams.count ? displayable.ownersParams.count + (displayable.ownersParams.owners ? displayable.ownersParams.owners.length : 0) : ownerData.length;
         ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
       }
     
