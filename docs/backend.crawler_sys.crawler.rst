@@ -12,14 +12,6 @@ backend.crawler\_sys.crawler.crawler module
    :undoc-members:
    :show-inheritance:
 
-backend.crawler\_sys.crawler.twiiit\_crawler module
----------------------------------------------------
-
-.. automodule:: backend.crawler_sys.crawler.twiiit_crawler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

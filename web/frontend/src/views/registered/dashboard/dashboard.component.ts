@@ -1,15 +1,49 @@
-import { NgFor, NgIf,} from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { inject } from '@angular/core';
-import { Observable, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, filter, forkJoin, fromEvent, map, of, switchMap, takeUntil, tap,} from 'rxjs';
-import { IDisplayableData, I_DisplayableRequest } from '../../../core/interfaces/displayable-interface';
-import { T_DisplayableDataType } from "../../../core/interfaces/displayable-data-interface";
+import {
+  Observable,
+  Subject,
+  Subscription,
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  forkJoin,
+  fromEvent,
+  map,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import {
+  IDisplayableData,
+  I_DisplayableRequest,
+} from '../../../core/interfaces/displayable-interface';
+import { T_DisplayableDataType } from '../../../core/interfaces/displayable-data-interface';
 import { MetricService } from '../../../core/services/metric.service';
 import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
 import { AsyncPipe } from '@angular/common';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { CommonModule } from '@angular/common';
-import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  CdkDropList,
+  CdkDrag,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { StatCardComponent } from '../../../displayable-components/stat-card/stat-card.component';
 import { BarChartComponent } from '../../../displayable-components/bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../../../displayable-components/graph-card/graph-card.component';
@@ -30,26 +64,42 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, StatCardComponent, BarChartComponent, AsyncPipe, MaterialModule, GraphCardComponent, CommonModule, CdkDrag, CdkDropList, AsyncPipe, CardGridComponent, GraphGridComponent],
+  imports: [
+    NgFor,
+    StatCardComponent,
+    BarChartComponent,
+    AsyncPipe,
+    MaterialModule,
+    GraphCardComponent,
+    CommonModule,
+    CdkDrag,
+    CdkDropList,
+    AsyncPipe,
+    CardGridComponent,
+    GraphGridComponent,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [MetricService],
-
 })
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
-
-  
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
-  _displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
-  _displayableProviderService: DisplayableProviderService = inject(DisplayableProviderService);
-  _dashboardPageManagerService: DashboardPageManagerService = inject(DashboardPageManagerService);
+  _displayRequestManagerService: DisplayRequestManagerService = inject(
+    DisplayRequestManagerService
+  );
+  _displayableProviderService: DisplayableProviderService = inject(
+    DisplayableProviderService
+  );
+  _dashboardPageManagerService: DashboardPageManagerService = inject(
+    DashboardPageManagerService
+  );
   public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   subscription: any;
   pageName$: Observable<string>;
-  grids$: Observable<I_GridRequestEntryWithName[]>
+  grids$: Observable<I_GridRequestEntryWithName[]>;
   routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
@@ -57,51 +107,39 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private snackBar: MatSnackBar) {
     this.pageName$ = this.route.params.pipe(
-      map(params => {
-          return params['page'];
-      },
-      distinctUntilChanged()
-    )
-  );
+      map((params) => {
+        return params['page'];
+      }, distinctUntilChanged())
+    );
 
-  this.grids$ = this.pageName$.pipe(
-    switchMap(pageName => this._displayableProviderService.getGrids$(pageName)),
-    map(gridEntries => Object.entries(gridEntries).map(([gridName, gridDetails]) => ({
-        name: gridName,
-        displayables: gridDetails.displayables, // directly use the displayable list without mapping each
-        type: gridDetails.type,
-        order: gridDetails.order
-      })
-    )),
-    map(gridArray => gridArray.sort((a, b) => a.order - b.order)), 
-  );
-  
-  
-}
+    this.grids$ = this.pageName$.pipe(
+      switchMap((pageName) =>
+        this._displayableProviderService.getGrids$(pageName)
+      )
+    );
+  }
 
-ngOnInit() {
-}
+  ngOnInit() {}
 
   ngOnDestroy(): void {
-  this.routeParamSubscription?.unsubscribe();
+    this.routeParamSubscription?.unsubscribe();
   }
 
   ngAfterViewInit() {
     // Initial subscription
-  
   }
-  
-  toggleEditMode(){
+
+  toggleEditMode() {
     this.editModeService.toggleEditMode();
   }
 
-  update(){
+  update() {
     this._dashboardPageManagerService.savePage();
     this.openSnackBar('Page has been saved.');
   }
 
   isEmpty$(): Observable<boolean> {
-    return this.grids$.pipe(map(stats => stats.length === 0));
+    return this.grids$.pipe(map((stats) => stats.length === 0));
   }
   
   openSnackBar(message: string) {

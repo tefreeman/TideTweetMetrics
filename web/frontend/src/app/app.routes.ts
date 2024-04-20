@@ -6,7 +6,6 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { StartComponent } from '../views/registered/start/start.component';
 import { DashboardComponent } from '../views/registered/dashboard/dashboard.component';
 import { startGuard } from '../core/guards/start.guard';
-import { GraphBuilderComponent } from '../views/registered/graph-builder/graph-builder.component';
 import { OptimizerComponent } from '../views/registered/optimizer/optimizer.component';
 import { MyProfileComponent } from '../views/registered/my-profile/my-profile.component';
 import { RegisterComponent } from '../views/unregistered/register/register.component';
