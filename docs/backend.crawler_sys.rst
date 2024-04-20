@@ -53,14 +53,6 @@ backend.crawler\_sys.scheduler module
    :undoc-members:
    :show-inheritance:
 
-backend.crawler\_sys.twitter\_mirrors\_manager module
------------------------------------------------------
-
-.. automodule:: backend.crawler_sys.twitter_mirrors_manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
