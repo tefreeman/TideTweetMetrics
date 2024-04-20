@@ -1,65 +1,35 @@
-import { NgFor, NgIf } from '@angular/common';
+import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
-  NgZone,
   OnDestroy,
   OnInit,
-  QueryList,
-  ViewChildren,
+  inject,
 } from '@angular/core';
-import { inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 import {
   Observable,
-  Subject,
   Subscription,
-  catchError,
-  debounceTime,
   distinctUntilChanged,
-  filter,
-  forkJoin,
-  fromEvent,
   map,
-  of,
   switchMap,
-  takeUntil,
-  tap,
 } from 'rxjs';
-import {
-  IDisplayableData,
-  I_DisplayableRequest,
-} from '../../../core/interfaces/displayable-interface';
-import { T_DisplayableDataType } from '../../../core/interfaces/displayable-data-interface';
-import { MetricService } from '../../../core/services/metric.service';
-import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
-import { AsyncPipe } from '@angular/common';
+import { I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
-import { CommonModule } from '@angular/common';
-import {
-  CdkDragDrop,
-  CdkDropList,
-  CdkDrag,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
-import { StatCardComponent } from '../../../displayable-components/stat-card/stat-card.component';
-import { BarChartComponent } from '../../../displayable-components/bar-chart/bar-chart.component';
-import { GraphCardComponent } from '../../../displayable-components/graph-card/graph-card.component';
-import { EditModeService } from '../../../core/services/edit-mode.service';
-import { MatDialog } from '@angular/material/dialog';
-import { AddGraphComponent } from '../../../displayable-components/add-graph/add-graph.component';
-import { AddCardComponent } from '../../../displayable-components/add-card/add-card.component';
-import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
-import { CardGridComponent } from '../../../displayable-components/card-grid/card-grid.component';
-import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
-import { ActivatedRoute } from '@angular/router';
-import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
-import {I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
+import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
+import { EditModeService } from '../../../core/services/edit-mode.service';
+import { MetricService } from '../../../core/services/metric.service';
+import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
+import { BarChartComponent } from '../../../displayable-components/bar-chart/bar-chart.component';
+import { CardGridComponent } from '../../../displayable-components/card-grid/card-grid.component';
+import { GraphCardComponent } from '../../../displayable-components/graph-card/graph-card.component';
+import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
+import { StatCardComponent } from '../../../displayable-components/stat-card/stat-card.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -103,9 +73,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
-  
-  
-  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private snackBar: MatSnackBar) {
+  constructor(
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
+  ) {
     this.pageName$ = this.route.params.pipe(
       map((params) => {
         return params['page'];
@@ -141,7 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
   }
-  
+
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Close', {
       duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
@@ -149,6 +121,4 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       verticalPosition: 'bottom', // Change as needed.
     });
   }
-
-
 }
