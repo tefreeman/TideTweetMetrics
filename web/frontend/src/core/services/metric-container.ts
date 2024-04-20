@@ -16,50 +16,82 @@ export class MetricContainer {
         return this._metrics ? Object.keys(this._metrics) : [];
     }
 
-    getOwnersForStat(stat_name: string): string[] {
+    getStatByOwner(stat_name: string, owner: string): I_MetricOwners {
+        return this._metrics[stat_name];
+    }
+
+    isMetricDefined(stat_name: string, owner: string): boolean {
+      return this._metrics && stat_name in this._metrics && owner in this._metrics[stat_name];
+    }
+
+    getAllOwnerNamesByStats(stat_name: string): string[] {
         if (this._metrics && this._metrics[stat_name])
             return Object.keys(this._metrics[stat_name]);
         return [];
     }
-
     getOwnersCountForStat(stat_name: string): number {
         if (this._metrics && this._metrics[stat_name])
             return Object.keys(this._metrics[stat_name]).length;
         return 0;
     }
 
+
+    addSpecificOwnerData(displayable: I_DisplayableRequest): IDisplayableStats {
+      // Initialize an empty object to hold owner data
+      let ownersObj: { [key: string]: T_MetricValue } = {};
+      
+      // Iterate through the list of owners specified in the displayable request
+      displayable.ownersConfig.owners.forEach((owner) => {
+        if (this.isMetricDefined(displayable.stat_name, owner)) {
+            // Populate the ownersObj with data from the metrics
+            ownersObj[owner] = this._metrics[displayable.stat_name][owner];
+        }
+      });
+      
+      // Construct and return the IDisplayableStats object
+      return {
+        ...displayable, // Spread the existing properties of the displayable object
+        owners: ownersObj // Include the constructed owners data
+      };
+    }
+
     getMetricData(displayable: I_DisplayableRequest): IDisplayableStats {
-      const owners = this.getOwnersForStat(displayable.stat_name);
+      console.log('displayable', displayable);
+      
+      if (displayable.ownersConfig.type === 'specific') {
+        return this.addSpecificOwnerData(displayable);
+      }
+    
       let ownerData: I_OwnerData[] = [];
     
-      const isMetricDefined = (owner: string) => 
-        this._metrics && this._metrics[displayable.stat_name] && this._metrics[displayable.stat_name][owner];
     
-      const addOwnerData = (owner: string) => {
-        if (isMetricDefined(owner)) {
+      // Retrieve all owners if the configuration is not specific. This essentially handles 'all', 'top', and 'bottom'.
+      const owners = this.getAllOwnerNamesByStats(displayable.stat_name);
+    
+      // Populate ownerData for all owners relevant to the stat
+      owners.forEach((owner) => {
+        if (this.isMetricDefined(displayable.stat_name, owner)) {
           ownerData.push({
             owner: owner,
             value: this._metrics[displayable.stat_name][owner]
           });
         }
-      };
+      });
     
-      if (['all', 'top', 'bottom', 'specific'].includes(displayable.ownersConfig.type)) {
-        const source = (displayable.ownersConfig.type === 'specific') ? displayable.ownersConfig.owners : owners;
-        source.forEach(addOwnerData);
-      }
-      
+      // If type is 'top' or 'bottom', sort and slice the ownerData array accordingly
       if (displayable.ownersConfig.type === 'top' || displayable.ownersConfig.type === 'bottom') {
         const isTop = displayable.ownersConfig.type === 'top';
-        const cutOff = displayable.ownersConfig.count! + displayable.ownersConfig.owners.length;
+        const cutOff = displayable.ownersConfig.count ? displayable.ownersConfig.count + (displayable.ownersConfig.owners ? displayable.ownersConfig.owners.length : 0) : ownerData.length;
         ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
       }
     
+      // Convert ownerData array to an object in the format { owner: value }
       const ownerObject = ownerData.reduce((obj, item) => {
         obj[item.owner] = item.value;
         return obj;
       }, {} as { [owner: string]: T_MetricValue });
     
+      // Return the augmented displayable object with the owner data included
       return {
         ...displayable,
         owners: ownerObject

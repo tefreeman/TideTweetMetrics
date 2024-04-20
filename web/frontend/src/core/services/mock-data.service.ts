@@ -56,16 +56,6 @@ let test_displayed_data9: I_DisplayableRequest = {
 }
 
 
-
-// let test_displayed_data4: I_DisplayableRequest = {
-//   stat_name: "tweet_likes-mean",
-//   ownersConfig: { type: "specific", owners: ["alabama_cs", "msu_egr"] },
-//   type: "graph-line",
-// }
-
-
-
-
 let test_displayed_data11: I_DisplayableRequest = {
   stat_name: "tweet_likes-mean",
   ownersConfig: { type: "bottom", owners: ["alabama_cs"], count: 12 },

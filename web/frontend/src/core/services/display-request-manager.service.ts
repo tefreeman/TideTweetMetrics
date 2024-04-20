@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { BehaviorSubject, filter, first, map, Observable } from 'rxjs';
+import { BehaviorSubject, filter, first, map, Observable, take, tap } from 'rxjs';
 import { I_DisplayableRequest, I_DisplayableRequestMap } from '../interfaces/displayable-interface';
 import { MockDataService } from './mock-data.service';
 
@@ -35,6 +35,13 @@ export class DisplayRequestManagerService {
       }
     });
   }
+  private getName(type:string, name: string) {
+    return name + "-" + type;
+  }
+
+  private getNonKeyName(name: string) {
+    return name.split('-')[0];
+  }
 
   public saveRequests(): void {
     this.requests$.pipe(first()).subscribe(requests => {
@@ -50,9 +57,24 @@ export class DisplayRequestManagerService {
     );
   }
 
-  private getName(type:string, name: string) {
-    return name + "-" + type;
+  public getPageNames$(): Observable<string[]> {
+    return this.requests$.pipe(
+      map(requests => Object.keys(requests))
+    );
   }
+
+  public addPage$(page: string): void {
+    this.requests$.pipe(first()).subscribe(requests => {
+      if (!requests[page]) { // Check if the page already exists
+        requests[page] = {}; // Add a new page to the array
+        this.requests$.next({ ...requests }); // Emit the modified copy
+      } else {
+        console.error(`Page "${page}" already exists`); // Handle edge case where page already exists
+      }
+    });
+  }
+  
+
   addRequest(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
     this.requests$.pipe(first()).subscribe(requests => {
       // Ensure the structure for page and name exists
@@ -81,6 +103,15 @@ export class DisplayRequestManagerService {
     });
   }
 
+  getDisplayNames$(page: string, type: 'graph' | 'stat'): Observable<string[]> {
+    return this.requests$.pipe(
+      take(1),
+      map(requests => {
+        return Object.keys(requests[page] || {}).filter(name => requests[page][name].type === type)
+        .map(name => this.getNonKeyName(name));
+      })
+    );
+  }
   removeDisplay(page: string, name: string, type: string): void {
     this.requests$.pipe(first()).subscribe(requests => {
       // Ensure the structure for page and name exists
