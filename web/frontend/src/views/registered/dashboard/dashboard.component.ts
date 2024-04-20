@@ -34,7 +34,6 @@ import { DisplayRequestManagerService } from '../../../core/services/display-req
 })
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChildren('statcard', {read: ElementRef}) statCards!: QueryList<any>;
   
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
