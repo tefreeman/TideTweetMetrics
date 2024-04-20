@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { MetricService } from './metric.service';
 import { DisplayRequestManagerService } from './display-request-manager.service';
-import { IDisplayableStats, I_DisplayableRequest, T_DisplayableDataType } from '../interfaces/displayable-interface';
+import { IDisplayableData, I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../interfaces/displayable-data-interface";
 import { combineLatestWith, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { DisplayableProcessorService } from './displayable-processor.service';

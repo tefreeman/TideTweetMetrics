@@ -4,7 +4,7 @@ import { NgIf } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { DecimalPipe } from '@angular/common';
 import { MaterialModule } from '../../core/modules/material/material.module';
-import { I_StatCompData } from '../../core/interfaces/displayable-interface';
+import { I_StatCompData } from "../../core/interfaces/displayable-data-interface";
 import { KeyTranslatorService } from '../../core/services/key-translator.service';
 @Component({
   selector: 'app-stat-comp',
