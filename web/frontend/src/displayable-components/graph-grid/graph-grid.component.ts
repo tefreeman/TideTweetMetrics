@@ -56,11 +56,10 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription = this.displayProviderService.getDisplayables(this.page, this.name, this.type).subscribe((data) => {
       this.dataGrid.dataArr = [];
 
-      data.forEach((displayable: any) => {
-          this.dataGrid.dataArr.push(displayable);
-          
-      });
-      console.log(this.dataGrid);
+      this.dataGrid.dataArr = [...data];
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
+      console.log("DATAGRID", this.page, this.name, this.type);
     });
 
     this.ngZone.runOutsideAngular(() => {

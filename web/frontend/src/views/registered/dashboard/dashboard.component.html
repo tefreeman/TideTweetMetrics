@@ -15,32 +15,13 @@
 </div>
 
 
-  <app-card-grid  [page]="'home'" [name]="'dashboard'" [cardHeight]="'8rem'" [maxColSize]="'1fr'" [minColSize]="'18rem'"></app-card-grid>
-  <app-graph-grid [page]="'home'" [name]="'dashboard'" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
+  @for (statgrid of statGrids$ | async; track statgrid.name) {
+  <app-card-grid  [page]="(pageName$ | async)!" [name]="statgrid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
+  }
+  @for (graphGrid of graphGrids$ | async; track graphGrid.name) {
+  <app-graph-grid [page]="(pageName$ | async)!" [name]="graphGrid.name" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
+  }
 
-
-  <!-- will get rid of this eventually-->
-  <!-- <div cdkDropList [cdkDropListData]="cardGrid.dataArr" [cdkDropListDisabled]="!(editMode | async)" class="dataCardContainer" (cdkDropListDropped)="dropCard($event)">
-    <ng-container *ngFor="let displayableData of cardGrid.dataArr;  let i = index">
-      <ng-container *ngIf="isCard(displayableData)">
-        <app-stat-card #statcard cdkDrag [displayableData]="displayableData" [placeHolderForEdit]="false"></app-stat-card>
-      </ng-container>
-    </ng-container>
-
-    <app-stat-card (click)="openStatCardDialog()" *ngIf="editMode | async" [displayableData]="cardGrid.dataArr[0]" [placeHolderForEdit]="true"></app-stat-card>
-  </div>
-
-
-  <div class="graphContainer">
-    <ng-container *ngFor="let displayableData of graphGrid.dataArr">
-      <ng-container *ngIf="isGraph(displayableData)">
-        <app-graph-card [displayableData]="displayableData" [placeHolderForEdit]="false"></app-graph-card>
-      </ng-container>
-    </ng-container>
-
-    <app-graph-card (click)="openGraphCardDialog()" *ngIf="editMode | async" [displayableData]="graphGrid.dataArr[0]" [placeHolderForEdit]="true"></app-graph-card>
-  </div>
-</div> -->
 
 <div class="footer">
 
