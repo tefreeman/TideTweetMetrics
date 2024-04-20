@@ -133,7 +133,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteCard(i: number) {
-    this.displayRequestManagerService.removeRequest(this.page, this.name, this.type, i);
+    this.displayRequestManagerService.removeDisplayable(this.page, this.name, this.type, i);
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
 }
