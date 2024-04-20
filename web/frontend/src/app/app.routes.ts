@@ -13,6 +13,7 @@ import { RegisterComponent } from '../views/unregistered/register/register.compo
 import { LoginComponent } from '../views/unregistered/login/login.component';
 import { AnalysisBoardComponent } from '../views/registered/analysis-board/analysis-board.component';
 import { dashboardGuard } from '../core/guards/dashboard.guard';
+import { DebugComponent } from '../views/debug/debug.component';
 
 export const routes: Routes = [
   {
@@ -20,6 +21,7 @@ export const routes: Routes = [
     component: UnauthorizedComponent
     },
   {path: '', component: HomeComponent},
+  {path: 'debug', component: DebugComponent},
   {path: 'dashboard', component: MainViewComponent, canActivate: [AuthGuard],
     children: [
       {
