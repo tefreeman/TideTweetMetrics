@@ -14,7 +14,13 @@
     </div>
 </div>
 
+@if (isEmptyCards$() | async) {
+  <h1 style="margin-top: 300px">EMPTY CARDSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS</h1>
+}
 
+@if (isEmptyGraphs$() | async) {
+  <h1 style="margin-top: 300px">EMPTY GRAPHSSSSSSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS</h1>
+}
   @for (statgrid of statGrids$ | async; track statgrid.name) {
   <app-card-grid  [page]="(pageName$ | async)!" [name]="statgrid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
   }

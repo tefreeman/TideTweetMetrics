@@ -45,7 +45,8 @@ export class DisplayRequestManagerService {
 
   public saveRequests(): void {
     this.requests$.pipe(first()).subscribe(requests => {
-      this._auth_service.setProfileDoc({ displays: requests });
+      console.log("SAVING: ", requests);
+      this._auth_service.setProfileDoc({ displays: requests }).subscribe();
     });
   }
   
