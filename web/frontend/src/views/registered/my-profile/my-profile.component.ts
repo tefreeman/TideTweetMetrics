@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { I_UserAndRole } from '../../../core/interfaces/profile-interface';
 import { take } from 'rxjs';
 import { NgFor, NgIf } from '@angular/common';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   standalone: true,
@@ -26,7 +27,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
 
   profileDocSubscription: any;
 
-  constructor() { }
+  constructor(private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.authService.isAdmin$().pipe(
@@ -62,40 +63,58 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       next: (success) => {
         console.log(`Deletion successful for userId ${userId}`);
         // Filter out the user from the usersAndRoles array
+        const message = `${user.email} has been removed.`; // Customize this message as needed.
+        this.openSnackBar(message);
         this.usersAndRoles = this.usersAndRoles.filter(u => u.uid !== userId);
       },
       error: (error) => {
         // Handle any errors here, such as showing an error message to the user
         console.error('Deletion failed', error);
+        this.openSnackBar(`Failed to remove ${user.email}.`);
       }
     });
   }
 
   approveUser(user: I_UserAndRole) {
-    const userId = user.uid; // Assuming `uid` is the unique identifier for the user in your I_UserAndRole interface.
+    const userId = user.uid; 
     if (!userId) return; // Safety check
   
     this.authService.updateUserRole$(userId).pipe(
       take(1)
     ).subscribe({
       next: (success) => {
-        console.log(`allow successful for userId ${userId}`);
+        console.log(`allow successful for userId ${user.email}`);
+        const message = `${userId} has been approved.`; // Customize this message as needed.
+        this.openSnackBar(message);
         // Filter out the user from the usersAndRoles array
         this.usersAndRoles = this.usersAndRoles.filter(u => u.uid !== userId);
       },
       error: (error) => {
         // Handle any errors here, such as showing an error message to the user
         console.error('allow failed', error);
+        this.openSnackBar(`Failed to allow ${user.email}.`);
       }
     });
+    
   }
   resetMyPassword() {
     this.authService.sendPasswordResetEmailCurrentUser().then(() => {
     
     });
+    this.openSnackBar('Password reset email sent.');
   }
 
   updateEmailReportOptIn(status: boolean) {
     this.authService.setProfileDoc({ doWantEmailReports: status }).subscribe(()=>{});
+    const message = status ? 'Opted in for email reports.' : 'Opted out of email reports.';
+    this.openSnackBar(message);
+  }
+
+  openSnackBar(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
+      horizontalPosition: 'center', // Change as needed.
+      verticalPosition: 'bottom', // Change as needed.
+    });
   }
 }
