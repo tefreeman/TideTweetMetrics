@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { AsyncPipe, NgIf } from '@angular/common';
 import { LineChartComponent } from '../line-chart/line-chart.component';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
-import { T_DisplayableDataType, I_GraphLineData, I_GraphBarData } from '../../core/interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../../core/interfaces/displayable-data-interface";
+import { I_GraphLineData, I_GraphBarData } from "../../core/interfaces/displayable-data-interface";
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { Observable } from 'rxjs';
 import { EditModeService } from '../../core/services/edit-mode.service';

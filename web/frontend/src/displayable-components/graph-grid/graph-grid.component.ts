@@ -3,7 +3,7 @@ import { AsyncPipe, CommonModule, NgFor, NgStyle } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, Subscription, fromEvent, debounceTime, takeUntil } from 'rxjs';
-import { T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../../core/interfaces/displayable-data-interface";
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { MoveableGridTilesService } from '../../core/services/moveable-grid-tiles.service';
 import { MaterialModule } from '../../core/modules/material/material.module';

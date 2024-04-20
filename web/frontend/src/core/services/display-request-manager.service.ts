@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { BehaviorSubject, filter, first, map, Observable, take, tap } from 'rxjs';
-import { I_DisplayableRequest, I_DisplayableRequestMap } from '../interfaces/displayable-interface';
+import { I_DisplayableRequest } from '../interfaces/displayable-interface';
+import { I_PageMap } from "../interfaces/pages-interface";
 import { MockDataService } from './mock-data.service';
 
 @Injectable({
@@ -11,7 +12,7 @@ export class DisplayRequestManagerService {
   private _auth_service = inject(AuthService);
   private _mockDataService = inject(MockDataService);
 
-  private requests$ = new BehaviorSubject<I_DisplayableRequestMap>({});
+  private requests$ = new BehaviorSubject<I_PageMap>({});
 
   constructor() {
     this.initRequests();
@@ -50,7 +51,7 @@ export class DisplayRequestManagerService {
     });
   }
   
-  public getRequests$(): Observable<I_DisplayableRequestMap> {
+  public getRequests$(): Observable<I_PageMap> {
     return this._auth_service.getProfileDoc().pipe(
       filter(profile => !!profile), // Only continue if profile is truthy
       map(profile => profile!.displays),

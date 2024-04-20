@@ -10,7 +10,7 @@ import { Observable, Subject, Subscription, debounceTime, fromEvent, takeUntil }
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
-import { T_DisplayableDataType } from '../../core/interfaces/displayable-interface';
+import { T_DisplayableDataType } from "../../core/interfaces/displayable-data-interface";
 import { AddCardComponent } from '../add-card/add-card.component';
 import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
 
