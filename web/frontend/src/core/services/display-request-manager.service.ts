@@ -20,13 +20,14 @@ export class DisplayRequestManagerService {
   public getRequestsByName(page: string, name: string, type: string): Observable<I_DisplayableRequest[]> {
     return this._dashboardPageManagerService.getPage$(page).pipe(
       map(pageEntry => {
+        console.log(pageEntry, name, type)
         return pageEntry[name]?.displayables || [];
       })
     );
   }
 
 
-  addRequest(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
+  addDisplayable(request: I_DisplayableRequest, type: 'graph' | 'stat', page: string, name: string): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe({
       next: (grid) => {
         // Grid exists, update it
@@ -55,6 +56,7 @@ export class DisplayRequestManagerService {
         }))
         .sort((a, b) => a.order - b.order)
       ),
+
       catchError(error => {
         // Handle error scenario, possibly returning an empty array or a default value
         console.log('Error fetching page:', error);
@@ -63,7 +65,7 @@ export class DisplayRequestManagerService {
     );
   }
 
-  removeRequest(page: string, name: string, type: string, index: number): void {
+  removeDisplayable(page: string, name: string, type: string, index: number): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe(grid => {
       if (grid && grid.displayables.length > index) {
         grid.displayables.splice(index, 1);
@@ -72,7 +74,7 @@ export class DisplayRequestManagerService {
     });
   }
 
-  editRequest(page: string, name: string, type: string, request: I_DisplayableRequest, index: number): void {
+  editDisplayable(page: string, name: string, type: string, request: I_DisplayableRequest, index: number): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe(grid => {
       if (grid && grid.displayables.length > index) {
         grid.displayables[index] = request;
