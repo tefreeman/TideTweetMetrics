@@ -1,6 +1,5 @@
 <div class="dashboardContainer">
   <div class="title-container">
-    <h2 class="title">Dashboard</h2>
     <div>
         <button *ngIf="(editMode | async)" mat-raised-button aria-label="Edit" color="accent" (click)="toggleEditMode()"  >
           <span class="text" style="color: #A51E36">Save</span>
@@ -9,7 +8,7 @@
           <span class="text" >Edit</span>
         </button>
         <button mat-raised-button aria-label="Update" color="primary" (click)="update()">
-          <span class="text">Update</span>
+          <span class="text">Save</span>
         </button>
     </div>
 </div>
@@ -20,14 +19,18 @@
   </div>
 }
 
-  @for (grid of grids$ | async; track grid.name) {
-    <h2 class="title-black">{{grid.name}}</h2>
+
+<ng-container *ngFor="let grid of (grids$ | async); let isFirst = first">
+  <div class="grid-container">
+    <h2 class="title-black" [style.color]="isFirst ? 'white' : null">{{ grid.name.charAt(0).toUpperCase() + grid.name.slice(1) }}</h2>
+  
     @if (grid.type == 'stat') {
     <app-card-grid  [page]="(pageName$ | async)!" [name]="grid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
     } @else {
       <app-graph-grid [page]="(pageName$ | async)!" [name]="grid.name" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
     }
-  }
+  </div>
+</ng-container>
 
 <div class="footer">
 

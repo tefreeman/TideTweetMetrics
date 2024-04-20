@@ -16,10 +16,11 @@
 
 .title-black{
     font-weight: bolder;
-    color: black;
     font-size: 25px !important;
     margin-left: 64px;
+    
 }
+
 
 .text {
     font-weight: bold;
@@ -33,23 +34,26 @@
 }
 
 .title-container {
-    margin-top: 8rem;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-left: 65px;
-    flex-wrap: wrap;
-    
+    justify-content: flex-end;
+    margin-top: 7rem;
 }
+
+
 
 .title-container button:last-child {
-    margin-left: 10px; 
-    margin-right: 65px;
+    margin-left: 8px; 
+    margin-right: 115px;
 }
 
+.title-container button {
+    margin-bottom: -45px;
+}
 
-
-
+.grid-container {
+    margin-left: 50px; /* Adjust the value as needed */
+    margin-right: 50px; /* Adjust the value as needed */
+}
 
 ::ng-deep .cdk-drag-placeholder {
     opacity: 0;
