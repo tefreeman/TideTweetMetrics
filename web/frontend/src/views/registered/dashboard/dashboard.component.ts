@@ -22,6 +22,7 @@ import { CardGridComponent } from '../../../displayable-components/card-grid/car
 import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
 import { ActivatedRoute } from '@angular/router';
 import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
+import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
   _displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
+  _dashboardPageManagerService: DashboardPageManagerService = inject(DashboardPageManagerService);
   public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
@@ -106,7 +108,7 @@ ngOnInit() {
   }
 
   update(){
-    this._displayRequestManagerService.saveRequests();
+    this._dashboardPageManagerService.savePage();
   }
 
   isEmpty$(): Observable<boolean> {

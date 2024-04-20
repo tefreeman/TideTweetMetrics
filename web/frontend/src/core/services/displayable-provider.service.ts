@@ -23,7 +23,7 @@ constructor() {
 public getDisplayables(page: string, name: string, type: string): Observable<T_DisplayableDataType[]> {
   return  combineLatest([
     this._metricsService.getMetricContainer$(),
-    this._displayReqService.getRequestsByName(page, name + "-" + type)
+    this._displayReqService.getRequestsByName(page, name, type)
   ]).pipe(
     tap(([metricContainer, requests]) =>
       console.log('Processing requests', requests, metricContainer)
