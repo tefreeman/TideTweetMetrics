@@ -100,7 +100,8 @@ export class MockDataService {
             test_displayed_data13,
             test_displayed_data12
           ],
-          type: 'graph'
+          type: 'graph',
+          order: 2
         },
 
         "dashboard-card": {
@@ -116,7 +117,8 @@ export class MockDataService {
             test_displayed_data8,
             test_displayed_data9,
           ],
-          type: 'stat'
+          type: 'stat',
+          order: 1
         },
         // Add more mock data as needed for your use case
       }
