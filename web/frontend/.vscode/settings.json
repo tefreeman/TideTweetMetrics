@@ -14,5 +14,10 @@
         "angular-page": {
           "skipChangeDetectionOnPush": true
         }
-      }
+      },
+
+      "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.organizeImports": true
+      },
 }
