@@ -44,7 +44,6 @@ export class DashboardPageManagerService {
     return this.pageMap$.pipe(
       map(pages => pages[page]),
       filter(page => !!page),
-      first()
     );
   }
 
@@ -105,7 +104,7 @@ export class DashboardPageManagerService {
   }
 
   public getGrids$(pageName: string): Observable<I_GridEntry> {
-    return this.getPage$(pageName);
+    return this.getPage$(pageName).pipe(first());
   }
 
 
