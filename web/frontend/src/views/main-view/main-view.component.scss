@@ -65,6 +65,59 @@
   object-fit: cover;
 }
 
+.side-nav {
+  width: 200px;
+}
+
+.side-nav-title{
+  font-weight: bold;
+  font-size: 15px; 
+  letter-spacing: -.3px;
+  color:#a51e36;
+}
+
+.side-nav-title span {
+  position: relative;
+  display: inline-block;
+}
+
+.side-nav-title span::after {
+  content: "";
+  position: absolute;
+  bottom: -8px; // Adjust this to move the line closer or further from the text
+  left: 0;
+  width: 100%;
+  border-bottom: 3px solid #a51e36;
+}
+
+.side-nav-subtitle{
+  font-weight: bold;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  color:#a51e36;
+}
+
+.side-nav-contents{
+  font-weight: bold !important;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+
+.add-card{
+  background-color: #a51e36;
+  color: white;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  display: flex;
+  align-items: center; // This centers the child items vertically inside the flex container
+
+
+  /* Adjust height and width as necessary, or let it adapt based on content */
+  width: auto; // Adjust based on your layout needs, or you can specify a width
+  padding: 5px; // Adds some inner space between the text/content and the border of the element
+  box-sizing: border-box; // This ensures the padding and border are included in the total width and height
+}
+
 
 /* .underline {
   display: inline-block;
