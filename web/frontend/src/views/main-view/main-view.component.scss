@@ -90,6 +90,13 @@
   border-bottom: 3px solid #a51e36;
 }
 
+.title{
+  font-weight: bold;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  color: white;
+  margin-left: 2px;
+}
 .side-nav-subtitle{
   font-weight: bold;
   font-size: 13px; 
@@ -98,7 +105,6 @@
 }
 
 .side-nav-contents{
-  font-weight: bold !important;
   font-size: 13px; 
   letter-spacing: -.3px;
 }
