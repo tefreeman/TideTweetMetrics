@@ -4,8 +4,11 @@ import { AgChartsAngular } from 'ag-charts-angular';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { AgChartOptions } from 'ag-charts-community';
 
-import {Chart1} from './chart1'
-import {Chart2} from './chart2'
+import {Chart} from './bar-small'
+import {Chart1} from './bar-large'
+import {Chart2} from './bargrouped-small'
+import {Chart3} from './bargrouped-large'
+import {Chart6} from './scatter-large'
 
 @Component({
   selector: 'app-debug',
@@ -21,8 +24,11 @@ import {Chart2} from './chart2'
 
 export class DebugComponent {
 
-  chartOptions: AgChartOptions = new Chart1().chartOptions;
+  chartOptions: AgChartOptions = new Chart().chartOptions;
+  chartOptions1: AgChartOptions = new Chart1().chartOptions;
   chartOptions2: AgChartOptions = new Chart2().chartOptions;
+  chartOptions3: AgChartOptions = new Chart3().chartOptions;
+  chartOptions6: AgChartOptions = new Chart6().chartOptions;
 
 
 }
