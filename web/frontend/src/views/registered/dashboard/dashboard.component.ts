@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           ...grid,
           type: grid.type as 'stat' | 'graph' // Cast the type here if you're confident in its value
       })))
-      // Correct the type assertion if necessary. For example, you may filter or enforce the type more explicitly if the automatic casting isn't safe.
+
   );
   
   this.graphGrids$ = grids$.pipe(
@@ -95,17 +95,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           ...grid,
           type: grid.type as 'stat' | 'graph' // Same casting applied here
       })))
-      // Adjust based on your actual logic and types. 
+
   );
   
 }
 
 ngOnInit() {
-  // You should initialize the observables here, based on the page name
-
-  // Note: 
-
-// Other initialization logic...
 }
 
   ngOnDestroy(): void {
@@ -122,9 +117,16 @@ ngOnInit() {
   }
 
   update(){
-    
+    this._displayRequestManagerService.saveRequests();
   }
 
+  isEmptyCards$(): Observable<boolean> {
+    return this.statGrids$.pipe(map(stats => stats.length === 0));
+  }
   
+
+  isEmptyGraphs$(): Observable<boolean> {
+    return this.graphGrids$.pipe(map(grids => grids.length === 0));
+  }
 
 }
