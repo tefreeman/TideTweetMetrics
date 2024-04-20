@@ -37,10 +37,19 @@ public getDisplayables(page: string, name: string, type: string): Observable<T_D
   );
 }
 
-  public getGrids$(pageName: string): Observable<I_GridEntry> {
-   return this._dashboardPageManagerService.getGrids$(pageName);
-  }
-
+public getGrids$(pageName: string): Observable<any[]> { // Adjust the type as necessary
+  return this._dashboardPageManagerService.getGrids$(pageName).pipe(
+    // Map each grid entry to a new structure
+    map(gridEntries => Object.entries(gridEntries).map(([gridName, gridDetails]) => ({
+      name: gridName,
+      displayables: gridDetails.displayables, // Directly use the displayable list without additional mapping
+      type: gridDetails.type,
+      order: gridDetails.order
+    }))),
+    // Sort the transformed grid entries based on their order
+    map(gridArray => gridArray.sort((a, b) => a.order - b.order)),
+  );
+}
 
 private processRequests(metricContainer: MetricContainer, requests: I_DisplayableRequest[]): T_DisplayableDataType[] {
   const displayables: T_DisplayableDataType[] = [];
