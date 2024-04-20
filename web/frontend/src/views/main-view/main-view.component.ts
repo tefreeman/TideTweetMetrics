@@ -9,6 +9,7 @@ import { DisplayRequestManagerService } from '../../core/services/display-reques
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBoardComponent } from '../registered/add-board/add-board.component';
+import { DashboardPageManagerService } from '../../core/services/dashboard-page-manager.service';
 
 @Component({
     selector: 'app-main-view',
@@ -20,6 +21,7 @@ import { AddBoardComponent } from '../registered/add-board/add-board.component';
 export class MainViewComponent implements OnInit, OnDestroy{
   editModeService: EditModeService = inject(EditModeService);
   displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
+  dashboardPageManagerService: DashboardPageManagerService = inject(DashboardPageManagerService);
   pageSubscription: Subscription | undefined;
 
   staticNavRoutes = [
@@ -36,7 +38,7 @@ export class MainViewComponent implements OnInit, OnDestroy{
   constructor(private authService: AuthService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.pageSubscription = this.displayRequestManagerService.getPageNames$().subscribe((pages) => {
+    this.pageSubscription = this.dashboardPageManagerService.getPageNames$().subscribe((pages) => {
       const newPages = pages.map((page) => ({ name: page.charAt(0).toUpperCase() + page.slice(1), route: page }))
       .filter((page) => page.name !== 'Home');
       this.dynamicNavRoutes = newPages;
@@ -64,7 +66,7 @@ export class MainViewComponent implements OnInit, OnDestroy{
     addBoardRef.afterClosed().subscribe(result => {
       if (result) {
         if (typeof result === 'string') {
-       this.displayRequestManagerService.addPage$(result);
+       this.dashboardPageManagerService.addNewPage$(result);
         }
       }
     });

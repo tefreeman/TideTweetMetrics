@@ -7,8 +7,10 @@ export interface I_GridRequestEntry {
   order: number;
 }
 
+export interface I_PageEntry {
+  [gridName: string]: I_GridRequestEntry;
+}
+
 export interface I_PageMap {
-  [page: string]: {
-    [name: string]: I_GridRequestEntry;
-  };
+  [page: string]: I_PageEntry;
 }
