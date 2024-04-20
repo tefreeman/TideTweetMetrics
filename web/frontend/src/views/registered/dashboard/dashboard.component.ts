@@ -57,7 +57,9 @@ import { GraphGridComponent } from '../../../displayable-components/graph-grid/g
 import { ActivatedRoute } from '@angular/router';
 import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
-import { I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
+import {I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -101,7 +103,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
-  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
+  
+  
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private snackBar: MatSnackBar) {
     this.pageName$ = this.route.params.pipe(
       map((params) => {
         return params['page'];
@@ -131,9 +135,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   update() {
     this._dashboardPageManagerService.savePage();
+    this.openSnackBar('Page has been saved.');
   }
 
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
   }
+  
+  openSnackBar(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
+      horizontalPosition: 'center', // Change as needed.
+      verticalPosition: 'bottom', // Change as needed.
+    });
+  }
+
+
 }
