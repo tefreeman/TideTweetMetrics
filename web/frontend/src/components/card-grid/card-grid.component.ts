@@ -28,9 +28,9 @@ import { DisplayRequestManagerService } from '../../core/services/display-reques
 import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { MoveableGridTilesService } from '../../core/services/moveable-grid-tiles.service';
-import { AddCardComponent } from '../add-card/add-card.component';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
+import { addStatsDialogComponent } from '../stat-components/add-stats-dialog/add-stats-dialog.component';
 import { StatCardComponent } from '../stat-components/stat-card/stat-card.component';
 
 @Component({
@@ -160,7 +160,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openStatCardDialog() {
     this.editModeService.setEditMode(false);
-    const dialogRef = this.dialog.open(AddCardComponent, {
+    const dialogRef = this.dialog.open(addStatsDialogComponent, {
       height: 'calc(100% - 5%)',
       width: 'calc(100% - 5%)',
       maxWidth: '100%',

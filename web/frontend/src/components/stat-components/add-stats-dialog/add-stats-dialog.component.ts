@@ -1,12 +1,12 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { T_DisplayableStat } from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
-import { RecommendedDisplayableService } from '../../core/services/recommended-displayable.service';
+import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { KeyTranslatorService } from '../../../core/services/key-translator.service';
+import { RecommendedDisplayableService } from '../../../core/services/recommended-displayable.service';
+import { MetricSearchComponent } from '../../metric-search/metric-search.component';
+import { MetricSelectListComponent } from '../../metric-select-list/metric-select-list.component';
 import { CardBarComponent } from '../cardBar/cardBar.component';
-import { MetricSearchComponent } from '../metric-search/metric-search.component';
-import { MetricSelectListComponent } from '../metric-select-list/metric-select-list.component';
 import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
 
 @Component({
@@ -21,10 +21,10 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
     MetricSearchComponent,
     simpleStatGridComponent,
   ],
-  templateUrl: './add-card.component.html',
-  styleUrl: './add-card.component.scss',
+  templateUrl: './add-stats-dialog.component.html',
+  styleUrl: './add-stats-dialog.component.scss',
 })
-export class AddCardComponent {
+export class addStatsDialogComponent {
   keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
   recommendedDisplayableService: RecommendedDisplayableService = inject(
     RecommendedDisplayableService
