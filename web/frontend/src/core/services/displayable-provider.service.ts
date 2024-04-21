@@ -60,12 +60,9 @@ export class DisplayableProviderService {
   ): T_DisplayableDataType[] {
     const displayables: T_DisplayableDataType[] = [];
     for (let request of requests) {
-      console.log('RESQUEST: ', request);
       let output = metricContainer.getMetricData(request);
-      console.log('OUTPUT: ', output);
       const result = this._graphService.convert(output);
       if (result) {
-        console.log('PUSH', result);
         displayables.push(result);
       }
     }
