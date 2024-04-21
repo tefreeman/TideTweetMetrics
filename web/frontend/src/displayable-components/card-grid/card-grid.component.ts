@@ -159,10 +159,10 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openStatCardDialog() {
     const dialogRef = this.dialog.open(AddCardComponent, {
-      height: 'calc(100% - 60px)',
-      width: 'calc(100% - 60px)',
+      height: 'calc(100% - 150px)',
+      width: 'calc(100% - 100px)',
       maxWidth: '100%',
-      maxHeight: '100%',
+      maxHeight: '100%'
     });
 
     dialogRef.afterClosed().subscribe((result) => {

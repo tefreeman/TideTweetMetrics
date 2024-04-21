@@ -4,6 +4,7 @@
   gap: 1rem;
   grid-auto-flow: dense;
   justify-content: left;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 .dataCard {
@@ -14,7 +15,7 @@
   justify-content: space-between;
   justify-self: center;
   max-width: inherit;
-  height: inherit;
+  height: 10vh;
 }
 
 .dataCard:hover {
