@@ -8,6 +8,7 @@ import {Chart} from './bar-small'
 import {Chart1} from './bar-large'
 import {Chart2} from './bargrouped-small'
 import {Chart3} from './bargrouped-large'
+import {Chart4} from './line-small'
 import {Chart6} from './scatter-large'
 
 @Component({
@@ -28,6 +29,7 @@ export class DebugComponent {
   chartOptions1: AgChartOptions = new Chart1().chartOptions;
   chartOptions2: AgChartOptions = new Chart2().chartOptions;
   chartOptions3: AgChartOptions = new Chart3().chartOptions;
+  chartOptions4: AgChartOptions = new Chart4().chartOptions;
   chartOptions6: AgChartOptions = new Chart6().chartOptions;
 
 
