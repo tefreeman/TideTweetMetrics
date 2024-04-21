@@ -3,10 +3,10 @@ import { AsyncPipe, NgClass, NgIf, NgSwitch } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  inject,
   Input,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -43,7 +43,7 @@ export class StatCardComponent implements OnInit {
   @Input({ required: true }) displayableData!: T_DisplayableDataType;
   @Input({ required: true }) editModeHook!: boolean;
   @Output() deleteEvent = new EventEmitter<void>();
-
+  hoverState: boolean = false;
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   applyClass = true;
 
@@ -73,5 +73,9 @@ export class StatCardComponent implements OnInit {
 
   onDelete(): void {
     this.deleteEvent.emit();
+  }
+
+  toggleHover(state: boolean): void {
+    this.hoverState = state;
   }
 }
