@@ -47,5 +47,8 @@ export type T_DisplayableStat =
   | I_StatValueData
   | I_StatTrendData
   | I_StatCompData;
+
+export type T_GridType = 'stat' | 'graph';
+
 export type T_DisplayableGraph = I_GraphBarData | I_GraphLineData;
 export type T_DisplayableDataType = T_DisplayableStat | T_DisplayableGraph;

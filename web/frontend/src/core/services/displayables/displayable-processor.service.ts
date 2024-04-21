@@ -58,14 +58,6 @@ export class DisplayableProcessorService {
       dataPoints = 1;
     }
 
-    console.log(
-      'ownerCount: ',
-      ownerCount,
-      'dataDimension: ',
-      dataDimension,
-      'dataPoints: ',
-      dataPoints
-    );
     if (data.type === 'auto-stat') {
       if (ownerCount == 1 && dataDimension == 1 && dataPoints == 1)
         return this.toStatValue(data);

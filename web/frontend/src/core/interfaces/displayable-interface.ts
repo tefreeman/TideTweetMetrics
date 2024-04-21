@@ -1,6 +1,6 @@
 import { T_MetricValue } from './metrics-interface';
 
-export type T_GraphType =
+export type T_DisplayableTypeString =
   | 'stat-value'
   | 'stat-trend'
   | 'stat-comparison'
@@ -12,6 +12,7 @@ export type T_GraphType =
   | 'auto'
   | 'edit-mode'
   | 'auto-stat';
+
 export type T_OwnerType = 'all' | 'top' | 'bottom' | 'specific';
 
 export interface I_OwnersParams {
@@ -23,7 +24,7 @@ export interface I_OwnersParams {
 export interface I_DisplayableRequest {
   stat_name: string;
   ownersParams: I_OwnersParams;
-  type: T_GraphType;
+  type: T_DisplayableTypeString;
 }
 
 export interface IDisplayableData extends I_DisplayableRequest {

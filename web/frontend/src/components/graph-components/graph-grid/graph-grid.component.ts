@@ -22,7 +22,11 @@ import {
   fromEvent,
   takeUntil,
 } from 'rxjs';
-import { T_DisplayableDataType } from '../../../core/interfaces/displayable-data-interface';
+import {
+  T_DisplayableDataType,
+  T_DisplayableGraph,
+  T_GridType,
+} from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
@@ -68,12 +72,12 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     DisplayRequestManagerService
   );
 
-  public dataGrid: MoveableGridTilesService;
+  public dataGrid: MoveableGridTilesService<T_DisplayableGraph>;
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
-  private type = 'graph';
+  private type: T_GridType = 'graph';
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -90,7 +94,7 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((data) => {
         this.dataGrid.dataArr = [];
 
-        this.dataGrid.dataArr = [...data];
+        this.dataGrid.dataArr = [...data] as T_DisplayableGraph[];
         console.log('DATAGRID', this.page, this.name, this.type);
       });
 

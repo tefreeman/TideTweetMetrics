@@ -1,5 +1,9 @@
+// Import necessary Angular and RxJS elements
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { BehaviorSubject, Observable } from 'rxjs';
+
 import { CommonModule, NgFor } from '@angular/common';
-import { Component, inject } from '@angular/core';
 import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { RecommendedDisplayableService } from '../../../core/services/displayables/recommended-displayable.service';
@@ -12,6 +16,8 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
 @Component({
   selector: 'app-add-card',
   standalone: true,
+  templateUrl: './add-stats-dialog.component.html',
+  styleUrls: ['./add-stats-dialog.component.scss'],
   imports: [
     CommonModule,
     MaterialModule,
@@ -21,71 +27,95 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
     MetricSearchComponent,
     simpleStatGridComponent,
   ],
-  templateUrl: './add-stats-dialog.component.html',
-  styleUrl: './add-stats-dialog.component.scss',
 })
-export class addStatsDialogComponent {
-  keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
-  recommendedDisplayableService: RecommendedDisplayableService = inject(
-    RecommendedDisplayableService
+export class addStatsDialogComponent implements OnInit {
+  private _recommendedDisplayables = new BehaviorSubject<T_DisplayableStat[]>(
+    []
   );
-  allDisplayables: T_DisplayableStat[] = []; // Array to hold all displayables
-  reccommendedDisplayables: T_DisplayableStat[] = [];
+  recommendedDisplayables$: Observable<T_DisplayableStat[]> =
+    this._recommendedDisplayables.asObservable();
 
-  addedDisplayables: T_DisplayableStat[] = [];
+  private _addedDisplayables = new BehaviorSubject<T_DisplayableStat[]>([]);
+  addedDisplayables$: Observable<T_DisplayableStat[]> =
+    this._addedDisplayables.asObservable();
 
-  constructor() {}
+  keyTranslatorService: KeyTranslatorService;
+  recommendedDisplayableService: RecommendedDisplayableService;
+  allDisplayables: T_DisplayableStat[] = [];
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: T_DisplayableStat[],
+    private cdr: ChangeDetectorRef,
+    keyTranslatorService: KeyTranslatorService,
+    recommendedDisplayableService: RecommendedDisplayableService
+  ) {
+    this.keyTranslatorService = keyTranslatorService;
+    this.recommendedDisplayableService = recommendedDisplayableService;
+  }
 
   ngOnInit(): void {
     this.recommendedDisplayableService
       .getRecommendedDisplayablesData()
       .subscribe((displayables) => {
         this.allDisplayables = displayables as T_DisplayableStat[];
-        this.reccommendedDisplayables = this.allDisplayables.slice(0, 30); // Initially displaying up to 30 items
+
+        if (this.data) {
+          this._recommendedDisplayables.next(
+            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 30)
+          );
+        } else {
+          this._recommendedDisplayables.next([]);
+        }
       });
   }
 
-  handleLeafNodeClicked(node: any): void {
-    console.log('Leaf node clicked:', node);
+  private filterAndLimitDisplayables(
+    allDisplayables: T_DisplayableStat[],
+    data: T_DisplayableStat[],
+    limit: number
+  ): T_DisplayableStat[] {
+    const filteredDisplayables = allDisplayables.filter((displayable) =>
+      data.every((d) => d.metricName !== displayable.metricName)
+    );
+    return filteredDisplayables.slice(0, limit);
   }
 
   onSearchValueChange(value: string) {
-    console.log(value);
     if (value) {
-      // Filter allDisplayables by checking if the 'title' or another relevant property includes the search string
-      // Adjust the property you filter by according to the structure of T_DisplayableStat
-      this.reccommendedDisplayables = this.allDisplayables.filter((item) => {
-        const metricString = this.keyTranslatorService.keyToFullString(
-          item.metricName
-        );
-        return metricString.toLowerCase().includes(value.toLowerCase());
-      });
-
-      console.log('SETTING');
+      this._recommendedDisplayables.next(
+        this.allDisplayables.filter((item) =>
+          this.keyTranslatorService
+            .keyToFullString(item.metricName)
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        )
+      );
     } else {
-      // If search box is empty, reset to show up to 30 items
-      this.reccommendedDisplayables = this.allDisplayables.slice(0, 30);
+      this._recommendedDisplayables.next(
+        this.filterAndLimitDisplayables(
+          this.allDisplayables,
+          this._addedDisplayables.getValue().concat(this.data),
+          30
+        )
+      );
     }
   }
 
   addCard(card: T_DisplayableStat): void {
-    console.log('Adding card:', card);
-    // Check if the card already exists in the array.
-    const exists = this.addedDisplayables.some(
-      (existingCard) => existingCard.metricName === card.metricName
-    );
-    if (!exists) {
-      this.addedDisplayables.push(card);
-    } else {
-      console.log('Card is already added:', card);
+    const currentCards = this._addedDisplayables.getValue();
+    if (
+      !currentCards.some(
+        (existingCard) => existingCard.metricName === card.metricName
+      )
+    ) {
+      this._addedDisplayables.next([...currentCards, card]);
     }
   }
 
   removeCard(card: T_DisplayableStat): void {
-    console.log('Removing card:', card);
-    // delete card from addedDisplayables array
-    this.addedDisplayables = this.addedDisplayables.filter(
-      (existingCard) => existingCard.metricName !== card.metricName
-    );
+    const updatedCards = this._addedDisplayables
+      .getValue()
+      .filter((existingCard) => existingCard.metricName !== card.metricName);
+    this._addedDisplayables.next(updatedCards);
   }
 }
