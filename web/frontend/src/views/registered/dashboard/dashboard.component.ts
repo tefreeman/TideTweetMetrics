@@ -10,6 +10,11 @@ import {
   map,
   switchMap,
 } from 'rxjs';
+import { BarChartComponent } from '../../../components/graph-components/bar-chart/bar-chart.component';
+import { GraphCardComponent } from '../../../components/graph-components/graph-card/graph-card.component';
+import { GraphGridComponent } from '../../../components/graph-components/graph-grid/graph-grid.component';
+import { CardGridComponent } from '../../../components/stat-components/card-grid/card-grid.component';
+import { StatCardComponent } from '../../../components/stat-components/stat-card/stat-card.component';
 import { I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
@@ -17,11 +22,6 @@ import { DisplayableProviderService } from '../../../core/services/displayable-p
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { MetricService } from '../../../core/services/metric.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
-import { BarChartComponent } from '../../../displayable-components/bar-chart/bar-chart.component';
-import { CardGridComponent } from '../../../displayable-components/card-grid/card-grid.component';
-import { GraphCardComponent } from '../../../displayable-components/graph-card/graph-card.component';
-import { GraphGridComponent } from '../../../displayable-components/graph-grid/graph-grid.component';
-import { StatCardComponent } from '../../../displayable-components/stat-card/stat-card.component';
 
 @Component({
   selector: 'app-dashboard',

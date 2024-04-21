@@ -6,9 +6,9 @@ import {
   MatTreeFlattener,
 } from '@angular/material/tree';
 import { Observable, map } from 'rxjs';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
-import { MetricService } from '../../core/services/metric.service';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { KeyTranslatorService } from '../../../core/services/key-translator.service';
+import { MetricService } from '../../../core/services/metric.service';
 
 interface MetricNode {
   name: string;
