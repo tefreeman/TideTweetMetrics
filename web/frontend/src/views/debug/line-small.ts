@@ -66,6 +66,7 @@ export class Chart4 {
   chartOptions: AgChartOptions = {
     // Data: Data to be displayed in the chart
     data: getData(),
+    theme: this.chartTheme,
     title: {
         text: "Likes per Month",
     },
@@ -77,8 +78,8 @@ export class Chart4 {
         yKey: "alabama_cs",
         yName: "@alabama_cs",
         tooltip: {
-            renderer: ({ datum, yName, xKey, yKey }) => {
-            return { title: `${yName}: ${datum[xKey]}`, content: datum[yKey] };
+            renderer: ({ datum, xName, yName, xKey, yKey }) => {
+            return { title: `${yName}: ${xName} ${datum[xKey]}`, content: datum[yKey] };
             },
         },
     },
@@ -89,8 +90,8 @@ export class Chart4 {
       yKey: "auburnidk",
       yName: "@auburnidk",
       tooltip: {
-        renderer: ({ datum, yName, xKey, yKey }) => {
-        return { title: `${yName}: ${datum[xKey]}`, content: datum[yKey] };
+        renderer: ({ datum, xName, yName, xKey, yKey }) => {
+        return { title: `${yName}: ${xName} ${datum[xKey]}`, content: datum[yKey] };
         },
     },
     },
@@ -101,8 +102,8 @@ export class Chart4 {
       yKey: "otherschool",
       yName: "@otherschool",
       tooltip: {
-        renderer: ({ datum, yName, xKey, yKey }) => {
-        return { title: `${yName}: ${datum[xKey]}`, content: datum[yKey] };
+        renderer: ({ datum, xName, yName, xKey, yKey }) => {
+        return { title: `${yName}: ${xName} ${datum[xKey]}`, content: datum[yKey] };
         },
     },
     },
@@ -113,8 +114,8 @@ export class Chart4 {
         yKey: "otherschool1",
         yName: "@otherschool1",
         tooltip: {
-            renderer: ({ datum, yName, xKey, yKey }) => {
-            return { title: `${yName}: ${datum[xKey]}`, content: datum[yKey] };
+            renderer: ({ datum, xName, yName, xKey, yKey }) => {
+            return { title: `${yName}: ${xName} ${datum[xKey]}`, content: datum[yKey] };
             },
         },
     },
@@ -143,6 +144,5 @@ export class Chart4 {
     },
   ],
 
-    theme: this.chartTheme,
   };
 }
