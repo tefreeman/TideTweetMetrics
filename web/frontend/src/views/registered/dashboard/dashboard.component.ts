@@ -1,13 +1,6 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -20,7 +13,6 @@ import {
 import { I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
-import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { MetricService } from '../../../core/services/metric.service';
@@ -52,12 +44,9 @@ import { StatCardComponent } from '../../../displayable-components/stat-card/sta
   styleUrl: './dashboard.component.scss',
   providers: [MetricService],
 })
-export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DashboardComponent implements OnInit {
   _displayProcessor = inject(DisplayableProviderService);
   editModeService: EditModeService = inject(EditModeService);
-  _displayRequestManagerService: DisplayRequestManagerService = inject(
-    DisplayRequestManagerService
-  );
   _displayableProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
   );
@@ -67,17 +56,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
   public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
-  subscription: any;
   pageName$: Observable<string>;
   grids$: Observable<I_GridRequestEntryWithName[]>;
-  routeParamSubscription: Subscription | undefined;
   gridsSubscription: Subscription | undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private snackBar: MatSnackBar
-  ) {
+  constructor(private route: ActivatedRoute, private snackBar: MatSnackBar) {
     this.pageName$ = this.route.params.pipe(
       map((params) => {
         return params['page'];
@@ -92,14 +75,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {}
-
-  ngOnDestroy(): void {
-    this.routeParamSubscription?.unsubscribe();
-  }
-
-  ngAfterViewInit() {
-    // Initial subscription
-  }
 
   toggleEditMode() {
     this.editModeService.toggleEditMode();
