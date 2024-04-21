@@ -1,0 +1,87 @@
+
+<!-- TODO: Hook up buttons. Put username placeholder to actual username. Hook up approved account list and Opt in for Email Reports-->
+
+<div class="title-container">
+  <h2 class="title">Profile</h2>
+</div>
+
+<div class="grid-container">
+  <mat-card class="card-container">
+    <div class="card">
+      <h3 class="card-title" style="margin-bottom: 0">My Account</h3>
+      <div class="input-container">
+        <span class="card-text">Username</span>
+        <mat-form-field class="input" color="primary">
+          <input matInput maxlength="10" placeholder="Username">
+        </mat-form-field>
+
+
+      </div>
+
+      
+      <button mat-stroked-button color="primary" class="change-button" (click)="resetMyPassword()">Change Password By Email</button>
+    </div>
+  </mat-card>
+  
+  
+
+  <mat-card class ="card-container">
+    <div class="card">
+      <h3 class="card-title">E-mail Report</h3>
+      <div class="input-container">
+        <span class="card-text">Opt In for E-mail Reports</span>
+        <mat-checkbox class="checkbox" color="primary" [checked]="optInForEmailReports" (change)="updateEmailReportOptIn($event.checked)">
+        </mat-checkbox>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card *ngIf="isAdmin" class="card-container">
+    <div class="card">
+      <h3 class="card-title">Admin Control</h3>
+      
+      <div class="input-container ">
+          <mat-accordion>
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+              <mat-expansion-panel-header>Approved Accounts</mat-expansion-panel-header>
+              
+              <!-- Approved accounts -->
+              <ng-container *ngFor="let user of usersAndRoles; let i = index">
+              <mat-card class="account-card" *ngIf="user.role === 'user'">
+                <mat-card-content>
+                  <div class="account-details">
+                    <span class="text">{{ user.email }}</span> <!-- Assuming you want to display the email as the account name -->
+                    <button mat-icon-button class="delete-button" color="primary" aria-label="Delete" (click)="deleteUser(user)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </ng-container>
+
+            </mat-expansion-panel>
+          </mat-accordion>
+      </div>
+
+      <!-- Requests -->
+      <p class="card-text2">Requests</p>
+      <ng-container *ngFor="let user of usersAndRoles; let i = index">
+      <mat-card class="account-card2" *ngIf="user.role === 'unverified'">
+        <mat-card-content>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="text">{{ user.email }}</span> <!-- Assuming you want to display the email as the account name -->
+            <div style="margin-right: 10px;">
+              <button class="accept-button" (click)="approveUser(user)">
+                <i class="fa fa-check fa-1x"></i>
+              </button>
+              <button class="decline-button"  (click)="deleteUser(user)">
+                <i class="fa fa-remove fa-1x"></i>
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+    </div>
+  </mat-card>
+</div>

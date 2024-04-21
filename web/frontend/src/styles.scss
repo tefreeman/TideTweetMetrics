@@ -11,16 +11,16 @@ html, body {
 
 
 $crimson-palette: (
-  900: #a51e36,
-  800: #a9282a,
-  700: #b62d30,
-  600: #c73636,
-  500: #d63e38,
-  400: #d44e4f,
-  300: #cd6d6f,
-  200: #dd9597,
-  100: #f4cacf,
-  50: #faeaed,
+  900: #a51e37,
+  800: #b52741,
+  700: #c22c49,
+  600: #d43451,
+  500: #e43c54,
+  400: #de5068,
+  300: #d37182,
+  200: #e198a5,
+  100: #f4ccd7,
+  50: #faebf0,
 
   contrast: (
     900: white,
@@ -37,16 +37,16 @@ $crimson-palette: (
 );
 
 $my-complementary: (
-  900: #174f4b,
-  800: #1b6c69,
-  700: #1b7c7a,
-  600: #1d8c8b,
-  500: #209999,
-  400: #34a9ab,
-  300: #55b8bb,
-  200: #85ccd0,
-  100: #b5e0e2,
-  50: #e2f2f4,
+  900: #3c3c3c,
+  800: #606060,
+  700: #818181,
+  600: #979797,
+  500: #c2c2c2,
+  400: #dedede,
+  300: #f0f0f0,
+  200: #f5f5f5,
+  100: #fafafa,
+  50: #ffffff,
 
   contrast: (
     900: white,
@@ -64,7 +64,7 @@ $my-complementary: (
 
 
 $my-primary: mat.define-palette($crimson-palette, 900);
-$my-accent: mat.define-palette($my-complementary, 500);
+$my-accent: mat.define-palette($my-complementary, 50);
 // The "warn" palette is optional and defaults to red if not specified.
 $my-warn: mat.define-palette(mat.$red-palette);
 

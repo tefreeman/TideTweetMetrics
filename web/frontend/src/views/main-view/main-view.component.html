@@ -1,0 +1,58 @@
+
+<div id="wrapper">
+  <mat-sidenav-container>
+    <mat-sidenav class="side-nav" #sidenav >
+      <div mat-subheader class="side-nav-title"><span>Tide Tweet Metrics</span></div>
+      <mat-nav-list >
+        <a
+          *ngFor="let nav of staticNavRoutes"
+          [routerLink]="nav.route"
+          mat-list-item
+          (click)="sidenav.toggle()"
+          >
+            <span class="side-nav-contents">{{ nav.name }}</span>
+        </a>
+      </mat-nav-list>
+  <div mat-subheader class="side-nav-subtitle">Custom Boards</div>
+  <mat-nav-list>
+    <a
+      *ngFor="let nav of dynamicNavRoutes"
+      [routerLink]="nav.route"
+      mat-list-item
+      (click)="sidenav.toggle()"
+      >
+      <span class="side-nav-contents">{{ nav.name }}</span>
+      </a>
+
+      <a
+      mat-list-item
+      (click)="addBoard()"
+      >
+      <mat-card class="add-card">
+        Add   
+      </mat-card>  
+      </a>
+  </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="custom-background">
+      <div class="background-image-container">
+        <img src="../../../assets/home-images/banner-images/image.png" alt="Background Image">
+      </div>
+      <!-- was 300vh need a better way to scale webpage size if cards over run-->
+      <div style="height: 100vh">
+        <mat-toolbar class="custom-toolbar">
+          <button mat-icon-button aria-label="Menu" (click)="sidenav.open()" style="color: white">
+            <i class="fa fa-bars fa-1x"></i>
+          </button>
+    
+          <span class="title">Page Name (Only for dashboards)</span> 
+          
+          <button mat-icon-button aria-label="Logout" style="color: white; margin-left:auto" (click)="signout()">
+            <i class="fa fa-sign-out fa-1x"></i>
+          </button>
+        </mat-toolbar>
+        <router-outlet> </router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

@@ -42,7 +42,7 @@ def _init_collections():
     """
     Initialize the necessary collections in the database.
     """
-    old_db = client["twitter"]
+    old_db = client["twitter_v2"]
 
     db.create_collection("crawl_list")
     crawl_list = old_db["crawl_list"].find({})
@@ -57,6 +57,13 @@ def _init_collections():
         mirror["is_working"] = True
         db["mirrors"].insert_one(mirror)
 
+    # TODO: check if this is correct
+    db.create_collection("crawl_accounts")
+    crawl_accounts = old_db["crawl_accounts"].find({})
+    for account in crawl_accounts:
+        db["crawl_accounts"].insert_one(account)
+        
+        
     db.create_collection("profiles")
     db.create_collection("tweets")
 
@@ -300,3 +307,29 @@ def save_mirror(mirror: dict):
     """
     collection = db["mirrors"]
     collection.replace_one({"url": mirror["url"]}, mirror, upsert=True)
+
+
+
+def get_twitter_crawling_accounts() -> list[dict]:
+    """
+    Get the list of Twitter accounts that crawl Twitter.
+
+    Returns:
+        list[dict]: List of Twitter accounts.
+    """
+    collection = db["crawl_accounts"]
+    accounts = []
+    for account in collection.find():
+        accounts.append(account)
+    return accounts
+
+
+def save_crawl_account(account: dict):
+    """
+    Save a Twitter account that crawls Twitter.
+
+    Args:
+        account (dict): Account object.
+    """
+    collection = db["crawl_accounts"]
+    collection.replace_one({"username": account["username"]}, account, upsert=True)
