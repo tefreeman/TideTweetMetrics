@@ -10,6 +10,7 @@ import { RecommendedDisplayableService } from '../../../core/services/displayabl
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 import { MetricSearchComponent } from '../../selectors/metric-search/metric-search.component';
 import { MetricSelectListComponent } from '../../selectors/metric-select-list/metric-select-list.component';
+import { OwnerSearchComponent } from '../../selectors/owner-search/owner-search.component';
 import { CardBarComponent } from '../cardBar/cardBar.component';
 import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
 
@@ -26,6 +27,7 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
     MetricSelectListComponent,
     MetricSearchComponent,
     simpleStatGridComponent,
+    OwnerSearchComponent,
   ],
 })
 export class addStatsDialogComponent implements OnInit {

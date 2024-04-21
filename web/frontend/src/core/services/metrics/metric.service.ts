@@ -39,6 +39,14 @@ export class MetricService {
     );
   }
 
+  public getOwnersForStat(metricName: string): Observable<string[]> {
+    return this.metricContainer$.pipe(
+      map((metricContainer) =>
+        metricContainer.getAllOwnerNamesByStat(metricName)
+      )
+    );
+  }
+
   private initMetricContainer(): void {
     this.getMetricContainer$().subscribe({
       next: (metricContainer) => {
