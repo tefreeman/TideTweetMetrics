@@ -22,6 +22,7 @@ import {
   fromEvent,
   takeUntil,
 } from 'rxjs';
+import { T_DisplayableStat } from '../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
 import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
@@ -73,7 +74,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
-  private type = 'card';
+  private type: 'stat' = 'stat';
   constructor(
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -158,15 +159,21 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openStatCardDialog() {
+    this.editModeService.setEditMode(false);
     const dialogRef = this.dialog.open(AddCardComponent, {
-      height: 'calc(100% - 150px)',
-      width: 'calc(100% - 100px)',
+      height: 'calc(100% - 5%)',
+      width: 'calc(100% - 5%)',
       maxWidth: '100%',
-      maxHeight: '100%'
+      maxHeight: '100%',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+    dialogRef.afterClosed().subscribe((result: T_DisplayableStat[]) => {
+      this.displayRequestManagerService.addDisplayables(
+        result,
+        this.type,
+        this.page,
+        this.name
+      );
     });
   }
 

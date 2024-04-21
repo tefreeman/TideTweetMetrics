@@ -103,6 +103,7 @@ export class DisplayableProcessorService {
     return {
       type: 'stat-value',
       metricName: data.stat_name,
+      ownersParams: data.ownersParams,
       owner: owner,
       value: data.owners[owner],
     };
@@ -117,6 +118,7 @@ export class DisplayableProcessorService {
     return {
       type: 'stat-comp',
       metricName: data.stat_name,
+      ownersParams: data.ownersParams,
       values: Object.values(data.owners),
       owners: Object.keys(data.owners),
     };
@@ -146,6 +148,7 @@ export class DisplayableProcessorService {
       return {
         type: 'stat-trend',
         metricName: data.stat_name,
+        ownersParams: data.ownersParams,
         owner: owner,
         times: times,
         time_period: 'monthes', // Hardcoded for now TODO: fix
@@ -160,6 +163,7 @@ export class DisplayableProcessorService {
     return {
       type: 'graph-bar',
       metricName: data.stat_name,
+      ownersParams: data.ownersParams,
       values: Object.values(data.owners),
       owners: Object.keys(data.owners),
     };
@@ -169,6 +173,7 @@ export class DisplayableProcessorService {
     return {
       type: 'graph-line',
       metricName: data.stat_name,
+      ownersParams: data.ownersParams,
       values: Object.values(data.owners),
       owners: Object.keys(data.owners),
     };
