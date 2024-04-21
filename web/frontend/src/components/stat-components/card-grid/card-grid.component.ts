@@ -22,16 +22,16 @@ import {
   fromEvent,
   takeUntil,
 } from 'rxjs';
-import { T_DisplayableStat } from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
-import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
-import { EditModeService } from '../../core/services/edit-mode.service';
-import { MoveableGridTilesService } from '../../core/services/moveable-grid-tiles.service';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
-import { GraphCardComponent } from '../graph-card/graph-card.component';
-import { addStatsDialogComponent } from '../stat-components/add-stats-dialog/add-stats-dialog.component';
-import { StatCardComponent } from '../stat-components/stat-card/stat-card.component';
+import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
+import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
+import { EditModeService } from '../../../core/services/edit-mode.service';
+import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
+import { BarChartComponent } from '../../graph-components/bar-chart/bar-chart.component';
+import { GraphCardComponent } from '../../graph-components/graph-card/graph-card.component';
+import { addStatsDialogComponent } from '../add-stats-dialog/add-stats-dialog.component';
+import { StatCardComponent } from '../stat-card/stat-card.component';
 
 @Component({
   selector: 'app-card-grid',

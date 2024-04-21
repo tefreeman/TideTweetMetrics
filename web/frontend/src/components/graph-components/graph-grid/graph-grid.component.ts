@@ -22,13 +22,13 @@ import {
   fromEvent,
   takeUntil,
 } from 'rxjs';
-import { T_DisplayableDataType } from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
-import { DisplayableProviderService } from '../../core/services/displayable-provider.service';
-import { EditModeService } from '../../core/services/edit-mode.service';
-import { MoveableGridTilesService } from '../../core/services/moveable-grid-tiles.service';
-import { AddGraphComponent } from '../add-graph/add-graph.component';
+import { T_DisplayableDataType } from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
+import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
+import { EditModeService } from '../../../core/services/edit-mode.service';
+import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
+import { AddGraphDialogComponent } from '../add-graph/add-graph-dialog.component';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
 
@@ -174,7 +174,7 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
   openGraphCardDialog() {
     this.editModeService.setEditMode(false);
 
-    const dialogRef = this.dialog.open(AddGraphComponent, {
+    const dialogRef = this.dialog.open(AddGraphDialogComponent, {
       height: 'calc(100% - 60px)',
       width: 'calc(100% - 60px)',
       maxWidth: '100%',
