@@ -10,7 +10,7 @@
   <ng-container *ngFor="let displayableData of dataGrid.dataArr; let i = index">
     <ng-container>
       <app-graph-card
-       [ngStyle]="{height: cardHeight, maxWidth: maxCardWidth}"
+        [ngStyle]="{ height: cardHeight, maxWidth: maxCardWidth }"
         class="dataCard"
         (deleteEvent)="deleteCard(i)"
         #graphcard
@@ -20,11 +20,19 @@
       ></app-graph-card>
     </ng-container>
   </ng-container>
-  <mat-card    [ngStyle]="{'max-width': maxCardWidth, 'height': '20rem'}"
-  class="card-add" (click)="openGraphCardDialog()" *ngIf="editMode | async">
-   <div class="icon-container">
-     <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add" class="custom-icon"></mat-icon>
-   </div>
- 
- </mat-card>
+  <mat-card
+    [ngStyle]="{ 'max-width': maxCardWidth, height: '20rem' }"
+    class="card-add"
+    (click)="openGraphCardDialog()"
+    *ngIf="editMode | async"
+  >
+    <div class="icon-container">
+      <mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="add"
+        class="custom-icon"
+      ></mat-icon>
+    </div>
+  </mat-card>
 </div>

@@ -18,9 +18,9 @@ import { StatCardComponent } from '../../../components/stat-components/stat-card
 import { I_GridRequestEntryWithName } from '../../../core/interfaces/pages-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
-import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
+import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
-import { MetricService } from '../../../core/services/metric.service';
+import { MetricService } from '../../../core/services/metrics/metric.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 
 @Component({

@@ -4,10 +4,10 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import { HttpClient } from '@angular/common/http';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
-import { I_MetricsInterface } from '../interfaces/metrics-interface';
-import { AuthService } from './auth.service';
-import { KeyTranslatorService } from './key-translator.service';
-import { LocalStorageService } from './local-storage.service';
+import { I_MetricsInterface } from '../../interfaces/metrics-interface';
+import { AuthService } from '../auth.service';
+import { KeyTranslatorService } from '../key-translator.service';
+import { LocalStorageService } from '../local-storage.service';
 import { MetricContainer } from './metric-container';
 
 @Injectable({

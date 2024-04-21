@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of } from 'rxjs';
-import { T_DisplayableDataType } from '../interfaces/displayable-data-interface';
+import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
 import {
   I_DisplayableRequest,
   T_GraphType,
-} from '../interfaces/displayable-interface';
-import { DashboardPageManagerService } from './dashboard-page-manager.service';
+} from '../../interfaces/displayable-interface';
+import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 
 @Injectable({
   providedIn: 'root',

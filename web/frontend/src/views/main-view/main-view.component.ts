@@ -1,75 +1,86 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { MaterialModule } from '../../core/modules/material/material.module';
 import { NgFor } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
-import { DashboardComponent } from '../registered/dashboard/dashboard.component';
-import { EditModeService } from '../../core/services/edit-mode.service';
-import { DisplayRequestManagerService } from '../../core/services/display-request-manager.service';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AddBoardComponent } from '../registered/add-board/add-board.component';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { MaterialModule } from '../../core/modules/material/material.module';
+import { AuthService } from '../../core/services/auth.service';
 import { DashboardPageManagerService } from '../../core/services/dashboard-page-manager.service';
+import { DisplayRequestManagerService } from '../../core/services/displayables/display-request-manager.service';
+import { EditModeService } from '../../core/services/edit-mode.service';
+import { AddBoardComponent } from '../registered/add-board/add-board.component';
+import { DashboardComponent } from '../registered/dashboard/dashboard.component';
 
 @Component({
-    selector: 'app-main-view',
-    standalone: true,
-    templateUrl: './main-view.component.html',
-    styleUrl: './main-view.component.scss',
-    imports: [MaterialModule, RouterLink, RouterOutlet, DashboardComponent,NgFor]
+  selector: 'app-main-view',
+  standalone: true,
+  templateUrl: './main-view.component.html',
+  styleUrl: './main-view.component.scss',
+  imports: [
+    MaterialModule,
+    RouterLink,
+    RouterOutlet,
+    DashboardComponent,
+    NgFor,
+  ],
 })
-export class MainViewComponent implements OnInit, OnDestroy{
+export class MainViewComponent implements OnInit, OnDestroy {
   editModeService: EditModeService = inject(EditModeService);
-  displayRequestManagerService: DisplayRequestManagerService = inject(DisplayRequestManagerService);
-  dashboardPageManagerService: DashboardPageManagerService = inject(DashboardPageManagerService);
+  displayRequestManagerService: DisplayRequestManagerService = inject(
+    DisplayRequestManagerService
+  );
+  dashboardPageManagerService: DashboardPageManagerService = inject(
+    DashboardPageManagerService
+  );
   pageSubscription: Subscription | undefined;
 
   staticNavRoutes = [
-    {name: "Home", route: "home"},
-    {name:'Analysis Board', route:'analysis-board'},  //Add more here as needed
-    {name:'Optimizer', route:'optimizer'},
-    {name:'My Profile', route:'my-profile'},
+    { name: 'Home', route: 'home' },
+    { name: 'Analysis Board', route: 'analysis-board' }, //Add more here as needed
+    { name: 'Optimizer', route: 'optimizer' },
+    { name: 'My Profile', route: 'my-profile' },
   ];
 
-  dynamicNavRoutes: {name: string; route: string}[] = [];
-
+  dynamicNavRoutes: { name: string; route: string }[] = [];
 
   public isExpanded = false;
   constructor(private authService: AuthService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.pageSubscription = this.dashboardPageManagerService.getPageNames$().subscribe((pages) => {
-      const newPages = pages.map((page) => ({ name: page.charAt(0).toUpperCase() + page.slice(1), route: page }))
-      .filter((page) => page.name !== 'Home');
-      this.dynamicNavRoutes = newPages;
-    });
+    this.pageSubscription = this.dashboardPageManagerService
+      .getPageNames$()
+      .subscribe((pages) => {
+        const newPages = pages
+          .map((page) => ({
+            name: page.charAt(0).toUpperCase() + page.slice(1),
+            route: page,
+          }))
+          .filter((page) => page.name !== 'Home');
+        this.dynamicNavRoutes = newPages;
+      });
   }
 
   ngOnDestroy(): void {
-      this.pageSubscription?.unsubscribe();
+    this.pageSubscription?.unsubscribe();
   }
 
-    public toggleMenu() {
-      this.isExpanded = !this.isExpanded;
-    }
+  public toggleMenu() {
+    this.isExpanded = !this.isExpanded;
+  }
 
-    signout(){
-      this.authService.signout();
-    }
-  
+  signout() {
+    this.authService.signout();
+  }
 
-  addBoard(){
-    const addBoardRef = this.dialog.open(AddBoardComponent, {
-  
-    });
+  addBoard() {
+    const addBoardRef = this.dialog.open(AddBoardComponent, {});
 
-    addBoardRef.afterClosed().subscribe(result => {
+    addBoardRef.afterClosed().subscribe((result) => {
       if (result) {
         if (typeof result === 'string') {
-       this.dashboardPageManagerService.addNewPage$(result);
+          this.dashboardPageManagerService.addNewPage$(result);
         }
       }
     });
-    }
-  
+  }
 }
