@@ -10,12 +10,10 @@ mat-dialog-content{
 }
 
 .grid-container {
-  box-sizing: border-box;
 
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: auto;
 
 }
 .search {
@@ -23,10 +21,16 @@ mat-dialog-content{
   width: 66.66%;
 }
 
-.scrollable-content { /* Added Displayables Section */
-  grid-column: 3; // Second column
-  max-height: 550px; // Example: Adjust based on your requirements
+.scrollable-content {
+  grid-column: 3;
+  background-color: #f8f9fa;  // Off-white background color
   overflow-y: scroll;
+  max-height: 550px;  // or consider using 100% if it's within a flex container that sizes correctly
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  // Remove any specific negative margin adjustments that might cut off the background
+  box-sizing: border-box;  // Essential for including padding in the height calculation
 }
 
 .data-card{
@@ -40,7 +44,6 @@ mat-dialog-content{
   justify-self: center;
   /* Add below styles to ensure max width and height are respected */
   max-width: inherit; /* Ensures .dataCard respects bound max-width */
-  height: inherit; /* Ensures .dataCard respects bound height */
   max-height: 550px; // Example: Adjust based on your requirements
   overflow-y: scroll;
 }
@@ -49,6 +52,12 @@ mat-dialog-content{
   font-weight: bold;
   font-size: 20px; 
   letter-spacing: -.3px;
+}
+
+.sub-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 1rem; /* Spacing below the subtitle for visual separation */
 }
 
 .card-margin {

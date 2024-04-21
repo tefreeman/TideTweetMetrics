@@ -1,32 +1,37 @@
 
 <div class="card-margin">
-<h2 mat-dialog-title class="title">Add Card</h2>
-
-<mat-dialog-content class="mat-typography">
-  <div class="grid-container">
+  <h2 mat-dialog-title class="title">Add Card</h2>
   
-    <!-- Search Bar -->
-    <app-metric-search class="search" (searchValueChanged)="onSearchValueChange($event)"></app-metric-search>
+  <mat-dialog-content class="mat-typography">
+    <div class="grid-container">
     
-    <!-- Section for Recommended Displayables-->
-    <div class="data-card ">
-      <app-simple-card-grid
-        (cardClicked)="addCard($event)"
-        [dataArr]="reccommendedDisplayables"
-      ></app-simple-card-grid>
-    </div>
-    
-    <!-- Section for Displaying Added Displayables -->
-    <div class="scrollable-content">
-      <app-simple-card-grid
-          [dataArr]="addedDisplayables"
+      <!-- Search Bar -->
+      <app-metric-search class="search" (searchValueChanged)="onSearchValueChange($event)"></app-metric-search>
+      
+      <!-- Section for Recommended Displayables-->
+      <div class="data-card">
+        <!-- Title for Recommended Cards -->
+        <h3 class="sub-title">Recommended Cards</h3>
+        <app-simple-card-grid
+          (cardClicked)="addCard($event)"
+          [dataArr]="reccommendedDisplayables"
         ></app-simple-card-grid>
+      </div>
+      
+      <!-- Section for Displaying Added Displayables -->
+      <div class="scrollable-content">
+        <!-- Title for Selected Cards -->
+        <h3 class="sub-title">Selected Cards</h3>
+        <app-simple-card-grid
+            [dataArr]="addedDisplayables"
+          ></app-simple-card-grid>
+      </div>
+      
     </div>
-    
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Add</button>
+  </mat-dialog-actions>
   </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Add</button>
-</mat-dialog-actions>
-</div>
+  
