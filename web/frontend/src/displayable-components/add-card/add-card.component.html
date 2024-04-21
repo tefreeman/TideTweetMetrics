@@ -3,11 +3,19 @@
 <mat-dialog-content class="mat-typography">
   <div class="grid-container">
     <div class="data-card">
-      <app-metric-select-list
-        (leafNodeClicked)="handleLeafNodeClicked($event)"
-      ></app-metric-select-list>
+      <app-metric-search
+        (searchValueChanged)="onSearchValueChange($event)"
+      ></app-metric-search>
+      <app-simple-card-grid
+        [dataArr]="addedDisplayables"
+      ></app-simple-card-grid>
     </div>
-    <div class="data-card" style="width: 500px; height: 500px"></div>
+    <div class="data-card">
+      <app-simple-card-grid
+        (cardClicked)="addCard($event)"
+        [dataArr]="reccommendedDisplayables"
+      ></app-simple-card-grid>
+    </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

@@ -54,14 +54,17 @@ export class DisplayableProviderService {
     );
   }
 
-  private processRequests(
+  public processRequests(
     metricContainer: MetricContainer,
     requests: I_DisplayableRequest[]
   ): T_DisplayableDataType[] {
     const displayables: T_DisplayableDataType[] = [];
     for (let request of requests) {
       let output = metricContainer.getMetricData(request);
-      displayables.push(this._graphService.convert(output));
+      const result = this._graphService.convert(output);
+      if (result) {
+        displayables.push(result);
+      }
     }
     return displayables;
   }
