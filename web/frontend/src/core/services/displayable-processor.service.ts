@@ -53,26 +53,30 @@ export class DisplayableProcessorService {
 
     // TODO: upgrade this to a switch statement
     if (Array.isArray(firstOwner)) {
-      if (Array.isArray(firstOwner[0])) {
-        dataPoints = firstOwner[0].length;
-      } else {
-        dataPoints = firstOwner.length;
-      }
+      dataPoints = firstOwner.length;
     } else {
       dataPoints = 1;
     }
 
-    if (ownerCount == 1 && dataDimension == 1 && dataPoints == 1)
-      return this.toStatValue(data);
-
-    if (ownerCount == 2 && dataDimension == 1 && dataPoints == 1)
-      return this.toStatComparison(data);
-
-    if (ownerCount == 1 && dataDimension == 2 && dataPoints == 1)
-      return this.toStatTrend(data);
-
-    // we can't fall through to the next if statement if auto-stat
+    console.log(
+      'ownerCount: ',
+      ownerCount,
+      'dataDimension: ',
+      dataDimension,
+      'dataPoints: ',
+      dataPoints
+    );
     if (data.type === 'auto-stat') {
+      if (ownerCount == 1 && dataDimension == 1 && dataPoints == 1)
+        return this.toStatValue(data);
+
+      if (ownerCount == 2 && dataDimension == 1 && dataPoints == 1)
+        return this.toStatComparison(data);
+
+      if (ownerCount == 1 && dataDimension == 2 && dataPoints > 1)
+        return this.toStatTrend(data);
+
+      // we can't fall through to the next if statement if auto-stat
       return this.toStatValue(data);
     }
 

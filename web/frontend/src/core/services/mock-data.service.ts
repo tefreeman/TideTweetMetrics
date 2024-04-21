@@ -30,7 +30,7 @@ let test_displayed_data4: I_DisplayableRequest = {
 let test_displayed_data5: I_DisplayableRequest = {
   stat_name: 'tweet_likes-sum-yearly',
   ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-trend',
+  type: 'auto-stat',
 };
 let test_displayed_data6: I_DisplayableRequest = {
   stat_name: 'tweet_replies-mean',
