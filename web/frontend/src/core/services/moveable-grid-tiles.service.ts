@@ -1,7 +1,7 @@
 import { ElementRef, QueryList } from '@angular/core';
 
-export class MoveableGridTilesService {
-  public dataArr: any[] = [];
+export class MoveableGridTilesService<T> {
+  public dataArr: T[] = [];
   private positionArr: { x: number; y: number }[] = [];
 
   constructor(debug: boolean = false) {

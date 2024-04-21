@@ -13,7 +13,7 @@
       <h3 class="sub-title">Recommended Cards</h3>
       <app-simple-stat-grid
         (cardClicked)="addCard($event)"
-        [dataArr]="reccommendedDisplayables"
+        [dataArr]="(recommendedDisplayables$ | async)!"
       ></app-simple-stat-grid>
     </div>
 
@@ -23,14 +23,18 @@
       <h3 class="sub-title">Selected Cards</h3>
       <app-simple-stat-grid
         (cardClicked)="removeCard($event)"
-        [dataArr]="addedDisplayables"
+        [dataArr]="(addedDisplayables$ | async)!"
       ></app-simple-stat-grid>
     </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button [mat-dialog-close]="null">Cancel</button>
-  <button mat-button [mat-dialog-close]="addedDisplayables" cdkFocusInitial>
+  <button
+    mat-button
+    [mat-dialog-close]="(addedDisplayables$ | async)!"
+    cdkFocusInitial
+  >
     Add
   </button>
 </mat-dialog-actions>

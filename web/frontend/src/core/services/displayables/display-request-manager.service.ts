@@ -1,9 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of } from 'rxjs';
-import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
+import {
+  T_DisplayableDataType,
+  T_GridType,
+} from '../../interfaces/displayable-data-interface';
 import {
   I_DisplayableRequest,
-  T_GraphType,
+  T_DisplayableTypeString,
 } from '../../interfaces/displayable-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 
@@ -18,7 +21,7 @@ export class DisplayRequestManagerService {
   public getRequestsByName(
     page: string,
     name: string,
-    type: string
+    type: T_GridType
   ): Observable<I_DisplayableRequest[]> {
     return this._dashboardPageManagerService.getPage$(page).pipe(
       map((pageEntry) => {
@@ -30,7 +33,7 @@ export class DisplayRequestManagerService {
 
   addDisplayable(
     request: I_DisplayableRequest | T_DisplayableDataType,
-    type: 'graph' | 'stat',
+    type: T_GridType,
     page: string,
     name: string
   ): void {
@@ -102,7 +105,7 @@ export class DisplayRequestManagerService {
   ): I_DisplayableRequest {
     let stat_name = data.metricName;
     let ownersParams = data.ownersParams;
-    let type = data.type as T_GraphType; // Ensure the type aligns with T_GraphType enum values.
+    let type = data.type as T_DisplayableTypeString; // Ensure the type aligns with T_GraphType enum values.
 
     // Return a new object that matches I_DisplayableRequest.
     return { stat_name, ownersParams, type };
