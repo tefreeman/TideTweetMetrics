@@ -8,8 +8,8 @@ import {
 } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { I_StatValueData } from '../../core/interfaces/displayable-data-interface';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
+import { I_StatValueData } from '../../../core/interfaces/displayable-data-interface';
+import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 
 @Component({
   selector: 'app-stat-value',
