@@ -6,6 +6,9 @@
     class="search"
     (searchValueChanged)="onSearchValueChange($event)"
   ></app-metric-search>
+
+  <app-owner-search [metricName]="'tweet_likes-sum'"> </app-owner-search>
+
   <div class="grid-container">
     <!-- Section for Recommended Displayables-->
     <div class="recommend-cards">
