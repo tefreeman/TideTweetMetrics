@@ -11,20 +11,20 @@
     <div class="recommend-cards">
       <!-- Title for Recommended Cards -->
       <h3 class="sub-title">Recommended Cards</h3>
-      <app-simple-card-grid
+      <app-simple-stat-grid
         (cardClicked)="addCard($event)"
         [dataArr]="reccommendedDisplayables"
-      ></app-simple-card-grid>
+      ></app-simple-stat-grid>
     </div>
 
     <!-- Section for Displaying Added Displayables -->
     <div class="scrollable-content">
       <!-- Title for Selected Cards -->
       <h3 class="sub-title">Selected Cards</h3>
-      <app-simple-card-grid
+      <app-simple-stat-grid
         (cardClicked)="removeCard($event)"
         [dataArr]="addedDisplayables"
-      ></app-simple-card-grid>
+      ></app-simple-stat-grid>
     </div>
   </div>
 </mat-dialog-content>

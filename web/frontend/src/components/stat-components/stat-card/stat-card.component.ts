@@ -14,9 +14,9 @@ import {
   I_StatTrendData,
   I_StatValueData,
   T_DisplayableDataType,
-} from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { EditModeService } from '../../core/services/edit-mode.service';
+} from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { EditModeService } from '../../../core/services/edit-mode.service';
 import { StatCompComponent } from '../stat-comp/stat-comp.component';
 import { StatTrendComponent } from '../stat-trend/stat-trend.component';
 import { StatValueComponent } from '../stat-value/stat-value.component';
