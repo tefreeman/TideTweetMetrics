@@ -1,6 +1,7 @@
 import os
 import subprocess
 import tarfile
+import time
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
 
     # Run MongoDB container
     print("Running MongoDB container...")
+    password = "your_password_here"  # Change to a secure password
     subprocess.run(
         [
             "docker",
@@ -19,7 +21,10 @@ def main():
             "27017:27017",
             "--name",
             "ttm-mongo",
+            "-e", "MONGO_INITDB_ROOT_USERNAME=Admin",  # Default admin username
+            "-e", f"MONGO_INITDB_ROOT_PASSWORD={password}",  # Default admin password
             "mongo:latest",
+            "--auth"
         ],
         check=True,
     )
@@ -35,35 +40,61 @@ def main():
 
     # Copy the extracted dump to the Docker container
     print("Copying dump to MongoDB container...")
-    subprocess.run(["docker", "cp", "extracted_dump", "ttm-mongo:/mongo"], check=True)
+    subprocess.run(["docker", "cp", "extracted_dump/mongodb_dump", "ttm-mongo:/mongo"], check=True)
+
+    # Give MongoDB time to initialize
+    print("Waiting for MongoDB to initialize...")
+    time.sleep(10)
 
     # Open MongoDB shell to create a user
-    print("Creating MongoDB user...")
-    password = "your_password_here"  # Change to a secure password
-    commands = [
-        "use admin",
-        f"db.createUser({{user: 'Admin', pwd: '{password}', roles: ['root']}})",
-    ]
-    command = "; ".join(commands)
-    subprocess.run(
-        ["docker", "exec", "-it", "ttm-mongo", "mongosh", "-eval", command], check=True
-    )
+    # print("Creating MongoDB user...")
+    # password = "your_password_here"  # Change to a secure password
+    # commands = [
+    #     "use admin",
+    #     f"db.createUser({{user: 'Admin', pwd: '{password}', roles: [{{role: 'root, db: 'admin'}}]}})",
+    # ]
+    # command = "; ".join(commands)
+    # subprocess.run(
+    #     ["docker", "exec", "-it", "ttm-mongo", "mongosh", "-eval", command], check=True
+    # )
 
     # Restore the database
     print("Restoring the database...")
-    restore_command = f"mongorestore --authenticationDatabase admin --username Admin --password {password} --host localhost /mongo"
-    subprocess.run(["docker", "exec", "-it", "ttm-mongo", restore_command], shell=True)
+    restore_command = [
+        "docker", "exec", "ttm-mongo", 
+        "mongorestore",
+        "--authenticationDatabase", "admin",
+        "--username", "Admin",
+        "--password", "your_password_here",
+        "--host", "localhost",
+        "/mongo"
+    ]
+    try:
+        subprocess.run(restore_command, check=True)
+    except subprocess.CalledProcessError as e:
+        print("Warning: mongorestore completed but exited with:", e.returncode)
+        print("Output was:", e.output)
 
     # Verify restoration
     print("Checking restored databases...")
-    subprocess.run(
-        ["docker", "exec", "-it", "ttm-mongo", "mongosh", "-eval", "show dbs"],
-        check=True,
-    )
+    restore_command = [
+        "docker", "exec", "ttm-mongo", "mongosh",
+        "--username", "Admin",
+        "--password", password,
+        "--authenticationDatabase", "admin",
+        "--eval", "show dbs"
+    ]
+    subprocess.run(restore_command, check=True)
 
     # Build and run project in Docker
     print("Building project containers...")
     subprocess.run(["docker-compose", "build"], check=True)
+
+    print("Creating metric network...")
+    subprocess.run(["docker", "network", "create", "metric-network"])
+
+    print("Connecting MongoDB to metric network...")
+    subprocess.run(["docker", "network", "connect", "metric-network", "ttm-mongo"])
 
     print("Running project containers...")
     subprocess.run(["docker-compose", "up", "-d"], check=True)
