@@ -18,7 +18,7 @@
 }
 
 .dataCard:hover {
-  border-top: 8px solid rgba(144, 238, 144, 0.5);
-  border-bottom: 8px solid rgba(144, 238, 144, 0.5); // Semi-transpare
+  transform: scale(1.05); // Scales up the card by 5%
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Adds a subtle shadow making it look lifted
 
 }
