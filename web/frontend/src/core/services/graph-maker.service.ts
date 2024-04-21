@@ -1,25 +1,29 @@
 import { Injectable, inject } from '@angular/core';
-import { AgChartOptions, AgChartTheme, AgChartThemeName } from 'ag-charts-community';
-import { T_GraphType } from '../interfaces/displayable-interface';
-import { T_DisplayableGraph } from "../interfaces/displayable-data-interface";
-import { I_GraphBarData, I_GraphLineData } from "../interfaces/displayable-data-interface";
+import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
+import {
+  I_GraphBarData,
+  I_GraphLineData,
+  T_DisplayableGraph,
+} from '../interfaces/displayable-data-interface';
 import { KeyTranslatorService } from './key-translator.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class GraphMakerService {
-  private keyTranslatorService: KeyTranslatorService = inject(KeyTranslatorService);
+  private keyTranslatorService: KeyTranslatorService =
+    inject(KeyTranslatorService);
 
-  constructor() { }
+  constructor() {}
 
   getGraphStructure(graphData: T_DisplayableGraph) {
-    const dataDimension = Array.isArray(graphData.values[0]) ? graphData.values[0].length : 1;
+    const dataDimension = Array.isArray(graphData.values[0])
+      ? graphData.values[0].length
+      : 1;
     const ownerCount = graphData.owners.length;
-    const dataPoints =  graphData.values.length;
+    const dataPoints = graphData.values.length;
 
-    return {dataDimension, ownerCount, dataPoints}
+    return { dataDimension, ownerCount, dataPoints };
   }
 
   createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
@@ -32,13 +36,13 @@ export class GraphMakerService {
       },
       data: this.getLineData(graphLineData),
       series: this.getLineSeries(graphLineData),
-      axes: [  
+      axes: [
         {
           type: 'category',
           label: {
             enabled: graphLineData.owners.length < 15,
             fontSize: 10,
-            fontWeight: 'bold', 
+            fontWeight: 'bold',
             fontFamily: 'Open Sans',
           },
           position: 'bottom',
@@ -50,13 +54,11 @@ export class GraphMakerService {
             fontSize: 10, // Specify font size here
             fontWeight: 'bold', // Specify font weight here
             fontFamily: 'Open Sans',
-            color: '#999'
-          }
-        }],
-        
-        
-      
-    }
+            color: '#999',
+          },
+        },
+      ],
+    };
 
     return chartOptions;
   }
@@ -64,22 +66,23 @@ export class GraphMakerService {
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       theme: this.getTheme(),
-      
+
       title: {
-        text: this.keyTranslatorService.translateKey(graphBarData.metricName),
+        text: this.keyTranslatorService.keyToFullString(
+          graphBarData.metricName
+        ),
       },
       data: this.getBarData(graphBarData),
-      
+
       series: this.getBarSeries(graphBarData),
-      axes: [  
+      axes: [
         {
           type: 'category',
           label: {
             enabled: graphBarData.owners.length < 15,
             fontSize: 10,
-            fontWeight: 'bold', 
-            fontFamily: 'Open Sans', 
-          
+            fontWeight: 'bold',
+            fontFamily: 'Open Sans',
           },
           position: 'bottom',
         },
@@ -90,21 +93,31 @@ export class GraphMakerService {
             fontSize: 10, // Specify font size here
             fontWeight: 'bold', // Specify font weight here
             fontFamily: 'Open Sans',
-            color: '#999'
-          }
-        }],
-      
+            color: '#999',
+          },
+        },
+      ],
+    };
 
-      
-    }
-  
     return chartOptions;
   }
   getTheme(): AgChartTheme {
-    const theme : AgChartTheme= {
+    const theme: AgChartTheme = {
       baseTheme: 'ag-default',
       palette: {
-          fills: ['#a51e36', '#ff7f7f', '#ffa07a', '#ffd700', '#9acd32', '#87ceeb', '#6a5acd', '#9370db', '#8a2be2', '#00ced1', '#32cd32']
+        fills: [
+          '#a51e36',
+          '#ff7f7f',
+          '#ffa07a',
+          '#ffd700',
+          '#9acd32',
+          '#87ceeb',
+          '#6a5acd',
+          '#9370db',
+          '#8a2be2',
+          '#00ced1',
+          '#32cd32',
+        ],
       },
       overrides: {
         common: {
@@ -115,46 +128,54 @@ export class GraphMakerService {
             color: '#999',
           },
         },
-      }
+      },
     };
 
     return theme;
   }
 
   getBarData(graphBarData: I_GraphBarData): any[] {
-    const chartData: any[] = []
+    const chartData: any[] = [];
     for (let i = 0; i < graphBarData.owners.length; i++) {
-      const data: any = {}
-      data["owner"] = graphBarData.owners[i];
-      data["1"] = graphBarData.values[i];
+      const data: any = {};
+      data['owner'] = graphBarData.owners[i];
+      data['1'] = graphBarData.values[i];
       chartData.push(data);
     }
     return chartData;
   }
 
   getBarSeries(data: I_GraphBarData): any[] {
-    return [{ type: 'bar', xKey: 'owner', yKey:'1',
-    formatter: ({ datum, yKey}:any) => ({
-      fillOpacity: this.getOpacity(datum[yKey], yKey, 0.4, 1, data.values),
-    }),
-      
-    }]
+    return [
+      {
+        type: 'bar',
+        xKey: 'owner',
+        yKey: '1',
+        formatter: ({ datum, yKey }: any) => ({
+          fillOpacity: this.getOpacity(datum[yKey], yKey, 0.4, 1, data.values),
+        }),
+      },
+    ];
   }
 
-
   getLineData(graphBarData: I_GraphLineData): any[] {
-    const chartData: any[] = []
+    const chartData: any[] = [];
     for (let i = 0; i < graphBarData.owners.length; i++) {
-      const data: any = {}
-      data["owner"] = graphBarData.owners[i];
-      data["1"] = graphBarData.values[i];
+      const data: any = {};
+      data['owner'] = graphBarData.owners[i];
+      data['1'] = graphBarData.values[i];
       chartData.push(data);
     }
     return chartData;
   }
 
-  getOpacity(value: number, key: any, minOpacity: any, maxOpacity: any, data: any) {
-
+  getOpacity(
+    value: number,
+    key: any,
+    minOpacity: any,
+    maxOpacity: any,
+    data: any
+  ) {
     const [min, max] = this.getDomain(key, data);
     let alpha = Math.round(((value - min) / (max - min)) * 10) / 10;
     //console.log(min, max, value);
@@ -162,16 +183,20 @@ export class GraphMakerService {
   }
 
   getDomain(key: string | number, data: any) {
-
     const min = Math.min(...data);
     const max = Math.max(...data);
     return [min, max];
   }
 
-  map = (value: number, start1: number, end1: number, start2: number, end2: number) => {
+  map = (
+    value: number,
+    start1: number,
+    end1: number,
+    start2: number,
+    end2: number
+  ) => {
     return ((value - start1) / (end1 - start1)) * (end2 - start2) + start2;
   };
-
 
   getLineSeries(data: I_GraphLineData): any[] {
     const dataLength = data.values.length;
@@ -179,30 +204,29 @@ export class GraphMakerService {
     // Define a strategy for strokeWidth based on the data size
     let strokeWidth = this.calculateStrokeWidth(dataLength);
 
-    return [{ 
-      type: 'line', 
-      xKey: 'owner', 
-      yKey:'1',
-      strokeWidth: strokeWidth, // Use dynamic strokeWidth based on data size
-      marker: {
-        enabled: false,
+    return [
+      {
+        type: 'line',
+        xKey: 'owner',
+        yKey: '1',
+        strokeWidth: strokeWidth, // Use dynamic strokeWidth based on data size
+        marker: {
+          enabled: false,
+        },
       },
-    }];
+    ];
   }
 
   // Implement a method to calculate strokeWidth based on data size
   calculateStrokeWidth(dataLength: number): number {
     if (dataLength <= 10) {
-      return 4; 
+      return 4;
     } else if (dataLength <= 50) {
-      return 3; 
-    } 
-    else if (dataLength <= 100) {
-      return 2; 
-    } 
-    else {
-      return 1; 
+      return 3;
+    } else if (dataLength <= 100) {
+      return 2;
+    } else {
+      return 1;
     }
   }
-
 }
