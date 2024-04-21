@@ -22,7 +22,10 @@ import {
   fromEvent,
   takeUntil,
 } from 'rxjs';
-import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
+import {
+  T_DisplayableStat,
+  T_GridType,
+} from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
@@ -63,7 +66,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editModeService: EditModeService = inject(EditModeService);
 
-  public dataGrid: MoveableGridTilesService;
+  public dataGrid: MoveableGridTilesService<T_DisplayableStat>;
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
   displayProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
@@ -74,7 +77,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$: Subject<void>;
   private subscription: any;
   private statsCardsChangesSub!: Subscription;
-  private type: 'stat' = 'stat';
+  private type: T_GridType = 'stat';
   constructor(
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -161,6 +164,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   openStatCardDialog() {
     this.editModeService.setEditMode(false);
     const dialogRef = this.dialog.open(addStatsDialogComponent, {
+      data: this.dataGrid.dataArr,
       height: 'calc(100% - 5%)',
       width: 'calc(100% - 5%)',
       maxWidth: '100%',

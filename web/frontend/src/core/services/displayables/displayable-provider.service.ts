@@ -1,6 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
-import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
+import {
+  T_DisplayableDataType,
+  T_GridType,
+} from '../../interfaces/displayable-data-interface';
 import { I_DisplayableRequest } from '../../interfaces/displayable-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 import { MetricContainer } from '../metrics/metric-container';
@@ -22,7 +25,7 @@ export class DisplayableProviderService {
   public getDisplayables(
     page: string,
     name: string,
-    type: string
+    type: T_GridType
   ): Observable<T_DisplayableDataType[]> {
     return combineLatest([
       this._metricsService.metricContainer$,

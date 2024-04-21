@@ -21,7 +21,6 @@ import { DashboardPageManagerService } from '../../../core/services/dashboard-pa
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { MetricService } from '../../../core/services/metrics/metric.service';
-import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,8 +52,7 @@ export class DashboardComponent implements OnInit {
   _dashboardPageManagerService: DashboardPageManagerService = inject(
     DashboardPageManagerService
   );
-  public cardGrid: MoveableGridTilesService = new MoveableGridTilesService();
-  public graphGrid: MoveableGridTilesService = new MoveableGridTilesService();
+
   editMode: Observable<boolean> = this.editModeService.getEditMode();
   pageName$: Observable<string>;
   grids$: Observable<I_GridRequestEntryWithName[]>;
