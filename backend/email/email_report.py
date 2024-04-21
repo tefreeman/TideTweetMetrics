@@ -13,7 +13,7 @@ def send_report(addresses: list[str]) -> None:
         from_email='tidetweetmetrics@gmail.com',
         to_emails=addresses,
         subject='Testing testing 123',
-        html_content='<strong>RAHHHHHH</strong>')
+        html_content='<strong>RAHHHHHH🦅</strong>')
     try:
         # sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         sg = SendGridAPIClient(key)

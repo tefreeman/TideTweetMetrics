@@ -1,3 +1,4 @@
+import pytz
 from .twitter_api_encoder import DataEncoder, IncompleteBuildException
 from .meta_encoder import MetaData
 from datetime import datetime
@@ -145,6 +146,29 @@ class Profile(DataEncoder):
         """
         return self._object["name"]
 
+    def set_id(self, id: str):
+        """
+        Sets the ID of the profile.
+
+        Args:
+            id (str | None): The ID of the profile. If None, the ID is not set.
+        """
+        self._object["id"] = id
+        if id != None and id != "":
+            self._set_fields.add("id")
+        else:
+            logging.warning("ID is None or blank. id is not being set")
+
+
+    def get_id(self) -> str | None:
+        """
+        Returns the ID of the Profile.
+
+        Returns:
+            str | None: The ID of the profile.
+        """
+        return self._object["id"]
+    
     def set_username(self, username: str):
         """
         Set the username of the profile.
@@ -261,7 +285,27 @@ class Profile(DataEncoder):
         Parameters:
         - created_at (str): The creation date of the profile.
         """
-        self._object["created_at"] = created_at
+        formats = ["%a %b %d %H:%M:%S %z %Y", "%b %d, %Y · %I:%M %p"]
+        
+        for date_format in formats:
+            try:
+                parsed_date = datetime.strptime(created_at, date_format)
+                
+                # If the timezone information is not provided, assume UTC
+                if parsed_date.tzinfo is None or parsed_date.tzinfo.utcoffset(parsed_date) is None:
+                    parsed_date = parsed_date.replace(tzinfo=pytz.UTC)
+                
+                self._object["created_at"] = parsed_date
+                if created_at != "" and created_at is not None:
+                    self._set_fields.add("created_at")
+                    
+                return  # Exit the function once a valid format has been found and processed
+            except ValueError:
+                pass  # Ignore exceptions for unmatched formats
+        
+        logging.warning(
+            "date is either None or blank. created_at is not being added."
+        )
         self._set_fields.add("created_at")
 
     def get_created_at(self):

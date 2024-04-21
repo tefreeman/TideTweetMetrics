@@ -6,8 +6,8 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import database as Database
-from encoders.tweet_encoder import Tweet
-from encoders.meta_encoder import MetaData
+from backend.encoders.tweet_encoder import Tweet
+from backend.encoders.meta_encoder import MetaData
 from backend.config import Config
 
 _init_flag = False

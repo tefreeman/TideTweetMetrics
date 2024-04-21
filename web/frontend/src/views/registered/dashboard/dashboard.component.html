@@ -1,0 +1,37 @@
+<div class="dashboardContainer">
+  <div class="title-container">
+    <div>
+        <button *ngIf="(editMode | async)" mat-raised-button aria-label="Edit" color="accent" (click)="toggleEditMode()"  >
+          <span class="text" style="color: #A51E36">Save</span>
+        </button>
+        <button *ngIf="!(editMode | async)" mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
+          <span class="text" >Edit</span>
+        </button>
+        <button mat-raised-button aria-label="Update" color="primary" (click)="update()">
+          <span class="text">Save</span>
+        </button>
+    </div>
+</div>
+
+@if (isEmpty$() | async) {
+  <div style="background-color: rgba(140, 140, 140, .3);" >
+    <h1 style="margin-top: 0px;" >EMPTY CARDSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS</h1>
+  </div>
+}
+
+
+<ng-container *ngFor="let grid of (grids$ | async); let isFirst = first">
+  <div class="grid-container">
+    <h2 class="title-black" [style.color]="isFirst ? 'white' : null">{{ grid.name.charAt(0).toUpperCase() + grid.name.slice(1) }}</h2>
+  
+    @if (grid.type == 'stat') {
+    <app-card-grid  [page]="(pageName$ | async)!" [name]="grid.name" cardHeight="8rem" maxColSize="1fr" minColSize="18rem"></app-card-grid>
+    } @else {
+      <app-graph-grid [page]="(pageName$ | async)!" [name]="grid.name" [cardHeight]="'auto'" [maxColSize]="'1fr'" [minColSize]="'36rem'"></app-graph-grid>
+    }
+  </div>
+</ng-container>
+
+<div class="footer">
+
+</div>
