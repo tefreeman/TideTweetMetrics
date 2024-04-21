@@ -39,7 +39,16 @@ export class StatValueComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.statValue = this.displayableData.value as number;
+    if (Array.isArray(this.displayableData.value)) {
+      this.statValue =
+        typeof this.displayableData.value[0] === 'number'
+          ? this.displayableData.value[0]
+          : 0;
+    } else if (typeof this.displayableData.value === 'number') {
+      this.statValue = this.displayableData.value;
+    } else {
+      this.statValue = 0;
+    }
     this.metricName = this.keyTranslatorService.keyToFullString(
       this.displayableData.metricName
     );
