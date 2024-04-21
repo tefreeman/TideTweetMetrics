@@ -2,9 +2,9 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
-import { MetricService } from '../../core/services/metric.service';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { KeyTranslatorService } from '../../../core/services/key-translator.service';
+import { MetricService } from '../../../core/services/metric.service';
 
 export interface MetricGroup {
   first: string;
