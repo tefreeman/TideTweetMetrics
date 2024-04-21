@@ -1,69 +1,42 @@
-
-.cdk-drag:not(.cdk-drag-preview) {
-    transform: none !important;
-  }
-
-.cdk-drag-placeholder {
-    opacity: 0.65;
+.title {
+  font-weight: bolder;
+  color: white;
+  font-size: 25px !important;
 }
 
-
-.title{
-    font-weight: bolder;
-    color: white;
-    font-size: 25px !important;
+.title-black {
+  font-weight: bolder;
+  font-size: 25px !important;
+  margin-left: 64px;
 }
-
-.title-black{
-    font-weight: bolder;
-    font-size: 25px !important;
-    margin-left: 64px;
-    
-}
-
 
 .text {
-    font-weight: bold;
-    font-size: 12px; 
-    letter-spacing: -.3px;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: -0.3px;
 }
 
 .footer {
-    background-color: #f4f4f4;
-    min-height: 2rem
+  background-color: #f4f4f4;
+  min-height: 2rem;
 }
 
 .title-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 7rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 7rem;
 }
 
-
-
 .title-container button:last-child {
-    margin-left: 8px; 
-    margin-right: 115px;
+  margin-left: 8px;
+  margin-right: 115px;
 }
 
 .title-container button {
-    margin-bottom: -45px;
+  margin-bottom: -45px;
 }
 
 .grid-container {
-    margin-left: 50px; /* Adjust the value as needed */
-    margin-right: 50px; /* Adjust the value as needed */
+  margin-left: 50px; /* Adjust the value as needed */
+  margin-right: 50px; /* Adjust the value as needed */
 }
-
-::ng-deep .cdk-drag-placeholder {
-    opacity: 0;
-}
-
-::ng-deep .cdk-drag-preview {
-    box-shadow: 0 5px 5px rgba(0,0,0,0.5);
-}
-
-::ng-deep .cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-

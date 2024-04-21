@@ -1,4 +1,9 @@
-import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,6 +12,7 @@ import {
   Observable,
   Subscription,
   distinctUntilChanged,
+  first,
   map,
   switchMap,
 } from 'rxjs';
@@ -54,9 +60,12 @@ export class DashboardComponent implements OnInit {
   );
 
   editMode: Observable<boolean> = this.editModeService.getEditMode();
+  gridEditMode: boolean = false;
+
   pageName$: Observable<string>;
   grids$: Observable<I_GridRequestEntryWithName[]>;
   gridsSubscription: Subscription | undefined;
+  localGrids: I_GridRequestEntryWithName[] = [];
 
   constructor(private route: ActivatedRoute, private snackBar: MatSnackBar) {
     this.pageName$ = this.route.params.pipe(
@@ -70,12 +79,20 @@ export class DashboardComponent implements OnInit {
         this._displayableProviderService.getGrids$(pageName)
       )
     );
+
+    this.gridsSubscription = this.grids$.subscribe((grids) => {
+      this.localGrids = grids;
+    });
   }
 
   ngOnInit() {}
 
   toggleEditMode() {
     this.editModeService.toggleEditMode();
+  }
+
+  toggleGridEditMode() {
+    this.gridEditMode = !this.gridEditMode;
   }
 
   update() {
@@ -92,6 +109,21 @@ export class DashboardComponent implements OnInit {
       duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
       horizontalPosition: 'center', // Change as needed.
       verticalPosition: 'bottom', // Change as needed.
+    });
+  }
+
+  ngOnDestroy() {
+    this.gridsSubscription?.unsubscribe();
+  }
+  drop(event: CdkDragDrop<I_GridRequestEntryWithName[]>) {
+    console.log(event);
+
+    moveItemInArray(this.localGrids, event.previousIndex, event.currentIndex);
+    for (let i = 0; i < this.localGrids.length; i++) {
+      this.localGrids[i].order = i;
+    }
+    this.pageName$.pipe(first()).subscribe((pageName) => {
+      this._dashboardPageManagerService.updateGrids$(pageName, this.localGrids);
     });
   }
 }
