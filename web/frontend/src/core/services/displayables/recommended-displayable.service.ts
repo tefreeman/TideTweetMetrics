@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, switchMap } from 'rxjs';
-import { metricRanking } from '../data/metric-ranking';
-import { T_DisplayableDataType } from '../interfaces/displayable-data-interface';
+import { metricRanking } from '../../data/metric-ranking';
+import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
 import {
   I_DisplayableRequest,
   I_OwnersParams,
-} from '../interfaces/displayable-interface';
-import { AuthService } from './auth.service';
+} from '../../interfaces/displayable-interface';
+import { AuthService } from '../auth.service';
+import { MetricService } from '../metrics/metric.service';
 import { DisplayableProviderService } from './displayable-provider.service';
-import { MetricService } from './metric.service';
 
 @Injectable({
   providedIn: 'root',

@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EditModeService {
-
   editMode = false;
 
   private editMode$ = new BehaviorSubject<boolean>(this.editMode);
@@ -25,5 +24,4 @@ export class EditModeService {
     this.editMode = !this.editMode;
     this.editMode$.next(this.editMode);
   }
-  
 }

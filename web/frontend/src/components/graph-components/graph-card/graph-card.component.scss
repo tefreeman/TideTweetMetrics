@@ -1,31 +1,26 @@
 // Remove empty ruleset for mat-card
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
+.card {
+  padding: 1rem 1.5rem 0rem;
+  @include mat.elevation(10);
+  height: 100%;
+}
+.delete-icon {
+  z-index: 2;
+  position: absolute;
+  scale: 1.25;
+  right: 0;
+  top: 0;
+  color: red; /* Makes the icon red */
+}
 
-  .card{
-    padding: 1rem 1.5rem 0rem;
-    @include mat.elevation(10);
-    height: 100%;
-
-  }
-  .delete-icon {
-    z-index: 2;
-    position: absolute;
-    scale: 1.25;
-    right: 0;
-    top: 0;
-    color: red; /* Makes the icon red */
-  }
-  
-  .card::before {
-    content: "";
-    position: absolute;
-    bottom: 0; /* Move the line to the bottom */
-    left: 0; /* Keep the line at the left edge of the card */
-    width: 100%; /* Set the width to cover the entire bottom */
-    height: .3rem; /* Set the height of the line */
-    background-color: #a51e36;
-  }
-  
-
-
+.card::before {
+  content: "";
+  position: absolute;
+  bottom: 0; /* Move the line to the bottom */
+  left: 0; /* Keep the line at the left edge of the card */
+  width: 100%; /* Set the width to cover the entire bottom */
+  height: 0.3rem; /* Set the height of the line */
+  background-color: #a51e36;
+}

@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
-import { T_DisplayableDataType } from '../interfaces/displayable-data-interface';
-import { I_DisplayableRequest } from '../interfaces/displayable-interface';
-import { DashboardPageManagerService } from './dashboard-page-manager.service';
+import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
+import { I_DisplayableRequest } from '../../interfaces/displayable-interface';
+import { DashboardPageManagerService } from '../dashboard-page-manager.service';
+import { MetricContainer } from '../metrics/metric-container';
+import { MetricService } from '../metrics/metric.service';
 import { DisplayRequestManagerService } from './display-request-manager.service';
 import { DisplayableProcessorService } from './displayable-processor.service';
-import { MetricContainer } from './metric-container';
-import { MetricService } from './metric.service';
 
 @Injectable({
   providedIn: 'root',
