@@ -1,5 +1,14 @@
 <h2 mat-dialog-title>Add Card Component</h2>
+
 <mat-dialog-content class="mat-typography">
+  <div class="grid-container">
+    <div class="data-card">
+      <app-metric-select-list
+        (leafNodeClicked)="handleLeafNodeClicked($event)"
+      ></app-metric-select-list>
+    </div>
+    <div class="data-card" style="width: 500px; height: 500px"></div>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>

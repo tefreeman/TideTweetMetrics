@@ -1,15 +1,16 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { getStorage, provideStorage } from '@angular/fire/storage';
-import { provideHttpClient, withFetch } from '@angular/common/http';
-import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { routes } from './app.routes';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -31,7 +32,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideFunctions(() => getFunctions())),
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideFirestore(() => getFirestore())),
-    importProvidersFrom(provideStorage(() => getStorage())), provideAnimationsAsync(),
-    provideCharts(withDefaultRegisterables())
+    importProvidersFrom(provideStorage(() => getStorage())),
+    provideAnimationsAsync(),
+    provideCharts(withDefaultRegisterables()),
   ],
 };
