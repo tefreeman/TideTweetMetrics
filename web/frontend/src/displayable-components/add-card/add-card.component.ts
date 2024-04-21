@@ -80,4 +80,12 @@ export class AddCardComponent {
       console.log('Card is already added:', card);
     }
   }
+
+  removeCard(card: T_DisplayableStat): void {
+    console.log('Removing card:', card);
+    // delete card from addedDisplayables array
+    this.addedDisplayables = this.addedDisplayables.filter(
+      (existingCard) => existingCard.metricName !== card.metricName
+    );
+  }
 }

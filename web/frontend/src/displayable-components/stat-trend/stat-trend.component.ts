@@ -1,7 +1,5 @@
-import { NgIf } from '@angular/common';
+import { CommonModule, DecimalPipe, NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-
-import { CommonModule } from '@angular/common';
 import { I_StatTrendData } from '../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { KeyTranslatorService } from '../../core/services/key-translator.service';
@@ -9,7 +7,7 @@ import { KeyTranslatorService } from '../../core/services/key-translator.service
 @Component({
   selector: 'app-stat-trend',
   standalone: true,
-  imports: [MaterialModule, NgIf, CommonModule],
+  imports: [MaterialModule, NgIf, CommonModule, DecimalPipe],
   templateUrl: './stat-trend.component.html',
   styleUrls: ['./stat-trend.component.scss'],
 })

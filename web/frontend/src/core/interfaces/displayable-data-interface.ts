@@ -1,16 +1,18 @@
-import { T_MetricValue } from "./metrics-interface";
-
+import { I_OwnersParams } from './displayable-interface';
+import { T_MetricValue } from './metrics-interface';
 
 export interface I_StatValueData {
-  type: "stat-value";
+  type: 'stat-value';
   metricName: string;
+  ownersParams: I_OwnersParams;
   owner: string;
   value: T_MetricValue;
 }
 
 export interface I_StatTrendData {
-  type: "stat-trend";
+  type: 'stat-trend';
   metricName: string;
+  ownersParams: I_OwnersParams;
   owner: string;
   values: Array<T_MetricValue>;
   times: Array<Number>;
@@ -18,27 +20,32 @@ export interface I_StatTrendData {
 }
 
 export interface I_StatCompData {
-  type: "stat-comp";
+  type: 'stat-comp';
   metricName: string;
+  ownersParams: I_OwnersParams;
   values: Array<T_MetricValue>;
   owners: Array<string>;
 }
 
 export interface I_GraphBarData {
-  type: "graph-bar";
+  type: 'graph-bar';
   metricName: string;
+  ownersParams: I_OwnersParams;
   values: Array<T_MetricValue>;
   owners: Array<string>;
 }
 
 export interface I_GraphLineData {
-  type: "graph-line";
+  type: 'graph-line';
   metricName: string;
+  ownersParams: I_OwnersParams;
   values: Array<T_MetricValue>;
   owners: Array<string>;
 }
 
-export type T_DisplayableStat = I_StatValueData | I_StatTrendData | I_StatCompData;
+export type T_DisplayableStat =
+  | I_StatValueData
+  | I_StatTrendData
+  | I_StatCompData;
 export type T_DisplayableGraph = I_GraphBarData | I_GraphLineData;
 export type T_DisplayableDataType = T_DisplayableStat | T_DisplayableGraph;
-
