@@ -7,7 +7,7 @@ import { RecommendedDisplayableService } from '../../core/services/recommended-d
 import { CardBarComponent } from '../cardBar/cardBar.component';
 import { MetricSearchComponent } from '../metric-search/metric-search.component';
 import { MetricSelectListComponent } from '../metric-select-list/metric-select-list.component';
-import { SimpleCardGridComponent } from '../simple-card-grid/simple-card-grid.component';
+import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
 
 @Component({
   selector: 'app-add-card',
@@ -19,7 +19,7 @@ import { SimpleCardGridComponent } from '../simple-card-grid/simple-card-grid.co
     NgFor,
     MetricSelectListComponent,
     MetricSearchComponent,
-    SimpleCardGridComponent,
+    simpleStatGridComponent,
   ],
   templateUrl: './add-card.component.html',
   styleUrl: './add-card.component.scss',

@@ -31,7 +31,7 @@ import { MoveableGridTilesService } from '../../core/services/moveable-grid-tile
 import { AddCardComponent } from '../add-card/add-card.component';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
-import { StatCardComponent } from '../stat-card/stat-card.component';
+import { StatCardComponent } from '../stat-components/stat-card/stat-card.component';
 
 @Component({
   selector: 'app-card-grid',

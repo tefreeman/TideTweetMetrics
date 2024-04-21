@@ -2,9 +2,9 @@ import { NgIf } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { I_StatCompData } from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { KeyTranslatorService } from '../../core/services/key-translator.service';
+import { I_StatCompData } from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 @Component({
   selector: 'app-stat-comp',
   standalone: true,

@@ -9,17 +9,17 @@ import {
 } from '@angular/core';
 import { T_DisplayableStat } from '../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../core/modules/material/material.module';
-import { StatCardComponent } from '../stat-card/stat-card.component';
+import { StatCardComponent } from '../stat-components/stat-card/stat-card.component';
 
 @Component({
   standalone: true,
   imports: [StatCardComponent, MaterialModule, CommonModule],
-  selector: 'app-simple-card-grid',
-  templateUrl: './simple-card-grid.component.html',
-  styleUrls: ['./simple-card-grid.component.scss'],
+  selector: 'app-simple-stat-grid',
+  templateUrl: './simple-stat-grid.component.html',
+  styleUrls: ['./simple-stat-grid.component.scss'],
   // Since it's a simplified version, we're not using standalone:true and imports here
 })
-export class SimpleCardGridComponent implements OnInit, OnDestroy {
+export class simpleStatGridComponent implements OnInit, OnDestroy {
   @Output() cardClicked: EventEmitter<T_DisplayableStat> = new EventEmitter();
   @Input() maxCardWidth!: string;
   @Input() cardHeight!: string;
