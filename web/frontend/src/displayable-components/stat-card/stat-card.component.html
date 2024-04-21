@@ -1,6 +1,8 @@
 <mat-card
   class="elevation"
-  [ngClass]="{ shake: (editMode | async) && editModeHook }"
+  [ngClass]="{ shake: (editMode | async) && editModeHook && !hoverState }"
+  (mouseenter)="toggleHover(true)"
+  (mouseleave)="toggleHover(false)"
 >
   <button
     *ngIf="(editMode | async) && editModeHook"
