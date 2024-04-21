@@ -1,6 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MaterialModule } from '../../core/modules/material/material.module';
+import { MaterialModule } from '../../../core/modules/material/material.module';
 
 @Component({
   selector: 'app-card-bar',
