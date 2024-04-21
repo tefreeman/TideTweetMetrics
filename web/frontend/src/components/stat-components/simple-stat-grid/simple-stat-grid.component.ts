@@ -7,9 +7,9 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { T_DisplayableStat } from '../../core/interfaces/displayable-data-interface';
-import { MaterialModule } from '../../core/modules/material/material.module';
-import { StatCardComponent } from '../stat-components/stat-card/stat-card.component';
+import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
+import { MaterialModule } from '../../../core/modules/material/material.module';
+import { StatCardComponent } from '../stat-card/stat-card.component';
 
 @Component({
   standalone: true,
