@@ -1,9 +1,7 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, setDoc} from '@angular/fire/firestore';
+import { Firestore, doc, docData, setDoc} from '@angular/fire/firestore';
 import {
   Auth,
-  GoogleAuthProvider,
-  signInWithPopup,
   UserCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -22,7 +20,7 @@ import { I_FileVersion, I_Profile, I_UserAndRole } from '../interfaces/profile-i
 
 
 @Injectable({ providedIn: 'root' })
-export class AuthService implements OnDestroy{
+export class AuthService {
 
   //TODO - DON"T FORGET TO RECONFIG CORS FOR STORAGE BUCKET
   // IT"S SET TO ALLOW ALL VERY INSECURE
@@ -182,9 +180,4 @@ export class AuthService implements OnDestroy{
         throw new Error('No authenticated user with an email found. Cannot send password reset email.');
     }
 }
-
-  ngOnDestroy() {
-    // when manually subscribing to an observable remember to unsubscribe in ngOnDestroy
-
-  }
 }
