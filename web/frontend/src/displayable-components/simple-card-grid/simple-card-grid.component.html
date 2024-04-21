@@ -1,0 +1,12 @@
+<div class="dataCardContainer">
+  <ng-container *ngFor="let displayableData of dataArr; let i = index">
+    <app-stat-card
+      (click)="onCardClick(displayableData)"
+      [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
+      class="dataCard"
+      [displayableData]="displayableData"
+      [editModeHook]="false"
+    >
+    </app-stat-card>
+  </ng-container>
+</div>

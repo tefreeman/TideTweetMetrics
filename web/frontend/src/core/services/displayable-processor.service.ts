@@ -1,17 +1,13 @@
-import { inject, Injectable } from '@angular/core';
-import {
-  IDisplayableData,
-  I_DisplayableRequest,
-  T_GraphType,
-} from '../interfaces/displayable-interface';
-import { T_DisplayableDataType } from "../interfaces/displayable-data-interface";
+import { Injectable } from '@angular/core';
 import {
   I_GraphBarData,
   I_GraphLineData,
   I_StatCompData,
   I_StatTrendData,
-  I_StatValueData
-} from "../interfaces/displayable-data-interface";
+  I_StatValueData,
+  T_DisplayableDataType,
+} from '../interfaces/displayable-data-interface';
+import { IDisplayableData } from '../interfaces/displayable-interface';
 import { T_MetricValue } from '../interfaces/metrics-interface';
 
 @Injectable({
@@ -20,8 +16,8 @@ import { T_MetricValue } from '../interfaces/metrics-interface';
 export class DisplayableProcessorService {
   constructor() {}
 
-  convert(data: IDisplayableData): T_DisplayableDataType {
-    if (data.type === 'display' || data.type === 'auto') {
+  convert(data: IDisplayableData): T_DisplayableDataType | null {
+    if (data.type === 'display' || data.type === 'auto' || 'auto-stat') {
       return this.decisionTree(data);
     }
 
@@ -40,7 +36,7 @@ export class DisplayableProcessorService {
     }
   }
 
-  decisionTree(data: IDisplayableData): T_DisplayableDataType {
+  decisionTree(data: IDisplayableData): T_DisplayableDataType | null {
     const ownerCount = Object.keys(data.owners).length;
     //TODO: fix
     const firstOwner = Object.values(data.owners)[0];
@@ -71,6 +67,11 @@ export class DisplayableProcessorService {
     if (ownerCount == 1 && dataDimension == 2 && dataPoints == 1)
       return this.toStatTrend(data);
 
+    // we can't fall through to the next if statement if auto-stat
+    if (data.type === 'auto-stat') {
+      return this.toStatValue(data);
+    }
+
     if (ownerCount == 1 && dataDimension == 2 && dataPoints > 1)
       return this.toGraphBar(data);
 
@@ -84,9 +85,10 @@ export class DisplayableProcessorService {
     return this.toGraphLine(data);
   }
 
-  private toStatValue(data: IDisplayableData): I_StatValueData {
+  private toStatValue(data: IDisplayableData): I_StatValueData | null {
     if (Object.keys(data.owners).length != 1) {
-      throw new Error('Invalid data for stat-value');
+      console.log('Invalid data for stat-value');
+      return null;
     }
 
     const owner = Object.keys(data.owners)[0];
@@ -98,9 +100,10 @@ export class DisplayableProcessorService {
     };
   }
 
-  private toStatComparison(data: IDisplayableData): I_StatCompData {
+  private toStatComparison(data: IDisplayableData): I_StatCompData | null {
     if (Object.keys(data.owners).length != 2) {
-      throw new Error('Invalid data for stat-comparison');
+      console.log('Invalid data for stat-comp');
+      return null;
     }
 
     return {
@@ -111,9 +114,10 @@ export class DisplayableProcessorService {
     };
   }
 
-  private toStatTrend(data: IDisplayableData): I_StatTrendData {
+  private toStatTrend(data: IDisplayableData): I_StatTrendData | null {
     if (Object.keys(data.owners).length != 1) {
-      throw new Error('Invalid data for stat-trend');
+      console.log('Invalid data for stat-trend');
+      return null;
     }
     const owner = Object.keys(data.owners)[0];
     const values: T_MetricValue[] = Object.values(

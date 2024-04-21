@@ -5,7 +5,7 @@ requirements.txt
 
 web/classifier/*
 **/.spec.ts
-
+**/chrome/**
 
 # docs folder
 docs/*

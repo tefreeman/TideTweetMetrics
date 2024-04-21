@@ -1,27 +1,37 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Firestore, doc, docData, setDoc} from '@angular/fire/firestore';
+import { inject, Injectable } from '@angular/core';
 import {
   Auth,
-  UserCredential,
+  authState,
   createUserWithEmailAndPassword,
+  idToken,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
-  authState,
-  idToken,
   user,
-  sendPasswordResetEmail
+  UserCredential,
 } from '@angular/fire/auth';
-import {Functions, httpsCallable} from '@angular/fire/functions';
+import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 
 import { Router } from '@angular/router';
-import { catchError, from, map, Observable, of, switchMap, throwError } from 'rxjs';
-import { I_FileVersion, I_Profile, I_UserAndRole } from '../interfaces/profile-interface';
-
-
+import {
+  catchError,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
+import {
+  I_FileVersion,
+  I_Profile,
+  I_UserAndRole,
+} from '../interfaces/profile-interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
   //TODO - DON"T FORGET TO RECONFIG CORS FOR STORAGE BUCKET
   // IT"S SET TO ALLOW ALL VERY INSECURE
   private _auth = inject(Auth);
@@ -32,11 +42,11 @@ export class AuthService {
   user$ = user(this._auth);
   idToken$ = idToken(this._auth);
 
-  constructor(private router: Router) {
-  }
+  // TODO: REMOVE INIT
+  userCollege: string = 'alabama_cs';
 
+  constructor(private router: Router) {}
 
-  
   adminGetAllUsersWithRoles$(): Observable<I_UserAndRole[]> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'getAllUsersWithRoles');
@@ -44,7 +54,7 @@ export class AuthService {
       map((result) => {
         // Read result of the Cloud Function.
         console.log(result.data);
-        return result.data as I_UserAndRole[]; 
+        return result.data as I_UserAndRole[];
       }),
       catchError((error) => {
         console.error('Error calling function:', error);
@@ -60,7 +70,7 @@ export class AuthService {
       map((result) => {
         // Read result of the Cloud Function.
         console.log(result.data);
-        return true; 
+        return true;
       }),
       catchError((error) => {
         console.error('Error calling function:', error);
@@ -68,7 +78,7 @@ export class AuthService {
       })
     );
   }
-  
+
   deleteUserAndProfile$(uid: string): Observable<boolean> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'deleteUserAndProfile');
@@ -76,7 +86,7 @@ export class AuthService {
       map((result) => {
         // Read result of the Cloud Function.
         console.log(result.data);
-        return true; 
+        return true;
       }),
       catchError((error) => {
         console.error('Error calling function:', error);
@@ -84,7 +94,7 @@ export class AuthService {
       })
     );
   }
-  
+
   isAdmin$(): Observable<boolean> {
     return this.authState$.pipe(
       switchMap(async (authState) => {
@@ -92,11 +102,10 @@ export class AuthService {
           return false;
         }
         const token = await authState.getIdTokenResult();
-        return token.claims['role'] === 'admin'
-      }),  
-      map(isAdmin => isAdmin)
+        return token.claims['role'] === 'admin';
+      }),
+      map((isAdmin) => isAdmin)
     );
-
   }
   getFileVersion(file_id: string): Observable<I_FileVersion | null> {
     if (!file_id) {
@@ -115,14 +124,21 @@ export class AuthService {
   }
 
   getProfileDoc(): Observable<I_Profile | null> {
-    return <Observable<I_Profile | null>>this.user$.pipe(
+    return this.user$.pipe(
       switchMap((user) => {
         if (!user) {
-          // If there's no user, return an observable that emits null
+          // If there's no user, then immediately return an observable of null
           return of(null);
         }
         const userDocRef = doc(this._firestore, `profiles/${user.uid}`);
-        return docData(userDocRef, { idField: 'id' });
+        // Specify the expected return type directly within docData's call
+        return docData(userDocRef, { idField: 'id' }) as Observable<I_Profile>;
+      }),
+      tap((profile) => {
+        if (profile) {
+          // TODO: FIX THIS
+          //  this.userCollege = profile.defaultCollege || '';
+        }
       })
     );
   }
@@ -134,10 +150,12 @@ export class AuthService {
           // If there's no user, throw an error or handle it as you see fit
           throw new Error('No authenticated user. Cannot set user document.');
         }
-        const userDocRef = doc(this._firestore, `profiles/${user.uid}`)
+        const userDocRef = doc(this._firestore, `profiles/${user.uid}`);
 
         // Convert the Firestore set operation (a Promise) into an Observable
-        return from(setDoc(userDocRef, userData, { merge: true })).pipe(map(() => undefined))
+        return from(setDoc(userDocRef, userData, { merge: true })).pipe(
+          map(() => undefined)
+        );
       })
     );
   }
@@ -152,11 +170,11 @@ export class AuthService {
 
   login(email: string, password: string): Promise<UserCredential> {
     return signInWithEmailAndPassword(
-        this._auth,
-        email.trim(),
-        password.trim()
-      );
-    }
+      this._auth,
+      email.trim(),
+      password.trim()
+    );
+  }
   signout(): void {
     signOut(this._auth).then(() => {
       this.router.navigate(['/']);
@@ -164,7 +182,7 @@ export class AuthService {
   }
 
   goHome(): void {
-    this.router.navigate(['/']); 
+    this.router.navigate(['/']);
   }
 
   sendPasswordResetEmailCurrentUser(): Promise<void> | never {
@@ -173,11 +191,13 @@ export class AuthService {
 
     // Check if a user is signed in
     if (user && user.email) {
-        // Use the email of the currently signed-in user to send a password reset email
-        return sendPasswordResetEmail(this._auth, user.email);
+      // Use the email of the currently signed-in user to send a password reset email
+      return sendPasswordResetEmail(this._auth, user.email);
     } else {
-        // Throw an error if there is no user signed in, or the user does not have an email
-        throw new Error('No authenticated user with an email found. Cannot send password reset email.');
+      // Throw an error if there is no user signed in, or the user does not have an email
+      throw new Error(
+        'No authenticated user with an email found. Cannot send password reset email.'
+      );
     }
-}
+  }
 }
