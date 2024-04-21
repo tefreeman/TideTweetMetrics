@@ -13,6 +13,14 @@
     },
     "files.exclude": {
         "**/*.spec.ts": true,
-      }
+        "**/.angular/**": true,
+        "**/node_modules/**": true
+    },
+    "angular-schematics.schematicsDefaultOptions": {
+        "angular-*": {
+            "style": "scss",
+            "externalTemplate": true
+        }
+    }
     
 }

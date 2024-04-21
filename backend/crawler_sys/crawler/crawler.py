@@ -4,39 +4,61 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from backend.encoders.tweet_encoder import Tweet
 from backend.encoders.profile_encoder import Profile
+from account import Account
 from urllib.parse import urlparse
 import database as db
 from utils.driver import create_undetected_driver
 from selenium.common.exceptions import WebDriverException
 from utils.error_sys import Error
-
+import time
 
 class CrawlResults(TypedDict):
-    """Type definition for the crawl results."""
-
     profile: Profile
     tweets: list[Tweet]
     raw_data: str | None
-    next_url: str | None
     errors: list[Error]
-
+    account_needs_rest: bool 
 
 class Crawler:
-    """Class representing a web crawler."""
+    """
+    A class that represents a web crawler for scraping tweets and profiles.
+
+    Attributes:
+        driver: The web driver used for crawling.
+        account: The account used for authentication.
+    """
 
     def __init__(self) -> None:
-        """Initialize the Crawler class."""
-        self.driver = create_undetected_driver()
+        """
+        Initializes a new instance of the Crawler class.
+        """
+        self.driver = None
+        self.account: Account = None
 
-    def try_load_page(self, url, errors: list[Error]) -> None:
-        """Try to load a web page.
+    def init_driver_to_account(self, account: Account) -> None:
+        """
+        Initializes the web driver and account.
 
         Args:
-            url (str): The URL of the web page to load.
-            errors (list[Error]): List to store any errors encountered during loading.
+            account: The account to be used for authentication.
+        """
+        self.account = account
+        
+        if self.driver != None:
+            self.driver.quit()
+            time.sleep(5)
+        self.driver = create_undetected_driver(
+            account.get_chrome_profile(), account.get_chrome_profile()
+        )
 
-        Returns:
-            None
+
+    def try_load_page(self, url, errors: list[Error]) -> None:
+        """
+        Tries to load a web page and handles exceptions.
+
+        Args:
+            url: The URL of the web page to load.
+            errors: The list to store any encountered errors.
         """
         try:
             self.driver_load_page(url)
@@ -50,34 +72,37 @@ class Crawler:
             errors.append(Error("NoInternetConnection"))
             return
 
-        status = self.driver.get_status_code()
-        if status is None:
-            errors.append(Error("noHTTPResponseCode"))
-            return
-        if status >= 300:
-            errors.append(Error("BadHTTPResponseCode"))
-            return
+        # status = self.driver.get_status_code()
+        # if status is None:
+        #     errors.append(Error("noHTTPResponseCode"))
+        #     return
+        # if status >= 300:
+        #     errors.append(Error("BadHTTPResponseCode"))
+        #     return
 
         html_not_loaded_error = self.detected_html_not_loaded()
         if html_not_loaded_error != None:
             errors.append(html_not_loaded_error)
             return
+        
 
-    def crawl(self, url: str) -> CrawlResults:
-        """Crawl a web page and extract data.
+    def crawl(self, url: str, tweet_count: int) -> CrawlResults:
+        """
+        Crawls a web page and retrieves crawl results.
 
         Args:
-            url (str): The URL of the web page to crawl.
+            url: The URL of the web page to crawl.
+            tweet_count: The number of tweets to retrieve.
 
         Returns:
-            CrawlResults: The results of the crawl operation.
+            The crawl results containing the profile, tweets, raw data, and errors.
         """
         results: CrawlResults = {
             "profile": None,
             "tweets": [],
             "raw_data": None,
-            "next_url": None,
             "errors": [],
+            "account_needs_rest": False,
         }
 
         self.try_load_page(url, results["errors"])
@@ -85,12 +110,11 @@ class Crawler:
         if len(results["errors"]) > 0:
             return results
 
-        results["raw_data"] = self.get_raw_data()
-        results["profile"], profile_errors = self.parse_profile()
-        results["tweets"], results["next_url"], tweet_errors = self.parse_tweets()
+        if self.is_logged_in_quick() == False:
+            self.login(self.account)
+            self.try_load_page(url, results["errors"])
 
-        results["errors"] += profile_errors
-        results["errors"] += tweet_errors
+        self.parse_tweets_and_profile(results, tweet_count, self.account)
 
         cleaned_errors = [item for item in results["errors"] if item is not None]
         results["errors"] = cleaned_errors
@@ -98,49 +122,76 @@ class Crawler:
         return results
 
     def shutdown(self):
-        """Shutdown the web driver."""
+        """
+        Shuts down the web driver.
+        """
         self.driver.quit()
 
     def detected_html_not_loaded(self) -> Error | None:
-        """Check if the HTML failed to load.
+        """
+        Checks if the HTML failed to load.
 
         Returns:
-            Error | None: An error object if the HTML failed to load, None otherwise.
+            An Error object if the HTML failed to load, None otherwise.
         """
         raise NotImplementedError()
 
     def driver_load_page(self, url: str):
-        """Load a web page in the web driver.
+        """
+        Loads a web page using the web driver.
 
         Args:
-            url (str): The URL of the web page to load.
-
-        Returns:
-            None
+            url: The URL of the web page to load.
         """
         raise NotImplementedError()
 
-    # raw html data
-    def get_raw_data(self) -> str:
-        """Get the raw HTML data of the loaded web page.
+    def login(self) -> None:
+        """
+        Logs into an account using the web driver.
+
+        Args:
+            account: The account to log into.
+        """
+        raise NotImplementedError()
+    def is_logged_in(self) -> bool:
+        """
+        Checks if the user is logged in.
 
         Returns:
-            str: The raw HTML data.
+            True if the user is logged in, False otherwise.
+        """
+        raise NotImplementedError()
+
+    def is_logged_in_quick(self) -> bool:
+        """
+        Quickly checks if the user is logged in.
+
+        Returns:
+            True if the user is logged in, False otherwise.
+        """
+        raise NotImplementedError()
+    
+    def get_raw_data(self) -> str:
+        """
+        Retrieves the raw HTML data of the loaded page.
+
+        Returns:
+            The raw HTML data of the loaded page.
         """
         return self.driver.page_source
 
-    def parse_tweets(self) -> tuple[list[Tweet], str | None]:
-        """Parse the tweets on the web page.
+    def parse_tweets_and_profile(
+        self, results: CrawlResults, tweet_count: int
+    ) -> tuple[list[Tweet], Profile]:
+        """
+        Parses tweets and profile from the loaded page.
+
+        Args:
+            results: The crawl results to store the parsed tweets and profile.
+            tweet_count: The number of tweets to retrieve.
 
         Returns:
-            tuple[list[Tweet], str | None]: A tuple containing the list of parsed tweets and the URL of the next page, if available.
+            A tuple containing the parsed tweets and profile.
         """
         raise NotImplementedError()
 
-    def parse_profile(self) -> Profile:
-        """Parse the profile information on the web page.
-
-        Returns:
-            Profile: The parsed profile information.
-        """
-        raise NotImplementedError()

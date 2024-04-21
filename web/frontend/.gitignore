@@ -1,13 +1,16 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
-
+# nx linter
+/.nx/**
 # Compiled output
 /dist
 /tmp
 /out-tsc
 /bazel-out
 
+#Angular
+**/.angular/*
 # Node
-/node_modules
+**/node_modules/*
 npm-debug.log
 yarn-error.log
 
