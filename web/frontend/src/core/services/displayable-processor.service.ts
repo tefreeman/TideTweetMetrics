@@ -17,7 +17,11 @@ export class DisplayableProcessorService {
   constructor() {}
 
   convert(data: IDisplayableData): T_DisplayableDataType | null {
-    if (data.type === 'display' || data.type === 'auto' || 'auto-stat') {
+    if (
+      data.type === 'display' ||
+      data.type === 'auto' ||
+      data.type === 'auto-stat'
+    ) {
       return this.decisionTree(data);
     }
 
@@ -86,7 +90,7 @@ export class DisplayableProcessorService {
   }
 
   private toStatValue(data: IDisplayableData): I_StatValueData | null {
-    if (Object.keys(data.owners).length != 1) {
+    if (Object.keys(data.owners).length < 1) {
       console.log('Invalid data for stat-value');
       return null;
     }
@@ -115,6 +119,8 @@ export class DisplayableProcessorService {
   }
 
   private toStatTrend(data: IDisplayableData): I_StatTrendData | null {
+    console.log('TREND: ', data);
+
     if (Object.keys(data.owners).length != 1) {
       console.log('Invalid data for stat-trend');
       return null;
