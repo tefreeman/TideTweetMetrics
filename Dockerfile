@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH /project
 # Define the command to run your application
-CMD ["python", "./tests/backend/metric_system/test_metric_system.py"]
+CMD ["python", "generate_full_metrics.py"]
 # CMD ["bash"]
