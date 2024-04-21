@@ -2,12 +2,12 @@ import {
   IDisplayableData,
   I_DisplayableRequest,
   I_OwnerData,
-} from '../interfaces/displayable-interface';
+} from '../../interfaces/displayable-interface';
 import {
   I_MetricOwners,
   I_MetricsInterface,
   T_MetricValue,
-} from '../interfaces/metrics-interface';
+} from '../../interfaces/metrics-interface';
 
 export class MetricContainer {
   _metrics: I_MetricsInterface = {};

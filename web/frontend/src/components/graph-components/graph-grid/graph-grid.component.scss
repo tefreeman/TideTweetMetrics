@@ -6,8 +6,6 @@
   opacity: 0.65;
 }
 
-
-
 .icon-container {
   display: flex; /* Enable flexbox for the container */
   justify-content: center; /* Center horizontally */
@@ -19,19 +17,19 @@
   transform: scale(2.5);
 }
 
-.card-add{
+.card-add {
   display: flex;
   flex-direction: column;
 }
 
 .card-add::before {
-content: "";
-position: absolute;
-top: 0;
-left: 0;
-width: .3rem;
-height: 100%; 
-background-color: #a51e36;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.3rem;
+  height: 100%;
+  background-color: #a51e36;
 }
 
 .dataCardContainer {
@@ -40,11 +38,10 @@ background-color: #a51e36;
   gap: 1rem;
   grid-auto-flow: dense;
   justify-content: left;
-  
 }
 
-.dataCard{
-  width: 100%; 
+.dataCard {
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -54,5 +51,3 @@ background-color: #a51e36;
   max-width: inherit; /* Ensures .dataCard respects bound max-width */
   height: inherit; /* Ensures .dataCard respects bound height */
 }
-
-

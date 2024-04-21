@@ -8,7 +8,7 @@ import {
 import { Observable, map } from 'rxjs';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
-import { MetricService } from '../../../core/services/metric.service';
+import { MetricService } from '../../../core/services/metrics/metric.service';
 
 interface MetricNode {
   name: string;

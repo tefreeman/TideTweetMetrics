@@ -24,8 +24,8 @@ import {
 } from 'rxjs';
 import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
-import { DisplayRequestManagerService } from '../../../core/services/display-request-manager.service';
-import { DisplayableProviderService } from '../../../core/services/displayable-provider.service';
+import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
+import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 import { BarChartComponent } from '../../graph-components/bar-chart/bar-chart.component';

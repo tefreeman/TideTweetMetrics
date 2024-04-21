@@ -6,9 +6,9 @@ import {
   I_StatTrendData,
   I_StatValueData,
   T_DisplayableDataType,
-} from '../interfaces/displayable-data-interface';
-import { IDisplayableData } from '../interfaces/displayable-interface';
-import { T_MetricValue } from '../interfaces/metrics-interface';
+} from '../../interfaces/displayable-data-interface';
+import { IDisplayableData } from '../../interfaces/displayable-interface';
+import { T_MetricValue } from '../../interfaces/metrics-interface';
 
 @Injectable({
   providedIn: 'root',
