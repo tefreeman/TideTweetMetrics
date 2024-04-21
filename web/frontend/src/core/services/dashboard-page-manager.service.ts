@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, filter, first, map } from 'rxjs';
 import {
   I_GridEntry,
   I_GridRequestEntry,
+  I_GridRequestEntryWithName,
   I_PageMap,
 } from '../interfaces/pages-interface';
 import { AuthService } from './auth.service';
@@ -103,7 +104,7 @@ export class DashboardPageManagerService {
   }
 
   public getGrids$(pageName: string): Observable<I_GridEntry> {
-    return this.getPage$(pageName).pipe(first());
+    return this.getPage$(pageName);
   }
 
   public deleteGrid$(pageName: string, gridName: string) {
@@ -147,6 +148,29 @@ export class DashboardPageManagerService {
         console.error(
           `Page "${pageName}" does not exist or grid "${gridName}" does not exist`
         );
+      }
+    });
+  }
+
+  public updateGrids$(pageName: string, grids: I_GridRequestEntryWithName[]) {
+    this.pageMap$.pipe(first()).subscribe((requests) => {
+      let updatesMade = false;
+      console.log('UPDATING GRIDS', grids);
+      grids.forEach((grid) => {
+        const { name, ...gridEntry } = grid;
+
+        if (requests[pageName] && requests[pageName][name]) {
+          requests[pageName][name] = gridEntry; // Update with gridEntry excluding the name
+          updatesMade = true;
+        } else {
+          console.error(
+            `Page "${pageName}" does not exist or grid "${name}" does not exist`
+          );
+        }
+      });
+      console.log('EMITTING REQUESTS', requests);
+      if (updatesMade) {
+        this.emitChanges({ ...requests });
       }
     });
   }
