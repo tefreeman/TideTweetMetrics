@@ -1,24 +1,32 @@
-<h2 mat-dialog-title>Add Card Component</h2>
+
+<div class="card-margin">
+<h2 mat-dialog-title class="title">Add Card</h2>
 
 <mat-dialog-content class="mat-typography">
   <div class="grid-container">
-    <div class="data-card">
-      <app-metric-search
-        (searchValueChanged)="onSearchValueChange($event)"
-      ></app-metric-search>
-      <app-simple-card-grid
-        [dataArr]="addedDisplayables"
-      ></app-simple-card-grid>
-    </div>
-    <div class="data-card">
+  
+    <!-- Search Bar -->
+    <app-metric-search class="search" (searchValueChanged)="onSearchValueChange($event)"></app-metric-search>
+    
+    <!-- Section for Recommended Displayables-->
+    <div class="data-card ">
       <app-simple-card-grid
         (cardClicked)="addCard($event)"
         [dataArr]="reccommendedDisplayables"
       ></app-simple-card-grid>
     </div>
+    
+    <!-- Section for Displaying Added Displayables -->
+    <div class="scrollable-content">
+      <app-simple-card-grid
+          [dataArr]="addedDisplayables"
+        ></app-simple-card-grid>
+    </div>
+    
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
   <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Add</button>
 </mat-dialog-actions>
+</div>
