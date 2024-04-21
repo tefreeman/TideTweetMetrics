@@ -1,24 +1,17 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:latest
-    volumes:
-      - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: Admin
-      MONGO_INITDB_ROOT_PASSWORD: ***REMOVED***
-
-  python_script:
+  metric_system:
     build: .
-    depends_on:
-      - mongodb
     environment:
       DB_HOST: mongodb
       DB_PORT: 27017
       DB_NAME: twitter_v2
       DB_USER: Admin
       DB_PASSWORD: ***REMOVED***
+    networks:
+      - metric-network
 
-volumes:
-  mongodb_data:
+networks:
+  metric-network:
+    external: true
