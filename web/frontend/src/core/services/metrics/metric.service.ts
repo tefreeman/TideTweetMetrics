@@ -19,7 +19,7 @@ export class MetricService {
   private _authService = inject(AuthService);
   private _localStorageService = inject(LocalStorageService);
   private _keyTranslatorService = inject(KeyTranslatorService);
-  private metricFileId = 'metrics_json';
+  private metricFileId = 'metrics_out';
 
   private metricContainerSubject$ = new BehaviorSubject<MetricContainer | null>(
     null
@@ -95,7 +95,9 @@ export class MetricService {
   }
 
   private fetchChartData(version: string): Observable<I_MetricsInterface> {
-    return from(getDownloadURL(ref(this._storage, 'ex_metric_out.json'))).pipe(
+    return from(
+      getDownloadURL(ref(this._storage, this.metricFileId + '.json'))
+    ).pipe(
       switchMap((url) => this._httpClient.get<I_MetricsInterface>(url)),
       tap((data) =>
         this._localStorageService.setItem(this.metricFileId, data, version)
