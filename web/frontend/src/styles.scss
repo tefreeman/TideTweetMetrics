@@ -54,8 +54,8 @@ $my-complementary: (
     700: white,
     600: white,
     500: white,
-    400: white,
-    300: white,
+    400: black,
+    300: black,
     200: rgba(black, 0.87),
     100: rgba(black, 0.87),
     50: rgba(black, 0.87),
@@ -64,7 +64,7 @@ $my-complementary: (
 
 
 $my-primary: mat.define-palette($crimson-palette, 900);
-$my-accent: mat.define-palette($my-complementary, 300);
+$my-accent: mat.define-palette($my-complementary, 600);
 // The "warn" palette is optional and defaults to red if not specified.
 $my-warn: mat.define-palette(mat.$red-palette);
 
