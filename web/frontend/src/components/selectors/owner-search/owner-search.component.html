@@ -19,7 +19,6 @@
     [matAutocomplete]="auto"
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     (matChipInputTokenEnd)="add($event)"
-    [disabled]="isAllowed"
   />
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     @for (owner of filteredOwners | async; track owner) {
