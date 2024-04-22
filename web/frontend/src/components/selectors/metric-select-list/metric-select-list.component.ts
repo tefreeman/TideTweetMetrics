@@ -23,6 +23,9 @@ interface MetricFlatNode {
   fullKey: string;
 }
 
+/**
+ * Represents the MetricSelectListComponent.
+ */
 @Component({
   selector: 'app-metric-select-list',
   standalone: true,
@@ -31,6 +34,9 @@ interface MetricFlatNode {
   styleUrl: './metric-select-list.component.scss',
 })
 export class MetricSelectListComponent {
+  /**
+   * Event emitter for leaf node click.
+   */
   @Output() leafNodeClicked = new EventEmitter<any>();
 
   private _metricService = inject(MetricService);
@@ -46,6 +52,10 @@ export class MetricSelectListComponent {
     };
   };
 
+  /**
+   * Retrieves the grouped metrics as an Observable.
+   * @returns An Observable of MetricNode[].
+   */
   getMetricsGrouped(): Observable<MetricNode[]> {
     return this._metricService.getMetricNames().pipe(
       map((keys: string[]) => {
@@ -98,8 +108,19 @@ export class MetricSelectListComponent {
     });
   }
 
+  /**
+   * Handles the click event on a leaf node.
+   * @param node - The clicked MetricFlatNode.
+   */
   onLeafNodeClick(node: MetricFlatNode): void {
     this.leafNodeClicked.emit(node.fullKey);
   }
+
+  /**
+   * Checks if a node has children.
+   * @param _ - The index of the node.
+   * @param node - The MetricFlatNode to check.
+   * @returns A boolean indicating if the node has children.
+   */
   hasChild = (_: number, node: MetricFlatNode) => node.expandable;
 }
