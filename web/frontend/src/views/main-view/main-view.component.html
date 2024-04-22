@@ -53,7 +53,7 @@
           <!-- Buttons to the right -->
           <div class="right-side"> <!-- New wrapper for right-aligned buttons -->
             <div>
-            <button class="button-class" *ngIf="editMode | async" mat-raised-button aria-label="Edit" color="accent" (click)="toggleEditMode()">
+            <button class="button-class" *ngIf="editMode | async" mat-raised-button aria-label="Edit" color="white" (click)="toggleEditMode()">
               <span class="text" style="color: #a51e36;">Save</span>
             </button>
             <button class="button-class" *ngIf="!(editMode | async)" mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
