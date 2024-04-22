@@ -1,6 +1,7 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { MaterialModule } from '../../core/modules/material/material.module';
@@ -8,9 +9,9 @@ import { AuthService } from '../../core/services/auth.service';
 import { DashboardPageManagerService } from '../../core/services/dashboard-page-manager.service';
 import { DisplayRequestManagerService } from '../../core/services/displayables/display-request-manager.service';
 import { EditModeService } from '../../core/services/edit-mode.service';
+import { GridEditModeService } from '../../core/services/grid-edit-mode.service';
 import { AddBoardComponent } from '../registered/add-board/add-board.component';
 import { DashboardComponent } from '../registered/dashboard/dashboard.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-main-view',
   standalone: true,
@@ -23,7 +24,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     DashboardComponent,
     NgFor,
     AsyncPipe,
-    NgIf
+    NgIf,
   ],
 })
 export class MainViewComponent implements OnInit, OnDestroy {
@@ -47,8 +48,14 @@ export class MainViewComponent implements OnInit, OnDestroy {
 
   public isExpanded = false;
   editMode: Observable<boolean> = this.editModeService.getEditMode();
-  gridEditMode: boolean = false;
-  constructor(private authService: AuthService, public dialog: MatDialog, private snackBar: MatSnackBar) {}
+  gridEditModeService: GridEditModeService = inject(GridEditModeService);
+  gridEditMode: Observable<boolean> = this.gridEditModeService.getEditMode();
+
+  constructor(
+    private authService: AuthService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.pageSubscription = this.dashboardPageManagerService
@@ -88,14 +95,12 @@ export class MainViewComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
   toggleEditMode() {
     this.editModeService.toggleEditMode();
   }
 
   toggleGridEditMode() {
-    this.gridEditMode = !this.gridEditMode;
+    this.gridEditModeService.toggleEditMode();
   }
 
   update() {

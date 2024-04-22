@@ -1,38 +1,17 @@
 <div class="dashboardContainer">
-  <div class="title-container">
-    
-  </div>
-
-
-
-
-
-
+  <div class="title-container"></div>
 
   <!-- NEW DASHBOARD -->
   @if (isEmpty$() | async) {
   <div class="empty-container">
     <div class="empty-card">
-      <h5 class="card-title">
-        Welcome to your new dashboard!
-      </h5>
+      <h5 class="card-title">Welcome to your new dashboard!</h5>
       <div class="card-content">
-        <h6 class="text">
-          Please add a grid to get started
-        </h6>
+        <h6 class="text">Please add a grid to get started</h6>
       </div>
-      
     </div>
   </div>
   }
-
-
-
-
-
-
-
-
 
   <div
     cdkDropList
@@ -44,7 +23,7 @@
         class="grid-container"
         cdkDragLockAxis="y"
         cdkDrag
-        [cdkDragDisabled]="!gridEditMode"
+        [cdkDragDisabled]="!(gridEditMode | async)"
       >
         <h2 class="title-black" [style.color]="isFirst ? 'white' : null">
           {{ grid.name.charAt(0).toUpperCase() + grid.name.slice(1) }}
@@ -71,6 +50,5 @@
     </div>
   </div>
 </div>
-
 
 <div class="footer" *ngIf="!(isEmpty$() | async)"></div>

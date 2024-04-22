@@ -26,6 +26,7 @@ import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
+import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MetricService } from '../../../core/services/metrics/metric.service';
 
 @Component({
@@ -58,9 +59,9 @@ export class DashboardComponent implements OnInit {
   _dashboardPageManagerService: DashboardPageManagerService = inject(
     DashboardPageManagerService
   );
-
+  gridEditModeService: GridEditModeService = inject(GridEditModeService);
+  gridEditMode: Observable<boolean> = this.gridEditModeService.getEditMode();
   editMode: Observable<boolean> = this.editModeService.getEditMode();
-  gridEditMode: boolean = false;
 
   pageName$: Observable<string>;
   grids$: Observable<I_GridRequestEntryWithName[]>;
@@ -86,8 +87,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {}
-
-
 
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
