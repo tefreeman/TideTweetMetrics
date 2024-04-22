@@ -2,6 +2,9 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 
+/**
+ * Represents the CardBarComponent class.
+ */
 @Component({
   selector: 'app-card-bar',
   standalone: true,
@@ -15,11 +18,19 @@ export class CardBarComponent {
   private startX: number = 0;
   private scrollLeft: number = 0;
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Sets the isDragging property to true.
+   */
   startQuickDrag() {
     this.isDragging = true;
   }
+
+  /**
+   * Sets the isDragging property to true and initializes the startX and scrollLeft properties.
+   * @param event - The MouseEvent or TouchEvent object.
+   */
   startDragging(event: MouseEvent | TouchEvent): void {
     this.isDragging = true;
     this.startX =
@@ -29,6 +40,10 @@ export class CardBarComponent {
     this.scrollLeft = element.scrollLeft;
   }
 
+  /**
+   * Updates the scroll position based on the drag movement.
+   * @param event - The MouseEvent or TouchEvent object.
+   */
   onDragging(event: MouseEvent | TouchEvent): void {
     if (!this.isDragging) return;
     event.preventDefault(); // Prevents selection of text etc.
@@ -39,6 +54,9 @@ export class CardBarComponent {
     element.scrollLeft = this.scrollLeft - walk;
   }
 
+  /**
+   * Sets the isDragging property to false.
+   */
   stopDragging(): void {
     this.isDragging = false;
   }
