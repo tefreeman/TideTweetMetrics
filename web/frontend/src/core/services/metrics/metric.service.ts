@@ -13,6 +13,9 @@ import { MetricContainer } from './metric-container';
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * Service for retrieving and managing metrics.
+ */
 export class MetricService {
   private _storage = inject(Storage);
   private _httpClient = inject(HttpClient);
@@ -24,6 +27,10 @@ export class MetricService {
   private metricContainerSubject$ = new BehaviorSubject<MetricContainer | null>(
     null
   );
+
+  /**
+   * Observable that emits the metric container.
+   */
   public metricContainer$: Observable<MetricContainer> =
     this.metricContainerSubject$
       .asObservable()
@@ -33,12 +40,22 @@ export class MetricService {
     // Initialize the MetricContainer data retrieval as soon as the service is constructed
     this.initMetricContainer();
   }
+
+  /**
+   * Retrieves the names of all metrics.
+   * @returns An observable that emits an array of metric names.
+   */
   public getMetricNames(): Observable<string[]> {
     return this.metricContainer$.pipe(
       map((metricContainer) => metricContainer.getStatKeys())
     );
   }
 
+  /**
+   * Retrieves the owners for a specific metric.
+   * @param metricName - The name of the metric.
+   * @returns An observable that emits an array of owners.
+   */
   public getOwnersForStat(metricName: string): Observable<string[]> {
     return this.metricContainer$.pipe(
       map((metricContainer) =>

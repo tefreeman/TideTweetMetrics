@@ -10,12 +10,21 @@ import {
 import { IDisplayableData } from '../../interfaces/displayable-interface';
 import { T_MetricValue } from '../../interfaces/metrics-interface';
 
+/**
+ * Service responsible for processing displayable data.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class DisplayableProcessorService {
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Converts the given displayable data to the corresponding displayable type.
+   * @param data The displayable data to convert.
+   * @returns The converted displayable data or null if conversion fails.
+   * @throws Error if the data type is invalid.
+   */
   convert(data: IDisplayableData): T_DisplayableDataType | null {
     if (
       data.type === 'display' ||
@@ -40,6 +49,11 @@ export class DisplayableProcessorService {
     }
   }
 
+  /**
+   * Processes the displayable data using a decision tree and returns the corresponding displayable type.
+   * @param data The displayable data to process.
+   * @returns The processed displayable data or null if processing fails.
+   */
   decisionTree(data: IDisplayableData): T_DisplayableDataType | null {
     const ownerCount = Object.keys(data.owners).length;
     //TODO: fix
@@ -85,6 +99,11 @@ export class DisplayableProcessorService {
     return this.toGraphLine(data);
   }
 
+  /**
+   * Converts the displayable data to the stat-value type.
+   * @param data The displayable data to convert.
+   * @returns The converted stat-value data or null if conversion fails.
+   */
   private toStatValue(data: IDisplayableData): I_StatValueData | null {
     if (Object.keys(data.owners).length < 1) {
       console.log('Invalid data for stat-value');
@@ -101,6 +120,11 @@ export class DisplayableProcessorService {
     };
   }
 
+  /**
+   * Converts the displayable data to the stat-comp type.
+   * @param data The displayable data to convert.
+   * @returns The converted stat-comp data or null if conversion fails.
+   */
   // Jerry rigged this to work need to go over
   private toStatComparison(data: IDisplayableData): I_StatCompData | null {
     if (Object.keys(data.owners).length != 2) {
@@ -130,6 +154,12 @@ export class DisplayableProcessorService {
       owners: Object.keys(data.owners),
     };
   }
+
+  /**
+   * Converts the displayable data to the stat-trend type.
+   * @param data The displayable data to convert.
+   * @returns The converted stat-trend data or null if conversion fails.
+   */
   private toStatTrend(data: IDisplayableData): I_StatTrendData | null {
     console.log('TREND: ', data);
 
@@ -165,6 +195,11 @@ export class DisplayableProcessorService {
     }
   }
 
+  /**
+   * Converts the displayable data to the graph-bar type.
+   * @param data The displayable data to convert.
+   * @returns The converted graph-bar data.
+   */
   private toGraphBar(data: IDisplayableData): I_GraphBarData {
     return {
       type: 'graph-bar',
@@ -175,6 +210,11 @@ export class DisplayableProcessorService {
     };
   }
 
+  /**
+   * Converts the displayable data to the graph-line type.
+   * @param data The displayable data to convert.
+   * @returns The converted graph-line data.
+   */
   private toGraphLine(data: IDisplayableData): I_GraphLineData {
     return {
       type: 'graph-line',

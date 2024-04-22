@@ -20,8 +20,14 @@ export class RecommendedDisplayableService {
   displayableProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
   );
-  constructor() {}
 
+  constructor() { }
+
+  /**
+   * Retrieves recommended displayable data for the specified owners.
+   * @param owners - An array of owner names.
+   * @returns An observable that emits an array of recommended displayable data.
+   */
   getRecommendedDisplayablesData(
     owners: string[]
   ): Observable<T_DisplayableDataType[]> {
@@ -75,6 +81,12 @@ export class RecommendedDisplayableService {
     );
   }
 
+  /**
+   * Retrieves recommended displayables based on the specified owners and type.
+   * @param ownersParamsArr - An array of owner parameters.
+   * @param type - The type of displayable.
+   * @returns An observable that emits an array of displayable requests.
+   */
   getRecommendedDisplayables(
     ownersParamsArr: I_OwnersParams[],
     type: T_DisplayableTypeString
@@ -96,6 +108,10 @@ export class RecommendedDisplayableService {
     );
   }
 
+  /**
+   * Retrieves recommended metric names.
+   * @returns An observable that emits an array of metric names.
+   */
   getRecommendedMetricNames(): Observable<string[]> {
     // Get all metric names from metric service
     return this.metricService.getMetricNames().pipe(
