@@ -124,7 +124,9 @@ export class addStatsDialogComponent implements OnInit {
     const currentCards = this._addedDisplayables.getValue();
     if (
       !currentCards.some(
-        (existingCard) => existingCard.metricName === card.metricName
+        (existingCard) =>
+          existingCard.metricName === card.metricName &&
+          existingCard.ownersParams.owners === card.ownersParams.owners
       )
     ) {
       this._addedDisplayables.next([...currentCards, card]);
@@ -139,12 +141,11 @@ export class addStatsDialogComponent implements OnInit {
   }
 
   onOwnersChanged($event: string[]) {
+    console.log('EVENT: ', $event);
     this.currentOwners.next($event);
   }
 
   onMetricsChanged($event: string[]) {
-    console.log('EVENT: ', $event);
-    console.log(this.lastMetricSearchValue);
     if ($event.length == 0)
       this.onSearchValueChange(this.lastMetricSearchValue);
     if ($event.length == 1) this.onSearchValueChange($event[0], false);
