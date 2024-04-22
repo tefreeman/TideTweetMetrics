@@ -13,6 +13,35 @@ function getData() {
     return data;
 }
 
+function getDomain(key: string, data: any[]) {
+  const values = data.map(item => item[key]);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  return [min, max];
+}
+
+function getOpacity(
+  value: number,
+  key: any,
+  minOpacity: any,
+  maxOpacity: any,
+  data: any
+) {
+  const [min, max] = getDomain(key, data);
+  let alpha = Math.round(((value - min) / (max - min)) * 10) / 10;
+  //console.log(min, max, value);
+  return map(alpha, 0, 1, minOpacity, maxOpacity);
+}
+
+const map = (
+  value: number,
+  start1: number,
+  end1: number,
+  start2: number,
+  end2: number
+) => {
+  return ((value - start1) / (end1 - start1)) * (end2 - start2) + start2;
+};
 
 export class Chart1 {
   chartTheme: AgChartTheme = {
@@ -47,6 +76,9 @@ export class Chart1 {
       xKey: "year",
       yKey: "visitors",
       cornerRadius: 15,
+      formatter: ({ datum, yKey }: any) => ({
+        fillOpacity: getOpacity(datum[yKey], yKey, 0.5, 1, getData()),
+      }),
       tooltip: {
         renderer: ({ datum, xKey, yKey }) => {
           return { title: datum[xKey], content: (datum[yKey]) };
