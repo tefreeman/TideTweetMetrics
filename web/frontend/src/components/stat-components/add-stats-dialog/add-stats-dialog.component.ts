@@ -47,6 +47,7 @@ export class addStatsDialogComponent implements OnInit {
 
   currentOwners: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   currentMetrics: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  lastMetricSearchValue: string = '';
   isEnabled: Observable<boolean>;
 
   constructor(
@@ -96,9 +97,10 @@ export class addStatsDialogComponent implements OnInit {
     return filteredDisplayables.slice(0, limit);
   }
 
-  onSearchValueChange(value: string) {
-    console.log(value);
+  onSearchValueChange(value: string, notMetricHook = true) {
     if (value) {
+      if (notMetricHook) this.lastMetricSearchValue = value;
+
       this._recommendedDisplayables.next(
         this.allDisplayables.filter((item) =>
           this.keyTranslatorService
@@ -141,6 +143,11 @@ export class addStatsDialogComponent implements OnInit {
   }
 
   onMetricsChanged($event: string[]) {
+    console.log('EVENT: ', $event);
+    console.log(this.lastMetricSearchValue);
+    if ($event.length == 0)
+      this.onSearchValueChange(this.lastMetricSearchValue);
+    if ($event.length == 1) this.onSearchValueChange($event[0], false);
     this.currentMetrics.next($event);
   }
 }
