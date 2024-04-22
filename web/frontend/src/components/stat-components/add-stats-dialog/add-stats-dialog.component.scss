@@ -4,10 +4,7 @@
   flex-direction: column;
   height: 100%;
 }
-mat-dialog-content{
-  max-height: unset !important;
-  flex: 1 0 0;
-}
+
 
 
 
@@ -32,24 +29,14 @@ mat-dialog-content{
   // You can adjust or remove the max-width from these elements as necessary
 }
 
-.scrollable-content {
-  background-color: #ECECEC;  // Off-white background color
-  overflow-y: auto;  // Enables vertical scrolling if content overflows
-  -webkit-overflow-scrolling: touch; 
-  max-height: 50vh;
-  min-height: 50vh;
-  padding: 1rem;
- 
-}
-
-.recommend-cards{
-  background-color: #ECECEC;
-  overflow-y: auto;  // Enables vertical scrolling if content overflows
-  -webkit-overflow-scrolling: touch; 
-  max-height: 50vh;
-  min-height: 50vh;
-  padding: 1rem;
-}
+  .scrollable-content, .recommend-cards {
+    background-color: #ECECEC;
+    
+    overflow-y: auto; // Keeps their own scrollbar as specified
+    -webkit-overflow-scrolling: touch; 
+    padding: 1rem;
+    max-height: 60vh; // Consider removing or adjusting max-height for better flexibility
+  }
 
 .title{
   font-weight: bold;
@@ -78,3 +65,4 @@ mat-dialog-actions {
   justify-content: flex-end;  // Align buttons to the right
   width: 100%;  // Ensure actions take full width for proper alignment
 }
+
