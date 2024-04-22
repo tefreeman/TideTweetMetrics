@@ -1,7 +1,58 @@
-<h2 mat-dialog-title>Add Graph Component</h2>
-<mat-dialog-content class="mat-typography">
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Add</button>
-</mat-dialog-actions>
+<div class="container">
+  <h2 mat-dialog-title class="title">Add Graph</h2>
+
+  <div class="search-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <app-metric-search
+        (searchValueChanged)="onSearchValueChange($event)"
+        [isEnabled]="isEnabled"
+      ></app-metric-search>
+    </div>
+    <!-- Owner Search Bar-->
+    <div class="owner-search">
+      <app-owner-search
+        [metricName]="'tweet_likes-sum'"
+        [defaultOwners]="['alabama_cs', '_global']"
+        (ownersChanged)="onOwnersChanged($event)"
+        [isAllowed]="true"
+        style="width: 100%"
+      >
+      </app-owner-search>
+    </div>
+  </div>
+
+  <mat-dialog-content class="mat-typography content">
+    <div class="grid-container">
+      <!-- Section for Recommended Displayables-->
+      <div class="recommend-cards">
+        <!-- Title for Recommended Cards -->
+        <h3 class="sub-title">Recommended Cards</h3>
+        <app-simple-graph-grid
+          (cardClicked)="addCard($event)"
+          [dataArr]="(recommendedDisplayables$ | async)!"
+        ></app-simple-graph-grid>
+      </div>
+
+      <!-- Section for Displaying Added Displayables -->
+      <div class="scrollable-content">
+        <!-- Title for Selected Cards -->
+        <h3 class="sub-title">Selected Cards</h3>
+        <app-simple-graph-grid
+          (cardClicked)="removeCard($event)"
+          [dataArr]="(addedDisplayables$ | async)!"
+        ></app-simple-graph-grid>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="null">Cancel</button>
+    <button
+      mat-button
+      [mat-dialog-close]="(addedDisplayables$ | async)!"
+      cdkFocusInitial
+    >
+      Add
+    </button>
+  </mat-dialog-actions>
+</div>
