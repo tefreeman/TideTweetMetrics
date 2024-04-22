@@ -12,7 +12,13 @@ import { KeyTranslatorService } from '../../../core/services/key-translator.serv
   templateUrl: './stat-comp.component.html',
   styleUrl: './stat-comp.component.scss',
 })
+/**
+ * Represents a component that displays statistical data.
+ */
 export class StatCompComponent {
+  /**
+   * The data to be displayed by the component.
+   */
   @Input({ required: true }) displayableData!: I_StatCompData;
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
@@ -23,8 +29,11 @@ export class StatCompComponent {
   statTwo: number = 0;
   ownerTwo: string = '';
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Initializes the component.
+   */
   ngOnInit() {
     this.metricName = this.keyTranslatorService.keyToFullString(
       this.displayableData['metricName']

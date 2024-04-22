@@ -11,6 +11,9 @@ import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-int
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { StatCardComponent } from '../stat-card/stat-card.component';
 
+/**
+ * Represents the Simple Stat Grid component.
+ */
 @Component({
   standalone: true,
   imports: [StatCardComponent, MaterialModule, CommonModule],
@@ -20,17 +23,42 @@ import { StatCardComponent } from '../stat-card/stat-card.component';
   // Since it's a simplified version, we're not using standalone:true and imports here
 })
 export class simpleStatGridComponent implements OnInit, OnDestroy {
+  /**
+   * Event emitter for when a card is clicked.
+   */
   @Output() cardClicked: EventEmitter<T_DisplayableStat> = new EventEmitter();
+
+  /**
+   * The maximum width of the card.
+   */
   @Input() maxCardWidth!: string;
+
+  /**
+   * The height of the card.
+   */
   @Input() cardHeight!: string;
+
+  /**
+   * The array of displayable statistics.
+   */
   @Input({ required: true }) dataArr: T_DisplayableStat[] = [];
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  /**
+   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   */
+  ngOnInit() { }
 
-  ngOnDestroy(): void {}
+  /**
+   * Lifecycle hook that is called when a directive, pipe, or service is destroyed.
+   */
+  ngOnDestroy(): void { }
 
+  /**
+   * Handles the click event on a card.
+   * @param card - The clicked card.
+   */
   onCardClick(card: T_DisplayableStat): void {
     this.cardClicked.emit(card);
   }
