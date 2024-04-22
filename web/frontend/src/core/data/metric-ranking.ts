@@ -1,3 +1,7 @@
+/**
+ * Represents a mapping of metric names to their corresponding ranking values.
+ * The ranking values are used to determine the importance or priority of each metric.
+ */
 export const metricRanking: { [key: string]: number } = {
   'tweet_likes-mean': 10,
   'tweet_likes-std': 6,
@@ -161,7 +165,7 @@ export const metricRanking: { [key: string]: number } = {
   'post_date_day-median': 2,
   'post_date_day-25th_percentile': 2,
   'post_date_day-75th_percentile': 2,
-  likes_per_follower: 10,
+  'likes_per_follower': 10,
   'tweet_likes-mean-yearly': 10,
   'tweet_likes-sum-yearly': 10,
   'tweet_likes-median-yearly': 10,
@@ -185,5 +189,5 @@ export const metricRanking: { [key: string]: number } = {
   'pearson-tweet_likes-vs-tweet_referenced_tweets': 4,
   'pearson-tweet_likes-vs-post_date_hour': 4,
   'pearson-tweet_likes-vs-post_date_day': 3,
-  tweet_word_frequency: 8,
+  'tweet_word_frequency': 8,
 };
