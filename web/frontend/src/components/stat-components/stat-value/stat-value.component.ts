@@ -35,7 +35,7 @@ export class StatValueComponent implements OnInit {
 
   statValue: number = 0;
   metricName: string = '';
-
+  ownerOne: string = '';
   constructor() {}
 
   ngOnInit() {
@@ -52,6 +52,7 @@ export class StatValueComponent implements OnInit {
     this.metricName = this.keyTranslatorService.keyToFullString(
       this.displayableData.metricName
     );
+    this.ownerOne = this.displayableData.owner;
   }
 
   isNumber(value: any): boolean {
