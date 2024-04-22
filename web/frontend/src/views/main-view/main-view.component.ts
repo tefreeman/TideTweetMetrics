@@ -1,8 +1,8 @@
-import { NgFor } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardPageManagerService } from '../../core/services/dashboard-page-manager.service';
@@ -10,7 +10,7 @@ import { DisplayRequestManagerService } from '../../core/services/displayables/d
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { AddBoardComponent } from '../registered/add-board/add-board.component';
 import { DashboardComponent } from '../registered/dashboard/dashboard.component';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-main-view',
   standalone: true,
@@ -22,6 +22,8 @@ import { DashboardComponent } from '../registered/dashboard/dashboard.component'
     RouterOutlet,
     DashboardComponent,
     NgFor,
+    AsyncPipe,
+    NgIf
   ],
 })
 export class MainViewComponent implements OnInit, OnDestroy {
@@ -44,7 +46,9 @@ export class MainViewComponent implements OnInit, OnDestroy {
   dynamicNavRoutes: { name: string; route: string }[] = [];
 
   public isExpanded = false;
-  constructor(private authService: AuthService, public dialog: MatDialog) {}
+  editMode: Observable<boolean> = this.editModeService.getEditMode();
+  gridEditMode: boolean = false;
+  constructor(private authService: AuthService, public dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.pageSubscription = this.dashboardPageManagerService
@@ -81,6 +85,29 @@ export class MainViewComponent implements OnInit, OnDestroy {
           this.dashboardPageManagerService.addNewPage$(result);
         }
       }
+    });
+  }
+
+
+
+  toggleEditMode() {
+    this.editModeService.toggleEditMode();
+  }
+
+  toggleGridEditMode() {
+    this.gridEditMode = !this.gridEditMode;
+  }
+
+  update() {
+    this.dashboardPageManagerService.savePage();
+    this.openSnackBar('Page has been saved.');
+  }
+
+  openSnackBar(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
+      horizontalPosition: 'center', // Change as needed.
+      verticalPosition: 'bottom', // Change as needed.
     });
   }
 }
