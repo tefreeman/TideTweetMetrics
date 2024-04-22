@@ -36,6 +36,9 @@ import { AddGraphDialogComponent } from '../add-graph/add-graph-dialog.component
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
 
+/**
+ * Represents the GraphGridComponent which is responsible for displaying a grid of graph cards.
+ */
 @Component({
   selector: 'app-graph-grid',
   standalone: true,
@@ -56,29 +59,96 @@ import { GraphCardComponent } from '../graph-card/graph-card.component';
   styleUrl: './graph-grid.component.scss',
 })
 export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
+  /**
+   * Represents the QueryList of graph cards.
+   */
   @ViewChildren('graphcard', { read: ElementRef }) statCards!: QueryList<any>;
+
+  /**
+   * Represents the name of the graph grid.
+   */
   @Input({ required: true }) name!: string;
+
+  /**
+   * Represents the page of the graph grid.
+   */
   @Input({ required: true }) page!: string;
+
+  /**
+   * Represents the minimum column size of the graph grid.
+   */
   @Input() minColSize!: string;
+
+  /**
+   * Represents the maximum column size of the graph grid.
+   */
   @Input() maxColSize!: string;
+
+  /**
+   * Represents the height of the graph cards.
+   */
   @Input() cardHeight!: string;
+
+  /**
+   * Represents the maximum width of the graph cards.
+   */
   @Input() maxCardWidth!: string;
 
+  /**
+   * Represents the EditModeService used for managing the edit mode.
+   */
   editModeService: EditModeService = inject(EditModeService);
+
+  /**
+   * Represents the DisplayableProviderService used for providing displayable data.
+   */
   displayProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
   );
+
+  /**
+   * Represents the DisplayRequestManagerService used for managing display requests.
+   */
   displayRequestManagerService: DisplayRequestManagerService = inject(
     DisplayRequestManagerService
   );
 
+  /**
+   * Represents the MoveableGridTilesService used for managing the grid tiles.
+   */
   public dataGrid: MoveableGridTilesService<T_DisplayableGraph>;
+
+  /**
+   * Represents the observable for the edit mode.
+   */
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
+
+  /**
+   * Represents the subject for destroying the component.
+   */
   private destroy$: Subject<void>;
+
+  /**
+   * Represents the subscription for displayables.
+   */
   private subscription: any;
+
+  /**
+   * Represents the subscription for stats card changes.
+   */
   private statsCardsChangesSub!: Subscription;
+
+  /**
+   * Represents the type of the grid.
+   */
   private type: T_GridType = 'graph';
 
+  /**
+   * Constructs a new instance of the GraphGridComponent.
+   * @param cdr - The ChangeDetectorRef used for detecting changes.
+   * @param dialog - The MatDialog used for opening dialogs.
+   * @param ngZone - The NgZone used for running code outside of Angular's zone.
+   */
   constructor(
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -88,6 +158,9 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$ = new Subject<void>();
   }
 
+  /**
+   * Initializes the component.
+   */
   ngOnInit() {
     this.subscription = this.displayProviderService
       .getDisplayables(this.page, this.name, this.type)
@@ -113,6 +186,9 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Cleans up the component.
+   */
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
 
@@ -124,6 +200,9 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
+  /**
+   * Runs after the view has been initialized.
+   */
   ngAfterViewInit() {
     // Initial subscription
     this.statsCardsChangesSub = this.statCards.changes.subscribe(
@@ -141,10 +220,17 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  /**
+   * Updates the grid when the window is resized.
+   */
   onResize() {
     this.dataGrid.update(this.statCards);
   }
 
+  /**
+   * Handles the drop event of a card.
+   * @param event - The CdkDragDrop event.
+   */
   dropCard(event: CdkDragDrop<any[]>) {
     this.dataGrid.swapClosestElements(event.previousIndex, {
       x: event.dropPoint.x,
@@ -152,6 +238,11 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Checks if the displayable data is a card.
+   * @param displayableData - The displayable data.
+   * @returns True if the displayable data is a card, false otherwise.
+   */
   isCard(displayableData: T_DisplayableDataType): boolean {
     return (
       displayableData.type === 'stat-value' ||
@@ -160,6 +251,11 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /**
+   * Checks if the displayable data is a graph.
+   * @param displayableData - The displayable data.
+   * @returns True if the displayable data is a graph, false otherwise.
+   */
   isGraph(displayableData: T_DisplayableDataType): boolean {
     return (
       displayableData.type === 'graph-line' ||
@@ -167,6 +263,10 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /**
+   * Gets the container style for the grid.
+   * @returns The container style object.
+   */
   get containerStyle(): { [key: string]: string } {
     const colWidth = `repeat(auto-fit, minmax(${this.minColSize}, ${this.maxColSize}))`;
 
@@ -175,6 +275,9 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
+  /**
+   * Opens the graph card dialog.
+   */
   openGraphCardDialog() {
     this.editModeService.setEditMode(false);
 
@@ -190,6 +293,10 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Deletes a card at the specified index.
+   * @param i - The index of the card to delete.
+   */
   deleteCard(i: number) {
     this.displayRequestManagerService.removeDisplayable(
       this.page,
