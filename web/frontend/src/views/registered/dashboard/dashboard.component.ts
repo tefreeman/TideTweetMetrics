@@ -87,18 +87,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {}
 
-  toggleEditMode() {
-    this.editModeService.toggleEditMode();
-  }
 
-  toggleGridEditMode() {
-    this.gridEditMode = !this.gridEditMode;
-  }
-
-  update() {
-    this._dashboardPageManagerService.savePage();
-    this.openSnackBar('Page has been saved.');
-  }
 
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
