@@ -69,6 +69,7 @@ export class OwnerSearchComponent implements OnInit {
 
   ngOnInit() {
     this.selectedOwners = this.defaultOwners;
+    this.ownersChanged.emit(this.selectedOwners);
     this.metricService.getOwnersForStat(this.metricName).subscribe((owners) => {
       this.allOwners = owners;
     });
