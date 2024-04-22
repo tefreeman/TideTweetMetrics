@@ -1,6 +1,6 @@
 <div class="card">
   <h5 class="card-title">{{ metricName }}</h5>
-  <h2 class="card-value">{{ nowPoint }}</h2>
+  <h2 class="card-value">{{ nowPoint | number : "1.0-2" }}</h2>
   <h6 class="card-footer">
     <span
       [ngClass]="{
