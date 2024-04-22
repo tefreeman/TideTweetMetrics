@@ -1,7 +1,7 @@
 // Import necessary Angular and RxJS elements
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 
 import { CommonModule, NgFor } from '@angular/common';
 import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
@@ -44,7 +44,10 @@ export class addStatsDialogComponent implements OnInit {
   keyTranslatorService: KeyTranslatorService;
   recommendedDisplayableService: RecommendedDisplayableService;
   allDisplayables: T_DisplayableStat[] = [];
+
   currentOwners: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  currentMetrics: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  isEnabled: Observable<boolean>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: T_DisplayableStat[],
@@ -54,6 +57,10 @@ export class addStatsDialogComponent implements OnInit {
   ) {
     this.keyTranslatorService = keyTranslatorService;
     this.recommendedDisplayableService = recommendedDisplayableService;
+
+    this.isEnabled = this.currentMetrics.pipe(
+      map((metrics) => metrics.length === 0)
+    );
   }
 
   ngOnInit(): void {
@@ -90,6 +97,7 @@ export class addStatsDialogComponent implements OnInit {
   }
 
   onSearchValueChange(value: string) {
+    console.log(value);
     if (value) {
       this._recommendedDisplayables.next(
         this.allDisplayables.filter((item) =>
@@ -130,5 +138,9 @@ export class addStatsDialogComponent implements OnInit {
 
   onOwnersChanged($event: string[]) {
     this.currentOwners.next($event);
+  }
+
+  onMetricsChanged($event: string[]) {
+    this.currentMetrics.next($event);
   }
 }
