@@ -20,8 +20,15 @@ export class DisplayableProviderService {
   private _metricsService = inject(MetricService);
   private _displayReqService = inject(DisplayRequestManagerService);
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Retrieves the displayable data for a given page, name, and type.
+   * @param page - The page name.
+   * @param name - The displayable name.
+   * @param type - The grid type.
+   * @returns An observable that emits an array of displayable data.
+   */
   public getDisplayables(
     page: string,
     name: string,
@@ -40,6 +47,11 @@ export class DisplayableProviderService {
     );
   }
 
+  /**
+   * Retrieves the grids for a given page name.
+   * @param pageName - The page name.
+   * @returns An observable that emits an array of grid data.
+   */
   public getGrids$(pageName: string): Observable<any[]> {
     // Adjust the type as necessary
     return this._dashboardPageManagerService.getGrids$(pageName).pipe(
@@ -57,6 +69,12 @@ export class DisplayableProviderService {
     );
   }
 
+  /**
+   * Processes the displayable requests and returns an array of displayable data.
+   * @param metricContainer - The metric container.
+   * @param requests - The displayable requests.
+   * @returns An array of displayable data.
+   */
   public processRequests(
     metricContainer: MetricContainer,
     requests: I_DisplayableRequest[]

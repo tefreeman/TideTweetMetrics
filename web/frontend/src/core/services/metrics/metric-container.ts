@@ -9,23 +9,50 @@ import {
   T_MetricValue,
 } from '../../interfaces/metrics-interface';
 
+/**
+ * Represents a container for metrics.
+ */
 export class MetricContainer {
   _metrics: I_MetricsInterface = {};
-  constructor() {}
 
+  /**
+   * Constructs a new MetricContainer instance.
+   */
+  constructor() { }
+
+  /**
+   * Sets the metrics for the container.
+   * @param metrics - The metrics to set.
+   */
   setMetrics(metrics: I_MetricsInterface): void {
     this._metrics = metrics;
     console.log('metrics set', this._metrics);
   }
 
+  /**
+   * Gets the keys of the statistics.
+   * @returns An array of statistic keys.
+   */
   getStatKeys(): string[] {
     return this._metrics ? Object.keys(this._metrics) : [];
   }
 
+  /**
+   * Gets the statistic by owner.
+   * @param stat_name - The name of the statistic.
+   * @param owner - The owner of the statistic.
+   * @returns The metric owners.
+   */
   getStatByOwner(stat_name: string, owner: string): I_MetricOwners {
     return this._metrics[stat_name];
   }
 
+  /**
+   * Checks if a metric is defined.
+   * @param stat_name - The name of the statistic.
+   * @param owner - The owner of the statistic.
+   * @returns A boolean indicating if the metric is defined.
+   */
   isMetricDefined(stat_name: string, owner: string): boolean {
     return (
       this._metrics &&
@@ -34,17 +61,33 @@ export class MetricContainer {
     );
   }
 
+  /**
+   * Gets all owner names for a statistic.
+   * @param stat_name - The name of the statistic.
+   * @returns An array of owner names.
+   */
   getAllOwnerNamesByStat(stat_name: string): string[] {
     if (this._metrics && this._metrics[stat_name])
       return Object.keys(this._metrics[stat_name]);
     return [];
   }
+
+  /**
+   * Gets the count of owners for a statistic.
+   * @param stat_name - The name of the statistic.
+   * @returns The count of owners.
+   */
   getOwnersCountForStat(stat_name: string): number {
     if (this._metrics && this._metrics[stat_name])
       return Object.keys(this._metrics[stat_name]).length;
     return 0;
   }
 
+  /**
+   * Adds specific owner data to the displayable request.
+   * @param displayable - The displayable request.
+   * @returns The displayable data.
+   */
   addSpecificOwnerData(displayable: I_DisplayableRequest): IDisplayableData {
     // Initialize an empty object to hold owner data
     let ownersObj: { [key: string]: T_MetricValue } = {};
@@ -64,6 +107,11 @@ export class MetricContainer {
     };
   }
 
+  /**
+   * Gets the metric data for the displayable request.
+   * @param displayable - The displayable request.
+   * @returns The displayable data.
+   */
   getMetricData(displayable: I_DisplayableRequest): IDisplayableData {
     if (displayable.ownersParams.type === 'specific') {
       return this.addSpecificOwnerData(displayable);
@@ -92,9 +140,9 @@ export class MetricContainer {
       const isTop = displayable.ownersParams.type === 'top';
       const cutOff = displayable.ownersParams.count
         ? displayable.ownersParams.count +
-          (displayable.ownersParams.owners
-            ? displayable.ownersParams.owners.length
-            : 0)
+        (displayable.ownersParams.owners
+          ? displayable.ownersParams.owners.length
+          : 0)
         : ownerData.length;
       ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
     }
@@ -112,6 +160,13 @@ export class MetricContainer {
     };
   }
 
+  /**
+   * Sorts and slices the owner data array.
+   * @param ownerData - The owner data array.
+   * @param count - The count of owners to include.
+   * @param isTop - A boolean indicating if it is sorting for top owners.
+   * @returns The sorted and sliced owner data array.
+   */
   private sortAndSlice(
     ownerData: I_OwnerData[],
     count: number,
@@ -133,6 +188,10 @@ export class MetricContainer {
       .slice(0, count);
   }
 
+  /**
+   * Gets the metrics as a JSON object.
+   * @returns The metrics as a JSON object.
+   */
   getJson(): I_MetricsInterface {
     return this._metrics;
   }
