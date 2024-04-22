@@ -1,22 +1,27 @@
+<div class="container">
 <h2 mat-dialog-title class="title">Add Card</h2>
 
-<mat-dialog-content class="mat-typography">
-  <!-- Search Bar -->
-  <app-metric-search
-    class="search"
-    (searchValueChanged)="onSearchValueChange($event)"
-  ></app-metric-search>
+  <div class="search-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <app-metric-search (searchValueChanged)="onSearchValueChange($event)"></app-metric-search>
+    </div>
+    <!-- Owner Search Bar-->
+    <div class="owner-search">
+      <app-owner-search
+        [metricName]="'tweet_likes-sum'"
+        [defaultOwners]="['alabama_cs', '_global']"
+        (ownersChanged)="onOwnersChanged($event)"
+        [isAllowed]="true"
+        style="width: 100%"
+      >
+      </app-owner-search>
+    </div>
+  </div>
 
-  <app-owner-search
-    [metricName]="'tweet_likes-sum'"
-    [defaultOwners]="['alabama_cs', '_global']"
-    (ownersChanged)="onOwnersChanged($event)"
-    [isAllowed]="true"
-    style="width: 50%"
-  >
-  </app-owner-search>
+  <mat-dialog-content class="mat-typography content">
 
-  <div class="grid-container">
+    <div class="grid-container">
     <!-- Section for Recommended Displayables-->
     <div class="recommend-cards">
       <!-- Title for Recommended Cards -->
@@ -48,3 +53,4 @@
     Add
   </button>
 </mat-dialog-actions>
+</div>
