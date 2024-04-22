@@ -6,6 +6,7 @@
 /backups/*
 *.7z
 /chrome/*
+**/docs/*
 # Mac shit
 
 bin/*
