@@ -3,13 +3,31 @@
     
   </div>
 
+
+
+
+
+
+
+  <!-- NEW DASHBOARD -->
   @if (isEmpty$() | async) {
-  <div style="background-color: rgba(140, 140, 140, 0.3)">
-    <h1 style="margin-top: 0px">
-      EMPTY CARDSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS
-    </h1>
+  <div class="empty">
+    <div class="empty-card">
+      <h1 style="margin-top: 0px">
+        EMPTY CARDSSSS SHIT TRAVISSSSSSsssssssssssssssssssssssssssssssssSS
+      </h1>
+    </div>
   </div>
   }
+
+
+
+
+
+
+
+
+
   <div
     cdkDropList
     [cdkDropListData]="localGrids"
