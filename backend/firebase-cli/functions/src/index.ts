@@ -99,7 +99,7 @@ export const uploadFile = functions.https.onRequest(
     let mimeType = "";
 
     // 'fileName' is now predefined; adjust according to your use case
-    let fileName = "metric_out.json";
+    let fileName = "metrics_out.json";
     let uniqueName: string;
     busboy.on(
       "file",
