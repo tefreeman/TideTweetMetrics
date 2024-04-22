@@ -42,7 +42,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-
+/**
+ * This module imports and exports all the necessary Angular Material modules used in the application.
+ * It also provides some default options for the Material components.
+ */
 @NgModule({
   declarations: [],
   imports: [CommonModule],
@@ -89,4 +92,4 @@ import { MatTreeModule } from '@angular/material/tree';
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
 })
-export class MaterialModule {}
+export class MaterialModule { }
