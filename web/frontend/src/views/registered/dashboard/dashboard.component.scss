@@ -46,11 +46,32 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+.empty-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+
+
+.card-title{
+  font-weight: bold;
+  letter-spacing: -.3px; 
+  color: #999;
+  margin-bottom: 0rem;
+  font-size: 15px;
+}
+
 .empty-card{
   background-color: white;
-  min-height: 10rem;
+  max-height: 50rem;
   height: 100%;
+  min-height: 20rem;
 
-  max-width: 10rem;
+  max-width: 50rem;
   width: 100%;
+  border-left: 4px solid #a51e36;
+
+  padding: 1rem 1.5rem 0rem;
 }
