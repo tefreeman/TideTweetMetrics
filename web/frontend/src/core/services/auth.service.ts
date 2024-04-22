@@ -30,23 +30,60 @@ import {
   I_UserAndRole,
 } from '../interfaces/profile-interface';
 
+/**
+ * Service responsible for handling authentication-related operations.
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   //TODO - DON"T FORGET TO RECONFIG CORS FOR STORAGE BUCKET
   // IT"S SET TO ALLOW ALL VERY INSECURE
+
+  /**
+   * Injected instance of the Auth service.
+   */
   private _auth = inject(Auth);
+
+  /**
+   * Injected instance of the Firestore service.
+   */
   private _firestore: Firestore = inject(Firestore);
+
+  /**
+   * Injected instance of the Functions service.
+   */
   private _functions = inject(Functions);
 
+  /**
+   * Observable representing the authentication state.
+   */
   authState$ = authState(this._auth);
+
+  /**
+   * Observable representing the currently signed-in user.
+   */
   user$ = user(this._auth);
+
+  /**
+   * Observable representing the ID token of the currently signed-in user.
+   */
   idToken$ = idToken(this._auth);
 
   // TODO: REMOVE INIT
+  /**
+   * The college/twitter-handle of the user.
+   */
   userCollege: string = 'alabama_cs';
 
-  constructor(private router: Router) {}
+  /**
+   * Constructs a new AuthService instance.
+   * @param router - The router service.
+   */
+  constructor(private router: Router) { }
 
+  /**
+   * Retrieves all users with their roles from the server.
+   * @returns An observable that emits an array of users with their roles.
+   */
   adminGetAllUsersWithRoles$(): Observable<I_UserAndRole[]> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'getAllUsersWithRoles');
@@ -63,6 +100,11 @@ export class AuthService {
     );
   }
 
+  /**
+   * Updates the role of a user.
+   * @param uid - The ID of the user.
+   * @returns An observable that emits a boolean indicating the success of the operation.
+   */
   updateUserRole$(uid: string): Observable<boolean> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'updateUserRole');
@@ -79,6 +121,11 @@ export class AuthService {
     );
   }
 
+  /**
+   * Deletes a user and their profile.
+   * @param uid - The ID of the user.
+   * @returns An observable that emits a boolean indicating the success of the operation.
+   */
   deleteUserAndProfile$(uid: string): Observable<boolean> {
     // Create a callable function reference
     const callable = httpsCallable(this._functions, 'deleteUserAndProfile');
@@ -95,6 +142,10 @@ export class AuthService {
     );
   }
 
+  /**
+   * Checks if the currently signed-in user is an admin.
+   * @returns An observable that emits a boolean indicating if the user is an admin.
+   */
   isAdmin$(): Observable<boolean> {
     return this.authState$.pipe(
       switchMap(async (authState) => {
@@ -107,6 +158,13 @@ export class AuthService {
       map((isAdmin) => isAdmin)
     );
   }
+
+  /**
+   * Retrieves the version of a file.
+   * @param file_id - The ID of the file.
+   * @returns An observable that emits the file version or null if the file does not exist.
+   * @throws Error if the file ID is invalid.
+   */
   getFileVersion(file_id: string): Observable<I_FileVersion | null> {
     if (!file_id) {
       throw new Error('Invalid file ID');
@@ -123,6 +181,10 @@ export class AuthService {
     );
   }
 
+  /**
+   * Retrieves the profile document of the currently signed-in user.
+   * @returns An observable that emits the profile document or null if the user is not signed in.
+   */
   getProfileDoc(): Observable<I_Profile | null> {
     return this.user$.pipe(
       switchMap((user) => {
@@ -143,6 +205,12 @@ export class AuthService {
     );
   }
 
+  /**
+   * Sets the profile document of the currently signed-in user.
+   * @param userData - The data to be set in the profile document.
+   * @returns An observable that emits void when the operation is complete.
+   * @throws Error if there is no authenticated user.
+   */
   setProfileDoc(userData: any): Observable<void> {
     return this.user$.pipe(
       switchMap((user) => {
@@ -160,6 +228,12 @@ export class AuthService {
     );
   }
 
+  /**
+   * Signs up a new user with the provided email and password.
+   * @param email - The email of the user.
+   * @param password - The password of the user.
+   * @returns A promise that resolves to the user credential.
+   */
   signup(email: string, password: string): Promise<UserCredential> {
     return createUserWithEmailAndPassword(
       this._auth,
@@ -168,6 +242,12 @@ export class AuthService {
     );
   }
 
+  /**
+   * Logs in a user with the provided email and password.
+   * @param email - The email of the user.
+   * @param password - The password of the user.
+   * @returns A promise that resolves to the user credential.
+   */
   login(email: string, password: string): Promise<UserCredential> {
     return signInWithEmailAndPassword(
       this._auth,
@@ -175,16 +255,28 @@ export class AuthService {
       password.trim()
     );
   }
+
+  /**
+   * Signs out the currently signed-in user.
+   */
   signout(): void {
     signOut(this._auth).then(() => {
       this.router.navigate(['/']);
     });
   }
 
+  /**
+   * Navigates to the home page.
+   */
   goHome(): void {
     this.router.navigate(['/']);
   }
 
+  /**
+   * Sends a password reset email to the currently signed-in user.
+   * @returns A promise that resolves when the email is sent.
+   * @throws Error if there is no authenticated user or the user does not have an email.
+   */
   sendPasswordResetEmailCurrentUser(): Promise<void> | never {
     // Attempt to retrieve the currently signed-in user
     const user = this._auth.currentUser;

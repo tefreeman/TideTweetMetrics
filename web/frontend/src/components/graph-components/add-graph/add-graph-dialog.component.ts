@@ -13,6 +13,10 @@ import { CardBarComponent } from '../../stat-components/cardBar/cardBar.componen
 import { simpleStatGridComponent } from '../../stat-components/simple-stat-grid/simple-stat-grid.component';
 import { SimpleGraphGridComponent } from '../simple-graph-grid/simple-graph-grid.component';
 
+/**
+ * Represents the AddGraphDialogComponent class.
+ * This component is responsible for displaying a dialog for adding graphs.
+ */
 @Component({
   selector: 'app-add-graph',
   standalone: true,
@@ -31,22 +35,67 @@ import { SimpleGraphGridComponent } from '../simple-graph-grid/simple-graph-grid
   styleUrl: './add-graph-dialog.component.scss',
 })
 export class AddGraphDialogComponent implements OnInit {
+  /**
+   * Represents the recommended displayables subject.
+   */
   private _recommendedDisplayables = new BehaviorSubject<T_DisplayableGraph[]>(
     []
   );
+
+  /**
+   * Represents the observable for recommended displayables.
+   */
   recommendedDisplayables$: Observable<T_DisplayableGraph[]> =
     this._recommendedDisplayables.asObservable();
 
+  /**
+   * Represents the added displayables subject.
+   */
   private _addedDisplayables = new BehaviorSubject<T_DisplayableGraph[]>([]);
+
+  /**
+   * Represents the observable for added displayables.
+   */
   addedDisplayables$: Observable<T_DisplayableGraph[]> =
     this._addedDisplayables.asObservable();
 
+  /**
+   * Represents the key translator service.
+   */
   keyTranslatorService: KeyTranslatorService;
+
+  /**
+   * Represents the recommended displayable service.
+   */
   recommendedDisplayableService: RecommendedDisplayableService;
+
+  /**
+   * Represents the array of all displayables.
+   */
   allDisplayables: T_DisplayableGraph[] = [];
+
+  /**
+   * Represents the current owners subject.
+   */
   currentOwners: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  /**
+   * Represents the current metrics subject.
+   */
   currentMetrics: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  /**
+   * Represents the isEnabled observable.
+   */
   isEnabled: Observable<boolean>;
+
+  /**
+   * Initializes a new instance of the AddGraphDialogComponent class.
+   * @param data - The data for the displayable graph.
+   * @param cdr - The change detector reference.
+   * @param keyTranslatorService - The key translator service.
+   * @param recommendedDisplayableService - The recommended displayable service.
+   */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: T_DisplayableGraph[],
     private cdr: ChangeDetectorRef,
@@ -83,6 +132,13 @@ export class AddGraphDialogComponent implements OnInit {
       });
   }
 
+  /**
+   * Filters and limits the displayables.
+   * @param allDisplayables - The array of all displayables.
+   * @param data - The data for the displayable graph.
+   * @param limit - The limit for the displayables.
+   * @returns The filtered and limited displayables.
+   */
   private filterAndLimitDisplayables(
     allDisplayables: T_DisplayableGraph[],
     data: T_DisplayableGraph[],
@@ -94,6 +150,10 @@ export class AddGraphDialogComponent implements OnInit {
     return filteredDisplayables.slice(0, limit);
   }
 
+  /**
+   * Handles the search value change event.
+   * @param value - The search value.
+   */
   onSearchValueChange(value: string) {
     if (value) {
       this._recommendedDisplayables.next(
@@ -115,6 +175,10 @@ export class AddGraphDialogComponent implements OnInit {
     }
   }
 
+  /**
+   * Adds a card to the displayables.
+   * @param card - The card to be added.
+   */
   addCard(card: T_DisplayableGraph): void {
     const currentCards = this._addedDisplayables.getValue();
     if (
@@ -126,6 +190,10 @@ export class AddGraphDialogComponent implements OnInit {
     }
   }
 
+  /**
+   * Removes a card from the displayables.
+   * @param card - The card to be removed.
+   */
   removeCard(card: T_DisplayableGraph): void {
     const updatedCards = this._addedDisplayables
       .getValue()
@@ -133,6 +201,10 @@ export class AddGraphDialogComponent implements OnInit {
     this._addedDisplayables.next(updatedCards);
   }
 
+  /**
+   * Handles the owners changed event.
+   * @param $event - The owners array.
+   */
   onOwnersChanged($event: string[]) {
     this.currentOwners.next($event);
   }
