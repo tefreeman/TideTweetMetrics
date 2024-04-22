@@ -100,7 +100,7 @@ export const uploadFile = functions.https.onRequest(
 
     // 'fileName' is now predefined; adjust according to your use case
     let fileName = "metric_out.json";
-
+    let uniqueName: string;
     busboy.on(
       "file",
       (
@@ -112,6 +112,7 @@ export const uploadFile = functions.https.onRequest(
       ) => {
         // Construct temporary file path
         const uniqueFileName = `${uuidv4()}_${filename}`;
+        uniqueName = uniqueFileName;
         const filepath = path.join(tmpdir, uniqueFileName);
         tmpFilePath = filepath;
         mimeType = mimetype;
@@ -146,7 +147,7 @@ export const uploadFile = functions.https.onRequest(
 
         // Update Firestore as before
         const firestore = admin.firestore();
-        await firestore.collection("file_versions").doc("metrics_json").set({
+        await firestore.collection("file_versions").doc(uniqueName).set({
           version: fileName,
         });
 

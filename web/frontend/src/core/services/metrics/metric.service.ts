@@ -67,7 +67,7 @@ export class MetricService {
           return throwError(() => new Error('No file version found'));
         }
         const result = this._localStorageService.getItem<I_MetricsInterface>(
-          'metrics_json',
+          this.metricFileId,
           fileVer.version
         );
         if (result) {
