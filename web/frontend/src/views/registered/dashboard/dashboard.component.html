@@ -13,9 +13,15 @@
   @if (isEmpty$() | async) {
   <div class="empty-container">
     <div class="empty-card">
-      <h1 class="card-title">
+      <h5 class="card-title">
         Welcome to your new dashboard!
-      </h1>
+      </h5>
+      <div class="card-content">
+        <h6 class="text">
+          Please add a grid to get started
+        </h6>
+      </div>
+      
     </div>
   </div>
   }
@@ -67,4 +73,4 @@
 </div>
 
 
-<div class="footer"></div>
+<div class="footer" *ngIf="!(isEmpty$() | async)"></div>
