@@ -41,15 +41,39 @@
       <!-- was 300vh need a better way to scale webpage size if cards over run-->
       <div style="height: 100vh">
         <mat-toolbar class="custom-toolbar">
-          <button mat-icon-button aria-label="Menu" (click)="sidenav.open()" style="color: white">
+
+          <div>
+          <!-- Menu Button & Title - Already on the left side -->
+          <button mat-icon-button aria-label="Menu" (click)="sidenav.open()" style="color: white" class="menu-button">
             <i class="fa fa-bars fa-1x"></i>
           </button>
-    
-          <span class="title">Page Name (Only for dashboards)</span> 
-          
-          <button mat-icon-button aria-label="Logout" style="color: white; margin-left:auto" (click)="signout()">
-            <i class="fa fa-sign-out fa-1x"></i>
-          </button>
+          <span class="title">Page Name (Only for dashboards)</span>
+        </div>
+
+          <!-- Buttons to the right -->
+          <div class="right-side"> <!-- New wrapper for right-aligned buttons -->
+            <div>
+            <button class="button-class" *ngIf="editMode | async" mat-raised-button aria-label="Edit" color="accent" (click)="toggleEditMode()">
+              <span class="text" style="color: #a51e36;">Save</span>
+            </button>
+            <button class="button-class" *ngIf="!(editMode | async)" mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
+              <span class="text">Card Edit</span>
+            </button>
+            <button class="button-class" mat-raised-button aria-label="Grid Edit Mode" color="primary" (click)="toggleGridEditMode()">
+              <span class="text">Grid Edit</span>
+            </button>
+            <button class="button-class" mat-raised-button aria-label="Update" color="primary" (click)="update()">
+              <span class="text">Save</span>
+            </button>
+            </div>
+            
+              <button mat-icon-button aria-label="Logout" style="color: white;" (click)="signout()">
+                <i class="fa fa-sign-out fa-1x"></i>
+              </button>
+              
+          </div>
+        
+
         </mat-toolbar>
         <router-outlet> </router-outlet>
       </div>
