@@ -1,41 +1,6 @@
 <div class="dashboardContainer">
   <div class="title-container">
-    <div>
-      <button
-        *ngIf="editMode | async"
-        mat-raised-button
-        aria-label="Edit"
-        color="accent"
-        (click)="toggleEditMode()"
-      >
-        <span class="text" style="color: #a51e36">Save</span>
-      </button>
-      <button
-        *ngIf="!(editMode | async)"
-        mat-raised-button
-        aria-label="Save"
-        color="primary"
-        (click)="toggleEditMode()"
-      >
-        <span class="text">Card Edit</span>
-      </button>
-      <button
-        mat-raised-button
-        aria-label="Grid Edit Mode"
-        color="primary"
-        (click)="toggleGridEditMode()"
-      >
-        <span class="text">Grid Edit</span>
-      </button>
-      <button
-        mat-raised-button
-        aria-label="Update"
-        color="primary"
-        (click)="update()"
-      >
-        <span class="text">Save</span>
-      </button>
-    </div>
+    
   </div>
 
   @if (isEmpty$() | async) {
@@ -82,3 +47,6 @@
     </div>
   </div>
 </div>
+
+
+<div class="footer"></div>
