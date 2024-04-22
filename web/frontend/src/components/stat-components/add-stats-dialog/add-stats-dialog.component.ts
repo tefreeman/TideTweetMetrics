@@ -1,7 +1,7 @@
 // Import necessary Angular and RxJS elements
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 
 import { CommonModule, NgFor } from '@angular/common';
 import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
@@ -44,6 +44,7 @@ export class addStatsDialogComponent implements OnInit {
   keyTranslatorService: KeyTranslatorService;
   recommendedDisplayableService: RecommendedDisplayableService;
   allDisplayables: T_DisplayableStat[] = [];
+  currentOwners: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: T_DisplayableStat[],
@@ -56,8 +57,14 @@ export class addStatsDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.recommendedDisplayableService
-      .getRecommendedDisplayablesData()
+    this.currentOwners
+      .pipe(
+        switchMap((owners) =>
+          this.recommendedDisplayableService.getRecommendedDisplayablesData(
+            owners
+          )
+        )
+      )
       .subscribe((displayables) => {
         this.allDisplayables = displayables as T_DisplayableStat[];
 
@@ -119,5 +126,9 @@ export class addStatsDialogComponent implements OnInit {
       .getValue()
       .filter((existingCard) => existingCard.metricName !== card.metricName);
     this._addedDisplayables.next(updatedCards);
+  }
+
+  onOwnersChanged($event: string[]) {
+    this.currentOwners.next($event);
   }
 }

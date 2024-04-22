@@ -21,15 +21,20 @@ export class RecommendedDisplayableService {
   );
   constructor() {}
 
-  getRecommendedDisplayablesData(): Observable<T_DisplayableDataType[]> {
+  getRecommendedDisplayablesData(
+    owners: string[]
+  ): Observable<T_DisplayableDataType[]> {
+    if (owners.length === 0) {
+      owners = [this.authService.userCollege, '_global'];
+    }
     const basicOwnersParams: I_OwnersParams = {
       type: 'specific',
-      owners: [this.authService.userCollege],
+      owners: [owners[0]],
       count: 1,
     };
     const comparsionOwnersParams: I_OwnersParams = {
       type: 'specific',
-      owners: [this.authService.userCollege, '_global'],
+      owners: [owners[0], owners[1]],
       count: 2,
     };
 
