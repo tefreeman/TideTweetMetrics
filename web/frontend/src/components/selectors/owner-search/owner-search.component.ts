@@ -27,6 +27,9 @@ export interface OwnerGroup {
   names: string[];
 }
 
+/**
+ * Component for searching and selecting owners.
+ */
 @Component({
   selector: 'app-owner-search',
   standalone: true,
@@ -44,20 +47,66 @@ export interface OwnerGroup {
   styleUrl: './owner-search.component.scss',
 })
 export class OwnerSearchComponent implements OnInit {
+  /**
+   * Event emitter for when the selected owners change.
+   */
   @Output() ownersChanged = new EventEmitter<string[]>();
+
+  /**
+   * The name of the metric.
+   */
   @Input({ required: true }) metricName: string = '';
+
+  /**
+   * The default owners.
+   */
   @Input({ required: true }) defaultOwners: string[] = [];
+
+  /**
+   * Indicates whether the user is allowed to perform actions.
+   */
   @Input({ required: true }) isAllowed!: boolean;
+
+  /**
+   * The key codes for the separator keys.
+   */
   separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  /**
+   * The form control for the owner input.
+   */
   ownerCtrl = new FormControl('');
+
+  /**
+   * The filtered owners.
+   */
   filteredOwners: Observable<string[]>;
+
+  /**
+   * The selected owners.
+   */
   selectedOwners: string[] = [];
+
+  /**
+   * All owners.
+   */
   allOwners: string[] = [];
 
+  /**
+   * The owner input element.
+   */
   @ViewChild('ownerInput')
   ownerInput!: ElementRef<HTMLInputElement>;
+
+  /**
+   * The live announcer.
+   */
   announcer = inject(LiveAnnouncer);
 
+  /**
+   * Constructs a new instance of the OwnerSearchComponent.
+   * @param metricService The metric service.
+   */
   constructor(private metricService: MetricService) {
     this.filteredOwners = this.ownerCtrl.valueChanges.pipe(
       startWith(null),
@@ -67,6 +116,9 @@ export class OwnerSearchComponent implements OnInit {
     );
   }
 
+  /**
+   * Initializes the component.
+   */
   ngOnInit() {
     this.selectedOwners = this.defaultOwners;
     this.ownersChanged.emit(this.selectedOwners);
@@ -75,6 +127,10 @@ export class OwnerSearchComponent implements OnInit {
     });
   }
 
+  /**
+   * Adds an owner.
+   * @param event The MatChipInputEvent.
+   */
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -89,6 +145,10 @@ export class OwnerSearchComponent implements OnInit {
     this.ownerCtrl.setValue(null);
   }
 
+  /**
+   * Removes an owner.
+   * @param owner The owner to remove.
+   */
   remove(owner: string): void {
     const index = this.selectedOwners.indexOf(owner);
 
@@ -99,6 +159,10 @@ export class OwnerSearchComponent implements OnInit {
     }
   }
 
+  /**
+   * Handles the selection of an owner from the autocomplete.
+   * @param event The MatAutocompleteSelectedEvent.
+   */
   selected(event: MatAutocompleteSelectedEvent): void {
     this.selectedOwners.push(event.option.viewValue);
     this.ownersChanged.emit(this.selectedOwners);
@@ -106,6 +170,11 @@ export class OwnerSearchComponent implements OnInit {
     this.ownerCtrl.setValue(null);
   }
 
+  /**
+   * Filters the owners based on the given value.
+   * @param value The value to filter by.
+   * @returns The filtered owners.
+   */
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.allOwners.filter((owner) =>
