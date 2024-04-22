@@ -1,6 +1,23 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, map, startWith } from 'rxjs';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
@@ -10,12 +27,6 @@ export interface MetricGroup {
   first: string;
   names: string[];
 }
-
-export const _filter = (opt: string[], value: string): string[] => {
-  const filterValue = value.toLowerCase();
-
-  return opt.filter((item) => item.toLowerCase().includes(filterValue));
-};
 
 @Component({
   selector: 'app-metric-search',
@@ -28,9 +39,14 @@ export const _filter = (opt: string[], value: string): string[] => {
     AsyncPipe,
   ],
   templateUrl: './metric-search.component.html',
-  styleUrl: './metric-search.component.scss',
+  styleUrls: ['./metric-search.component.scss'],
 })
 export class MetricSearchComponent implements OnInit {
+  @Input({ required: true }) isEnabled!: Observable<boolean>;
+  @Output() metricsChanged: EventEmitter<string[]> = new EventEmitter<
+    string[]
+  >();
+
   @Output() searchValueChanged: EventEmitter<string> =
     new EventEmitter<string>();
 
@@ -40,11 +56,17 @@ export class MetricSearchComponent implements OnInit {
 
   metricGroups: MetricGroup[] = [];
   metricGroupOptions!: Observable<MetricGroup[]>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  selectedMetrics: string[] = [];
+  metricCtrl = new FormControl('');
+
+  @ViewChild('metricInput') metricInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private _formBuilder: FormBuilder,
     private metricService: MetricService,
-    private keyTranslatorService: KeyTranslatorService
+    private keyTranslatorService: KeyTranslatorService,
+    private announcer: LiveAnnouncer
   ) {}
 
   ngOnInit() {
@@ -57,19 +79,59 @@ export class MetricSearchComponent implements OnInit {
       .valueChanges.pipe(
         startWith(''),
         map((value) => {
-          this.searchValueChanged.emit(value as string); // Emit the current value
           return this._filterGroup(value || '');
         })
       );
+
+    this.isEnabled.subscribe((isEnabled) => {
+      if (isEnabled) {
+        this.metricCtrl.enable();
+      } else {
+        this.metricCtrl.disable();
+      }
+    });
+  }
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      const matchingMetric = this.metricGroups
+        .flatMap((group) => group.names)
+        .find((metric) => metric.toLowerCase() === value.toLowerCase());
+
+      if (matchingMetric && !this.selectedMetrics.includes(matchingMetric)) {
+        this.selectedMetrics.push(matchingMetric);
+        this.metricsChanged.emit(this.selectedMetrics);
+      }
+    }
+
+    event.chipInput!.clear();
+    this.metricCtrl.setValue(null);
+  }
+
+  remove(metric: string): void {
+    const index = this.selectedMetrics.indexOf(metric);
+
+    if (index >= 0) {
+      this.selectedMetrics.splice(index, 1);
+      this.metricsChanged.emit(this.selectedMetrics);
+      this.announcer.announce(`Removed ${metric}`);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedMetrics.push(event.option.viewValue);
+    this.metricsChanged.emit(this.selectedMetrics);
+    this.metricInput.nativeElement.value = '';
+    this.metricCtrl.setValue(null);
   }
 
   private groupMetrics(metrics: string[]): MetricGroup[] {
-    // The logic of grouping by the first string (word) instead of the first character
     const groups: { [key: string]: string[] } = {};
     metrics.forEach((metric) => {
-      // Assuming metrics are space-delimited strings, get the first word for grouping
       const keys = this.keyTranslatorService.keyToFullStringParts(metric);
-      const key = keys[0]; // Group by the first word
+      const key = keys[0];
       if (!groups[key]) {
         groups[key] = [];
       }
@@ -92,5 +154,16 @@ export class MetricSearchComponent implements OnInit {
     }
 
     return this.metricGroups;
+  }
+
+  onSearchInputChange() {
+    const searchValue = this.metricCtrl?.value ?? '';
+    this.searchValueChanged.emit(searchValue);
+  }
+
+  getDisabledTooltip(): Observable<string> {
+    return this.isEnabled.pipe(
+      map((isEnabled) => (isEnabled ? '' : 'Cards only support one Metric'))
+    );
   }
 }
