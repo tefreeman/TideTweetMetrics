@@ -10,7 +10,7 @@
   <ng-container *ngFor="let displayableData of dataGrid.dataArr; let i = index">
     <ng-container>
       <app-stat-card
-        [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
+        [ngStyle]="{ 'max-width': maxCardWidth, 'height': cardHeight }"
         class="dataCard"
         #statcard
         cdkDrag
@@ -22,7 +22,7 @@
   </ng-container>
 
   <mat-card
-    [ngStyle]="{ 'max-width': maxCardWidth, height: 'cardHeight' }"
+    [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight  }"
     class="card-add"
     (click)="openStatCardDialog()"
     *ngIf="editMode | async"

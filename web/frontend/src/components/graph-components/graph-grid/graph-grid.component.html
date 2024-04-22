@@ -21,7 +21,7 @@
     </ng-container>
   </ng-container>
   <mat-card
-    [ngStyle]="{ 'max-width': maxCardWidth, height: '20rem' }"
+    [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
     class="card-add"
     (click)="openGraphCardDialog()"
     *ngIf="editMode | async"

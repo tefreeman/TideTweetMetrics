@@ -190,4 +190,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
+
+  getHeight( height: string){
+    
+  }
 }
+

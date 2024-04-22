@@ -1,15 +1,7 @@
-<mat-form-field class="search-bar" appearance="fill" style="width: 50%">
+
+<mat-form-field class="search-bar" style="width:100%">
   <mat-label>Owners</mat-label>
-  <mat-chip-grid #chipGrid aria-label="Owner selection">
-    @for (owner of selectedOwners; track owner) {
-    <mat-chip-row (removed)="remove(owner)">
-      {{ owner }}
-      <button matChipRemove [attr.aria-label]="'remove ' + owner">
-        <mat-icon>cancel</mat-icon>
-      </button>
-    </mat-chip-row>
-    }
-  </mat-chip-grid>
+  
   <input
     matInput
     placeholder="New Owner..."
@@ -20,9 +12,20 @@
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     (matChipInputTokenEnd)="add($event)"
   />
+
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     @for (owner of filteredOwners | async; track owner) {
-    <mat-option color="accent" [value]="owner">{{ owner }}</mat-option>
+    <mat-option [value]="owner">{{ owner }}</mat-option>
     }
   </mat-autocomplete>
 </mat-form-field>
+<mat-chip-grid #chipGrid aria-label="Owner selection">
+  @for (owner of selectedOwners; track owner) {
+  <mat-chip-row color="accent" highlighted (removed)="remove(owner)">
+    {{ owner }}
+    <button matChipRemove [attr.aria-label]="'remove ' + owner">
+      <mat-icon>cancel</mat-icon>
+    </button>
+  </mat-chip-row>
+  }
+</mat-chip-grid>
