@@ -1,8 +1,11 @@
 <form [formGroup]="stateForm">
-  <mat-form-field style="width: 100%" appearance="fill">
+  <mat-form-field
+    style="width: 100%"
+    appearance="fill"
+    [matTooltip]="(getDisabledTooltip() | async) ?? ''"
+  >
     <mat-label>Search by metrics</mat-label>
     <input
-      [matTooltip]="(getDisabledTooltip() | async) ?? ''"
       matInput
       [matAutocomplete]="auto"
       formControlName="metricGroup"

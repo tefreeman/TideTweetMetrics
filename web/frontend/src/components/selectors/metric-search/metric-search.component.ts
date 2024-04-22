@@ -93,8 +93,8 @@ export class MetricSearchComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent): void {
+    console.log('EVENT: ', event);
     const value = (event.value || '').trim();
-
     if (value) {
       const matchingMetric = this.metricGroups
         .flatMap((group) => group.names)
@@ -121,8 +121,17 @@ export class MetricSearchComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.selectedMetrics.push(event.option.viewValue);
-    this.metricsChanged.emit(this.selectedMetrics);
+    const value = event.option.viewValue;
+    if (value) {
+      const matchingMetric = this.metricGroups
+        .flatMap((group) => group.names)
+        .find((metric) => metric.toLowerCase() === value.toLowerCase());
+
+      if (matchingMetric && !this.selectedMetrics.includes(matchingMetric)) {
+        this.selectedMetrics.push(matchingMetric);
+        this.metricsChanged.emit(this.selectedMetrics);
+      }
+    }
     this.metricInput.nativeElement.value = '';
     this.metricCtrl.setValue(null);
   }
