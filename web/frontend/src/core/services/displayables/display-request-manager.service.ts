@@ -10,14 +10,24 @@ import {
 } from '../../interfaces/displayable-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 
+/**
+ * Service responsible for managing display requests.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class DisplayRequestManagerService {
   private _dashboardPageManagerService = inject(DashboardPageManagerService);
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Retrieves displayable requests by name.
+   * @param page - The page name.
+   * @param name - The displayable name.
+   * @param type - The grid type.
+   * @returns An observable of displayable requests.
+   */
   public getRequestsByName(
     page: string,
     name: string,
@@ -31,6 +41,13 @@ export class DisplayRequestManagerService {
     );
   }
 
+  /**
+   * Adds a displayable request.
+   * @param request - The displayable request or data type.
+   * @param type - The grid type.
+   * @param page - The page name.
+   * @param name - The displayable name.
+   */
   addDisplayable(
     request: I_DisplayableRequest | T_DisplayableDataType,
     type: T_GridType,
@@ -58,6 +75,13 @@ export class DisplayRequestManagerService {
     });
   }
 
+  /**
+   * Adds multiple displayable requests.
+   * @param request - The array of displayable requests or data types.
+   * @param type - The grid type ('graph' or 'stat').
+   * @param page - The page name.
+   * @param name - The displayable name.
+   */
   addDisplayables(
     request: I_DisplayableRequest[] | T_DisplayableDataType[],
     type: 'graph' | 'stat',
@@ -92,14 +116,22 @@ export class DisplayRequestManagerService {
     });
   }
 
-  // Helper method to check if the type is T_DisplayableDataType.
+  /**
+   * Checks if the request is of type T_DisplayableDataType.
+   * @param request - The request to check.
+   * @returns A boolean indicating if the request is of type T_DisplayableDataType.
+   */
   private isDisplayableDataType(
     request: any
   ): request is T_DisplayableDataType {
     return 'type' in request;
   }
 
-  // Convert T_DisplayableDataType to I_DisplayableRequest.
+  /**
+   * Converts a T_DisplayableDataType to an I_DisplayableRequest.
+   * @param data - The data to convert.
+   * @returns The converted displayable request.
+   */
   private convertToDisplayableRequest(
     data: T_DisplayableDataType
   ): I_DisplayableRequest {
@@ -111,6 +143,12 @@ export class DisplayRequestManagerService {
     return { stat_name, ownersParams, type };
   }
 
+  /**
+   * Retrieves display names with order for a given page and type.
+   * @param page - The page name.
+   * @param type - The grid type ('graph' or 'stat').
+   * @returns An observable of display names with order.
+   */
   getDisplayNamesWithOrder$(
     page: string,
     type: 'graph' | 'stat'
@@ -134,6 +172,13 @@ export class DisplayRequestManagerService {
     );
   }
 
+  /**
+   * Removes a displayable request.
+   * @param page - The page name.
+   * @param name - The displayable name.
+   * @param type - The grid type.
+   * @param index - The index of the displayable request to remove.
+   */
   removeDisplayable(
     page: string,
     name: string,
@@ -148,6 +193,14 @@ export class DisplayRequestManagerService {
     });
   }
 
+  /**
+   * Edits a displayable request.
+   * @param page - The page name.
+   * @param name - The displayable name.
+   * @param type - The grid type.
+   * @param request - The updated displayable request.
+   * @param index - The index of the displayable request to edit.
+   */
   editDisplayable(
     page: string,
     name: string,

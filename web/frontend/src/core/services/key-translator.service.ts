@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
 import { I_KeyTranslator } from '../interfaces/key-translator-interface';
 
+/**
+ * Service responsible for translating keys used in the application.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class KeyTranslatorService {
   // TODO: ISSUE: improve the translation object to sound more natural
+  /**
+   * The translation object that maps keys to their corresponding translations.
+   */
   private _translationObject: I_KeyTranslator = {
     mean: { full: 'Average of all', abr: 'Avg', desc: 'Mean value', order: 1 },
     std: {
@@ -178,6 +184,9 @@ export class KeyTranslatorService {
     },
   };
 
+  /**
+   * The translation fixes object that contains fixes for specific keys.
+   */
   private _translationFixes: I_KeyTranslator = {
     'tweet_count-sum-remove': {
       full: 'Tweet Count',
@@ -187,20 +196,39 @@ export class KeyTranslatorService {
     },
   };
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Sets the translation object.
+   * @param translationObject - The translation object to set.
+   */
   public setTranslationObject(translationObject: I_KeyTranslator): void {
     this._translationObject = translationObject;
   }
 
+  /**
+   * Splits a key into an array of parts.
+   * @param key - The key to split.
+   * @returns An array of parts.
+   */
   splitKey(key: string): string[] {
     return key.split('-');
   }
 
+  /**
+   * Translates a single key to its full string representation.
+   * @param key - The key to translate.
+   * @returns The full string representation of the key.
+   */
   private translateKeySingle(key: string): string {
     return this._translationObject[key]?.full ?? key;
   }
 
+  /**
+   * Converts a key to its full string representation.
+   * @param key - The key to convert.
+   * @returns The full string representation of the key.
+   */
   keyToFullString(key: string): string {
     if (this._translationFixes[key]) {
       return this._translationFixes[key].full;
@@ -214,6 +242,12 @@ export class KeyTranslatorService {
     return keys.map((k) => this.translateKeySingle(k)).join(' ');
   }
 
+  /**
+   * Converts a key to its full string representation and returns the parts as an array.
+   * @param key - The key to convert.
+   * @param reverseOrder - Whether to reverse the order of the parts.
+   * @returns An array of parts representing the full string representation of the key.
+   */
   keyToFullStringParts(key: string, reverseOrder = false): string[] {
     if (this._translationFixes[key]) {
       return this._translationFixes[key].full.split(' ');
@@ -232,18 +266,38 @@ export class KeyTranslatorService {
     return keys.map((k) => this.translateKeySingle(k));
   }
 
+  /**
+   * Checks if a key has an abbreviation.
+   * @param key - The key to check.
+   * @returns True if the key has an abbreviation, false otherwise.
+   */
   hasAbr(key: string): boolean {
     return !!this._translationObject[key]?.abr;
   }
 
+  /**
+   * Checks if a key has a description.
+   * @param key - The key to check.
+   * @returns True if the key has a description, false otherwise.
+   */
   hasDesc(key: string): boolean {
     return !!this._translationObject[key]?.desc;
   }
 
+  /**
+   * Translates a key to its abbreviation.
+   * @param key - The key to translate.
+   * @returns The abbreviation of the key.
+   */
   translateKeyAbr(key: string): string {
     return this._translationObject[key]?.abr ?? key;
   }
 
+  /**
+   * Translates a key to its description.
+   * @param key - The key to translate.
+   * @returns The description of the key.
+   */
   translateKeyDesc(key: string): string {
     return this._translationObject[key]?.desc ?? key;
   }

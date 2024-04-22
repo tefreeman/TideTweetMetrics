@@ -9,35 +9,46 @@ let test_displayed_data1: I_DisplayableRequest = {
 };
 let test_displayed_data2: I_DisplayableRequest = {
   stat_name: 'tweet_likes-mean-yearly',
-  ownersParams: { type: 'specific', owners: ['alabama_cs']},
+  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
   type: 'stat-trend',
 };
 let test_displayed_data3: I_DisplayableRequest = {
   stat_name: 'tweet_retweets-mean',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', '_global']},
+  ownersParams: { type: 'specific', owners: ['alabama_cs', '_global'] },
   type: 'stat-comp',
 };
 let test_displayed_data4: I_DisplayableRequest = {
   stat_name: 'tweet_likes-sum-yearly',
-  ownersParams: { type: 'specific', owners: ['alabama_cs']},
+  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
   type: 'stat-trend',
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
   stat_name: 'tweet_likes-sum',
-  ownersParams: { type: 'bottom', count: 20, owners: ['alabama_cs']},
+  ownersParams: { type: 'bottom', count: 20, owners: ['alabama_cs'] },
   type: 'graph-bar',
 };
 
 
 
+/**
+ * A service that provides mock data for testing purposes.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class MockDataService {
+  /**
+   * Determines whether to override the profile or not.
+   */
   public overrideProfile = true;
-  constructor() {}
 
+  constructor() { }
+
+  /**
+   * Retrieves mock data.
+   * @returns The mock data.
+   */
   getMockData(): I_PageMap {
     return {
       home: {
