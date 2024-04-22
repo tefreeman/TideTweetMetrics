@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, map, of, switchMap } from 'rxjs';
 import { metricRanking } from '../../data/metric-ranking';
 import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
 import {
@@ -25,8 +25,10 @@ export class RecommendedDisplayableService {
     owners: string[]
   ): Observable<T_DisplayableDataType[]> {
     if (owners.length === 0) {
-      owners = [this.authService.userCollege, '_global'];
+      console.log(owners);
+      return of([]);
     }
+
     const basicOwnersParams: I_OwnersParams = {
       type: 'specific',
       owners: [owners[0]],
@@ -38,8 +40,20 @@ export class RecommendedDisplayableService {
       count: 2,
     };
 
-    console.log('basicOwnersParams', basicOwnersParams);
-
+    if (owners.length === 1) {
+      return this.metricService.metricContainer$.pipe(
+        switchMap((metricContainer) =>
+          this.getRecommendedDisplayables([basicOwnersParams]).pipe(
+            map((displayables) =>
+              this.displayableProviderService.processRequests(
+                metricContainer,
+                displayables
+              )
+            )
+          )
+        )
+      );
+    }
     return this.metricService.metricContainer$.pipe(
       switchMap((metricContainer) =>
         this.getRecommendedDisplayables([
