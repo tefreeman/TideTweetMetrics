@@ -23,7 +23,7 @@
   />
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     @for (owner of filteredOwners | async; track owner) {
-    <mat-option [value]="owner">{{ owner }}</mat-option>
+    <mat-option color="accent" [value]="owner">{{ owner }}</mat-option>
     }
   </mat-autocomplete>
 </mat-form-field>
