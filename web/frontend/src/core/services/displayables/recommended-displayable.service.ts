@@ -5,6 +5,7 @@ import { T_DisplayableDataType } from '../../interfaces/displayable-data-interfa
 import {
   I_DisplayableRequest,
   I_OwnersParams,
+  T_DisplayableTypeString,
 } from '../../interfaces/displayable-interface';
 import { AuthService } from '../auth.service';
 import { MetricService } from '../metrics/metric.service';
@@ -43,7 +44,10 @@ export class RecommendedDisplayableService {
     if (owners.length === 1) {
       return this.metricService.metricContainer$.pipe(
         switchMap((metricContainer) =>
-          this.getRecommendedDisplayables([basicOwnersParams]).pipe(
+          this.getRecommendedDisplayables(
+            [basicOwnersParams],
+            'auto-stat'
+          ).pipe(
             map((displayables) =>
               this.displayableProviderService.processRequests(
                 metricContainer,
@@ -56,10 +60,10 @@ export class RecommendedDisplayableService {
     }
     return this.metricService.metricContainer$.pipe(
       switchMap((metricContainer) =>
-        this.getRecommendedDisplayables([
-          basicOwnersParams,
-          comparsionOwnersParams,
-        ]).pipe(
+        this.getRecommendedDisplayables(
+          [comparsionOwnersParams],
+          'stat-comp'
+        ).pipe(
           map((displayables) =>
             this.displayableProviderService.processRequests(
               metricContainer,
@@ -72,7 +76,8 @@ export class RecommendedDisplayableService {
   }
 
   getRecommendedDisplayables(
-    ownersParamsArr: I_OwnersParams[]
+    ownersParamsArr: I_OwnersParams[],
+    type: T_DisplayableTypeString
   ): Observable<I_DisplayableRequest[]> {
     return this.getRecommendedMetricNames().pipe(
       map((metricNames) => {
@@ -82,7 +87,7 @@ export class RecommendedDisplayableService {
             displayables.push({
               stat_name: metricName,
               ownersParams: ownersParams,
-              type: 'auto-stat',
+              type: type,
             });
           });
         });

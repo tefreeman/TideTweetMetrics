@@ -101,21 +101,35 @@ export class DisplayableProcessorService {
     };
   }
 
+  // Jerry rigged this to work need to go over
   private toStatComparison(data: IDisplayableData): I_StatCompData | null {
     if (Object.keys(data.owners).length != 2) {
       console.log('Invalid data for stat-comp');
       return null;
     }
 
+    const values = Object.values(data.owners).map((value) => {
+      return Array.isArray(value) ? value[value.length - 1] : value;
+    });
+
+    if (
+      values.length !== 2 ||
+      Array.isArray(values[0]) ||
+      Array.isArray(values[1])
+    ) {
+      console.log('Invalid data for stat-comp');
+      return null;
+    }
+
+    console.log('VALUE: ', values);
     return {
       type: 'stat-comp',
       metricName: data.stat_name,
       ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
+      values: values, // Directly use the processed 'values' array
       owners: Object.keys(data.owners),
     };
   }
-
   private toStatTrend(data: IDisplayableData): I_StatTrendData | null {
     console.log('TREND: ', data);
 
