@@ -53,17 +53,17 @@
           <!-- Buttons to the right -->
           <div class="right-side"> <!-- New wrapper for right-aligned buttons -->
             <div>
-            <button class="button-class" *ngIf="editMode | async" mat-raised-button aria-label="Edit" color="white" (click)="toggleEditMode()">
+            <button class="button-class" *ngIf=" (editMode| async)" mat-raised-button aria-label="Edit" color="white" (click)="toggleEditMode()">
               <span class="text" style="color: #a51e36;">Confirm</span>
             </button>
-            <button class="button-class" *ngIf="!(editMode | async)" mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
+            <button class="button-class" *ngIf="!(editMode | async) && !gridEditMode " mat-raised-button aria-label="Save" color="primary" (click)="toggleEditMode()">
               <span class="text">Card Edit</span>
             </button>
         
-            <button class="button-class" *ngIf="gridEditMode " mat-raised-button aria-label=" Grid Edit Edit" color="white" (click)="toggleGridEditMode()">
+            <button class="button-class" *ngIf="gridEditMode" mat-raised-button aria-label=" Grid Edit Edit" color="white" (click)="toggleGridEditMode()">
               <span class="text" style="color: #a51e36;">Confirm</span>
             </button>
-            <button class="button-class" *ngIf="!(gridEditMode)" mat-raised-button aria-label="Grid Edit Mode" color="primary" (click)="toggleGridEditMode()">
+            <button class="button-class" *ngIf="!(gridEditMode) && !(editMode| async)" mat-raised-button aria-label="Grid Edit Mode" color="primary" (click)="toggleGridEditMode()">
               <span class="text">Grid Edit</span>
             </button>
 
