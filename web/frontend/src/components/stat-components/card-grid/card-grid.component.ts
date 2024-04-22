@@ -171,14 +171,18 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '100%',
     });
 
-    dialogRef.afterClosed().subscribe((result: T_DisplayableStat[]) => {
-      this.displayRequestManagerService.addDisplayables(
-        result,
-        this.type,
-        this.page,
-        this.name
-      );
+    dialogRef.afterClosed().subscribe((result: T_DisplayableStat[] | null) => {
+      if (result) {
+        this.displayRequestManagerService.addDisplayables(
+          result,
+          this.type,
+          this.page,
+          this.name
+        );
+      }
     });
+
+    this.editModeService.setEditMode(false);
   }
 
   deleteCard(i: number) {
@@ -191,8 +195,5 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
 
-  getHeight( height: string){
-    
-  }
+  getHeight(height: string) {}
 }
-
