@@ -32,7 +32,7 @@ import { LineChartComponent } from '../line-chart/line-chart.component';
 })
 export class GraphCardComponent implements OnInit {
   @Input({ required: true }) displayableData!: T_DisplayableDataType;
-  @Input({ required: true }) placeHolderForEdit!: boolean;
+
   @Output() deleteEvent = new EventEmitter<void>();
 
   editModeService: EditModeService = inject(EditModeService);
