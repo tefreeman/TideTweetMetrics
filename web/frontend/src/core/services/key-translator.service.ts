@@ -28,7 +28,7 @@ export class KeyTranslatorService {
     },
     count: {
       full: 'Count of all',
-      abr: 'Count',
+      abr: 'count',
       desc: 'Count value',
       order: 1,
     },
@@ -135,7 +135,7 @@ export class KeyTranslatorService {
       order: 2,
     },
     tweet_count: {
-      full: "'Count' counts",
+      full: "tweet counts",
       abr: 'TCount',
       desc: "Number of 'counts' in a given Tweet",
       order: 2,
