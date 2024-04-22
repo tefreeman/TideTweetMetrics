@@ -36,6 +36,9 @@ import { GraphCardComponent } from '../../graph-components/graph-card/graph-card
 import { addStatsDialogComponent } from '../add-stats-dialog/add-stats-dialog.component';
 import { StatCardComponent } from '../stat-card/stat-card.component';
 
+/**
+ * Represents the CardGridComponent which displays a grid of stat cards.
+ */
 @Component({
   selector: 'app-card-grid',
   standalone: true,
@@ -56,28 +59,96 @@ import { StatCardComponent } from '../stat-card/stat-card.component';
   styleUrl: './card-grid.component.scss',
 })
 export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
+  /**
+   * The stat cards in the grid.
+   */
   @ViewChildren('statcard', { read: ElementRef }) statCards!: QueryList<any>;
+
+  /**
+   * The minimum column size of the grid.
+   */
   @Input() minColSize!: string;
+
+  /**
+   * The maximum column size of the grid.
+   */
   @Input() maxColSize!: string;
+
+  /**
+   * The maximum width of the cards in the grid.
+   */
   @Input() maxCardWidth!: string;
+
+  /**
+   * The height of the cards in the grid.
+   */
   @Input() cardHeight!: string;
+
+  /**
+   * The name of the grid (required).
+   */
   @Input({ required: true }) name!: string;
+
+  /**
+   * The page of the grid (required).
+   */
   @Input({ required: true }) page!: string;
 
+  /**
+   * The EditModeService used to manage the edit mode.
+   */
   editModeService: EditModeService = inject(EditModeService);
 
+  /**
+   * The data grid service used to manage the grid tiles.
+   */
   public dataGrid: MoveableGridTilesService<T_DisplayableStat>;
+
+  /**
+   * The observable representing the edit mode.
+   */
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
+
+  /**
+   * The display provider service used to provide displayables.
+   */
   displayProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
   );
+
+  /**
+   * The display request manager service used to manage display requests.
+   */
   displayRequestManagerService: DisplayRequestManagerService = inject(
     DisplayRequestManagerService
   );
+
+  /**
+   * The subject used to unsubscribe from observables.
+   */
   private destroy$: Subject<void>;
+
+  /**
+   * The subscription used to get displayables.
+   */
   private subscription: any;
+
+  /**
+   * The subscription used to listen for changes in stat cards.
+   */
   private statsCardsChangesSub!: Subscription;
+
+  /**
+   * The type of the grid.
+   */
   private type: T_GridType = 'stat';
+
+  /**
+   * Creates an instance of CardGridComponent.
+   * @param cdr - The ChangeDetectorRef used for change detection.
+   * @param dialog - The MatDialog used for opening dialogs.
+   * @param ngZone - The NgZone used for running code outside of Angular's zone.
+   */
   constructor(
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -87,6 +158,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$ = new Subject<void>();
   }
 
+  /**
+   * Initializes the component.
+   */
   ngOnInit() {
     this.subscription = this.displayProviderService
       .getDisplayables(this.page, this.name, this.type)
@@ -114,6 +188,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Cleans up the component.
+   */
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
 
@@ -125,6 +202,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
+  /**
+   * Runs after the view has been initialized.
+   */
   ngAfterViewInit() {
     // Initial subscription
     this.statsCardsChangesSub = this.statCards.changes.subscribe(
@@ -142,10 +222,17 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  /**
+   * Updates the grid when the window is resized.
+   */
   onResize() {
     this.dataGrid.update(this.statCards);
   }
 
+  /**
+   * Handles the drop event of a card.
+   * @param event - The CdkDragDrop event.
+   */
   dropCard(event: CdkDragDrop<any[]>) {
     this.dataGrid.swapClosestElements(event.previousIndex, {
       x: event.dropPoint.x,
@@ -153,6 +240,10 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Gets the container style for the grid.
+   * @returns The container style object.
+   */
   get containerStyle(): { [key: string]: string } {
     const colWidth = `repeat(auto-fit, minmax(${this.minColSize}, ${this.maxColSize}))`;
 
@@ -161,6 +252,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
+  /**
+   * Opens the stat card dialog.
+   */
   openStatCardDialog() {
     this.editModeService.setEditMode(false);
     const dialogRef = this.dialog.open(addStatsDialogComponent, {
@@ -185,6 +279,10 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.editModeService.setEditMode(false);
   }
 
+  /**
+   * Deletes a card from the grid.
+   * @param i - The index of the card to delete.
+   */
   deleteCard(i: number) {
     this.displayRequestManagerService.removeDisplayable(
       this.page,
@@ -195,5 +293,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
   }
 
-  getHeight(height: string) {}
+  /**
+   * Gets the height of a card.
+   * @param height - The height of the card.
+   */
+  getHeight(height: string) { }
 }
