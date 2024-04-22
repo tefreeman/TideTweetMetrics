@@ -78,7 +78,7 @@ export class addStatsDialogComponent implements OnInit {
 
         if (this.data) {
           this._recommendedDisplayables.next(
-            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 30)
+            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 300)
           );
         } else {
           this._recommendedDisplayables.next([]);
