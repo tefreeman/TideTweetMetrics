@@ -1,17 +1,29 @@
-<!-- metric-search.component.html -->
-<form [formGroup]="stateForm">
-  <mat-form-field class="search-bar" appearance="fill">
-    <mat-label>Owners</mat-label>
-    <input matInput [matAutocomplete]="auto" formControlName="metricGroup" />
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-optgroup
-        *ngFor="let group of ownerGroupOptions | async"
-        [label]="group.first"
-      >
-        <mat-option *ngFor="let name of group.names" [value]="name">
-          {{ name }}
-        </mat-option>
-      </mat-optgroup>
-    </mat-autocomplete>
-  </mat-form-field>
-</form>
+<mat-form-field class="search-bar" appearance="fill" style="width: 50%">
+  <mat-label>Owners</mat-label>
+  <mat-chip-grid #chipGrid aria-label="Owner selection">
+    @for (owner of selectedOwners; track owner) {
+    <mat-chip-row (removed)="remove(owner)">
+      {{ owner }}
+      <button matChipRemove [attr.aria-label]="'remove ' + owner">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    }
+  </mat-chip-grid>
+  <input
+    matInput
+    placeholder="New Owner..."
+    #ownerInput
+    [formControl]="ownerCtrl"
+    [matChipInputFor]="chipGrid"
+    [matAutocomplete]="auto"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    (matChipInputTokenEnd)="add($event)"
+    [disabled]="isAllowed"
+  />
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    @for (owner of filteredOwners | async; track owner) {
+    <mat-option [value]="owner">{{ owner }}</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

@@ -1,6 +1,23 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 import { Observable, map, startWith } from 'rxjs';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { MetricService } from '../../../core/services/metrics/metric.service';
@@ -9,12 +26,6 @@ export interface OwnerGroup {
   first: string;
   names: string[];
 }
-
-export const _filter = (opt: string[], value: string): string[] => {
-  const filterValue = value.toLowerCase();
-
-  return opt.filter((item) => item.toLowerCase().includes(filterValue));
-};
 
 @Component({
   selector: 'app-owner-search',
@@ -25,73 +36,79 @@ export const _filter = (opt: string[], value: string): string[] => {
     MaterialModule,
     ReactiveFormsModule,
     AsyncPipe,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatIconModule,
   ],
   templateUrl: './owner-search.component.html',
   styleUrl: './owner-search.component.scss',
 })
 export class OwnerSearchComponent implements OnInit {
-  @Output() searchValueChanged: EventEmitter<string> =
-    new EventEmitter<string>();
-
+  @Output() ownersChanged = new EventEmitter<string[]>();
   @Input({ required: true }) metricName: string = '';
+  @Input({ required: true }) defaultOwners: string[] = [];
+  @Input({ required: true }) isAllowed!: boolean;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  ownerCtrl = new FormControl('');
+  filteredOwners: Observable<string[]>;
+  selectedOwners: string[] = [];
+  allOwners: string[] = [];
 
-  stateForm = this._formBuilder.group({
-    metricGroup: '',
-  });
+  @ViewChild('ownerInput')
+  ownerInput!: ElementRef<HTMLInputElement>;
+  announcer = inject(LiveAnnouncer);
 
-  ownerGroups: OwnerGroup[] = [];
-  ownerGroupOptions!: Observable<OwnerGroup[]>;
-
-  constructor(
-    private _formBuilder: FormBuilder,
-    private metricService: MetricService
-  ) {}
+  constructor(private metricService: MetricService) {
+    this.filteredOwners = this.ownerCtrl.valueChanges.pipe(
+      startWith(null),
+      map((owner: string | null) =>
+        owner ? this._filter(owner) : this.allOwners.slice()
+      )
+    );
+  }
 
   ngOnInit() {
-    this.metricService
-      .getOwnersForStat(this.metricName)
-      .subscribe((metrics) => {
-        this.ownerGroups = this.groupMetrics(metrics);
-      });
-
-    this.ownerGroupOptions = this.stateForm
-      .get('metricGroup')!
-      .valueChanges.pipe(
-        startWith(''),
-        map((value) => {
-          this.searchValueChanged.emit(value as string); // Emit the current value
-          return this._filterGroup(value || '');
-        })
-      );
-  }
-
-  private groupMetrics(metrics: string[]): OwnerGroup[] {
-    // The logic of grouping by the first capitalized character
-    const groups: { [key: string]: string[] } = {};
-    metrics.forEach((metric) => {
-      // Get the first character of the metric string
-      const firstChar = metric.charAt(0).toUpperCase();
-      if (!groups[firstChar]) {
-        groups[firstChar] = [];
-      }
-      groups[firstChar].push(metric);
+    this.selectedOwners = this.defaultOwners;
+    this.metricService.getOwnersForStat(this.metricName).subscribe((owners) => {
+      this.allOwners = owners;
     });
-
-    return Object.entries(groups).map(([first, names]) => ({ first, names }));
   }
 
-  private _filterGroup(value: string): OwnerGroup[] {
-    if (value) {
-      return this.ownerGroups
-        .map((group) => ({
-          first: group.first,
-          names: group.names.filter((name) =>
-            name.toLowerCase().includes(value.toLowerCase())
-          ),
-        }))
-        .filter((group) => group.names.length > 0);
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value && this.allOwners.includes(value)) {
+      if (!this.selectedOwners.includes(value)) {
+        this.selectedOwners.push(value);
+        this.ownersChanged.emit(this.selectedOwners);
+      }
     }
 
-    return this.ownerGroups;
+    event.chipInput!.clear();
+    this.ownerCtrl.setValue(null);
+  }
+
+  remove(owner: string): void {
+    const index = this.selectedOwners.indexOf(owner);
+
+    if (index >= 0) {
+      this.selectedOwners.splice(index, 1);
+      this.ownersChanged.emit(this.selectedOwners);
+      this.announcer.announce(`Removed ${owner}`);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedOwners.push(event.option.viewValue);
+    this.ownersChanged.emit(this.selectedOwners);
+    this.ownerInput.nativeElement.value = '';
+    this.ownerCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.allOwners.filter((owner) =>
+      owner.toLowerCase().includes(filterValue)
+    );
   }
 }
