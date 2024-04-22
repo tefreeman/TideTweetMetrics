@@ -29,6 +29,7 @@ export class StatCompComponent {
     this.metricName = this.keyTranslatorService.keyToFullString(
       this.displayableData['metricName']
     );
+
     this.statOne = this.displayableData.values[0] as number;
     this.statTwo = this.displayableData.values[1] as number;
     this.ownerOne = this.displayableData.owners[0];
