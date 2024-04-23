@@ -118,65 +118,47 @@ export class DisplayableProviderService {
     return [...individualResults, ...mergedGroupResults];
   }
 
-  private mergeGroupedResults(groupedResults: {
-    [key: string]: T_DisplayableDataType[];
-  }): T_DisplayableDataType[] {
+  private mergeGroupedResults(groupedResults: { [key: string]: T_DisplayableDataType[] }): T_DisplayableDataType[] {
     const mergedResults: T_DisplayableDataType[] = [];
-
+  
     Object.values(groupedResults).forEach((group) => {
       if (group.length > 0 && 'owners' in group[0]) {
-        const base = group[0] as T_DisplayableGraph;
-
-        try {
-          const ownerValueMap: { [owner: string]: T_MetricValue[] } = {};
-
-          for (let i = 0; i < group.length; i++) {
-            const currentItem = group[i];
-            if ('owners' in currentItem) {
-              const typedItem = currentItem as T_DisplayableGraph;
-              typedItem.owners.forEach((owner, index) => {
-                if (!(owner in ownerValueMap)) {
-                  ownerValueMap[owner] = [];
-                }
-                ownerValueMap[owner].push(typedItem.values[index]);
-              });
-              if ('metricName' in base && 'metricName' in currentItem) {
-                base.metricNames = Array.isArray(base.metricName)
-                  ? base.metricName
-                  : [base.metricName];
-                base.metricNames.push(typedItem.metricName);
+        const base = {...group[0]} as T_DisplayableGraph; // Deep copy for safe modifications
+        base.metricNames = []; // Initialize empty array to collect all metricNames
+  
+        const ownerValueMap: { [owner: string]: T_MetricValue[] } = {};
+  
+        for (let i = 0; i < group.length; i++) {
+          const currentItem = group[i] as T_DisplayableGraph;
+          if ('owners' in currentItem) {
+            currentItem.owners.forEach((owner, index) => {
+              if (!(owner in ownerValueMap)) {
+                ownerValueMap[owner] = [];
               }
-            }
+              ownerValueMap[owner].push(currentItem.values[index]);
+            });
+            base.metricNames.push(currentItem.metricName); // Always push current metricName
           }
-
-          const lengths = Object.values(ownerValueMap).map(
-            (values) => values.length
-          );
-          const medianLength = lengths.sort((a, b) => a - b)[
-            Math.floor(lengths.length / 2)
-          ];
-
-          base.owners = Object.keys(ownerValueMap);
-          base.valuesNested = base.owners.map((owner) => {
-            const values = ownerValueMap[owner];
-            if (values.length === medianLength) {
-              return values;
-            } else {
-              console.warn(
-                `Skipping owner '${owner}' due to inconsistent value length.`
-              );
-              return [];
-            }
-          });
-
-          mergedResults.push(base);
-        } catch (error) {
-          console.error('Error merging group items: ', error);
-          // Handle errors as needed
         }
+  
+        const lengths = Object.values(ownerValueMap).map(values => values.length);
+        const medianLength = lengths.sort((a, b) => a - b)[Math.floor(lengths.length / 2)];
+  
+        base.owners = Object.keys(ownerValueMap);
+        base.valuesNested = base.owners.map(owner => {
+          const values = ownerValueMap[owner];
+          if (values.length === medianLength) {
+            return values;
+          } else {
+            console.warn(`Skipping owner '${owner}' due to inconsistent value length.`);
+            return [];
+          }
+        });
+  
+        mergedResults.push(base);
       }
     });
-
+  
     console.log('MERGED IS OVER: ', mergedResults);
     return mergedResults;
   }
