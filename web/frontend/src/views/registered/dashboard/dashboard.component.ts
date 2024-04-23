@@ -29,6 +29,10 @@ import { EditModeService } from '../../../core/services/edit-mode.service';
 import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MetricService } from '../../../core/services/metrics/metric.service';
 
+/**
+ * Represents the DashboardComponent class.
+ * This component is responsible for displaying the dashboard view.
+ */
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -68,6 +72,11 @@ export class DashboardComponent implements OnInit {
   gridsSubscription: Subscription | undefined;
   localGrids: I_GridRequestEntryWithName[] = [];
 
+  /**
+   * Constructs a new instance of the DashboardComponent class.
+   * @param route - The ActivatedRoute instance.
+   * @param snackBar - The MatSnackBar instance.
+   */
   constructor(private route: ActivatedRoute, private snackBar: MatSnackBar) {
     this.pageName$ = this.route.params.pipe(
       map((params) => {
@@ -86,12 +95,23 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  /**
+   * Initializes the component.
+   */
+  ngOnInit() { }
 
+  /**
+   * Checks if the grids are empty.
+   * @returns An Observable that emits a boolean indicating if the grids are empty.
+   */
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
   }
 
+  /**
+   * Opens a snackbar with the specified message.
+   * @param message - The message to display in the snackbar.
+   */
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Close', {
       duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
@@ -100,9 +120,17 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+   * Cleans up resources before the component is destroyed.
+   */
   ngOnDestroy() {
     this.gridsSubscription?.unsubscribe();
   }
+
+  /**
+   * Handles the drop event of a CdkDrag.
+   * @param event - The CdkDragDrop event.
+   */
   drop(event: CdkDragDrop<I_GridRequestEntryWithName[]>) {
     console.log(event);
 
