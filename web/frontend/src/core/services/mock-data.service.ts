@@ -84,7 +84,6 @@ export class MockDataService {
             test_displayed_data5,
             test_displayed_data4,
             test_displayed_data12,
-            test_displayed_data13,
             test_displayed_data14,
           ],
           type: 'graph',
