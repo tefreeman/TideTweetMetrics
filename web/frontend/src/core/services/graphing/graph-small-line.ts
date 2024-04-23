@@ -1,5 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
+import { I_GraphLineData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 export class GraphSmallLine extends BaseGraph {
@@ -7,56 +7,66 @@ export class GraphSmallLine extends BaseGraph {
     super();
   }
 
-  private isGrouped(data: I_GraphBarData): boolean {
+  private isGrouped(data: I_GraphLineData): boolean {
     if (data.groupId) {
       return true;
     }
     return false;
   }
 
-  public getGraph(data: I_GraphBarData): AgChartOptions {
+  public getGraph(data: I_GraphLineData): AgChartOptions {
     return this.getOptions(data);
   }
 
-  getData(data: I_GraphBarData): any[] {
+  getData(data: I_GraphLineData): any[] {
     const chartData: any[] = [];
-    console.log('DATA: ', data);
+    console.log('DATA-SMALLINE: ', data);
+    if (data.values) {
+      //@ts-ignore
+      for (let i = 0; i < data.values[0].length; i++) {
+        const dataOut: any = {};
 
-    for (let i = 0; i < data.owners.length; i++) {
-      const dataOut: any = {};
-      dataOut['owner'] = data.owners[i];
+        for (let j = 0; j < data.owners.length; j++) {
+          const owner = data.owners[j];
+          //@ts-ignore
+          const valueArray = data.values[j][i] as any[];
+          const epochTime = valueArray[0];
+          const value = valueArray[1];
 
-      if (data.valuesNested) {
-        for (let j = 0; j < data.metricNames!.length; j++) {
-          const metricName = data.metricNames![j];
-          const value = data.valuesNested[i][j];
-          dataOut[metricName] = value;
+          if (!dataOut.time) {
+            dataOut.time = epochTime;
+          }
+
+          dataOut[owner] = value;
         }
+
+        chartData.push(dataOut);
       }
-
-      chartData.push(dataOut);
     }
-
+    console.log('DATA-SMALL-OUT: ', chartData);
     return chartData;
   }
-
-  getSeries(data: I_GraphBarData): any[] {
+  getSeries(data: I_GraphLineData): any[] {
     const series: any[] = [];
 
     for (const owner of data.owners || []) {
       series.push({
-        time: 'line',
-        xKey: 'month',
-        xName: 'Month',
+        type: 'line',
+        xKey: 'time',
+        xName: 'Time',
         yKey: owner,
         yName: '@' + owner,
         tooltip: {
-          renderer: ({ datum, xName, yName, xKey, yKey }) => {
+          renderer: ({ datum, xName, yName, xKey, yKey }: any) => {
             return {
               title: `${yName}: ${xName} ${datum[xKey]}`,
               content: datum[yKey],
             };
           },
+        },
+        marker: {
+          size: 1,
+          strokeWidth: 1,
         },
       });
     }
@@ -64,10 +74,9 @@ export class GraphSmallLine extends BaseGraph {
     return series;
   }
 
-  private getOptions(data: I_GraphBarData): AgChartOptions {
+  private getOptions(data: I_GraphLineData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
-
       data: this.getData(data),
       title: {
         text: 'Likes (Bar/Large)',
@@ -75,10 +84,10 @@ export class GraphSmallLine extends BaseGraph {
       series: this.getSeries(data),
       axes: [
         {
-          type: 'category',
+          type: 'time',
           position: 'bottom',
           title: {
-            text: 'Accounts',
+            text: 'Time',
           },
         },
         {

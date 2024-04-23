@@ -47,9 +47,10 @@ class StandardProfileStatOverWeekGeneratorWeekly(MetricGenerator):
         for profile_plus in stat_helper.get_all_profiles().values():
             metrics += self.gen_standard_stats_for_profile(profile_plus)
         return metrics
+    
     def gen_standard_stats_for_profile(self, profile_plus: ProfileWithTweetProperties) -> List[Metric]:
         """
-        Generates weekly standard statistics for a profile, collapsing continuous weeks of zero data.
+        Generates weekly standard statistics for a profile, including zeros for all time intervals.
         """
         metrics = []
 
@@ -73,8 +74,6 @@ class StandardProfileStatOverWeekGeneratorWeekly(MetricGenerator):
 
                 weekly_stats = []
                 current_week_start = oldest_date
-                last_value = None
-                last_date = None
 
                 while current_week_start < latest_date:
                     current_week_end = current_week_start + timedelta(days=7)
@@ -89,23 +88,9 @@ class StandardProfileStatOverWeekGeneratorWeekly(MetricGenerator):
                     else:
                         avg_value = stat_func(week_arr)
 
-                    if avg_value == 0 and last_value == 0:
-                        # Skip adding zeros if the last value was also zero
-                        pass
-                    elif avg_value != 0 or last_value != 0:
-                        # Save the last date that had a zero
-                        if last_value == 0 and last_date is not None:
-                            weekly_stats.append((last_date.strftime("%Y-%m-%d"), 0))
-                        weekly_stats.append((current_week_start.strftime("%Y-%m-%d"), avg_value))
-                        
-                    last_value = avg_value
-                    last_date = current_week_start if avg_value == 0 else None
+                    weekly_stats.append((int(current_week_start.timestamp()), avg_value))
 
                     current_week_start += timedelta(days=7)
-
-                # Append the last period of zeros if it ended with zeros
-                if last_value == 0 and last_date is not None:
-                    weekly_stats.append((last_date.strftime("%Y-%m-%d"), 0))
 
                 metric.set_data(weekly_stats)
                 metrics.append(metric)

@@ -59,7 +59,7 @@ export class StatTrendComponent implements OnInit {
    */
   timeUnitString: string = '';
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Initializes the component.
@@ -76,5 +76,41 @@ export class StatTrendComponent implements OnInit {
 
     this.difference = this.nowPoint - this.oldPoint;
     this.timeUnitString = this.displayableData.time_period;
+
+    console.log('TIME : ', this.oldTime, this.nowTime);
+    this.timeUnitString = this.createTimePeriodString(
+      this.oldTime,
+      this.nowTime
+    );
+  }
+
+  createTimePeriodString(oldTimeEpoch: number, nowTimeEpoch: number): string {
+    const oneDay = 24 * 60 * 60; // hours*minutes*seconds*milliseconds
+    const oneMonth = oneDay * 30; // Approximate, recognizing variability
+    const oneYear = oneDay * 365; // Approximate, not accounting for leap year
+
+    const diffTime = nowTimeEpoch - oldTimeEpoch;
+
+    if (diffTime < oneDay) {
+      // Less than a day
+      return 'daily';
+    } else if (diffTime < oneMonth) {
+      // Weekly or less
+      const days = Math.floor(diffTime / oneDay);
+      if (days >= 7) {
+        const weeks = Math.floor(days / 7);
+        return weeks === 1 ? 'last week' : `${weeks} weeks ago`;
+      } else {
+        return days === 1 ? 'yesterday' : `${days} days ago `;
+      }
+    } else if (diffTime < oneYear) {
+      // Monthly
+      const months = Math.round(diffTime / oneMonth);
+      return months === 1 ? 'last month' : `${months} months ago`;
+    } else {
+      // Yearly or more
+      const years = Math.round(diffTime / oneYear);
+      return years === 1 ? 'last year' : `${years} years ago`;
+    }
   }
 }

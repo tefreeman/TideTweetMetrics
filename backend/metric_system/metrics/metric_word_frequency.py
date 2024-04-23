@@ -32,7 +32,7 @@ class WordFrequencyMetric(OverTweetMetric):
 
     def __init__(self, return_count=10):
         Metric.__init__(
-            self, owner=NONE_PROFILE_NAME, metric_name="tweet_word_frequency"
+            self, owner="_words", metric_name="tweet_word_frequency"
         )
         nltk.download("stopwords")
         nltk.download("punkt")
