@@ -24,7 +24,7 @@ class TestDatabase(TestCase):
         sleep(0.5)
         collections = Database.db.list_collection_names()
         print(f"The database contains {len(collections)} collections.")
-        self.assertEqual(len(collections), 9, "Database should contain 9 collections.")
+        self.assertEqual(len(collections), 10, "Database should contain 9 collections.")
         self._init_flag = True
 
     # Insert tweet test case
