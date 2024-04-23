@@ -64,10 +64,10 @@ export class GraphSmallLine extends BaseGraph {
             };
           },
         },
-        marker: {
-          size: 1,
-          strokeWidth: 1,
+        marker: {   //Marker size should be strokeWidth*2, I think that looks good
+          size: 4,
         },
+        strokeWidth: 2,
       });
     }
 
@@ -129,7 +129,6 @@ export class GraphSmallLine extends BaseGraph {
           '#00ced1',
           '#32cd32',
         ],
-        strokes: ['#fff'],
       },
       overrides: {
         common: {
