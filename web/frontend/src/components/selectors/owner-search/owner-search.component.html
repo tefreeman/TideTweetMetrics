@@ -12,7 +12,7 @@
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     (matChipInputTokenEnd)="add($event)"
   />
-
+  
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     @for (owner of filteredOwners | async; track owner) {
     <mat-option [value]="owner">{{ owner }}</mat-option>
