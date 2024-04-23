@@ -13,7 +13,7 @@ import { MetricSelectListComponent } from '../../selectors/metric-select-list/me
 import { OwnerSearchComponent } from '../../selectors/owner-search/owner-search.component';
 import { CardBarComponent } from '../cardBar/cardBar.component';
 import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
-
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 /**
  * Represents the Add Stats Dialog component.
  */
@@ -31,6 +31,7 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
     MetricSearchComponent,
     simpleStatGridComponent,
     OwnerSearchComponent,
+    MatButtonToggleModule,
   ],
 })
 export class addStatsDialogComponent implements OnInit {
