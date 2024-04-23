@@ -2,9 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   T_DisplayableDataType,
+  T_DisplayableGraph,
   T_GridType,
 } from '../../interfaces/displayable-data-interface';
 import { I_DisplayableRequest } from '../../interfaces/displayable-interface';
+import { T_MetricValue } from '../../interfaces/metrics-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 import { MetricContainer } from '../metrics/metric-container';
 import { MetricService } from '../metrics/metric.service';
@@ -20,7 +22,7 @@ export class DisplayableProviderService {
   private _metricsService = inject(MetricService);
   private _displayReqService = inject(DisplayRequestManagerService);
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Retrieves the displayable data for a given page, name, and type.
@@ -79,14 +81,92 @@ export class DisplayableProviderService {
     metricContainer: MetricContainer,
     requests: I_DisplayableRequest[]
   ): T_DisplayableDataType[] {
-    const displayables: T_DisplayableDataType[] = [];
-    for (let request of requests) {
-      let output = metricContainer.getMetricData(request);
+    const groupedResults: { [key: string]: T_DisplayableDataType[] } = {};
+    const individualResults: T_DisplayableDataType[] = [];
+
+    requests.forEach((request) => {
+      const output = metricContainer.getMetricData(request);
       const result = this._graphService.convert(output);
+
       if (result) {
-        displayables.push(result);
+        if (request.groupId) {
+          if (!groupedResults[request.groupId]) {
+            groupedResults[request.groupId] = [];
+          }
+          groupedResults[request.groupId].push(result);
+        } else {
+          individualResults.push(result);
+        }
       }
-    }
-    return displayables;
+    });
+
+    // Now process grouped items
+    const mergedGroupResults = this.mergeGroupedResults(groupedResults);
+
+    return [...individualResults, ...mergedGroupResults];
+  }
+
+  private mergeGroupedResults(groupedResults: {
+    [key: string]: T_DisplayableDataType[];
+  }): T_DisplayableDataType[] {
+    const mergedResults: T_DisplayableDataType[] = [];
+
+    Object.values(groupedResults).forEach((group) => {
+      if (group.length > 0 && 'owners' in group[0]) {
+        const base = group[0] as T_DisplayableGraph;
+
+        try {
+          const ownerValueMap: { [owner: string]: T_MetricValue[] } = {};
+
+          for (let i = 0; i < group.length; i++) {
+            const currentItem = group[i];
+            if ('owners' in currentItem) {
+              const typedItem: any = currentItem as T_DisplayableGraph;
+              typedItem.owners.forEach((owner: any, index: any) => {
+                if (!(owner in ownerValueMap)) {
+                  ownerValueMap[owner] = [];
+                }
+                ownerValueMap[owner].push(typedItem.values[index]);
+              });
+              if ('metricName' in base && 'metricName' in currentItem) {
+                base.metricNames = Array.isArray(base.metricName)
+                  ? base.metricName
+                  : [base.metricName];
+                base.metricNames.push(typedItem.metricName);
+              }
+            }
+          }
+
+          const lengths = Object.values(ownerValueMap).map(
+            (values) => values.length
+          );
+          const medianLength = lengths.sort((a, b) => a - b)[
+            Math.floor(lengths.length / 2)
+          ];
+
+          base.owners = [];
+          base.values = [];
+
+          for (const [owner, values] of Object.entries(ownerValueMap)) {
+            if (values.length === medianLength) {
+              base.owners.push(owner);
+              base.values.push(values);
+            } else {
+              console.warn(
+                `Skipping owner '${owner}' due to inconsistent value length.`
+              );
+            }
+          }
+
+          mergedResults.push(base);
+        } catch (error) {
+          console.error('Error merging group items: ', error);
+          // Handle errors as needed
+        }
+      }
+    });
+
+    console.log('MERGED IS OVER: ', mergedResults);
+    return mergedResults;
   }
 }

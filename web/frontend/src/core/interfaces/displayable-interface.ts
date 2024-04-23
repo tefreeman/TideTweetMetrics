@@ -25,7 +25,6 @@ export type T_DisplayableTypeString =
   | 'edit-mode'
   | 'auto-stat';
 
-
 /**
 
  * Represents the type of owner.
@@ -51,7 +50,6 @@ export interface I_OwnersParams {
   owners: string[];
 }
 
-
 /**
  * Represents a displayable request.
  */
@@ -69,6 +67,10 @@ export interface I_DisplayableRequest {
    * The type of displayable element.
    */
   type: T_DisplayableTypeString;
+  /**
+   * If the displayable request is part of a group, the group ID.
+   */
+  groupId?: string;
 }
 
 /**
