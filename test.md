@@ -54,15 +54,27 @@ The following user acceptance tests verify the main system functions.
 - Verify:
   - Login attempt was successful.
 
-## Card Creation
+## Card (and Card Grid) Creation
 - Visit Dashboard page.
+- Click *Add my first grid!*. Add a Card Grid.
 - Click *Card Edit*.
-- Create a card.
+- Scroll through the provided list, or searching by metric and/or owner. Click *Add*.
 - Verify:
   - The card appears on the Dashboard.
-- Delete the card.
+- Repeat process as desired.
+
+## Card (and Card Grid) Deletion
+- After previous steps...
+- Click *Card Edit*.
+- Delete Cards as desired by clicking the red 'X' button in the top right corner of a Card.
 - Verify:
   - The card is deleted from the Dashboard.
+- Click *Confirm* to exit Card Editing mode.
+- Click *Grid Edit*.
+- Click the trash icon.
+- Verify:
+  - The grid is deleted.
+- Click *Confirm*.
 
 ## Graph Creation
 - Visit the Dashboard page.
