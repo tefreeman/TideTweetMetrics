@@ -14,6 +14,9 @@ import { OwnerSearchComponent } from '../../selectors/owner-search/owner-search.
 import { CardBarComponent } from '../cardBar/cardBar.component';
 import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
 
+/**
+ * Represents the Add Stats Dialog component.
+ */
 @Component({
   selector: 'app-add-card',
   standalone: true,
@@ -31,25 +34,72 @@ import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.co
   ],
 })
 export class addStatsDialogComponent implements OnInit {
+  /**
+   * Represents the recommended displayables subject.
+   */
   private _recommendedDisplayables = new BehaviorSubject<T_DisplayableStat[]>(
     []
   );
+
+  /**
+   * Represents the observable for recommended displayables.
+   */
   recommendedDisplayables$: Observable<T_DisplayableStat[]> =
     this._recommendedDisplayables.asObservable();
 
+  /**
+   * Represents the added displayables subject.
+   */
   private _addedDisplayables = new BehaviorSubject<T_DisplayableStat[]>([]);
+
+  /**
+   * Represents the observable for added displayables.
+   */
   addedDisplayables$: Observable<T_DisplayableStat[]> =
     this._addedDisplayables.asObservable();
 
+  /**
+   * Represents the key translator service.
+   */
   keyTranslatorService: KeyTranslatorService;
+
+  /**
+   * Represents the recommended displayable service.
+   */
   recommendedDisplayableService: RecommendedDisplayableService;
+
+  /**
+   * Represents all displayables.
+   */
   allDisplayables: T_DisplayableStat[] = [];
 
+  /**
+   * Represents the current owners subject.
+   */
   currentOwners: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  /**
+   * Represents the current metrics subject.
+   */
   currentMetrics: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  /**
+   * Represents the last metric search value.
+   */
   lastMetricSearchValue: string = '';
+
+  /**
+   * Represents the isEnabled observable.
+   */
   isEnabled: Observable<boolean>;
 
+  /**
+   * Constructs a new instance of the Add Stats Dialog component.
+   * @param data - The data for the displayable stats.
+   * @param cdr - The change detector reference.
+   * @param keyTranslatorService - The key translator service.
+   * @param recommendedDisplayableService - The recommended displayable service.
+   */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: T_DisplayableStat[],
     private cdr: ChangeDetectorRef,
@@ -64,6 +114,9 @@ export class addStatsDialogComponent implements OnInit {
     );
   }
 
+  /**
+   * Initializes the component.
+   */
   ngOnInit(): void {
     this.currentOwners
       .pipe(
@@ -78,7 +131,7 @@ export class addStatsDialogComponent implements OnInit {
 
         if (this.data) {
           this._recommendedDisplayables.next(
-            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 30)
+            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 300)
           );
         } else {
           this._recommendedDisplayables.next([]);
@@ -86,6 +139,13 @@ export class addStatsDialogComponent implements OnInit {
       });
   }
 
+  /**
+   * Filters and limits the displayables.
+   * @param allDisplayables - The array of all displayables.
+   * @param data - The array of displayable stats.
+   * @param limit - The limit of displayables.
+   * @returns The filtered and limited displayables.
+   */
   private filterAndLimitDisplayables(
     allDisplayables: T_DisplayableStat[],
     data: T_DisplayableStat[],
@@ -97,6 +157,11 @@ export class addStatsDialogComponent implements OnInit {
     return filteredDisplayables.slice(0, limit);
   }
 
+  /**
+   * Handles the search value change event.
+   * @param value - The search value.
+   * @param notMetricHook - Indicates if it is not a metric hook.
+   */
   onSearchValueChange(value: string, notMetricHook = true) {
     if (value) {
       if (notMetricHook) this.lastMetricSearchValue = value;
@@ -120,6 +185,10 @@ export class addStatsDialogComponent implements OnInit {
     }
   }
 
+  /**
+   * Adds a card to the displayables.
+   * @param card - The displayable stat card.
+   */
   addCard(card: T_DisplayableStat): void {
     const currentCards = this._addedDisplayables.getValue();
     if (
@@ -133,6 +202,10 @@ export class addStatsDialogComponent implements OnInit {
     }
   }
 
+  /**
+   * Removes a card from the displayables.
+   * @param card - The displayable stat card.
+   */
   removeCard(card: T_DisplayableStat): void {
     const updatedCards = this._addedDisplayables
       .getValue()
@@ -140,11 +213,19 @@ export class addStatsDialogComponent implements OnInit {
     this._addedDisplayables.next(updatedCards);
   }
 
+  /**
+   * Handles the owners changed event.
+   * @param $event - The owners array.
+   */
   onOwnersChanged($event: string[]) {
     console.log('EVENT: ', $event);
     this.currentOwners.next($event);
   }
 
+  /**
+   * Handles the metrics changed event.
+   * @param $event - The metrics array.
+   */
   onMetricsChanged($event: string[]) {
     if ($event.length == 0)
       this.onSearchValueChange(this.lastMetricSearchValue);
