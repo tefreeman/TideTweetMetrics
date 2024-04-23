@@ -74,6 +74,8 @@ export interface I_DisplayableRequest {
    * If the displayable request is part of a group, the group ID.
    */
   groupId?: string;
+
+  metric_names?: string[];
 }
 
 /**
