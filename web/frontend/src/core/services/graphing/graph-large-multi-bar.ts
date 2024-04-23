@@ -100,7 +100,7 @@ export class GraphLargeMutliBar extends BaseGraph {
 
       data: this.getData(data),
       title: {
-        text: 'Likes (Bar/Large)',
+        enabled: false,
       },
       series: this.getSeries(data),
       axes: [
