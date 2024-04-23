@@ -91,6 +91,11 @@ export class DisplayableProcessorService {
       return null;
     }
 
+    if (typeof data.stat_name !== 'string') {
+      console.log('Invalid data for stat-value');
+      return null;
+    }
+
     const owner = Object.keys(data.owners)[0];
     return {
       type: 'stat-value',
@@ -108,6 +113,10 @@ export class DisplayableProcessorService {
       return null;
     }
 
+    if (typeof data.stat_name !== 'string') {
+      console.log('Invalid data for stat-value');
+      return null;
+    }
     const values = Object.values(data.owners).map((value) => {
       return Array.isArray(value) ? value[value.length - 1] : value;
     });
@@ -135,6 +144,11 @@ export class DisplayableProcessorService {
 
     if (Object.keys(data.owners).length != 1) {
       console.log('Invalid data for stat-trend');
+      return null;
+    }
+
+    if (typeof data.stat_name !== 'string') {
+      console.log('Invalid data for stat-value');
       return null;
     }
     const owner = Object.keys(data.owners)[0];
