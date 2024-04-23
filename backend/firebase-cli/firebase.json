@@ -22,5 +22,16 @@
       "enabled": true
     },
     "singleProjectMode": true
+  },
+  "hosting": {
+    "source": "../../web/frontend",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
   }
 }
