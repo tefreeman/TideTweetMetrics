@@ -2,11 +2,20 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphLineData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
+/**
+ * Represents a small line graph.
+ * @extends BaseGraph
+ */
 export class GraphSmallLine extends BaseGraph {
   constructor() {
     super();
   }
 
+  /**
+   * Checks if the data is grouped.
+   * @param data - The graph line data.
+   * @returns True if the data is grouped, false otherwise.
+   */
   private isGrouped(data: I_GraphLineData): boolean {
     if (data.groupId) {
       return true;
@@ -14,10 +23,20 @@ export class GraphSmallLine extends BaseGraph {
     return false;
   }
 
+  /**
+   * Gets the graph options.
+   * @param data - The graph line data.
+   * @returns The graph options.
+   */
   public getGraph(data: I_GraphLineData): AgChartOptions {
     return this.getOptions(data);
   }
 
+  /**
+   * Gets the chart data.
+   * @param data - The graph line data.
+   * @returns The chart data.
+   */
   getData(data: I_GraphLineData): any[] {
     const chartData: any[] = [];
     console.log('DATA-SMALLINE: ', data);
@@ -46,6 +65,12 @@ export class GraphSmallLine extends BaseGraph {
     console.log('DATA-SMALL-OUT: ', chartData);
     return chartData;
   }
+
+  /**
+   * Gets the series for the graph.
+   * @param data - The graph line data.
+   * @returns The series for the graph.
+   */
   getSeries(data: I_GraphLineData): any[] {
     const series: any[] = [];
     this.getGraphStructure(data);
@@ -64,16 +89,21 @@ export class GraphSmallLine extends BaseGraph {
             };
           },
         },
-        marker: {
-          size: 1,
-          strokeWidth: 1,
+        marker: {   //Marker size should be strokeWidth*2, I think that looks good
+          size: 4,
         },
+        strokeWidth: 2,
       });
     }
 
     return series;
   }
 
+  /**
+   * Gets the graph options.
+   * @param data - The graph line data.
+   * @returns The graph options.
+   */
   private getOptions(data: I_GraphLineData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
@@ -112,6 +142,10 @@ export class GraphSmallLine extends BaseGraph {
     return chartOptions;
   }
 
+  /**
+   * Gets the graph theme.
+   * @returns The graph theme.
+   */
   private getTheme(): AgChartTheme {
     return {
       baseTheme: 'ag-default',
@@ -129,7 +163,6 @@ export class GraphSmallLine extends BaseGraph {
           '#00ced1',
           '#32cd32',
         ],
-        strokes: ['#fff'],
       },
       overrides: {
         common: {
