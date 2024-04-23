@@ -24,18 +24,18 @@ let test_displayed_data4: I_DisplayableRequest = {
     count: 2,
     owners: ['alabama_cs', 'azengineering'],
   },
-  groupId: 'test',
+  groupId: 'group1',
   type: 'auto',
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-median',
+  stat_name: 'tweet_likes-sum',
   ownersParams: {
     type: 'specific',
     count: 2,
     owners: ['alabama_cs', 'azengineering'],
   },
-  groupId: 'test',
+  groupId: 'group1',
   type: 'auto',
 };
 
