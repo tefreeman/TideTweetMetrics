@@ -1,7 +1,7 @@
 # 1. Automated Testing for Important Specified Features
 
-For convenience, we have setup a file in the `filepath` directory which runs all the automated unit tests in an appropriate order.
-In the `test/backend/metric_system` folder, the tester should run test_metric_system.py before running the tests in the `generator` subdirectory. The former generates the `ex_testing_metric_out.json` file, against which the contents of the latter are tested.
+<!-- Future: For convenience, we have setup a file in the `filepath` directory which runs all the automated unit tests in an appropriate order. -->
+In the `test/backend/metric_system` folder, the tester should run `test_metric_system.py` before running the tests in the `generator` subdirectory. The former automatically generates the `ex_testing_metric_out.json` file, which holds every generated metric, against which the contents of the latter are tested.
 
 # 2. High-Risk Features:
 
@@ -19,26 +19,36 @@ These files test the functionality of the encoders, which ensure that informatio
 The following user acceptance tests verify the main system functions.
 
 ## Account Creation
-- Step 1 for account creation
-- Step 2 for account creation
-- Verify that this is true
+- Visit the homepage
+- Click create account/login
+- Create an account
+- Verify that account exists
 
-## Login 
-- Step 1 for login
-- Step 2 for login
-- Verify that this is true
+## Login
+- Visit the homepage
+- Click create account/login
+- Enter wrong credentials
+- Verify that user is not logged in
+- Enter correct credentials
+- Verify that user is logged in
 
 ## Card Creation
-- Step 1 for card generation
-- Step 2 for card generation
-- Verify that this is true
+- Visit dashboard page
+- Click Card Edit
+- Create a card
+- Verify that card appears on dashboard
+- Delete the card
+- Verify that the card is deleted
 
 ## Graph Creation
-- Step 1 for graph generation
-- Step 2 for graph generation
-- Verify that this is true
+- Visit dashboard page
+- Click Card Edit
+- Create a graph
+- Verify that graph appears on dashboard
+- Delete the graph
+- Verify that the graph is deleted
 
 ## Update Metrics
-- Step 1 for updating metrics
-- Step 2 for updating metrics
-- Verify that this is true
+- Visit dashboard page
+- Click Update Metrics
+- Verify that metrics are updated
