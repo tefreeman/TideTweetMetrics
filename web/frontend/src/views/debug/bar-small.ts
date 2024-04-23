@@ -1,5 +1,9 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
+/**
+ * Retrieves data for the bar chart.
+ * @returns An array of objects representing the data.
+ */
 function getData() {
   return [
     { year: '@alabama_cs', visitors: 20 },
@@ -12,10 +16,22 @@ function getData() {
     { year: '@otherschool5', visitors: 50 },
   ];
 }
+
+/**
+ * Formats a number as a string.
+ * @param value - The number to format.
+ * @returns The formatted number as a string.
+ */
 function formatNumber(value: any) {
   return `${value}`;
 }
 
+/**
+ * Gets the domain (minimum and maximum values) for a given key in the data.
+ * @param key - The key to get the domain for.
+ * @param data - The data array.
+ * @returns An array containing the minimum and maximum values for the key.
+ */
 function getDomain(key: string, data: any[]) {
   const values = data.map((item) => item[key]);
   const min = Math.min(...values);
@@ -23,6 +39,15 @@ function getDomain(key: string, data: any[]) {
   return [min, max];
 }
 
+/**
+ * Calculates the opacity of a value based on its position within the domain.
+ * @param value - The value to calculate the opacity for.
+ * @param key - The key to calculate the domain for.
+ * @param minOpacity - The minimum opacity value.
+ * @param maxOpacity - The maximum opacity value.
+ * @param data - The data array.
+ * @returns The calculated opacity value.
+ */
 function getOpacity(
   value: number,
   key: any,
@@ -36,6 +61,15 @@ function getOpacity(
   return map(alpha, 0, 1, minOpacity, maxOpacity);
 }
 
+/**
+ * Maps a value from one range to another range.
+ * @param value - The value to map.
+ * @param start1 - The start of the input range.
+ * @param end1 - The end of the input range.
+ * @param start2 - The start of the output range.
+ * @param end2 - The end of the output range.
+ * @returns The mapped value.
+ */
 const map = (
   value: number,
   start1: number,
@@ -46,7 +80,13 @@ const map = (
   return ((value - start1) / (end1 - start1)) * (end2 - start2) + start2;
 };
 
+/**
+ * Represents a chart.
+ */
 export class Chart {
+  /**
+   * The theme for the chart.
+   */
   chartTheme: AgChartTheme = {
     baseTheme: 'ag-default',
     palette: {
@@ -77,6 +117,9 @@ export class Chart {
     },
   };
 
+  /**
+   * The options for the chart.
+   */
   chartOptions: AgChartOptions = {
     // Data: Data to be displayed in the chart
 
