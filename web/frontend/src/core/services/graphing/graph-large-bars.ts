@@ -27,7 +27,6 @@ export class GraphLargeBar extends BaseGraph {
    */
   getData(data: I_GraphBarData): any[] {
     const chartData: any[] = [];
-    console.log('DATA: ', data);
 
     for (let i = 0; i < data.owners.length; i++) {
       const dataOut: any = {};

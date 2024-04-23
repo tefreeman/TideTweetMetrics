@@ -19,7 +19,7 @@ import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 export class DisplayRequestManagerService {
   private _dashboardPageManagerService = inject(DashboardPageManagerService);
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Retrieves displayable requests by name.
@@ -98,7 +98,7 @@ export class DisplayRequestManagerService {
     } else {
       displayableRequests = request as I_DisplayableRequest[];
     }
-
+    console.log('REQUEST BECAME ', displayableRequests);
     // Proceed with adding the displayables.
     this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
       if (grid && grid.type === type) {
@@ -124,7 +124,11 @@ export class DisplayRequestManagerService {
   private isDisplayableDataType(
     request: any
   ): request is T_DisplayableDataType {
-    return 'type' in request;
+    if (request.metricName) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
