@@ -29,7 +29,7 @@ let test_displayed_data4: I_DisplayableRequest = {
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-sum',
+  stat_name: 'tweet_likes-median',
   ownersParams: {
     type: 'specific',
     count: 2,
@@ -39,6 +39,23 @@ let test_displayed_data5: I_DisplayableRequest = {
   type: 'auto',
 };
 
+let test_displayed_data6: I_DisplayableRequest = {
+  stat_name: 'tweet_likes-mean',
+  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
+  type: 'stat-value',
+};
+
+let test_displayed_data8: I_DisplayableRequest = {
+  stat_name: 'tweet_retweets-mean',
+  ownersParams: { type: 'specific', owners: ['alabama_cs', '_global'] },
+  type: 'stat-comp',
+};
+
+let test_displayed_data9: I_DisplayableRequest = {
+  stat_name: 'tweet_count-sum-yearly',
+  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
+  type: 'stat-trend',
+};
 let test_displayed_data12: I_DisplayableRequest = {
   stat_name: 'tweet_likes-mean-yearly',
   ownersParams: { type: 'bottom', owners: ['alabama_cs'], count: 12 },
@@ -93,8 +110,11 @@ export class MockDataService {
         'Card Grid': {
           displayables: [
             test_displayed_data1,
+            test_displayed_data6,
             test_displayed_data2,
+            test_displayed_data9,
             test_displayed_data3,
+            test_displayed_data8,
           ],
           type: 'stat',
           order: 1,
