@@ -1,5 +1,9 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
+/**
+ * Retrieves data for the chart.
+ * @returns {Array<Object>} The data for the chart.
+ */
 function getData() {
   const data = [
     {
@@ -51,6 +55,9 @@ function getData() {
 }
 
 // In the Chart3 class, update the series part of chartOptions
+/**
+ * Represents a chart configuration for displaying likes, follows, retweets, shares, and comments.
+ */
 export class Chart3 {
   chartTheme: AgChartTheme = {
     baseTheme: 'ag-default',
