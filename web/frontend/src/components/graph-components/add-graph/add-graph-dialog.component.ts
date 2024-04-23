@@ -297,7 +297,8 @@ export class AddGraphDialogComponent implements OnInit {
   removeCard(card: T_DisplayableGraph): void {
     const updatedCards = this._addedDisplayables
       .getValue()
-      .filter((existingCard) => existingCard.metricName !== card.metricName);
+      .filter((existingCard) => existingCard.metricName !== card.metricName && existingCard.groupId !== card.groupId);
+      console.log('REMOVING CARD: ', card, ' UPDATED CARDS: ', updatedCards)
     this._addedDisplayables.next(updatedCards);
   }
 
