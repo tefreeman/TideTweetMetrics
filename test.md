@@ -40,11 +40,13 @@ The following user acceptance tests verify the main system functions.
 
 ## Account Creation
 - Visit the Welcome page.
+
 - Click the *Create Account / Log in* button.
 - Create an account.
   - NOTE: Admin approval is required for the account recieve access permissions.
+  ![alt text](image.png)
 - Verify: 
-  - Account exists.
+  - A message is displayed indicating that the admin must approve.
 
 ## Login
 - Visit the Welcome page.
