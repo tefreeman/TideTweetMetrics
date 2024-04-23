@@ -99,7 +99,8 @@ export const uploadFile = functions.https.onRequest(
     let mimeType = "";
 
     // 'fileName' is now predefined; adjust according to your use case
-    let fileName = "metrics_out.json";
+    let fileNameBase = "metrics_out";
+    let fileName = fileNameBase + ".json";
     let uniqueName: string;
     busboy.on(
       "file",
@@ -147,8 +148,8 @@ export const uploadFile = functions.https.onRequest(
 
         // Update Firestore as before
         const firestore = admin.firestore();
-        await firestore.collection("file_versions").doc(uniqueName).set({
-          version: fileName,
+        await firestore.collection("file_versions").doc(fileNameBase).set({
+          version: uniqueName,
         });
 
         res

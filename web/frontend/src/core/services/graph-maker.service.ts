@@ -7,6 +7,7 @@ import {
 } from '../interfaces/displayable-data-interface';
 import { GraphLargeBar } from './graphing/graph-large-bars';
 import { GraphSmallBar } from './graphing/graph-small-bar';
+import { GraphSmallLine } from './graphing/graph-small-line';
 import { GraphSmallMultiBar } from './graphing/graph-small-multi-bar';
 import { KeyTranslatorService } from './key-translator.service';
 @Injectable({
@@ -18,6 +19,7 @@ export class GraphMakerService {
   private graphSmallBar: GraphSmallBar = new GraphSmallBar();
   private graphLargeBar: GraphLargeBar = new GraphLargeBar();
   private graphSmallMultiBar: GraphSmallMultiBar = new GraphSmallMultiBar();
+  private graphSmallLine: GraphSmallLine = new GraphSmallLine();
   constructor() {}
 
   /**
@@ -41,8 +43,7 @@ export class GraphMakerService {
    * @returns The chart options for a line chart.
    */
   createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
-    const structure = this.getGraphStructure(graphLineData);
-    return {};
+    return this.graphSmallLine.getGraph(graphLineData);
   }
 
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
