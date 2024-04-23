@@ -121,8 +121,8 @@ export class DisplayableProviderService {
           for (let i = 0; i < group.length; i++) {
             const currentItem = group[i];
             if ('owners' in currentItem) {
-              const typedItem: any = currentItem as T_DisplayableGraph;
-              typedItem.owners.forEach((owner: any, index: any) => {
+              const typedItem = currentItem as T_DisplayableGraph;
+              typedItem.owners.forEach((owner, index) => {
                 if (!(owner in ownerValueMap)) {
                   ownerValueMap[owner] = [];
                 }
@@ -144,19 +144,18 @@ export class DisplayableProviderService {
             Math.floor(lengths.length / 2)
           ];
 
-          base.owners = [];
-          base.values = [];
-
-          for (const [owner, values] of Object.entries(ownerValueMap)) {
+          base.owners = Object.keys(ownerValueMap);
+          base.valuesNested = base.owners.map((owner) => {
+            const values = ownerValueMap[owner];
             if (values.length === medianLength) {
-              base.owners.push(owner);
-              base.values.push(values);
+              return values;
             } else {
               console.warn(
                 `Skipping owner '${owner}' due to inconsistent value length.`
               );
+              return [];
             }
-          }
+          });
 
           mergedResults.push(base);
         } catch (error) {
