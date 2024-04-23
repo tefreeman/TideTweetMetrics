@@ -68,7 +68,7 @@ export class MockDataService {
   /**
    * Determines whether to override the profile or not.
    */
-  public overrideProfile = true;
+  public overrideProfile = false;
 
   constructor() {}
 
@@ -81,10 +81,10 @@ export class MockDataService {
       home: {
         'Graph Grid': {
           displayables: [
-            //  test_displayed_data5,
-            //   test_displayed_data4,
-            //   test_displayed_data12,
-            //   test_displayed_data14,
+            test_displayed_data5,
+            test_displayed_data4,
+            test_displayed_data12,
+            test_displayed_data14,
           ],
           type: 'graph',
           order: 2,
@@ -92,9 +92,9 @@ export class MockDataService {
 
         'Card Grid': {
           displayables: [
-            //      test_displayed_data1,
-            //     test_displayed_data2,
-            //      test_displayed_data3,
+            test_displayed_data1,
+            test_displayed_data2,
+            test_displayed_data3,
           ],
           type: 'stat',
           order: 1,

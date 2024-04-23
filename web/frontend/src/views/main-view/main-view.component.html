@@ -6,7 +6,7 @@
       </div>
       <mat-nav-list>
         <a
-          *ngFor="let nav of staticNavRoutes"
+          *ngFor="let nav of allDefinedRoutes"
           [routerLink]="nav.route"
           mat-list-item
           (click)="sidenav.toggle()"
@@ -51,13 +51,25 @@
             >
               <i class="fa fa-bars fa-1x"></i>
             </button>
-            <span class="title">Page Name (Only for dashboards)</span>
+            @if (isPage) {
+            <span class="title">{{ pageNameCapitalized }}</span>
+            }
           </div>
-
           <!-- Buttons to the right -->
           <div class="right-side">
             <!-- New wrapper for right-aligned buttons -->
+            @if (isDynamicRoute(pageName)) {
             <div>
+              <button
+                class="button-class"
+                *ngIf="!(editMode | async) && (gridEditMode | async)"
+                mat-raised-button
+                aria-label="Save"
+                color="accent"
+                (click)="addGrid()"
+              >
+                <span class="text">Add Grid</span>
+              </button>
               <button
                 class="button-class"
                 *ngIf="editMode | async"
@@ -110,7 +122,7 @@
                 <span class="text">Save</span>
               </button>
             </div>
-
+            }
             <button
               mat-icon-button
               aria-label="Logout"

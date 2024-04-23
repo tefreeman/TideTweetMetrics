@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, filter, first, map } from 'rxjs';
 import {
   I_GridEntry,
@@ -26,7 +27,7 @@ export class DashboardPageManagerService {
   public changeDetected$ = new BehaviorSubject<null>(null);
   private unsavedChanges = false;
 
-  constructor() {
+  constructor(private router: Router) {
     this.initPages();
   }
 
@@ -49,7 +50,11 @@ export class DashboardPageManagerService {
       if (this._mockDataService.overrideProfile == true) {
         this.pageMap$.next(this._mockDataService.getMockData());
       } else {
-        this.pageMap$.next(requests);
+        if (requests) {
+          this.pageMap$.next(requests);
+        } else {
+          this.router.navigate(['dashboard/start']);
+        }
       }
     });
   }
@@ -117,6 +122,16 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Checks if a page exists in the page map.
+   * @param page - The name of the page to check.
+   * @returns An observable that emits true if the page exists, else false.
+   */
+  public isAPage$(page: string): Observable<boolean> {
+    return this.pageMap$.pipe(
+      map((requests) => !!requests[page]) // map to a boolean indicating the presence of the page
+    );
+  }
   /**
    * Deletes a page from the page map.
    * @param page - The name of the page to delete.
@@ -243,5 +258,64 @@ export class DashboardPageManagerService {
         this.emitChanges({ ...requests });
       }
     });
+  }
+
+  /**
+   * Adds a new grid to the end of a page in the page map based on the order.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the new grid.
+   * @param gridEntry - The grid entry object without the order.
+   */
+  public addGridToEnd$(
+    pageName: string,
+    gridName: string,
+    gridEntry: Omit<I_GridRequestEntry, 'order'>
+  ) {
+    this.pageMap$.pipe(first()).subscribe((requests) => {
+      if (requests[pageName] && !requests[pageName]?.[gridName]) {
+        // Calculate the new order by finding the max order in the current grids and adding 1
+        const maxOrder = Math.max(
+          0,
+          ...Object.values(requests[pageName]).map((grid) => grid.order)
+        );
+        const newGridEntry = {
+          ...gridEntry, // Spread the gridEntry to include all other properties
+          order: maxOrder + 1, // Set the order to be one more than the maximum found
+        };
+
+        // Add the new grid with calculated order at the "end"
+        requests[pageName][gridName] = newGridEntry;
+        this.emitChanges({ ...requests });
+      } else {
+        if (requests[pageName]?.[gridName]) {
+          console.error(
+            `Grid "${gridName}" already exists in page "${pageName}".`
+          );
+        } else {
+          console.error(`Page "${pageName}" does not exist.`);
+        }
+      }
+    });
+  }
+
+  /**
+   * Creates a blank grid with the specified type and adds it to the end of the specified page.
+   * @param pageName - The name of the page where the grid will be added.
+   * @param gridName - The name of the new grid.
+   * @param type - The type of the grid (either 'graph' or 'stat').
+   */
+  public createAndAddGridToEnd$(
+    pageName: string,
+    gridName: string,
+    type: 'graph' | 'stat'
+  ) {
+    // Creating a blank I_GridRequestEntry
+    const blankGridEntry: Omit<I_GridRequestEntry, 'order'> = {
+      displayables: [], // Assuming a blank grid means no displayable items initially
+      type: type,
+    };
+
+    // Utilizing the previously defined method to add this grid to the end
+    this.addGridToEnd$(pageName, gridName, blankGridEntry);
   }
 }

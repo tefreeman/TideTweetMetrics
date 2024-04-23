@@ -10,6 +10,7 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  ViewChild,
   ViewChildren,
   inject,
 } from '@angular/core';
@@ -28,9 +29,11 @@ import {
   T_GridType,
 } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
+import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
 import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
+import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 import { AddGraphDialogComponent } from '../add-graph/add-graph-dialog.component';
 import { BarChartComponent } from '../bar-chart/bar-chart.component';
@@ -94,11 +97,17 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   @Input() maxCardWidth!: string;
 
+  @ViewChild('holdToDeleteCard', { static: true })
+  holdToDeleteCard!: ElementRef;
   /**
    * Represents the EditModeService used for managing the edit mode.
    */
-  editModeService: EditModeService = inject(EditModeService);
 
+  dashboardPageManagerService: DashboardPageManagerService = inject(
+    DashboardPageManagerService
+  );
+  editModeService: EditModeService = inject(EditModeService);
+  gridEditModeService: GridEditModeService = inject(GridEditModeService);
   /**
    * Represents the DisplayableProviderService used for providing displayable data.
    */
@@ -122,7 +131,8 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
    * Represents the observable for the edit mode.
    */
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
-
+  public gridEditMode: Observable<boolean> =
+    this.gridEditModeService.getEditMode();
   /**
    * Represents the subject for destroying the component.
    */
@@ -195,7 +205,6 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.statsCardsChangesSub) {
       this.statsCardsChangesSub.unsubscribe();
     }
-
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -319,5 +328,14 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       i
     );
     this.dataGrid.dataArr = [...this.dataGrid.dataArr]; // Create a new array to trigger change detection
+  }
+
+  triggerHoldEvent(): void {
+    console.log('The card was held for 1 second. Triggering event...');
+    // Place here the action you want to perform after holding.
+  }
+
+  deleteGrid() {
+    this.dashboardPageManagerService.deleteGrid$(this.page, this.name);
   }
 }

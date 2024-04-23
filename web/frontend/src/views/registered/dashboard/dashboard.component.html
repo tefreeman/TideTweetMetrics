@@ -33,6 +33,7 @@
         <app-card-grid
           [page]="(pageName$ | async)!"
           [name]="grid.name"
+          maxCardWidth="30rem"
           cardHeight="8rem"
           maxColSize="1fr"
           minColSize="18rem"
@@ -43,7 +44,7 @@
           [name]="grid.name"
           [cardHeight]="'auto'"
           [maxColSize]="'1fr'"
-          [minColSize]="'36rem'"
+          [minColSize]="'50rem'"
         ></app-graph-grid>
         }
       </div>
