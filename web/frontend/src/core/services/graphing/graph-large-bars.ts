@@ -2,15 +2,29 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
+/**
+ * Represents a class for creating a large bar graph.
+ * @class
+ */
 export class GraphLargeBar extends BaseGraph {
   constructor() {
     super();
   }
 
+  /**
+   * Gets the graph options for the large bar graph.
+   * @param {I_GraphBarData} data - The data for the graph.
+   * @returns {AgChartOptions} The graph options.
+   */
   public getGraph(data: I_GraphBarData): AgChartOptions {
     return this.getOptions(data);
   }
 
+  /**
+   * Gets the chart data for the large bar graph.
+   * @param {I_GraphBarData} data - The data for the graph.
+   * @returns {any[]} The chart data.
+   */
   getData(data: I_GraphBarData): any[] {
     const chartData: any[] = [];
     console.log('DATA: ', data);
@@ -25,6 +39,11 @@ export class GraphLargeBar extends BaseGraph {
     return chartData;
   }
 
+  /**
+   * Gets the bar series for the large bar graph.
+   * @param {I_GraphBarData} data - The data for the graph.
+   * @returns {any[]} The bar series.
+   */
   getBarSeries(data: I_GraphBarData): any[] {
     return [
       {
@@ -54,6 +73,11 @@ export class GraphLargeBar extends BaseGraph {
     ];
   }
 
+  /**
+   * Gets the options for the large bar graph.
+   * @param {I_GraphBarData} data - The data for the graph.
+   * @returns {AgChartOptions} The graph options.
+   */
   private getOptions(data: I_GraphBarData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
@@ -92,6 +116,10 @@ export class GraphLargeBar extends BaseGraph {
     return chartOptions;
   }
 
+  /**
+   * Gets the theme for the large bar graph.
+   * @returns {AgChartTheme} The graph theme.
+   */
   private getTheme(): AgChartTheme {
     return {
       baseTheme: 'ag-default',
