@@ -105,7 +105,7 @@ export class MetricSearchComponent implements OnInit {
     private metricService: MetricService,
     private keyTranslatorService: KeyTranslatorService,
     private announcer: LiveAnnouncer
-  ) { }
+  ) {}
 
   /**
    * Lifecycle hook called after component initialization.
