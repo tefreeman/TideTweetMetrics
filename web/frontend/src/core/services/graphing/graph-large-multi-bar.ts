@@ -2,7 +2,7 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
-export class GraphSmallMultiBar extends BaseGraph {
+export class GraphLargeMutliBar extends BaseGraph {
   constructor() {
     super();
   }
@@ -82,19 +82,20 @@ export class GraphSmallMultiBar extends BaseGraph {
           title: {
             text: 'Accounts',
           },
+          label: {
+            enabled: true,
+          },
         },
         {
           type: 'number',
           position: 'left',
           label: {
-            formatter: ({ value }) => this.formatNumber(value),
+            formatter: ({ value }) => value,
           },
           crosshair: {
             label: {
               renderer: ({ value }) =>
-                `<div style="padding: 0 7px; border-radius: 2px; line-height: 1.7em; background-color: rgb(71,71,71); color: rgb(255, 255, 255);">${this.formatNumber(
-                  value
-                )}</div>`,
+                `<div style="padding: 0 7px; border-radius: 2px; line-height: 1.7em; background-color: rgb(71,71,71); color: rgb(255, 255, 255);">${value}</div>`,
             },
           },
         },

@@ -13,7 +13,7 @@ let test_displayed_data2: I_DisplayableRequest = {
   type: 'stat-trend',
 };
 let test_displayed_data3: I_DisplayableRequest = {
-  stat_name: 'tweet_retweets-mean',
+  stat_name: 'tweet_retweets-median',
   ownersParams: { type: 'specific', owners: ['alabama_cs', '_global'] },
   type: 'stat-comp',
 };
@@ -29,7 +29,7 @@ let test_displayed_data4: I_DisplayableRequest = {
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-sum',
+  stat_name: 'tweet_likes-median',
   ownersParams: {
     type: 'specific',
     count: 2,
