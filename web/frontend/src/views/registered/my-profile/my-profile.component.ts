@@ -187,7 +187,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       });
   }
   update(){
-    
+    this.openSnackBar('Updates will progress in the background. ETA 30 Mins');
   }
   /**
    * Opens a snackbar with the given message.
