@@ -3,6 +3,11 @@
 <!-- Future: For convenience, we have setup a file in the `filepath` directory which runs all the automated unit tests in an appropriate order. -->
 Tests are located in the `tests` directory, which is located within the root directory of the project. Within this directory, subdirectories are arranged to match the organizational structure found in the parent directory. For example, a test over `./backend/crawler_sys/database.py` is found in `./tests/backend/crawler_sys/test_database.py`.
 
+NOTE: The Database and Metric System tests interact directly with the database. As such, you must ensure that your `main_config.json` file is configured accordingly. If you are currently using Docker, and want to reach out to the database within it, change the HOST to value to "ttm-mongo" (as seen below).
+![alt text](<Images/Screenshot 2024-04-23 at 5.18.22 PM.png>)
+Alternatively, if you are reaching out to an external database, find the IP address (ex. see MongoDB Compass screenshot below) and set HOST accordingly.
+![alt text](<Images/Screenshot 2024-04-23 at 5.18.36 PM.png>)
+![alt text](<Images/Screenshot 2024-04-23 at 5.19.05 PM.png>)
 The `test_database.py` test and the encoder tests can be run at any time. However, when running tests over the generator (and over `test_metric_word_frequency.py`), the tester should *first* run `test_metric_system.py`. This script mocks a small amount of data and automatically generates the `ex_testing_metric_out.json` file, which contains every metric generated from this data. The generators, along with `test_metric_word_frequency.py`, are tested against this data.
 
 NOTE: `test_metric_system_helper.py` should not be run. It is a helper class for `test_metric_system.py`.
