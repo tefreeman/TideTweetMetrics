@@ -338,8 +338,12 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
             this.name
           );
         } else {
+          let out = result;
+          if (!Array.isArray(result)) {
+            out = [result];
+          }
           this.displayRequestManagerService.addDisplayables(
-            result,
+            out,
             this.type,
             this.page,
             this.name
