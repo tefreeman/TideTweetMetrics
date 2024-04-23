@@ -18,15 +18,25 @@ let test_displayed_data3: I_DisplayableRequest = {
   type: 'stat-comp',
 };
 let test_displayed_data4: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-sum-yearly',
-  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-trend',
+  stat_name: 'tweet_likes-mean',
+  ownersParams: {
+    type: 'specific',
+    count: 2,
+    owners: ['alabama_cs', 'azengineering'],
+  },
+  type: 'graph-bar',
+  groupId: 'group1',
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
   stat_name: 'tweet_likes-sum',
-  ownersParams: { type: 'bottom', count: 20, owners: ['alabama_cs'] },
+  ownersParams: {
+    type: 'specific',
+    count: 2,
+    owners: ['alabama_cs', 'azengineering'],
+  },
   type: 'graph-bar',
+  groupId: 'group1',
 };
 
 let test_displayed_data12: I_DisplayableRequest = {
@@ -66,7 +76,7 @@ export class MockDataService {
     return {
       home: {
         'Graph Grid': {
-          displayables: [test_displayed_data5],
+          displayables: [test_displayed_data5, test_displayed_data4],
           type: 'graph',
           order: 2,
         },
@@ -75,7 +85,6 @@ export class MockDataService {
           displayables: [
             test_displayed_data1,
             test_displayed_data2,
-            test_displayed_data4,
             test_displayed_data3,
           ],
           type: 'stat',
