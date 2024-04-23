@@ -1,19 +1,31 @@
 <h2 mat-dialog-title>Add Dashboard</h2>
 <mat-dialog-content class="mat-typography">
-    <form class="example-form">
-        <mat-form-field class="example-full-width">
-          <mat-label>Choose a name</mat-label>
-          <input [(ngModel)]="nameInput" name="name" matInput #name maxlength="32" placeholder="">
-          <mat-hint align="start"><strong>Cannot use previous dashboard names</strong> </mat-hint>
-          <mat-hint align="end">{{name.value.length}} / 32</mat-hint>
-        </mat-form-field>
-      </form>
-       
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Choose a name</mat-label>
+      <input
+        [(ngModel)]="nameInput"
+        name="name"
+        matInput
+        #name
+        maxlength="32"
+        placeholder=""
+      />
+      <mat-hint align="start"
+        ><strong>Cannot use previous dashboard names</strong>
+      </mat-hint>
+      <mat-hint align="end">{{ name.value.length }} / 32</mat-hint>
+    </mat-form-field>
+  </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close [mat-dialog-close]="false">Cancel</button>
-  <button mat-button [mat-dialog-close]="nameInput" cdkFocusInitial>Add</button>
+  <button
+    mat-button
+    [mat-dialog-close]="nameInput"
+    cdkFocusInitial
+    [disabled]="!nameInput"
+  >
+    Add
+  </button>
 </mat-dialog-actions>
-
-
-  

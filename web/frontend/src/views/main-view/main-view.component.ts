@@ -2,8 +2,14 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterOutlet,
+} from '@angular/router';
+import { Observable, Subscription, filter, map, switchMap } from 'rxjs';
 import { MaterialModule } from '../../core/modules/material/material.module';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardPageManagerService } from '../../core/services/dashboard-page-manager.service';
@@ -11,6 +17,7 @@ import { DisplayRequestManagerService } from '../../core/services/displayables/d
 import { EditModeService } from '../../core/services/edit-mode.service';
 import { GridEditModeService } from '../../core/services/grid-edit-mode.service';
 import { AddBoardComponent } from '../registered/add-board/add-board.component';
+import { AddGridComponent } from '../registered/add-grid/add-grid.component';
 import { DashboardComponent } from '../registered/dashboard/dashboard.component';
 /**
  * Represents the main view component of the application.
@@ -28,6 +35,7 @@ import { DashboardComponent } from '../registered/dashboard/dashboard.component'
     NgFor,
     AsyncPipe,
     NgIf,
+    AddGridComponent,
   ],
 })
 export class MainViewComponent implements OnInit, OnDestroy {
@@ -59,12 +67,13 @@ export class MainViewComponent implements OnInit, OnDestroy {
    * Represents the static navigation routes.
    */
   staticNavRoutes = [
-    { name: 'Home', route: 'home' },
-    { name: 'Analysis Board', route: 'analysis-board' }, //Add more here as needed
     { name: 'Optimizer', route: 'optimizer' },
     { name: 'My Profile', route: 'my-profile' },
   ];
 
+  allDefinedRoutes = [{ name: 'Home', route: 'home' }].concat(
+    this.staticNavRoutes
+  );
   /**
    * Represents the dynamic navigation routes.
    */
@@ -89,7 +98,10 @@ export class MainViewComponent implements OnInit, OnDestroy {
    * Represents the grid edit mode observable.
    */
   gridEditMode: Observable<boolean> = this.gridEditModeService.getEditMode();
-
+  isPage: boolean = false;
+  pageName: string = '';
+  pageNameCapitalized: string = '';
+  sub: any;
   constructor(
     /**
      * Represents the authentication service.
@@ -104,13 +116,15 @@ export class MainViewComponent implements OnInit, OnDestroy {
     /**
      * Represents the snackbar service.
      */
-    private snackBar: MatSnackBar
-  ) { }
-
+    private snackBar: MatSnackBar,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {}
   /**
    * Initializes the component.
    */
   ngOnInit(): void {
+    this.handleRouteChange();
     this.pageSubscription = this.dashboardPageManagerService
       .getPageNames$()
       .subscribe((pages) => {
@@ -122,13 +136,82 @@ export class MainViewComponent implements OnInit, OnDestroy {
           .filter((page) => page.name !== 'Home');
         this.dynamicNavRoutes = newPages;
       });
+
+    this.sub = this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        switchMap((event: any) => {
+          const urlTree = this.router.parseUrl(event.url);
+          const segments = urlTree.root.children['primary'].segments;
+          const lastSegment = segments[segments.length - 1]?.path;
+          // Use isAPage$ to check if the last segment is a page
+          return this.dashboardPageManagerService.isAPage$(lastSegment).pipe(
+            map((isAPage) => ({
+              isAPage,
+              page: lastSegment,
+            }))
+          );
+        })
+      )
+      .subscribe(({ isAPage, page }) => {
+        this.isPage = isAPage;
+        this.pageName = page;
+        this.pageNameCapitalized = page.charAt(0).toUpperCase() + page.slice(1);
+        // You can now check if the page is dynamic or part of the static routes
+        // You can do additional actions based on whether it's a dynamic route or part of static routes
+      });
   }
 
+  handleRouteChange() {
+    this.evaluateCurrentRoute().subscribe(({ isAPage, page }) => {
+      this.updatePageStatus(isAPage, page);
+    });
+  }
+
+  updatePageStatus(isAPage: boolean, page: string) {
+    this.isPage = isAPage;
+    this.pageName = page;
+    this.pageNameCapitalized = page.charAt(0).toUpperCase() + page.slice(1);
+  }
+
+  evaluateCurrentRoute() {
+    // Ensuring the current route is evaluated even at component initialization
+    const url = this.router.url;
+    const urlTree = this.router.parseUrl(url);
+    const segments = urlTree.root.children['primary']
+      ? urlTree.root.children['primary'].segments
+      : [];
+    const lastSegment =
+      segments.length > 0 ? segments[segments.length - 1].path : '';
+    return this.dashboardPageManagerService.isAPage$(lastSegment).pipe(
+      map((isAPage) => ({
+        isAPage,
+        page: lastSegment,
+      }))
+    );
+  }
+
+  /** fix the override
+   * Checks if the given page is not part of static navigation routes.
+   * @param pageName - The last part of the URL.
+   * @returns `false` if the page is found in staticNavRoutes, otherwise `true`.
+   */
+  isDynamicRoute(pageName: string): boolean {
+    const staticRoutesAndOne = this.staticNavRoutes.concat({
+      name: 'Start',
+      route: 'start',
+    });
+    const pageFound = staticRoutesAndOne.some(
+      (route) => route.route === pageName
+    );
+    return !pageFound;
+  }
   /**
    * Cleans up the component.
    */
   ngOnDestroy(): void {
     this.pageSubscription?.unsubscribe();
+    this.sub?.unsubscribe();
   }
 
   /**
@@ -160,6 +243,24 @@ export class MainViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  addGrid() {
+    const addBoardRef = this.dialog.open(AddGridComponent, {});
+
+    addBoardRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      if (result) {
+        if (typeof result['name'] === 'string') {
+          if (result['type'] === 'graph' || result['type'] === 'stat') {
+            this.dashboardPageManagerService.createAndAddGridToEnd$(
+              this.pageName,
+              result['name'],
+              result['type']
+            );
+          }
+        }
+      }
+    });
+  }
   /**
    * Toggles the edit mode.
    */

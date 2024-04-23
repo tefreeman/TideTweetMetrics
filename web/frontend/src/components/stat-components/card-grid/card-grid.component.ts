@@ -27,9 +27,11 @@ import {
   T_GridType,
 } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
+import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
 import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
 import { DisplayableProviderService } from '../../../core/services/displayables/displayable-provider.service';
 import { EditModeService } from '../../../core/services/edit-mode.service';
+import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 import { BarChartComponent } from '../../graph-components/bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../../graph-components/graph-card/graph-card.component';
@@ -98,7 +100,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
    * The EditModeService used to manage the edit mode.
    */
   editModeService: EditModeService = inject(EditModeService);
-
+  gridEditModeService: GridEditModeService = inject(GridEditModeService);
   /**
    * The data grid service used to manage the grid tiles.
    */
@@ -108,14 +110,17 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
    * The observable representing the edit mode.
    */
   public editMode: Observable<boolean> = this.editModeService.getEditMode();
-
+  public gridEditMode: Observable<boolean> =
+    this.gridEditModeService.getEditMode();
   /**
    * The display provider service used to provide displayables.
    */
   displayProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
   );
-
+  dashboardPageManagerService: DashboardPageManagerService = inject(
+    DashboardPageManagerService
+  );
   /**
    * The display request manager service used to manage display requests.
    */
@@ -297,5 +302,9 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
    * Gets the height of a card.
    * @param height - The height of the card.
    */
-  getHeight(height: string) { }
+  getHeight(height: string) {}
+
+  deleteGrid() {
+    this.dashboardPageManagerService.deleteGrid$(this.page, this.name);
+  }
 }
