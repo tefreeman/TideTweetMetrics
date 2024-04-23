@@ -101,7 +101,11 @@ export interface I_GraphBarData {
   /**
    * The type of data, which is 'graph-bar'.
    */
-  type: 'graph-bar';
+  type:
+    | 'small-graph-bar'
+    | 'large-graph-bar'
+    | 'large-graph-bar-grouped'
+    | 'small-graph-bar-grouped';
   /**
    * The name of the metric.
    */
@@ -158,6 +162,63 @@ export interface I_GraphLineData {
   groupId?: string;
 }
 
+export interface I_ScatterPlotData {
+  /**
+   * The type of data, which is 'scatter-line'.
+   */
+  type: 'graph-scatter';
+  /**
+   * The name of the metric.
+   */
+  metricName: string;
+  /**
+   * The parameters for the owners.
+   */
+  metricNames?: Array<string>;
+  ownersParams: I_OwnersParams;
+  /**
+   * The values of the metric.
+   */
+  values: Array<T_MetricValue>;
+  valuesNested?: T_MetricValue[][];
+  /**
+   * The owners of the metric.
+   */
+  owners: Array<string>;
+  /**
+   * The Group ID for grouping metric Requests
+   */
+  groupId?: string;
+}
+
+export interface I_GenericGraphData {
+  /**
+   * The type of data, which is 'scatter-line'.
+   */
+  type: 'auto';
+  /**
+   * The name of the metric.
+   */
+  metricName: string;
+  /**
+   * The parameters for the owners.
+   */
+  metricNames?: Array<string>;
+  ownersParams: I_OwnersParams;
+  /**
+   * The values of the metric.
+   */
+  values: Array<T_MetricValue>;
+  valuesNested?: T_MetricValue[][];
+  /**
+   * The owners of the metric.
+   */
+  owners: Array<string>;
+  /**
+   * The Group ID for grouping metric Requests
+   */
+  groupId?: string;
+}
 /**
  * Represents the type for displayable statistical data.
  */
@@ -170,13 +231,26 @@ export type T_DisplayableStat =
  * Represents the type for grid data.
  */
 export type T_GridType = 'stat' | 'graph';
-
+export type T_GraphTypeStr =
+  | 'small-graph-bar'
+  | 'large-graph-bar'
+  | 'large-graph-bar-grouped'
+  | 'small-graph-bar-grouped'
+  | 'graph-line'
+  | 'graph-scatter'
+  | 'auto';
 /**
  * Represents the type for displayable graph data.
  */
-export type T_DisplayableGraph = I_GraphBarData | I_GraphLineData;
+export type T_DisplayableGraph =
+  | I_GraphBarData
+  | I_GraphLineData
+  | I_ScatterPlotData;
 
 /**
  * Represents the type for displayable data.
  */
-export type T_DisplayableDataType = T_DisplayableStat | T_DisplayableGraph;
+export type T_DisplayableDataType =
+  | T_DisplayableStat
+  | T_DisplayableGraph
+  | I_GenericGraphData;

@@ -48,7 +48,7 @@ export class GraphSmallLine extends BaseGraph {
   }
   getSeries(data: I_GraphLineData): any[] {
     const series: any[] = [];
-
+    this.getGraphStructure(data);
     for (const owner of data.owners || []) {
       series.push({
         type: 'line',
