@@ -79,7 +79,7 @@ export class GraphSmallBar extends BaseGraph {
       // Data: Data to be displayed in the chart
       data: this.getData(data),
       title: {
-        text: 'Likes (Bar/Small)',
+        text: data.metricName,
       },
       series: this.getBarSeries(data),
       axes: [
