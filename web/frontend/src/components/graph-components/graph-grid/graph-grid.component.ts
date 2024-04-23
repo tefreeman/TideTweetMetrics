@@ -258,8 +258,12 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   isGraph(displayableData: T_DisplayableDataType): boolean {
     return (
+      displayableData.type === 'small-graph-bar' ||
+      displayableData.type === 'large-graph-bar' ||
+      displayableData.type === 'large-graph-bar-grouped' ||
+      displayableData.type === 'small-graph-bar-grouped' ||
       displayableData.type === 'graph-line' ||
-      displayableData.type === 'graph-bar'
+      displayableData.type === 'graph-scatter'
     );
   }
 

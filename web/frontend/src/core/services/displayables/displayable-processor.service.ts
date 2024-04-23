@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
+  I_GenericGraphData,
   I_GraphBarData,
   I_GraphLineData,
+  I_ScatterPlotData,
   I_StatCompData,
   I_StatTrendData,
   I_StatValueData,
@@ -17,7 +19,7 @@ import { T_MetricValue } from '../../interfaces/metrics-interface';
   providedIn: 'root',
 })
 export class DisplayableProcessorService {
-  constructor() { }
+  constructor() {}
 
   /**
    * Converts the given displayable data to the corresponding displayable type.
@@ -40,8 +42,16 @@ export class DisplayableProcessorService {
       return this.toStatComparison(data);
     } else if (data.type === 'stat-trend') {
       return this.toStatTrend(data);
-    } else if (data.type === 'graph-bar') {
-      return this.toGraphBar(data);
+    } else if (data.type === 'small-graph-bar') {
+      return this.toSmallGraphBar(data);
+    } else if (data.type === 'large-graph-bar') {
+      return this.toLareGraphBar(data);
+    } else if (data.type === 'small-graph-bar-grouped') {
+      return this.toSmallGraphBarGrouped(data);
+    } else if (data.type === 'large-graph-bar-grouped') {
+      return this.toLargeGraphBarGrouped(data);
+    } else if (data.type === 'graph-scatter') {
+      return this.toScatterPlot(data);
     } else if (data.type === 'graph-line') {
       return this.toGraphLine(data);
     } else {
@@ -85,18 +95,7 @@ export class DisplayableProcessorService {
       // we can't fall through to the next if statement if auto-stat
       return this.toStatValue(data);
     }
-
-    if (ownerCount == 1 && dataDimension == 2 && dataPoints > 1)
-      return this.toGraphBar(data);
-
-    if (ownerCount > 2 && dataDimension == 1 && dataPoints == 1)
-      return this.toGraphBar(data);
-
-    if (ownerCount > 1 && dataDimension == 2 && dataPoints > 1)
-      return this.toGraphLine(data);
-
-    console.log('Fell through decision tree, returning line-graph');
-    return this.toGraphLine(data);
+    return this.genericGraphData(data);
   }
 
   /**
@@ -209,14 +208,23 @@ export class DisplayableProcessorService {
     }
   }
 
+  private genericGraphData(data: IDisplayableData): I_GenericGraphData {
+    return {
+      type: 'auto',
+      metricName: data.stat_name,
+      ownersParams: data.ownersParams,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
   /**
    * Converts the displayable data to the graph-bar type.
    * @param data The displayable data to convert.
    * @returns The converted graph-bar data.
    */
-  private toGraphBar(data: IDisplayableData): I_GraphBarData {
+  private toSmallGraphBar(data: IDisplayableData): I_GraphBarData {
     return {
-      type: 'graph-bar',
+      type: 'small-graph-bar',
       metricName: data.stat_name,
       ownersParams: data.ownersParams,
       values: Object.values(data.owners),
@@ -224,6 +232,35 @@ export class DisplayableProcessorService {
     };
   }
 
+  private toLareGraphBar(data: IDisplayableData): I_GraphBarData {
+    return {
+      type: 'large-graph-bar',
+      metricName: data.stat_name,
+      ownersParams: data.ownersParams,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
+
+  private toSmallGraphBarGrouped(data: IDisplayableData): I_GraphBarData {
+    return {
+      type: 'small-graph-bar-grouped',
+      metricName: data.stat_name,
+      ownersParams: data.ownersParams,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
+
+  private toLargeGraphBarGrouped(data: IDisplayableData): I_GraphBarData {
+    return {
+      type: 'large-graph-bar-grouped',
+      metricName: data.stat_name,
+      ownersParams: data.ownersParams,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
   /**
    * Converts the displayable data to the graph-line type.
    * @param data The displayable data to convert.
@@ -232,6 +269,16 @@ export class DisplayableProcessorService {
   private toGraphLine(data: IDisplayableData): I_GraphLineData {
     return {
       type: 'graph-line',
+      metricName: data.stat_name,
+      ownersParams: data.ownersParams,
+      values: Object.values(data.owners),
+      owners: Object.keys(data.owners),
+    };
+  }
+
+  private toScatterPlot(data: IDisplayableData): I_ScatterPlotData {
+    return {
+      type: 'graph-scatter',
       metricName: data.stat_name,
       ownersParams: data.ownersParams,
       values: Object.values(data.owners),
