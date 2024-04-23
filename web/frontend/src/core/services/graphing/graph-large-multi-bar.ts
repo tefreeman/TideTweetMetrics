@@ -2,11 +2,19 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
+/**
+ * Represents a large multi-bar graph.
+ */
 export class GraphLargeMutliBar extends BaseGraph {
   constructor() {
     super();
   }
 
+  /**
+   * Checks if the graph data is grouped.
+   * @param data - The graph data.
+   * @returns True if the data is grouped, false otherwise.
+   */
   private isGrouped(data: I_GraphBarData): boolean {
     if (data.groupId) {
       return true;
@@ -14,10 +22,20 @@ export class GraphLargeMutliBar extends BaseGraph {
     return false;
   }
 
+  /**
+   * Gets the graph options.
+   * @param data - The graph data.
+   * @returns The graph options.
+   */
   public getGraph(data: I_GraphBarData): AgChartOptions {
     return this.getOptions(data);
   }
 
+  /**
+   * Gets the chart data.
+   * @param data - The graph data.
+   * @returns The chart data.
+   */
   getData(data: I_GraphBarData): any[] {
     const chartData: any[] = [];
     console.log('DATA: ', data);
@@ -40,6 +58,11 @@ export class GraphLargeMutliBar extends BaseGraph {
     return chartData;
   }
 
+  /**
+   * Gets the series for the graph.
+   * @param data - The graph data.
+   * @returns The series for the graph.
+   */
   getSeries(data: I_GraphBarData): any[] {
     const series: any[] = [];
 
@@ -66,6 +89,11 @@ export class GraphLargeMutliBar extends BaseGraph {
     return series;
   }
 
+  /**
+   * Gets the graph options.
+   * @param data - The graph data.
+   * @returns The graph options.
+   */
   private getOptions(data: I_GraphBarData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
@@ -106,6 +134,10 @@ export class GraphLargeMutliBar extends BaseGraph {
     return chartOptions;
   }
 
+  /**
+   * Gets the graph theme.
+   * @returns The graph theme.
+   */
   private getTheme(): AgChartTheme {
     return {
       baseTheme: 'ag-default',
