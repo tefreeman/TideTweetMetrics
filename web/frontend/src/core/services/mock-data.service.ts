@@ -40,9 +40,9 @@ let test_displayed_data5: I_DisplayableRequest = {
 };
 
 let test_displayed_data12: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
+  stat_name: 'tweet_likes-mean-yearly',
   ownersParams: { type: 'bottom', owners: ['alabama_cs'], count: 12 },
-  type: 'graph-line',
+  type: 'auto',
 };
 
 let test_displayed_data13: I_DisplayableRequest = {
@@ -52,9 +52,9 @@ let test_displayed_data13: I_DisplayableRequest = {
 };
 
 let test_displayed_data14: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
+  stat_name: 'tweet_retweets-mean',
   ownersParams: { type: 'all', owners: ['alabama_cs'], count: 100 },
-  type: 'graph-line',
+  type: 'auto',
 };
 
 @Injectable({
@@ -76,7 +76,13 @@ export class MockDataService {
     return {
       home: {
         'Graph Grid': {
-          displayables: [test_displayed_data5, test_displayed_data4],
+          displayables: [
+            test_displayed_data5,
+            test_displayed_data4,
+            test_displayed_data12,
+            test_displayed_data13,
+            test_displayed_data14,
+          ],
           type: 'graph',
           order: 2,
         },
