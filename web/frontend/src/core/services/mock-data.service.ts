@@ -45,9 +45,13 @@ let test_displayed_data12: I_DisplayableRequest = {
   type: 'auto',
 };
 
-let test_displayed_data13: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'top', owners: ['alabama_cs'], count: 20 },
+let test_displayed_data7: I_DisplayableRequest = {
+  stat_name: 'tweet_retweets-mean',
+  ownersParams: {
+    type: 'specific',
+    count: 2,
+    owners: ['alabama_cs', 'azengineering', 'novaengineer'],
+  },
   type: 'auto',
 };
 
