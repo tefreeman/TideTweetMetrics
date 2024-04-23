@@ -1,19 +1,39 @@
 # 1. Automated Testing for Important Specified Features
 
 <!-- Future: For convenience, we have setup a file in the `filepath` directory which runs all the automated unit tests in an appropriate order. -->
-In the `test/backend/metric_system` folder, the tester should run `test_metric_system.py` before running the tests in the `generator` subdirectory. The former automatically generates the `ex_testing_metric_out.json` file, which holds every generated metric, against which the contents of the latter are tested.
+Tests are located in the `tests` directory, which is located within the root directory of the project. Within this directory, subdirectories are arranged to match the organizational structure found in the parent directory. For example, a test over `./backend/crawler_sys/database.py` is found in `./tests/backend/crawler_sys/test_database.py`.
+
+The `test_database.py` test and the encoder tests can be run at any time. However, when running tests over the generator (and over `test_metric_word_frequency.py`), the tester should *first* run `test_metric_system.py`. This script mocks a small amount of data and automatically generates the `ex_testing_metric_out.json` file, which contains every metric generated from this data. The generators, along with `test_metric_word_frequency.py`, are tested against this data.
+
+NOTE: `test_metric_system_helper.py` should not be run. It is a helper class for `test_metric_system.py`.
 
 # 2. High-Risk Features:
 
-The directory structure of the tests folder matches that of the repository as a whole. For instance, the root directory has a `backend/crawler_sys/database.py` filepath. This is matched by `test/backend/crawler_sys/test_database.py`.
+The most high-risk features are arguably those upon which the others are built--those that must be functioning properly in order to have any meaningful functionality at all. For this project, such features include:
+- CRUD functionality for the Database
+  - Test:
+    - `test_database.py`
+  - If data is not properly stored, retrieved, updated, and deleted from the database, all other functionality is for naught.
+  - We ensure that information is neither lost nor mutated during transmission or manipulation of data.
+- Encoding of data
+  - Tests:
+    - `test_meta_encoder.py`
+    - `test_metric_encoder.py`
+    - `test_profile_encoder.py`
+    - `test_tweet_encoder.py`
+  - These encoders ensure we put data into a standardized format before making use of it in various ways. Without this standardization, issues with the data in the database will inevitably follow.
+  - We ensure that the setting and getting of various fields do not result in mutations.
+- Generation of metrics and statistics
+  - Tests:
+    - `test_gen_likes_per_follower.py`
+    - `test_gen_pearson_correlation_stat_generator`
+    - `test_gen_standard_profile_stat_gen.py`
+    - `test_gen_standard_profile_stat_over_time_weekly.py`
+    - `test_gen_standard_profile_stat_over_time.py`
+    - `test_metric_word_frequency.py`
+  - These generators take the raw Tweet and Profile data from our database and generate almost 200 different metrics (ex. tweet_likes-mean). A failure in one of these would lead to many incorrectly computed metrics across a lot of data.
+  - We start with a small amount of data: two Profiles, each with three Tweets. These are created via the `test_metric_system.py` and the `test_metric_system_helper.py`. We then ensure that the output generated in `ex_testing_metric_out.json` matches our calculated expected values.
 
-The most high-risk features are arguably those upon which the others are built--those that must be functioning properly in order to have any meaningful functionality at all. For this project, tests over such feature could include:
-
-## test_database.py
-This tests the various functions by which CRUD operations are performed on Tweets and Profiles in the database. A bug in this file could lead to incorrect data being stored.
-
-## test_meta_encoder.py, test_metric_encoder.py, test_profile_encoder.py, test_tweet_encoder.py
-These files test the functionality of the encoders, which ensure that information is stored in the right structure/format when being passed too and from the database. If these are not properly set up, information could be lost or fail to transfer. 
 
 # 3. User Acceptance Testing
 The following user acceptance tests verify the main system functions.
