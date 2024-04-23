@@ -7,6 +7,7 @@ import {
 } from '../interfaces/displayable-data-interface';
 import { GraphLargeBar } from './graphing/graph-large-bars';
 import { GraphSmallBar } from './graphing/graph-small-bar';
+import { GraphSmallMultiBar } from './graphing/graph-small-multi-bar';
 import { KeyTranslatorService } from './key-translator.service';
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class GraphMakerService {
     inject(KeyTranslatorService);
   private graphSmallBar: GraphSmallBar = new GraphSmallBar();
   private graphLargeBar: GraphLargeBar = new GraphLargeBar();
+  private graphSmallMultiBar: GraphSmallMultiBar = new GraphSmallMultiBar();
   constructor() {}
 
   /**
@@ -45,9 +47,9 @@ export class GraphMakerService {
 
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
     if (graphBarData.owners.length < 15) {
-      return this.graphSmallBar.getGraph(graphBarData);
+      return this.graphSmallMultiBar.getGraph(graphBarData);
     } else {
-      return this.graphLargeBar.getGraph(graphBarData);
+      return this.graphSmallMultiBar.getGraph(graphBarData);
     }
   }
   getTheme(): AgChartTheme {

@@ -2,7 +2,7 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
-export class GraphSmallMultiBar extends BaseGraph {
+export class GraphSmallLine extends BaseGraph {
   constructor() {
     super();
   }
@@ -43,20 +43,18 @@ export class GraphSmallMultiBar extends BaseGraph {
   getSeries(data: I_GraphBarData): any[] {
     const series: any[] = [];
 
-    for (const metricName of data.metricNames || []) {
+    for (const owner of data.owners || []) {
       series.push({
-        type: 'bar',
-        xKey: 'owner',
-        yKey: metricName,
-        cornerRadius: 15,
-        label: {
-          formatter: ({ value }: any) => this.formatNumber(value),
-        },
+        time: 'line',
+        xKey: 'month',
+        xName: 'Month',
+        yKey: owner,
+        yName: '@' + owner,
         tooltip: {
-          renderer: ({ datum, xKey, yKey }: any) => {
+          renderer: ({ datum, xName, yName, xKey, yKey }) => {
             return {
-              title: datum[xKey],
-              content: this.formatNumber(datum[yKey]),
+              title: `${yName}: ${xName} ${datum[xKey]}`,
+              content: datum[yKey],
             };
           },
         },
