@@ -85,7 +85,7 @@ export class MockDataService {
   /**
    * Determines whether to override the profile or not.
    */
-  public overrideProfile = false;
+  public overrideProfile = true;
 
   constructor() {}
 
