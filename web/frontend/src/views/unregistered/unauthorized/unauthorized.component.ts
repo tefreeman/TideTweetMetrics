@@ -2,8 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
+/**
+ * Represents the UnauthorizedComponent.
+ */
 @Component({
     selector: 'app-unauthorized',
     standalone: true,
@@ -17,13 +20,19 @@ import {MatButtonModule} from '@angular/material/button';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnauthorizedComponent {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
+    /**
+     * Signs out the user.
+     */
     signout() {
         this.authService.signout();
     }
 
-    goHome(){
+    /**
+     * Navigates to the home page.
+     */
+    goHome() {
         this.authService.goHome();
     }
 }

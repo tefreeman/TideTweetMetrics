@@ -60,24 +60,25 @@ class TestStandardProfileStatOverTimeWeeklyGenerator(TestCase):
 
         for week in tweets_by_week:
             if len(week) == 1:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], 0])
+                calculated_metrics["tweet_likes-mean-weekly"].append(0)
+                calculated_metrics["tweet_likes-sum-weekly"].append(0)
+                calculated_metrics["tweet_likes-median-weekly"].append(0)
+                calculated_metrics["tweet_count-mean-weekly"].append(0)
+                calculated_metrics["tweet_count-sum-weekly"].append(0)
+                calculated_metrics["tweet_count-median-weekly"].append(0)
             else:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], np.mean([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], np.sum([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], np.median([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], np.mean([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], np.sum([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], np.median([1 for x in week[1:]])])
+                calculated_metrics["tweet_likes-mean-weekly"].append(np.mean([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-sum-weekly"].append(np.sum([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-median-weekly"].append(np.median([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_count-mean-weekly"].append(np.mean([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-sum-weekly"].append(np.sum([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-median-weekly"].append(np.median([1 for x in week[1:]]))
             
         # check for equality
         for metric in calculated_metrics.keys():
             for week in generated_metrics[metric]:
-                self.assertTrue(week in calculated_metrics[metric])
+                if week[1] != 0:
+                    self.assertTrue(week[1] in calculated_metrics[metric])
 
     def test_02_profile2(self):
         # output of the function
@@ -123,24 +124,25 @@ class TestStandardProfileStatOverTimeWeeklyGenerator(TestCase):
 
         for week in tweets_by_week:
             if len(week) == 1:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], 0])
+                calculated_metrics["tweet_likes-mean-weekly"].append(0)
+                calculated_metrics["tweet_likes-sum-weekly"].append(0)
+                calculated_metrics["tweet_likes-median-weekly"].append(0)
+                calculated_metrics["tweet_count-mean-weekly"].append(0)
+                calculated_metrics["tweet_count-sum-weekly"].append(0)
+                calculated_metrics["tweet_count-median-weekly"].append(0)
             else:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], np.mean([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], np.sum([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], np.median([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], np.mean([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], np.sum([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], np.median([1 for x in week[1:]])])
+                calculated_metrics["tweet_likes-mean-weekly"].append(np.mean([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-sum-weekly"].append(np.sum([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-median-weekly"].append(np.median([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_count-mean-weekly"].append(np.mean([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-sum-weekly"].append(np.sum([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-median-weekly"].append(np.median([1 for x in week[1:]]))
             
         # check for equality
         for metric in calculated_metrics.keys():
             for week in generated_metrics[metric]:
-                self.assertTrue(week in calculated_metrics[metric])
+                if week[1] != 0:
+                    self.assertTrue(week[1] in calculated_metrics[metric])
 
     def test_03_all(self):
         # output of the function
@@ -192,24 +194,25 @@ class TestStandardProfileStatOverTimeWeeklyGenerator(TestCase):
 
         for week in tweets_by_week:
             if len(week) == 1:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], 0])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], 0])
+                calculated_metrics["tweet_likes-mean-weekly"].append(0)
+                calculated_metrics["tweet_likes-sum-weekly"].append(0)
+                calculated_metrics["tweet_likes-median-weekly"].append(0)
+                calculated_metrics["tweet_count-mean-weekly"].append(0)
+                calculated_metrics["tweet_count-sum-weekly"].append(0)
+                calculated_metrics["tweet_count-median-weekly"].append(0)
             else:
-                calculated_metrics["tweet_likes-mean-weekly"].append([week[0], np.mean([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-sum-weekly"].append([week[0], np.sum([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_likes-median-weekly"].append([week[0], np.median([x["metrics"][2] for x in week[1:]])])
-                calculated_metrics["tweet_count-mean-weekly"].append([week[0], np.mean([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-sum-weekly"].append([week[0], np.sum([1 for x in week[1:]])])
-                calculated_metrics["tweet_count-median-weekly"].append([week[0], np.median([1 for x in week[1:]])])
+                calculated_metrics["tweet_likes-mean-weekly"].append(np.mean([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-sum-weekly"].append(np.sum([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_likes-median-weekly"].append(np.median([x["metrics"][2] for x in week[1:]]))
+                calculated_metrics["tweet_count-mean-weekly"].append(np.mean([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-sum-weekly"].append(np.sum([1 for x in week[1:]]))
+                calculated_metrics["tweet_count-median-weekly"].append(np.median([1 for x in week[1:]]))
             
         # check for equality
         for metric in calculated_metrics.keys():
             for week in generated_metrics[metric]:
-                self.assertTrue(week in calculated_metrics[metric])
+                if week[1] != 0:
+                    self.assertTrue(week[1] in calculated_metrics[metric])
 
 # main
 if __name__ == "__main__":

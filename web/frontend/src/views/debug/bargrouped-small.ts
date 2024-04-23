@@ -1,5 +1,9 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
+/**
+ * Retrieves data for the bar grouped chart.
+ * @returns An array of objects representing the data.
+ */
 function getData() {
   return [
     { year: '@alabama_cs', likes: 20, follows: 20, retweets: 10 },
@@ -8,10 +12,19 @@ function getData() {
     { year: '@otherschool1', likes: 8, follows: 26, retweets: 10 },
   ];
 }
+/**
+ * Formats a number as a string.
+ * 
+ * @param value - The number to format.
+ * @returns The formatted number as a string.
+ */
 function formatNumber(value: any) {
   return `${value}`;
 }
 
+/**
+ * Represents a chart configuration for displaying likes, follows, and retweets.
+ */
 export class Chart2 {
   chartTheme: AgChartTheme = {
     baseTheme: 'ag-default',
