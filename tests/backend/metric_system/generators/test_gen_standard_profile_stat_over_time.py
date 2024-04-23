@@ -2,7 +2,9 @@ from unittest import TestCase
 import unittest
 import json
 from datetime import datetime
+from datetime import timezone
 import numpy as np
+import calendar
 
 from tests.backend.metric_system.test_metric_system_helper import TestMetricSystemHelper
 
@@ -48,20 +50,22 @@ class TestStandardProfileStatOverTimeGenerator(TestCase):
                 tweets_by_year[year].append(tweet)
         current_year = datetime.now().year
         for year in range(current_year - 9, current_year):
+            year_as_date = datetime(year, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc)
+            eYear = calendar.timegm(year_as_date.timetuple())
             if year not in tweets_by_year:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-median-yearly"].append([year, 0])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, 0])
             else:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, np.mean([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, np.sum([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-median-yearly"].append([year, np.median([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, np.mean([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, np.sum([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, np.median([1 for x in tweets_by_year[year]])])
             
         # check for equality
         self.assertDictEqual(generated_metrics, calculated_metrics)
@@ -101,20 +105,22 @@ class TestStandardProfileStatOverTimeGenerator(TestCase):
                 tweets_by_year[year].append(tweet)
         current_year = datetime.now().year
         for year in range(current_year - 9, current_year):
+            year_as_date = datetime(year, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc)
+            eYear = calendar.timegm(year_as_date.timetuple())
             if year not in tweets_by_year:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-median-yearly"].append([year, 0])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, 0])
             else:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, np.mean([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, np.sum([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-median-yearly"].append([year, np.median([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, np.mean([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, np.sum([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, np.median([1 for x in tweets_by_year[year]])])
             
         # check for equality
         self.assertDictEqual(generated_metrics, calculated_metrics)
@@ -160,20 +166,22 @@ class TestStandardProfileStatOverTimeGenerator(TestCase):
                 tweets_by_year[year].append(tweet)
         current_year = datetime.now().year
         for year in range(current_year - 9, current_year):
+            year_as_date = datetime(year, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc)
+            eYear = calendar.timegm(year_as_date.timetuple())
             if year not in tweets_by_year:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, 0])
-                calculated_metrics["tweet_count-median-yearly"].append([year, 0])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, 0])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, 0])
             else:
-                calculated_metrics["tweet_likes-mean-yearly"].append([year, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-sum-yearly"].append([year, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_likes-median-yearly"].append([year, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-mean-yearly"].append([year, np.mean([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-sum-yearly"].append([year, np.sum([1 for x in tweets_by_year[year]])])
-                calculated_metrics["tweet_count-median-yearly"].append([year, np.median([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-mean-yearly"].append([eYear, np.mean([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-sum-yearly"].append([eYear, np.sum([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_likes-median-yearly"].append([eYear, np.median([x["metrics"][2] for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-mean-yearly"].append([eYear, np.mean([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-sum-yearly"].append([eYear, np.sum([1 for x in tweets_by_year[year]])])
+                calculated_metrics["tweet_count-median-yearly"].append([eYear, np.median([1 for x in tweets_by_year[year]])])
             
         # check for equality
         self.assertDictEqual(generated_metrics, calculated_metrics)
