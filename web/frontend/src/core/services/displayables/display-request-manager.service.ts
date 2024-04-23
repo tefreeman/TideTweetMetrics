@@ -184,19 +184,46 @@ export class DisplayRequestManagerService {
    * @param index - The index of the displayable request to remove.
    */
   removeDisplayable(
-    page: string,
-    name: string,
-    type: string,
+    page: string, 
+    name: string, 
+    type: string, 
     index: number
   ): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
       if (grid && grid.displayables.length > index) {
-        grid.displayables.splice(index, 1);
-        this._dashboardPageManagerService.updateGrid$(page, name, grid);
+        // Check if the displayable at the specified index has a groupId
+        const groupId = grid.displayables[index].groupId;
+        if (groupId) {
+          // If groupId exists, remove all displayables with this groupId
+          this.removeDisplayablesByGroupId(page, name, groupId);
+        } else {
+          // Otherwise, just remove the single displayable at the index
+          grid.displayables.splice(index, 1);
+          this._dashboardPageManagerService.updateGrid$(page, name, grid);
+        }
       }
     });
   }
 
+  /**
+ * Removes all displayable requests with a specified groupId across all cards in a given page.
+ * @param page - The page name.
+ * @param groupId - The groupId to match for removal.
+ */
+  removeDisplayablesByGroupId(page: string, gridName: string, groupId: string): void {
+    this._dashboardPageManagerService.getGrid$(page, gridName).subscribe((grid) => {
+      if (grid) {
+        // Filter out displayables that match the groupId
+        const filteredDisplayables = grid.displayables.filter(displayable => displayable.groupId !== groupId);
+        console.log("filtering on:", groupId, 'Filtered displayables:', filteredDisplayables, 'Original displayables:', grid.displayables);
+        // Only update the grid if there are changes in the displayables array
+        if (grid.displayables.length !== filteredDisplayables.length) {
+          grid.displayables = filteredDisplayables;
+          this._dashboardPageManagerService.updateGrid$(page, gridName, grid);
+        }
+      }
+    });
+  }
   /**
    * Edits a displayable request.
    * @param page - The page name.
