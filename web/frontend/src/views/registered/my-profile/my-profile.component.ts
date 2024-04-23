@@ -186,6 +186,9 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         },
       });
   }
+  update(){
+    
+  }
   /**
    * Opens a snackbar with the given message.
    * @param message - The message to be displayed in the snackbar.
