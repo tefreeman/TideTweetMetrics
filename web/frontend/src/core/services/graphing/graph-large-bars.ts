@@ -83,7 +83,7 @@ export class GraphLargeBar extends BaseGraph {
 
       data: this.getData(data),
       title: {
-        text: 'Likes (Bar/Large)',
+        text: "",
       },
       series: this.getBarSeries(data),
       axes: [
