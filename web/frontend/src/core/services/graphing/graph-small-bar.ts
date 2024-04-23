@@ -2,15 +2,28 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
+/**
+ * Represents a small bar graph for displaying likes data.
+ */
 export class GraphSmallBar extends BaseGraph {
   constructor() {
     super();
   }
 
+  /**
+   * Generates the graph options for the small bar graph.
+   * @param data - The data used to generate the graph.
+   * @returns The graph options.
+   */
   public getGraph(data: I_GraphBarData): AgChartOptions {
     return this.getOptions(data);
   }
 
+  /**
+   * Converts the data into the format required by the graph.
+   * @param data - The data to be converted.
+   * @returns The converted data.
+   */
   getData(data: I_GraphBarData): any[] {
     const chartData: any[] = [];
     console.log('DATA: ', data);
@@ -25,6 +38,11 @@ export class GraphSmallBar extends BaseGraph {
     return chartData;
   }
 
+  /**
+   * Generates the bar series for the small bar graph.
+   * @param data - The data used to generate the bar series.
+   * @returns The bar series.
+   */
   getBarSeries(data: I_GraphBarData): any[] {
     return [
       {
@@ -51,6 +69,11 @@ export class GraphSmallBar extends BaseGraph {
     ];
   }
 
+  /**
+   * Generates the graph options for the small bar graph.
+   * @param data - The data used to generate the graph options.
+   * @returns The graph options.
+   */
   private getOptions(data: I_GraphBarData): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
@@ -89,6 +112,10 @@ export class GraphSmallBar extends BaseGraph {
     return chartOptions;
   }
 
+  /**
+   * Retrieves the theme for the small bar graph.
+   * @returns The theme.
+   */
   private getTheme(): AgChartTheme {
     return {
       baseTheme: 'ag-default',
