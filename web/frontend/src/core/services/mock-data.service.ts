@@ -29,7 +29,7 @@ let test_displayed_data4: I_DisplayableRequest = {
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-sum',
+  stat_name: 'tweet_likes-median',
   ownersParams: {
     type: 'specific',
     count: 2,
