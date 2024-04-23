@@ -9,6 +9,9 @@ import {
 import { AuthService } from './auth.service';
 import { MockDataService } from './mock-data.service';
 
+/**
+ * Service responsible for managing the dashboard pages.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +20,9 @@ export class DashboardPageManagerService {
   private _mockDataService = inject(MockDataService);
   private pageMap$ = new BehaviorSubject<I_PageMap>({});
 
+  /**
+   * Observable that emits a null value whenever a change is detected.
+   */
   public changeDetected$ = new BehaviorSubject<null>(null);
   private unsavedChanges = false;
 
@@ -24,12 +30,19 @@ export class DashboardPageManagerService {
     this.initPages();
   }
 
+  /**
+   * Emits the changes made to the page map.
+   * @param newPageMap - The updated page map.
+   */
   private emitChanges(newPageMap: I_PageMap) {
     console.log('Emitting changes', newPageMap);
     this.pageMap$.next(newPageMap);
     this.unsavedChanges = true;
   }
 
+  /**
+   * Initializes the pages by retrieving them from the server.
+   */
   private initPages(): void {
     this.getPages$().subscribe((requests) => {
       console.log('subscribing to getPages$');
@@ -41,6 +54,11 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Retrieves a specific page from the page map.
+   * @param page - The name of the page.
+   * @returns An observable that emits the grid entry of the specified page.
+   */
   public getPage$(page: string): Observable<I_GridEntry> {
     return this.pageMap$.pipe(
       map((pages) => pages[page]),
@@ -48,6 +66,10 @@ export class DashboardPageManagerService {
     );
   }
 
+  /**
+   * Retrieves the entire page map.
+   * @returns An observable that emits the page map.
+   */
   private getPages$(): Observable<I_PageMap> {
     return this._auth_service.getProfileDoc().pipe(
       filter((profile) => !!profile), // Only continue if profile is truthy
@@ -56,6 +78,9 @@ export class DashboardPageManagerService {
     );
   }
 
+  /**
+   * Saves the current page map.
+   */
   public savePage(): void {
     this.pageMap$.pipe(first()).subscribe((requests) => {
       console.log('SAVING: ', requests);
@@ -68,10 +93,18 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Retrieves the names of all the pages in the page map.
+   * @returns An observable that emits an array of page names.
+   */
   public getPageNames$(): Observable<string[]> {
     return this.pageMap$.pipe(map((pages) => Object.keys(pages)));
   }
 
+  /**
+   * Adds a new page to the page map.
+   * @param page - The name of the new page.
+   */
   public addNewPage$(page: string): void {
     this.pageMap$.pipe(first()).subscribe((requests) => {
       if (!requests[page]) {
@@ -84,6 +117,10 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Deletes a page from the page map.
+   * @param page - The name of the page to delete.
+   */
   public deletePage$(page: string): void {
     this.pageMap$.pipe(first()).subscribe((requests) => {
       if (requests[page]) {
@@ -95,6 +132,12 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Retrieves a specific grid from a page in the page map.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the grid.
+   * @returns An observable that emits the grid entry of the specified grid.
+   */
   public getGrid$(pageName: string, gridName: string) {
     return this.getPage$(pageName).pipe(
       map((page) => page[gridName]),
@@ -103,10 +146,20 @@ export class DashboardPageManagerService {
     );
   }
 
+  /**
+   * Retrieves all the grids from a page in the page map.
+   * @param pageName - The name of the page.
+   * @returns An observable that emits the page's grid entries.
+   */
   public getGrids$(pageName: string): Observable<I_GridEntry> {
     return this.getPage$(pageName);
   }
 
+  /**
+   * Deletes a specific grid from a page in the page map.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the grid to delete.
+   */
   public deleteGrid$(pageName: string, gridName: string) {
     this.pageMap$.pipe(first()).subscribe((requests) => {
       if (requests[pageName]) {
@@ -118,6 +171,12 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Adds a new grid to a page in the page map.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the new grid.
+   * @param gridEntry - The grid entry object.
+   */
   public addGrid$(
     pageName: string,
     gridName: string,
@@ -135,6 +194,12 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Updates an existing grid in a page of the page map.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the grid to update.
+   * @param gridEntry - The updated grid entry object.
+   */
   public updateGrid$(
     pageName: string,
     gridName: string,
@@ -152,6 +217,11 @@ export class DashboardPageManagerService {
     });
   }
 
+  /**
+   * Updates multiple grids in a page of the page map.
+   * @param pageName - The name of the page.
+   * @param grids - An array of grid entries with names.
+   */
   public updateGrids$(pageName: string, grids: I_GridRequestEntryWithName[]) {
     this.pageMap$.pipe(first()).subscribe((requests) => {
       let updatesMade = false;

@@ -1,5 +1,9 @@
 import { ElementRef, QueryList } from '@angular/core';
 
+/**
+ * Service for managing moveable grid tiles.
+ * @template T The type of data stored in the grid tiles.
+ */
 export class MoveableGridTilesService<T> {
   public dataArr: T[] = [];
   private positionArr: { x: number; y: number }[] = [];
@@ -12,6 +16,10 @@ export class MoveableGridTilesService<T> {
     }
   }
 
+  /**
+   * Sets the positions of the grid tiles based on their element references.
+   * @param queryList The list of element references.
+   */
   private setElementPositions(queryList: QueryList<ElementRef>) {
     queryList.forEach((elemRef, index) => {
       if (elemRef && elemRef.nativeElement) {
@@ -24,10 +32,19 @@ export class MoveableGridTilesService<T> {
     });
   }
 
+  /**
+   * Updates the positions of the grid tiles based on the provided query list.
+   * @param queryList The query list of grid tiles.
+   */
   public update(queryList: QueryList<any>) {
     this.setElementPositions(queryList);
   }
 
+  /**
+   * Swaps the closest grid tiles with the specified index and drop position.
+   * @param index The index of the grid tile to swap.
+   * @param dropPos The drop position of the grid tile.
+   */
   public swapClosestElements(index: number, dropPos: { x: number; y: number }) {
     if (index < 0 || index >= this.positionArr.length) {
       return;
@@ -55,6 +72,10 @@ export class MoveableGridTilesService<T> {
     this.performSwap(index, dropPos);
   }
 
+  /**
+   * Determines the number of items per row in the grid.
+   * @returns The number of items per row.
+   */
   private determineItemsPerRow(): number {
     if (this.positionArr.length < 2) {
       return this.positionArr.length;
@@ -72,6 +93,14 @@ export class MoveableGridTilesService<T> {
     return indexOfSecondRow;
   }
 
+  /**
+   * Checks if the drop position is in the last row or below the grid.
+   * @param dropPos The drop position.
+   * @param itemsPerRow The number of items per row.
+   * @param totalRows The total number of rows in the grid.
+   * @param itemsInLastRow The number of items in the last row.
+   * @returns True if the drop position is in the last row or below the grid, false otherwise.
+   */
   private isDropInLastRowOrBelow(
     dropPos: { x: number; y: number },
     itemsPerRow: number,
@@ -96,7 +125,11 @@ export class MoveableGridTilesService<T> {
 
     return false;
   }
-  // Move the dragged item to the end if dropped in an extra space or below the grid.
+
+  /**
+   * Moves the dragged item to the end if dropped in an extra space or below the grid.
+   * @param index The index of the dragged item.
+   */
   private moveToEnd(index: number) {
     const item = this.dataArr.splice(index, 1)[0];
     this.dataArr.push(item);
@@ -105,7 +138,11 @@ export class MoveableGridTilesService<T> {
     this.positionArr.push(position);
   }
 
-  // Swap the dragged item with the closest item.
+  /**
+   * Swaps the dragged item with the closest item.
+   * @param index The index of the dragged item.
+   * @param dropPos The drop position of the dragged item.
+   */
   private performSwap(index: number, dropPos: { x: number; y: number }) {
     let closestDistance = Number.MAX_VALUE;
     let closestIndex = -1;
