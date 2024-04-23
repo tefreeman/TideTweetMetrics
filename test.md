@@ -39,36 +39,43 @@ The most high-risk features are arguably those upon which the others are built--
 The following user acceptance tests verify the main system functions.
 
 ## Account Creation
-- Visit the homepage
-- Click create account/login
-- Create an account
-- Verify that account exists
+- Visit the Welcome page.
+- Click the *Create Account / Log in* button.
+- Create an account.
+  - NOTE: Admin approval is required for the account recieve access permissions.
+- Verify: 
+  - Account exists.
 
 ## Login
-- Visit the homepage
-- Click create account/login
-- Enter wrong credentials
-- Verify that user is not logged in
-- Enter correct credentials
-- Verify that user is logged in
+- Visit the Welcome page.
+- Enter invalid username and/or password.
+- Verify that you are unable to log in.
+- Enter correct credentials.
+- Verify:
+  - Login attempt was successful.
 
 ## Card Creation
-- Visit dashboard page
-- Click Card Edit
-- Create a card
-- Verify that card appears on dashboard
-- Delete the card
-- Verify that the card is deleted
+- Visit Dashboard page.
+- Click *Card Edit*.
+- Create a card.
+- Verify:
+  - The card appears on the Dashboard.
+- Delete the card.
+- Verify:
+  - The card is deleted from the Dashboard.
 
 ## Graph Creation
-- Visit dashboard page
-- Click Card Edit
-- Create a graph
-- Verify that graph appears on dashboard
+- Visit the Dashboard page.
+- Click *Card Edit*.
+- Create a graph.
+- Verify:
+  - The graph appears on Dashboard.
 - Delete the graph
-- Verify that the graph is deleted
+- Verify:
+  - The graph is deleted.
 
 ## Update Metrics
-- Visit dashboard page
-- Click Update Metrics
-- Verify that metrics are updated
+- Visit Dashboard page.
+- Click *Update Metrics*.
+- Verify:
+   The metrics are updated.
