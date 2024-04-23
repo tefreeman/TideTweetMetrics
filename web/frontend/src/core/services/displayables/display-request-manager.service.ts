@@ -183,40 +183,52 @@ export class DisplayRequestManagerService {
    * @param type - The grid type.
    * @param index - The index of the displayable request to remove.
    */
-  removeDisplayable(
-    page: string, 
-    name: string, 
-    type: string, 
-    index: number
-  ): void {
+  removeDisplayable(page: string, name: string, type: string, index: number): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
       if (!grid) {
-        console.error('Grid is not defined!'); // Debug: Check if grid is defined
+        console.error('Grid is not defined!');
         return;
       }
   
-      if (grid.displayables.length <= index) {
-        console.error('Index out of bounds!'); // Debug: Check array bounds
+      const consolidatedDisplayables = this.consolidateDisplayables(grid.displayables);
+
+      if (index >= consolidatedDisplayables.length) {
+        console.error('Index out of bounds!');
         return;
       }
-  
-      const displayable = grid.displayables[index];
-      if (!displayable) {
-        console.error('No displayable at this index!'); // Debug: Check if displayable exists
-        return;
-      }
-  
-      const groupId = displayable.groupId;
-      if (groupId) {
-        console.log(`Removing by groupId ${groupId} instead of index ${index}.`); // Debug: Log group removal
-        this.removeDisplayablesByGroupId(page, name, groupId);
+
+      const item = consolidatedDisplayables[index];
+      if (item.groupId) {
+        console.log(`Removing by groupId ${item.groupId} at logical index ${index}.`);
+        this.removeDisplayablesByGroupId(page, name, item.groupId);
       } else {
-        console.log(`Removing single displayable at index ${index}.`); // Debug: Log single removal
-        grid.displayables.splice(index, 1);
+        console.log(`Removing single displayable at logical index ${index}.`);
+        grid.displayables.splice(grid.displayables.indexOf(item), 1);
         this._dashboardPageManagerService.updateGrid$(page, name, grid);
       }
     });
   }
+
+  consolidateDisplayables(displayables: any[]): any[] {
+    let result: any= [];
+    let groupMap = new Map<string, any>();
+
+    displayables.forEach(displayable => {
+      if (displayable.groupId) {
+        if (!groupMap.has(displayable.groupId)) {
+          groupMap.set(displayable.groupId, displayable);
+        }
+      } else {
+        result.push(displayable);
+      }
+    });
+
+    result = [...result, ...Array.from(groupMap.values())];
+    return result;
+  }
+
+  // Assume removeDisplayablesByGroupId remains unchanged
+
   
   removeDisplayablesByGroupId(page: string, gridName: string, groupId: string): void {
     this._dashboardPageManagerService.getGrid$(page, gridName).subscribe((grid) => {

@@ -221,7 +221,7 @@ export class AuthService {
         const userDocRef = doc(this._firestore, `profiles/${user.uid}`);
 
         // Convert the Firestore set operation (a Promise) into an Observable
-        return from(setDoc(userDocRef, userData, { merge: true })).pipe(
+        return from(setDoc(userDocRef, userData)).pipe(
           map(() => undefined)
         );
       })
