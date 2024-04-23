@@ -50,6 +50,7 @@
       </div>
     </div>
   </div>
+    <!-- Footer section; visible only if there's at least one grid present -->
+    <div *ngIf="((grids$ | async) ?? []).length > 0" class="dashboard-footer">
+  </div>
 </div>
-
-<div class="footer" *ngIf="!(isEmpty$() | async)"></div>
