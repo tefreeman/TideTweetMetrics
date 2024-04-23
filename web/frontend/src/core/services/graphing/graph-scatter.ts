@@ -77,7 +77,7 @@ export class GraphScatter extends BaseGraph {
       // Data: Data to be displayed in the chart
 
       title: {
-        text: 'Likes (Bar/Large)',
+        enabled: false,
       },
       series: Object.entries(this.getData(gData)).map(([username, data]) => ({
         data,
@@ -98,9 +98,6 @@ export class GraphScatter extends BaseGraph {
           position: 'bottom',
           type: 'number',
           nice: false,
-          title: {
-            text: 'Likes',
-          },
           crosshair: {
             label: {
               renderer: ({ value }) =>
