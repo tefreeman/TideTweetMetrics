@@ -89,7 +89,7 @@ export class DisplayRequestManagerService {
     name: string
   ): void {
     let displayableRequests: I_DisplayableRequest[];
-
+    console.log('REQUEST WAS ', request);
     // Check if the first item in the request array is of type T_DisplayableDataType and convert all to I_DisplayableRequest if true.
     if (this.isDisplayableDataType(request[0])) {
       displayableRequests = (request as T_DisplayableDataType[]).map((req) =>

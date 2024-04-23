@@ -14,6 +14,7 @@ import {
   ViewChildren,
   inject,
 } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Observable,
@@ -301,19 +302,53 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '100%',
     });
 
-    dialogRef.afterClosed().subscribe((result: T_DisplayableGraph[] | null) => {
-      console.log('RESULT', result);
+    dialogRef.afterClosed().subscribe((dataIn: any | null) => {
+      // Adjust the type of result as per your actual data structure
+      const result = dataIn[0] as any;
+      console.log('AFTER CLOSE RESULT', result);
       if (result) {
-        this.displayRequestManagerService.addDisplayables(
-          result,
-          this.type,
-          this.page,
-          this.name
-        );
-      }
-    });
+        // Assume result could be an object that contains `metric_names` among other properties
+        // First, handle adding displayables as you initially di
+        // Now, if metric_names exists and has items, process them
+        const groupId = Timestamp.now().toMillis().toString();
+        if (result.metric_names && result.metric_names.length > 0) {
+          const newObjects = result.metric_names.map((metricName: any) => {
+            // Assuming you want to create new objects that are similar to result but with adjustments
+            const newObj = {
+              ...result,
+              stat_name: metricName,
+              groupId: groupId,
+              // Ensure we don't perpetuate the metric_names array in the new objects
+              metric_names: undefined,
+            };
+            // Explicitly delete the metric_names array to ensure it's not included
+            delete newObj.metric_names;
 
-    this.editModeService.setEditMode(false);
+            // Return the newly formed object
+            return newObj;
+          });
+
+          // At this point, newObjects will contain the array of newly created objects
+          // based on each metric_name. Here you might want to handle these new objects,
+          // for example, logging them or further processing.
+          this.displayRequestManagerService.addDisplayables(
+            newObjects,
+            this.type,
+            this.page,
+            this.name
+          );
+        } else {
+          this.displayRequestManagerService.addDisplayables(
+            result,
+            this.type,
+            this.page,
+            this.name
+          );
+        }
+      }
+
+      this.editModeService.setEditMode(false);
+    });
   }
 
   /**
