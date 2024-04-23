@@ -55,25 +55,30 @@ The following user acceptance tests verify the main system functions.
 - Enter correct credentials.
 - Verify:
   - Login attempt was successful.
+  ![alt text](<Images/Screenshot 2024-04-23 at 4.47.33 PM.png>)
 
 ## Data Card (and Card Grid) Creation
 - Visit Dashboard page.
 - Click *Add my first grid!*. Add a Card Grid.
 - Click *Card Edit*.
 - Scroll through the provided list, or searching by metric and/or owner. Click *Add*.
+![alt text](<Images/Screenshot 2024-04-23 at 4.50.31 PM.png>)
 - Verify:
   - The card appears on the Dashboard.
 - Repeat process as desired.
+![alt text](<Images/Screenshot 2024-04-23 at 4.51.08 PM.png>)
 
 ## Data Card (and Card Grid) Deletion
 - After previous steps...
 - Click *Card Edit*.
 - Delete Cards as desired by clicking the red 'X' button in the top right corner of a Card.
+![alt text](<Images/Screenshot 2024-04-23 at 4.55.13 PM.png>)
 - Verify:
   - The card is deleted from the Dashboard.
 - Click *Confirm* to exit Card Editing mode.
 - Click *Grid Edit*.
 - Click the trash icon.
+![alt text](<Images/Screenshot 2024-04-23 at 4.52.30 PM.png>)
 - Verify:
   - The grid is deleted.
 - Click *Confirm*.
