@@ -18,7 +18,7 @@ let test_displayed_data3: I_DisplayableRequest = {
   type: 'stat-comp',
 };
 let test_displayed_data4: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean-weekly',
+  stat_name: 'tweet_likes-mean-yearly',
   ownersParams: {
     type: 'specific',
     count: 2,
