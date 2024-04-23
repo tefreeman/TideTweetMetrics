@@ -1,5 +1,9 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
+/**
+ * Retrieves data for the line chart.
+ * @returns An array of objects representing the data.
+ */
 function getData() {
   return [
     {
@@ -39,11 +43,24 @@ function getData() {
     },
   ];
 }
+
+/**
+ * Formats the given value as a string.
+ * 
+ * @param value - The value to be formatted.
+ * @returns The formatted value as a string.
+ */
 function formatNumber(value: any) {
   return `${value}`;
 }
 
+/**
+ * Represents a line chart.
+ */
 export class Chart4 {
+  /**
+   * The theme of the chart.
+   */
   chartTheme: AgChartTheme = {
     baseTheme: 'ag-default',
     palette: {
@@ -73,6 +90,9 @@ export class Chart4 {
     },
   };
 
+  /**
+   * The options of the chart.
+   */
   chartOptions: AgChartOptions = {
     // Data: Data to be displayed in the chart
     data: getData(),
