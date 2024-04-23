@@ -12,8 +12,8 @@ def send_report(addresses: list[str]) -> None:
     message = Mail(
         from_email='tidetweetmetrics@gmail.com',
         to_emails=addresses,
-        subject='Testing testing 123',
-        html_content='<strong>RAHHHHHH🦅</strong>')
+        subject='Tide Tweet Metrics Dashboard Update',
+        html_content='Your Tide Tweet Metrics dashboard has been updated!')
     try:
         # sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         sg = SendGridAPIClient(key)
@@ -23,6 +23,3 @@ def send_report(addresses: list[str]) -> None:
         print(response.headers)
     except Exception as e:
         logging.error(e.message)
-
-if __name__ == "__main__":
-    send_report(["samuelmgaines@gmail.com"])
