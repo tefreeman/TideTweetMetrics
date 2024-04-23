@@ -44,7 +44,7 @@ The following user acceptance tests verify the main system functions.
 - Click the *Create Account / Log in* button.
 - Create an account.
   - NOTE: Admin approval is required for the account recieve access permissions.
-  ![alt text](image.png)
+  ![alt text](Images/image.png)
 - Verify: 
   - A message is displayed indicating that the admin must approve.
 
@@ -99,7 +99,8 @@ Click *Add*.
 ## Graph Card (and Graph Grid) Deletion
 - After previous steps...
 - Click *Card Edit*.
-- Delete Graphs as desired by clicking the red 'X' button in the top right corner of a Graph Card.
+- Delete graphs or cards as desired by clicking the red 'X' button in the top right corner of them.
+![Card Deletion](Images/carddeletion.png)
 - Verify:
   - The Graph is deleted from the Dashboard.
 - Click *Confirm* to exit Card Editing mode.
@@ -120,6 +121,7 @@ Click *Add*.
 - Visit Dashboard page (as admin)
 - On the sidebar, click My Profile.
 - Scroll down and remove an approved account.
+![List of admin approved accounts](Images/removeaccount.png)
 - Verify:
   - The account is deleted (by attempting to login)
 
@@ -127,6 +129,7 @@ Click *Add*.
 - Visit Dashboard page.
 - On the sidebar, click My Profile.
 - Check the box beside Opt In for E-Mail Reports
+![Email report checkbox](Images/emailreportcheck.png)
 - Trigger an email by updating the dashboard
 - Verify:
   - The email address on file receives an email from tidetweetmetrics@gmail.com
@@ -135,6 +138,7 @@ Click *Add*.
 - Visit Dashboard page.
 - On the sidebar, click Add under Custom Dashboards.
 - Create a custom dashboard with some specified name.
+![Dashboard creation](Images/newdashboard.png)
 - Verify:
   - A blank custom dashboard is created with the specified name.
   - Cards and graphs can be added to this new custom dashboard.
@@ -143,5 +147,6 @@ Click *Add*.
 - Visit Dashboard page.
 - On the sidebar, click Optimizer
 - Type a tweet in the box that says Enter Tweet Here
+![Tweet optimizer](Images/optimizer.png)
 - Verify:
   - An analysis of your entered tweet is generated
