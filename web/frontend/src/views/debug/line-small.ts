@@ -3,14 +3,14 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 function getData() {
   return [
     {
-      month: 1,
+      time: 11241241,
       alabama_cs: 1,
       auburnidk: 2,
       otherschool: 3,
       otherschool1: 4,
     },
     {
-      month: 2,
+      time: 213141515,
       alabama_cs: 2,
       auburnidk: 3,
       otherschool: 4,
