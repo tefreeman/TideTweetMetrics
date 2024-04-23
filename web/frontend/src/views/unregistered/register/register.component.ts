@@ -99,7 +99,7 @@ export class RegisterComponent {
       const { email, password1 } = this.signupForm.value;
       this._service
         .signup(email!, password1!)
-        .then(() => this.router.navigate(['/']))
+        .then(() => this.router.navigate(['/dashboard']))
         .catch((error) => {
           console.error('Login Failed', error);
           this.errorMessage = 'User creation failed! Please try again.';

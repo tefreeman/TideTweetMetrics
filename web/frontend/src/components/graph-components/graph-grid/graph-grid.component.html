@@ -20,7 +20,7 @@
     </ng-container>
   </ng-container>
   <mat-card
-    [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
+    [ngStyle]="{ 'max-width': maxCardWidth, height: '20rem' }"
     class="card-add"
     (click)="openGraphCardDialog()"
     *ngIf="editMode | async"
@@ -30,6 +30,24 @@
         aria-hidden="false"
         aria-label="Example home icon"
         fontIcon="add"
+        class="custom-icon"
+      ></mat-icon>
+    </div>
+  </mat-card>
+
+  <mat-card
+    #holdToDeleteCard
+    matTooltip="Double click to delete graph grid"
+    [ngStyle]="{ 'max-width': maxCardWidth, 'min-height': '20rem' }"
+    class="card-add"
+    (dblclick)="deleteGrid()"
+    *ngIf="gridEditMode | async"
+  >
+    <div class="icon-container">
+      <mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="delete"
         class="custom-icon"
       ></mat-icon>
     </div>
