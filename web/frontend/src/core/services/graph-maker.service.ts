@@ -111,14 +111,16 @@ export class GraphMakerService {
     }
 
     if (dataDimension === 1) {
-      if (dataPoints <= 10) {
-        return this.graphSmallBar.getGraph(
-          graphData as unknown as I_GraphBarData
-        );
-      } else {
-        return this.graphLargeBar.getGraph(
-          graphData as unknown as I_GraphBarData
-        );
+      if (dataPoints == 1) {
+        if (ownerCount <= 10) {
+          return this.graphSmallBar.getGraph(
+            graphData as unknown as I_GraphBarData
+          );
+        } else {
+          return this.graphLargeBar.getGraph(
+            graphData as unknown as I_GraphBarData
+          );
+        }
       }
     }
 
