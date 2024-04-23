@@ -176,16 +176,24 @@ export class DashboardPageManagerService {
    * @param gridName - The name of the grid to delete.
    */
   public deleteGrid$(pageName: string, gridName: string) {
-    this.pageMap$.pipe(first()).subscribe((requests) => {
-      if (requests[pageName]) {
-        delete requests[pageName][gridName];
-        this.emitChanges({ ...requests });
-      } else {
-        console.error(`Grid "${gridName}" does not exist`);
-      }
+    this.pageMap$.pipe(
+      first(),
+      map(requests => {
+        // Create a deep clone if necessary to avoid direct mutations - shallow copy might be sufficient based on structure
+        const updatedRequests = JSON.parse(JSON.stringify(requests));
+        
+        if (updatedRequests[pageName] && updatedRequests[pageName][gridName]) {
+          delete updatedRequests[pageName][gridName];
+        } else {
+          console.error(`Grid "${gridName}" or Page "${pageName}" does not exist`);
+        }
+  
+        return updatedRequests;
+    })).subscribe((updatedRequests) => {
+      // Emit the changes to all subscribers
+      this.emitChanges(updatedRequests);
     });
   }
-
   /**
    * Adds a new grid to a page in the page map.
    * @param pageName - The name of the page.
