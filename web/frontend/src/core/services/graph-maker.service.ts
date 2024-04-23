@@ -5,15 +5,17 @@ import {
   I_GraphLineData,
   T_DisplayableGraph,
 } from '../interfaces/displayable-data-interface';
+import { GraphLargeBar } from './graphing/graph-large-bars';
+import { GraphSmallBar } from './graphing/graph-small-bar';
 import { KeyTranslatorService } from './key-translator.service';
-
 @Injectable({
   providedIn: 'root',
 })
 export class GraphMakerService {
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
-
+  private graphSmallBar: GraphSmallBar = new GraphSmallBar();
+  private graphLargeBar: GraphLargeBar = new GraphLargeBar();
   constructor() {}
 
   getGraphStructure(graphData: T_DisplayableGraph) {
@@ -28,78 +30,15 @@ export class GraphMakerService {
 
   createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
     const structure = this.getGraphStructure(graphLineData);
-
-    const chartOptions = {
-      theme: this.getTheme(),
-      title: {
-        text: graphLineData.metricName,
-      },
-      data: this.getLineData(graphLineData),
-      series: this.getLineSeries(graphLineData),
-      axes: [
-        {
-          type: 'category',
-          label: {
-            enabled: graphLineData.owners.length < 15,
-            fontSize: 10,
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans',
-          },
-          position: 'bottom',
-        },
-        {
-          type: 'number',
-          position: 'left',
-          label: {
-            fontSize: 10, // Specify font size here
-            fontWeight: 'bold', // Specify font weight here
-            fontFamily: 'Open Sans',
-            color: '#999',
-          },
-        },
-      ],
-    };
-
-    return chartOptions;
+    return {};
   }
 
   createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
-    const chartOptions: AgChartOptions = {
-      theme: this.getTheme(),
-
-      title: {
-        text: this.keyTranslatorService.keyToFullString(
-          graphBarData.metricName
-        ),
-      },
-      data: this.getBarData(graphBarData),
-
-      series: this.getBarSeries(graphBarData),
-      axes: [
-        {
-          type: 'category',
-          label: {
-            enabled: graphBarData.owners.length < 15,
-            fontSize: 10,
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans',
-          },
-          position: 'bottom',
-        },
-        {
-          type: 'number',
-          position: 'left',
-          label: {
-            fontSize: 10, // Specify font size here
-            fontWeight: 'bold', // Specify font weight here
-            fontFamily: 'Open Sans',
-            color: '#999',
-          },
-        },
-      ],
-    };
-
-    return chartOptions;
+    if (graphBarData.owners.length < 15) {
+      return this.graphSmallBar.getGraph(graphBarData);
+    } else {
+      return this.graphLargeBar.getGraph(graphBarData);
+    }
   }
   getTheme(): AgChartTheme {
     const theme: AgChartTheme = {

@@ -67,7 +67,7 @@ let test_displayed_data12: I_DisplayableRequest = {
 
 let test_displayed_data13: I_DisplayableRequest = {
   stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'all', owners: ['alabama_cs'], count: 100 },
+  ownersParams: { type: 'top', owners: ['alabama_cs'], count: 20 },
   type: 'graph-bar',
 };
 
