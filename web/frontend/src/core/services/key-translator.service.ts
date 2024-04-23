@@ -141,7 +141,7 @@ export class KeyTranslatorService {
       order: 2,
     },
     tweet_count: {
-      full: "tweet counts",
+      full: 'tweet counts',
       abr: 'TCount',
       desc: "Number of 'counts' in a given Tweet",
       order: 2,
@@ -196,7 +196,7 @@ export class KeyTranslatorService {
     },
   };
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Sets the translation object.
@@ -282,6 +282,33 @@ export class KeyTranslatorService {
    */
   hasDesc(key: string): boolean {
     return !!this._translationObject[key]?.desc;
+  }
+  /**
+   * Reverses a full string translation back to the original key(s).
+   * @param fullString - The full string representation to reverse-translate.
+   * @returns The original key or keys concatenated by '-' if the full string represents multiple keys.
+   */
+
+  // this is a terrible way to do this but 4am time crunch
+  reverseTranslate(fullString: string): string {
+    // Extract all 'full' values and their corresponding keys and orders.
+    const fullMatches: { key: string; order: number }[] = [];
+    Object.entries(this._translationObject).forEach(
+      ([key, { full, order }]) => {
+        if (fullString.includes(full)) {
+          // Check if the full part is in the given string
+          fullMatches.push({ key, order });
+        }
+      }
+    );
+
+    // Sort the matches based on the 'order' value.
+    fullMatches.sort((a, b) => b.order - a.order);
+
+    // Extract the keys and concatenate them.
+    const result = fullMatches.map((match) => match.key).join('-');
+
+    return result;
   }
 
   /**

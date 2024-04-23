@@ -292,9 +292,19 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '100%',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+    dialogRef.afterClosed().subscribe((result: T_DisplayableGraph[] | null) => {
+      console.log('RESULT', result);
+      if (result) {
+        this.displayRequestManagerService.addDisplayables(
+          result,
+          this.type,
+          this.page,
+          this.name
+        );
+      }
     });
+
+    this.editModeService.setEditMode(false);
   }
 
   /**

@@ -71,6 +71,18 @@ export class DisplayableProviderService {
     );
   }
 
+  public processRequestsWithLatestMetricContainer(
+    requests: I_DisplayableRequest[]
+  ): Observable<T_DisplayableDataType[]> {
+    // Fetch the latest metricContainer
+    console.log('PROCESSING LATESTEST METRIC CONTAINER: ', requests);
+    return this._metricsService.metricContainer$.pipe(
+      switchMap((metricContainer) =>
+        of(this.processRequests(metricContainer, requests))
+      )
+    );
+  }
+
   /**
    * Processes the displayable requests and returns an array of displayable data.
    * @param metricContainer - The metric container.

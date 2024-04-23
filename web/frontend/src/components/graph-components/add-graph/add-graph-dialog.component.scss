@@ -70,8 +70,24 @@ mat-dialog-content {
 .content {
   overflow-y: hidden;
 }
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+}
+
+.example-form-field {
+  width: auto; /* Adjust based on your form field size */
+  margin-right: 1rem; /* Spacing between form fields */
+}
 
 mat-dialog-actions {
   justify-content: flex-end; // Align buttons to the right
   width: 100%; // Ensure actions take full width for proper alignment
+}
+
+.button-center {
+  margin-bottom: 32px;
+  margin-right: 8px;
 }
