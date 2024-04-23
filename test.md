@@ -88,7 +88,13 @@ The following user acceptance tests verify the main system functions.
 - Click *Grid Edit* and *Add Grid*.
 - Create a Graph Grid.
 - Click *Card Edit* and click the '+' button.
-- Select the metric you would like to examine. Add and delete owners as desired. Click *Add*.
+![alt text](<Images/Screenshot 2024-04-23 at 4.59.57 PM.png>)
+- Select the metric you would like to examine. Add and delete owners as desired. 
+![alt text](<Images/Screenshot 2024-04-23 at 5.02.04 PM.png>)
+Click *Add*.
+- Verify:
+  - The graph appears on the Dashboard.
+
 
 ## Graph Card (and Graph Grid) Deletion
 - After previous steps...
