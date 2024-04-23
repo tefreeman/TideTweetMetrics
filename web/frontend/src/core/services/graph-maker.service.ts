@@ -35,22 +35,34 @@ export class GraphMakerService {
    */
   getGraphStructure(graphData: T_DisplayableGraph) {
     let dataPoints;
-    if (graphData.valuesNested && Array.isArray(graphData.valuesNested[0])) {
-      // If valuesNested exists and its first element is an array, calculate based on it
-      dataPoints = graphData.valuesNested[0].length;
-    } else if (Array.isArray(graphData.values[0])) {
-      // If the first case isn't true but the first element of values is an array, calculate based on it
-      dataPoints = graphData.values[0].length;
+    let dataDimension; // Dimension of each data point
+
+    // Determine if we're dealing with values or valuesNested
+    const primaryData = graphData.valuesNested
+      ? graphData.valuesNested
+      : graphData.values;
+
+    if (Array.isArray(primaryData[0])) {
+      // We're dealing with at least a 2D array
+      if (Array.isArray(primaryData[0][0])) {
+        // It's a 3D array
+        dataPoints = primaryData[0].length; // The size of the second level array
+        dataDimension = primaryData[0][0].length; // The size of the innermost array
+      } else {
+        // It's a 2D array
+        dataPoints = primaryData.length; // In case of 2D, consider the first dimension size as data points
+        dataDimension = 1; // Since it's 2D, the data dimension is 1
+      }
     } else {
-      // Fall back to 1 if neither of the above cases are true
+      // If primaryData[0] isn't an array, then we've misunderstood the structure. Default to safe values.
       dataPoints = 1;
+      dataDimension = 1; // Assuming each value is a single data point with one dimension
     }
+
     const ownerCount = graphData.owners.length;
-    const dataDimension = graphData.values.length;
 
     return { dataPoints, ownerCount, dataDimension };
   }
-
   createChart(graphData: T_DisplayableGraph): AgChartOptions {
     if (graphData.type === 'graph-line') {
       return this.graphSmallLine.getGraph(graphData as I_GraphLineData);
@@ -76,6 +88,8 @@ export class GraphMakerService {
       graphData as any
     );
     console.log(
+      'Object:',
+      graphData,
       'DataDimension: ',
       dataDimension,
       'OwnerCount: ',
