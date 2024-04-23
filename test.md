@@ -130,3 +130,18 @@ Click *Add*.
 - Trigger an email by updating the dashboard
 - Verify:
   - The email address on file receives an email from tidetweetmetrics@gmail.com
+
+## Add a Custom Dashboard
+- Visit Dashboard page.
+- On the sidebar, click Add under Custom Dashboards.
+- Create a custom dashboard with some specified name.
+- Verify:
+  - A blank custom dashboard is created with the specified name.
+  - Cards and graphs can be added to this new custom dashboard.
+
+## Optimizer Testing
+- Visit Dashboard page.
+- On the sidebar, click Optimizer
+- Type a tweet in the box that says Enter Tweet Here
+- Verify:
+  - An analysis of your entered tweet is generated
