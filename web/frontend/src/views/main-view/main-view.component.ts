@@ -12,6 +12,9 @@ import { EditModeService } from '../../core/services/edit-mode.service';
 import { GridEditModeService } from '../../core/services/grid-edit-mode.service';
 import { AddBoardComponent } from '../registered/add-board/add-board.component';
 import { DashboardComponent } from '../registered/dashboard/dashboard.component';
+/**
+ * Represents the main view component of the application.
+ */
 @Component({
   selector: 'app-main-view',
   standalone: true,
@@ -28,15 +31,33 @@ import { DashboardComponent } from '../registered/dashboard/dashboard.component'
   ],
 })
 export class MainViewComponent implements OnInit, OnDestroy {
+  /**
+   * Represents the edit mode service.
+   */
   editModeService: EditModeService = inject(EditModeService);
+
+  /**
+   * Represents the display request manager service.
+   */
   displayRequestManagerService: DisplayRequestManagerService = inject(
     DisplayRequestManagerService
   );
+
+  /**
+   * Represents the dashboard page manager service.
+   */
   dashboardPageManagerService: DashboardPageManagerService = inject(
     DashboardPageManagerService
   );
+
+  /**
+   * Represents the subscription to the page names.
+   */
   pageSubscription: Subscription | undefined;
 
+  /**
+   * Represents the static navigation routes.
+   */
   staticNavRoutes = [
     { name: 'Home', route: 'home' },
     { name: 'Analysis Board', route: 'analysis-board' }, //Add more here as needed
@@ -44,19 +65,51 @@ export class MainViewComponent implements OnInit, OnDestroy {
     { name: 'My Profile', route: 'my-profile' },
   ];
 
+  /**
+   * Represents the dynamic navigation routes.
+   */
   dynamicNavRoutes: { name: string; route: string }[] = [];
 
+  /**
+   * Represents the expanded state of the menu.
+   */
   public isExpanded = false;
+
+  /**
+   * Represents the edit mode observable.
+   */
   editMode: Observable<boolean> = this.editModeService.getEditMode();
+
+  /**
+   * Represents the grid edit mode service.
+   */
   gridEditModeService: GridEditModeService = inject(GridEditModeService);
+
+  /**
+   * Represents the grid edit mode observable.
+   */
   gridEditMode: Observable<boolean> = this.gridEditModeService.getEditMode();
 
   constructor(
+    /**
+     * Represents the authentication service.
+     */
     private authService: AuthService,
-    public dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
 
+    /**
+     * Represents the dialog service.
+     */
+    public dialog: MatDialog,
+
+    /**
+     * Represents the snackbar service.
+     */
+    private snackBar: MatSnackBar
+  ) { }
+
+  /**
+   * Initializes the component.
+   */
   ngOnInit(): void {
     this.pageSubscription = this.dashboardPageManagerService
       .getPageNames$()
@@ -71,18 +124,30 @@ export class MainViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Cleans up the component.
+   */
   ngOnDestroy(): void {
     this.pageSubscription?.unsubscribe();
   }
 
+  /**
+   * Toggles the menu expansion state.
+   */
   public toggleMenu() {
     this.isExpanded = !this.isExpanded;
   }
 
+  /**
+   * Signs out the user.
+   */
   signout() {
     this.authService.signout();
   }
 
+  /**
+   * Adds a new board.
+   */
   addBoard() {
     const addBoardRef = this.dialog.open(AddBoardComponent, {});
 
@@ -95,19 +160,32 @@ export class MainViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Toggles the edit mode.
+   */
   toggleEditMode() {
     this.editModeService.toggleEditMode();
   }
 
+  /**
+   * Toggles the grid edit mode.
+   */
   toggleGridEditMode() {
     this.gridEditModeService.toggleEditMode();
   }
 
+  /**
+   * Updates the page.
+   */
   update() {
     this.dashboardPageManagerService.savePage();
     this.openSnackBar('Page has been saved.');
   }
 
+  /**
+   * Opens a snackbar with the given message.
+   * @param message - The message to display in the snackbar.
+   */
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Close', {
       duration: 3000, // Duration in milliseconds after which the snackbar will auto-dismiss.
