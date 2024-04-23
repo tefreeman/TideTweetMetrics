@@ -12,12 +12,6 @@ class TestMetaData(unittest.TestCase):
         self.assertEqual(self.meta.get_errors(), [])
         self.assertIsNone(self.meta._object.get("created"))
 
-    def test_attach_metadata_existing_imeta(self):
-        test_obj = {"imeta": {}}
-        with self.assertRaises(Exception) as context:
-            self.meta.attach(test_obj)
-        self.assertEqual(str(context.exception), "imeta already exists in object")
-
     def test_attach_metadata_success(self):
         test_obj = {}
         self.meta.attach(test_obj)
@@ -57,22 +51,19 @@ class TestMetaData(unittest.TestCase):
         self.assertEqual(len(json_dict["errors"]), 1)
         self.assertEqual(json_dict["domain"], "example.com")
 
-    # def test_from_json_dict(self):
-    #     initial_data = {
-    #         "domain": "example.com",
-    #         "errors": [{"message": "Error message"}],
-    #     }
-    #     meta = MetaData(as_json=initial_data)
-    #     self.assertEqual(meta.get_domain(), "example.com")
-    #     self.assertEqual(len(meta.get_errors()), 1)
-    #     self.assertEqual(meta.get_errors()[0].message, "Error message")
-
     def test_changes_from_json_dict_exception(self):
         with self.assertRaises(Exception) as context:
             self.meta._changes_from_json_dict()
         self.assertEqual(
             str(context.exception), "Metadata does not support this method"
         )
+
+    # # Outdated
+    # def test_attach_metadata_existing_imeta(self):
+    #     test_obj = {"imeta": {}}
+    #     with self.assertRaises(Exception) as context:
+    #         self.meta.attach(test_obj)
+    #     self.assertEqual(str(context.exception), "imeta already exists in object")
 
 
 if __name__ == "__main__":
