@@ -3,6 +3,8 @@ version: '3.8'
 services:
   metric_system:
     build: .
+    ports:
+      - "80:80"
     environment:
       DB_HOST: mongodb
       DB_PORT: 27017
