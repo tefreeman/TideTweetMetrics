@@ -104,7 +104,23 @@ The following user acceptance tests verify the main system functions.
 - Click *Confirm*.
 
 ## Update Metrics
-- Visit Dashboard page.
-- Click *Update Metrics*.
+- Visit Dashboard page (as admin).
+- On the sidebar, click My Profile.
+- Scroll down and click Update under Metric Update.
 - Verify:
-   The metrics are updated.
+   The metrics are updated and loaded to frontend (after some time)
+
+## Remove an Approved Account
+- Visit Dashboard page (as admin)
+- On the sidebar, click My Profile.
+- Scroll down and remove an approved account.
+- Verify:
+  - The account is deleted (by attempting to login)
+
+## Email Reports
+- Visit Dashboard page.
+- On the sidebar, click My Profile.
+- Check the box beside Opt In for E-Mail Reports
+- Trigger an email by updating the dashboard
+- Verify:
+  - The email address on file receives an email from tidetweetmetrics@gmail.com
