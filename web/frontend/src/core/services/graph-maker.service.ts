@@ -34,21 +34,21 @@ export class GraphMakerService {
    * @returns The structure of the graph data including data dimension, owner count, and data points.
    */
   getGraphStructure(graphData: T_DisplayableGraph) {
-    let dataDimension;
+    let dataPoints;
     if (graphData.valuesNested && Array.isArray(graphData.valuesNested[0])) {
       // If valuesNested exists and its first element is an array, calculate based on it
-      dataDimension = graphData.valuesNested[0].length;
+      dataPoints = graphData.valuesNested[0].length;
     } else if (Array.isArray(graphData.values[0])) {
       // If the first case isn't true but the first element of values is an array, calculate based on it
-      dataDimension = graphData.values[0].length;
+      dataPoints = graphData.values[0].length;
     } else {
       // Fall back to 1 if neither of the above cases are true
-      dataDimension = 1;
+      dataPoints = 1;
     }
     const ownerCount = graphData.owners.length;
-    const dataPoints = graphData.values.length;
+    const dataDimension = graphData.values.length;
 
-    return { dataDimension, ownerCount, dataPoints };
+    return { dataPoints, ownerCount, dataDimension };
   }
 
   createChart(graphData: T_DisplayableGraph): AgChartOptions {
