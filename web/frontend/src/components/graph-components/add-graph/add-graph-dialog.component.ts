@@ -179,7 +179,7 @@ export class AddGraphDialogComponent implements OnInit {
   ) {
     // Retrieve the current value
     const currentReq = this.graphDisplayableReqSubject.getValue();
-
+    console.log('Current req: ', currentReq, ' MODS: ', modifications);
     // Directly updating the ownersParams within the current request, aiming to trigger a change
     if (modifications.ownersParams?.owners) {
       currentReq.ownersParams = {
