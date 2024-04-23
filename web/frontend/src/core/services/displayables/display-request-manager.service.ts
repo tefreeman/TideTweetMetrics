@@ -190,40 +190,54 @@ export class DisplayRequestManagerService {
     index: number
   ): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
-      if (grid && grid.displayables.length > index) {
-        // Check if the displayable at the specified index has a groupId
-        const groupId = grid.displayables[index].groupId;
-        if (groupId) {
-          // If groupId exists, remove all displayables with this groupId
-          this.removeDisplayablesByGroupId(page, name, groupId);
-        } else {
-          // Otherwise, just remove the single displayable at the index
-          grid.displayables.splice(index, 1);
-          this._dashboardPageManagerService.updateGrid$(page, name, grid);
-        }
+      if (!grid) {
+        console.error('Grid is not defined!'); // Debug: Check if grid is defined
+        return;
+      }
+  
+      if (grid.displayables.length <= index) {
+        console.error('Index out of bounds!'); // Debug: Check array bounds
+        return;
+      }
+  
+      const displayable = grid.displayables[index];
+      if (!displayable) {
+        console.error('No displayable at this index!'); // Debug: Check if displayable exists
+        return;
+      }
+  
+      const groupId = displayable.groupId;
+      if (groupId) {
+        console.log(`Removing by groupId ${groupId} instead of index ${index}.`); // Debug: Log group removal
+        this.removeDisplayablesByGroupId(page, name, groupId);
+      } else {
+        console.log(`Removing single displayable at index ${index}.`); // Debug: Log single removal
+        grid.displayables.splice(index, 1);
+        this._dashboardPageManagerService.updateGrid$(page, name, grid);
       }
     });
   }
-
-  /**
- * Removes all displayable requests with a specified groupId across all cards in a given page.
- * @param page - The page name.
- * @param groupId - The groupId to match for removal.
- */
+  
   removeDisplayablesByGroupId(page: string, gridName: string, groupId: string): void {
     this._dashboardPageManagerService.getGrid$(page, gridName).subscribe((grid) => {
-      if (grid) {
-        // Filter out displayables that match the groupId
-        const filteredDisplayables = grid.displayables.filter(displayable => displayable.groupId !== groupId);
-        console.log("filtering on:", groupId, 'Filtered displayables:', filteredDisplayables, 'Original displayables:', grid.displayables);
-        // Only update the grid if there are changes in the displayables array
-        if (grid.displayables.length !== filteredDisplayables.length) {
-          grid.displayables = filteredDisplayables;
-          this._dashboardPageManagerService.updateGrid$(page, gridName, grid);
-        }
+      if (!grid) {
+        console.error('Grid is not defined!'); // Debug: Confirm grid existence
+        return;
+      }
+  
+      const originalLength = grid.displayables.length;
+      grid.displayables = grid.displayables.filter(displayable => displayable.groupId !== groupId);
+      
+      console.log(`Filtered from ${originalLength} to ${grid.displayables.length} by removing groupId ${groupId}.`); // Debug: Log filtering effect
+  
+      if (originalLength !== grid.displayables.length) {
+        this._dashboardPageManagerService.updateGrid$(page, gridName, grid);
+      } else {
+        console.log('No displayables removed because no matching groupId found.'); // Debug: Log no removal case
       }
     });
   }
+  
   /**
    * Edits a displayable request.
    * @param page - The page name.

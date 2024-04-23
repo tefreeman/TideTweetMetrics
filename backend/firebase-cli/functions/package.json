@@ -20,7 +20,8 @@
     "firebase-functions": "^4.9.0",
     "formidable": "^3.5.1",
     "node-fetch": "^3.3.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/busboy": "^1.5.3",
