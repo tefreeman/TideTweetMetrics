@@ -109,15 +109,21 @@ export interface I_GraphBarData {
   /**
    * The parameters for the owners.
    */
+
+  metricNames?: Array<string>;
+
   ownersParams: I_OwnersParams;
   /**
    * The values of the metric.
    */
   values: Array<T_MetricValue>;
+  valuesNested?: T_MetricValue[][];
   /**
    * The owners of the metric.
    */
   owners: Array<string>;
+
+  groupId?: string;
 }
 
 /**
@@ -135,15 +141,21 @@ export interface I_GraphLineData {
   /**
    * The parameters for the owners.
    */
+  metricNames?: Array<string>;
   ownersParams: I_OwnersParams;
   /**
    * The values of the metric.
    */
   values: Array<T_MetricValue>;
+  valuesNested?: T_MetricValue[][];
   /**
    * The owners of the metric.
    */
   owners: Array<string>;
+  /**
+   * The Group ID for grouping metric Requests
+   */
+  groupId?: string;
 }
 
 /**
