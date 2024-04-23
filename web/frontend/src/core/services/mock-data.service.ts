@@ -18,13 +18,14 @@ let test_displayed_data3: I_DisplayableRequest = {
   type: 'stat-comp',
 };
 let test_displayed_data4: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean-weekly',
+  stat_name: 'tweet_likes-mean',
   ownersParams: {
     type: 'specific',
     count: 2,
     owners: ['alabama_cs', 'azengineering'],
   },
-  type: 'graph-line',
+  groupId: 'test',
+  type: 'auto',
 };
 
 let test_displayed_data5: I_DisplayableRequest = {
@@ -34,7 +35,8 @@ let test_displayed_data5: I_DisplayableRequest = {
     count: 2,
     owners: ['alabama_cs', 'azengineering'],
   },
-  type: 'graph-bar',
+  groupId: 'test',
+  type: 'auto',
 };
 
 let test_displayed_data12: I_DisplayableRequest = {
@@ -46,7 +48,7 @@ let test_displayed_data12: I_DisplayableRequest = {
 let test_displayed_data13: I_DisplayableRequest = {
   stat_name: 'tweet_likes-mean',
   ownersParams: { type: 'top', owners: ['alabama_cs'], count: 20 },
-  type: 'graph-bar',
+  type: 'auto',
 };
 
 let test_displayed_data14: I_DisplayableRequest = {

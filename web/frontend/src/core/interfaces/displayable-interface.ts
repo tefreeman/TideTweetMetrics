@@ -18,12 +18,15 @@ export type T_DisplayableTypeString =
   | 'stat-comparison'
   | 'stat-comp'
   | 'graph-line'
-  | 'graph-bar'
-  | 'graph-pie'
   | 'display'
   | 'auto'
   | 'edit-mode'
-  | 'auto-stat';
+  | 'auto-stat'
+  | 'small-graph-bar'
+  | 'large-graph-bar'
+  | 'large-graph-bar-grouped'
+  | 'small-graph-bar-grouped'
+  | 'graph-scatter';
 
 /**
 

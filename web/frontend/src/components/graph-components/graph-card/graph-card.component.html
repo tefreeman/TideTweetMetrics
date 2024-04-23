@@ -8,11 +8,7 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <ng-container class="card" *ngIf="isLineGraph(displayableData)">
-    <app-line-chart [displayableData]="displayableData"></app-line-chart>
-  </ng-container>
-
-  <ng-container *ngIf="isBarGraph(displayableData)">
-    <app-bar-chart [displayableData]="displayableData"></app-bar-chart>
+  <ng-container>
+    <app-generic-graph [displayableData]="displayableData"></app-generic-graph>
   </ng-container>
 </mat-card>
