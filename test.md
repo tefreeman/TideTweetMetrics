@@ -54,7 +54,7 @@ The following user acceptance tests verify the main system functions.
 - Verify:
   - Login attempt was successful.
 
-## Card (and Card Grid) Creation
+## Data Card (and Card Grid) Creation
 - Visit Dashboard page.
 - Click *Add my first grid!*. Add a Card Grid.
 - Click *Card Edit*.
@@ -63,7 +63,7 @@ The following user acceptance tests verify the main system functions.
   - The card appears on the Dashboard.
 - Repeat process as desired.
 
-## Card (and Card Grid) Deletion
+## Data Card (and Card Grid) Deletion
 - After previous steps...
 - Click *Card Edit*.
 - Delete Cards as desired by clicking the red 'X' button in the top right corner of a Card.
@@ -76,15 +76,25 @@ The following user acceptance tests verify the main system functions.
   - The grid is deleted.
 - Click *Confirm*.
 
-## Graph Creation
+## Graph Card (and Graph Grid) Creation
 - Visit the Dashboard page.
+- Click *Grid Edit* and *Add Grid*.
+- Create a Graph Grid.
+- Click *Card Edit* and click the '+' button.
+- Select the metric you would like to examine. Add and delete owners as desired. Click *Add*.
+
+## Graph Card (and Graph Grid) Deletion
+- After previous steps...
 - Click *Card Edit*.
-- Create a graph.
+- Delete Graphs as desired by clicking the red 'X' button in the top right corner of a Graph Card.
 - Verify:
-  - The graph appears on Dashboard.
-- Delete the graph
+  - The Graph is deleted from the Dashboard.
+- Click *Confirm* to exit Card Editing mode.
+- Click *Grid Edit*.
+- Click the trash icon.
 - Verify:
-  - The graph is deleted.
+  - The grid is deleted.
+- Click *Confirm*.
 
 ## Update Metrics
 - Visit Dashboard page.
