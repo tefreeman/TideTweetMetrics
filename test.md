@@ -32,7 +32,6 @@ The most high-risk features are arguably those upon which the others are built--
   - Tests:
     - `test_gen_likes_per_follower.py`
     - `test_gen_pearson_correlation_stat_generator`
-    - `test_gen_standard_profile_stat_gen.py`
     - `test_gen_standard_profile_stat_over_time_weekly.py`
     - `test_gen_standard_profile_stat_over_time.py`
     - `test_metric_word_frequency.py`
