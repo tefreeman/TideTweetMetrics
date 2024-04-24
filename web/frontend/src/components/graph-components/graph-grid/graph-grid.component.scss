@@ -40,6 +40,12 @@
   justify-content: left;
 }
 
+.grid-delete-hover {
+  /* Add your desired styles for when the grid is being hovered over for deletion */
+  /* For example: */
+  box-shadow: 0 0 16px rgba(255, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease;
+}
 .dataCard {
   width: 100%;
   position: relative;

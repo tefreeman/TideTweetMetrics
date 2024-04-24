@@ -134,6 +134,10 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$: Subject<void>;
 
   /**
+   * The boolean representing if the delete button is hovered.
+   */
+  public isDeleteHovered = false;
+  /**
    * The subscription used to get displayables.
    */
   private subscription: any;
@@ -314,5 +318,8 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteGrid() {
     this.dashboardPageManagerService.deleteGrid$(this.page, this.name);
+  }
+  onDeleteHover(isHovered: boolean) {
+    this.isDeleteHovered = isHovered;
   }
 }

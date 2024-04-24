@@ -16,6 +16,7 @@
         cdkDrag
         [displayableData]="displayableData"
         [editModeHook]="true"
+        [class.grid-delete-hover]="isDeleteHovered"
         (deleteEvent)="deleteCard(i)"
       ></app-stat-card>
     </ng-container>
@@ -40,7 +41,9 @@
   <mat-card
     matTooltip="Double click to delete card grid"
     [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
-    (click)="deleteGrid()"
+    (mouseenter)="onDeleteHover(true)"
+    (mouseleave)="onDeleteHover(false)"
+    (dblclick)="deleteGrid()"
     *ngIf="gridEditMode | async"
   >
     <div class="icon-container">
