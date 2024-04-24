@@ -83,6 +83,7 @@ export class DisplayRequestManagerService {
       .getGrid$(page, name)
       .pipe(first())
       .subscribe((grid) => {
+        console.log('page', page, 'name', name, 'grid', grid);
         if (grid && grid.type === type) {
           if (!grid.displayables) {
             grid.displayables = [];

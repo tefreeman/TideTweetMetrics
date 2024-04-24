@@ -100,13 +100,13 @@ export class DisplayableProcessorService {
     if (request.type === 'auto-graph') {
       if (
         metricCount === 1 &&
-        ownerCount > 1 &&
+        ownerCount >= 1 &&
         MetricValTypeEnum === MetricValType.Number
       ) {
         return this.toBarGraph(data);
       } else if (
         metricCount > 1 &&
-        ownerCount > 1 &&
+        ownerCount >= 1 &&
         MetricValTypeEnum === MetricValType.Number
       ) {
         return this.toBarGroupedGraph(data);

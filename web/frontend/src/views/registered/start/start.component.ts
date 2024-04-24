@@ -42,7 +42,7 @@ export class StartComponent {
       console.log(result);
       if (result) {
         if (typeof result['name'] === 'string') {
-          if (result['type'] === 'graph' || result['type'] === 'stat') {
+          if (result['type'] === 'graph' || result['type'] === 'metric') {
             this.dashboardPageManagerService.addNewPage$('home');
             this.dashboardPageManagerService.createAndAddGridToEnd$(
               'home',
