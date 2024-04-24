@@ -96,6 +96,11 @@ export class MetricSearchComponent implements OnInit {
   metricCtrl = new FormControl('');
 
   /**
+   * Map of private keys to transformed keys.
+   */
+  private keyMap: { [transformedKey: string]: string } = {};
+
+  /**
    * Reference to the metric input element.
    */
   @ViewChild('metricInput') metricInput!: ElementRef<HTMLInputElement>;
@@ -147,7 +152,9 @@ export class MetricSearchComponent implements OnInit {
 
       if (matchingMetric && !this.selectedMetrics.includes(matchingMetric)) {
         this.selectedMetrics.push(matchingMetric);
-        this.metricsChanged.emit(this.selectedMetrics);
+        this.metricsChanged.emit(
+          this.selectedMetrics.map((metric) => this.keyMap[metric])
+        );
       }
     }
 
@@ -164,7 +171,9 @@ export class MetricSearchComponent implements OnInit {
 
     if (index >= 0) {
       this.selectedMetrics.splice(index, 1);
-      this.metricsChanged.emit(this.selectedMetrics);
+      this.metricsChanged.emit(
+        this.selectedMetrics.map((metric) => this.keyMap[metric])
+      );
       this.announcer.announce(`Removed ${metric}`);
     }
   }
@@ -182,7 +191,9 @@ export class MetricSearchComponent implements OnInit {
 
       if (matchingMetric && !this.selectedMetrics.includes(matchingMetric)) {
         this.selectedMetrics.push(matchingMetric);
-        this.metricsChanged.emit(this.selectedMetrics);
+        this.metricsChanged.emit(
+          this.selectedMetrics.map((metric) => this.keyMap[metric])
+        );
       }
     }
     this.metricInput.nativeElement.value = '';
@@ -196,13 +207,17 @@ export class MetricSearchComponent implements OnInit {
    */
   private groupMetrics(metrics: string[]): MetricGroup[] {
     const groups: { [key: string]: string[] } = {};
+
     metrics.forEach((metric) => {
       const keys = this.keyTranslatorService.keyToFullStringParts(metric);
       const key = keys[0];
+      const transformedKey = keys.join(' ');
+
       if (!groups[key]) {
         groups[key] = [];
       }
-      groups[key].push(keys.join(' '));
+      groups[key].push(transformedKey);
+      this.keyMap[transformedKey] = metric;
     });
 
     return Object.entries(groups).map(([first, names]) => ({ first, names }));

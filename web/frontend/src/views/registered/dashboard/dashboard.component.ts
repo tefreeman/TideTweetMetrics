@@ -16,7 +16,6 @@ import {
   map,
   switchMap,
 } from 'rxjs';
-import { BarChartComponent } from '../../../components/graph-components/bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../../../components/graph-components/graph-card/graph-card.component';
 import { GraphGridComponent } from '../../../components/graph-components/graph-grid/graph-grid.component';
 import { CardGridComponent } from '../../../components/stat-components/card-grid/card-grid.component';
@@ -39,7 +38,6 @@ import { MetricService } from '../../../core/services/metrics/metric.service';
   imports: [
     NgFor,
     StatCardComponent,
-    BarChartComponent,
     AsyncPipe,
     MaterialModule,
     GraphCardComponent,
@@ -98,7 +96,7 @@ export class DashboardComponent implements OnInit {
   /**
    * Initializes the component.
    */
-  ngOnInit() { }
+  ngOnInit() {}
 
   /**
    * Checks if the grids are empty.

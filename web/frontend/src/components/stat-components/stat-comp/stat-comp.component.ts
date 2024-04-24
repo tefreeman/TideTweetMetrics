@@ -1,8 +1,6 @@
-import { NgIf } from '@angular/common';
+import { CommonModule, DecimalPipe, NgIf } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
-
-import { CommonModule, DecimalPipe } from '@angular/common';
-import { I_StatCompData } from '../../../core/interfaces/displayable-data-interface';
+import { I_CompMetricCard } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 @Component({
@@ -19,7 +17,7 @@ export class StatCompComponent {
   /**
    * The data to be displayed by the component.
    */
-  @Input({ required: true }) displayableData!: I_StatCompData;
+  @Input({ required: true }) displayableData!: I_CompMetricCard;
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
 
@@ -29,7 +27,7 @@ export class StatCompComponent {
   statTwo: number = 0;
   ownerTwo: string = '';
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Initializes the component.

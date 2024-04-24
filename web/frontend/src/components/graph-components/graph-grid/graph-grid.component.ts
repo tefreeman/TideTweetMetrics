@@ -25,8 +25,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import {
-  T_DisplayableDataType,
-  T_DisplayableGraph,
+  I_BaseGraphCard,
   T_GridType,
 } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
@@ -37,7 +36,6 @@ import { EditModeService } from '../../../core/services/edit-mode.service';
 import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
 import { AddGraphDialogComponent } from '../add-graph/add-graph-dialog.component';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../graph-card/graph-card.component';
 
 /**
@@ -49,7 +47,6 @@ import { GraphCardComponent } from '../graph-card/graph-card.component';
   imports: [
     NgFor,
     NgStyle,
-    BarChartComponent,
     AsyncPipe,
     MaterialModule,
     GraphCardComponent,
@@ -126,7 +123,7 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Represents the MoveableGridTilesService used for managing the grid tiles.
    */
-  public dataGrid: MoveableGridTilesService<T_DisplayableGraph>;
+  public dataGrid: MoveableGridTilesService<I_BaseGraphCard>;
 
   /**
    * Represents the observable for the edit mode.
@@ -178,7 +175,7 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((data) => {
         this.dataGrid.dataArr = [];
 
-        this.dataGrid.dataArr = [...data] as T_DisplayableGraph[];
+        this.dataGrid.dataArr = [...data] as I_BaseGraphCard[];
         console.log('DATAGRID', this.page, this.name, this.type);
       });
 
@@ -249,35 +246,6 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Checks if the displayable data is a card.
-   * @param displayableData - The displayable data.
-   * @returns True if the displayable data is a card, false otherwise.
-   */
-  isCard(displayableData: T_DisplayableDataType): boolean {
-    return (
-      displayableData.type === 'stat-value' ||
-      displayableData.type === 'stat-trend' ||
-      displayableData.type === 'stat-comp'
-    );
-  }
-
-  /**
-   * Checks if the displayable data is a graph.
-   * @param displayableData - The displayable data.
-   * @returns True if the displayable data is a graph, false otherwise.
-   */
-  isGraph(displayableData: T_DisplayableDataType): boolean {
-    return (
-      displayableData.type === 'small-graph-bar' ||
-      displayableData.type === 'large-graph-bar' ||
-      displayableData.type === 'large-graph-bar-grouped' ||
-      displayableData.type === 'small-graph-bar-grouped' ||
-      displayableData.type === 'graph-line' ||
-      displayableData.type === 'graph-scatter'
-    );
-  }
-
-  /**
    * Gets the container style for the grid.
    * @returns The container style object.
    */
@@ -307,9 +275,6 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
       const result = dataIn[0] as any;
       console.log('AFTER CLOSE RESULT', result);
       if (result) {
-        // Assume result could be an object that contains `metric_names` among other properties
-        // First, handle adding displayables as you initially di
-        // Now, if metric_names exists and has items, process them
         const groupId = Timestamp.now().toMillis().toString();
         if (result.metric_names && result.metric_names.length > 0) {
           const newObjects = result.metric_names.map((metricName: any) => {
@@ -328,9 +293,6 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
             return newObj;
           });
 
-          // At this point, newObjects will contain the array of newly created objects
-          // based on each metric_name. Here you might want to handle these new objects,
-          // for example, logging them or further processing.
           this.displayRequestManagerService.addDisplayables(
             newObjects,
             this.type,

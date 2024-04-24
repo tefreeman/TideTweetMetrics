@@ -1,12 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
-  T_DisplayableDataType,
-  T_DisplayableGraph,
+  T_BaseCard,
   T_GridType,
 } from '../../interfaces/displayable-data-interface';
 import { I_DisplayableRequest } from '../../interfaces/displayable-interface';
-import { T_MetricValue } from '../../interfaces/metrics-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 import { MetricContainer } from '../metrics/metric-container';
 import { MetricService } from '../metrics/metric.service';
@@ -35,7 +33,7 @@ export class DisplayableProviderService {
     page: string,
     name: string,
     type: T_GridType
-  ): Observable<T_DisplayableDataType[]> {
+  ): Observable<T_BaseCard[]> {
     return combineLatest([
       this._metricsService.metricContainer$,
       this._displayReqService.getRequestsByName(page, name, type),
@@ -43,8 +41,13 @@ export class DisplayableProviderService {
       tap(([metricContainer, requests]) =>
         console.log('Processing requests', requests, metricContainer)
       ),
-      switchMap(([metricContainer, requests]) =>
-        of(this.processRequests(metricContainer, requests))
+      switchMap(
+        ([metricContainer, requests]) =>
+          of(
+            this.processRequests(metricContainer, requests, type).filter(
+              (x) => x !== null
+            )
+          ) as Observable<T_BaseCard[]>
       )
     );
   }
@@ -71,16 +74,23 @@ export class DisplayableProviderService {
     );
   }
 
-  public processRequestsWithLatestMetricContainer(
-    requests: I_DisplayableRequest[]
-  ): Observable<T_DisplayableDataType[]> {
+  public processRequestsWithMetrics(
+    requests: I_DisplayableRequest[],
+    type: T_GridType
+  ): Observable<T_BaseCard[]> {
     // Fetch the latest metricContainer
-    console.log('PROCESSING LATESTEST METRIC CONTAINER: ', requests);
     return this._metricsService.metricContainer$.pipe(
-      switchMap((metricContainer) =>
-        of(this.processRequests(metricContainer, requests))
-      )
-    );
+      switchMap((metricContainer) => {
+        const results = this.processRequests(metricContainer, requests, type);
+        const filteredResults: T_BaseCard[] = [];
+        for (let i = 0; i < results.length; i++) {
+          if (results[i] !== null)
+            if (Object.keys(results[i]!.data).length !== 0)
+              filteredResults.push(results[i] as T_BaseCard);
+        }
+        return of(filteredResults);
+      })
+    ) as Observable<T_BaseCard[]>;
   }
 
   /**
@@ -91,75 +101,23 @@ export class DisplayableProviderService {
    */
   public processRequests(
     metricContainer: MetricContainer,
-    requests: I_DisplayableRequest[]
-  ): T_DisplayableDataType[] {
-    const groupedResults: { [key: string]: T_DisplayableDataType[] } = {};
-    const individualResults: T_DisplayableDataType[] = [];
-
+    requests: I_DisplayableRequest[],
+    type: T_GridType
+  ): (T_BaseCard | null)[] {
+    // Process each request
+    const results: Array<T_BaseCard | null> = [];
     requests.forEach((request) => {
-      const output = metricContainer.getMetricData(request);
-      const result = this._graphService.convert(output);
-
-      if (result) {
-        if (request.groupId) {
-          if (!groupedResults[request.groupId]) {
-            groupedResults[request.groupId] = [];
-          }
-          groupedResults[request.groupId].push(result);
-        } else {
-          individualResults.push(result);
-        }
+      if (request.metricNames.length === 0) {
+        results.push(null);
+      } else {
+        const result = this._graphService.convert(
+          metricContainer.getMetricData(request),
+          request
+        );
+        results.push(result);
       }
     });
-
+    return results;
     // Now process grouped items
-    const mergedGroupResults = this.mergeGroupedResults(groupedResults);
-
-    return [...individualResults, ...mergedGroupResults];
-  }
-
-  private mergeGroupedResults(groupedResults: { [key: string]: T_DisplayableDataType[] }): T_DisplayableDataType[] {
-    const mergedResults: T_DisplayableDataType[] = [];
-  
-    Object.values(groupedResults).forEach((group) => {
-      if (group.length > 0 && 'owners' in group[0]) {
-        const base = {...group[0]} as T_DisplayableGraph; // Deep copy for safe modifications
-        base.metricNames = []; // Initialize empty array to collect all metricNames
-  
-        const ownerValueMap: { [owner: string]: T_MetricValue[] } = {};
-  
-        for (let i = 0; i < group.length; i++) {
-          const currentItem = group[i] as T_DisplayableGraph;
-          if ('owners' in currentItem) {
-            currentItem.owners.forEach((owner, index) => {
-              if (!(owner in ownerValueMap)) {
-                ownerValueMap[owner] = [];
-              }
-              ownerValueMap[owner].push(currentItem.values[index]);
-            });
-            base.metricNames.push(currentItem.metricName); // Always push current metricName
-          }
-        }
-  
-        const lengths = Object.values(ownerValueMap).map(values => values.length);
-        const medianLength = lengths.sort((a, b) => a - b)[Math.floor(lengths.length / 2)];
-  
-        base.owners = Object.keys(ownerValueMap);
-        base.valuesNested = base.owners.map(owner => {
-          const values = ownerValueMap[owner];
-          if (values.length === medianLength) {
-            return values;
-          } else {
-            console.warn(`Skipping owner '${owner}' due to inconsistent value length.`);
-            return [];
-          }
-        });
-  
-        mergedResults.push(base);
-      }
-    });
-  
-    console.log('MERGED IS OVER: ', mergedResults);
-    return mergedResults;
   }
 }

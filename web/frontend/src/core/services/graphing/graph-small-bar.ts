@@ -1,5 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
+import { I_BarGraphCard } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -15,27 +15,8 @@ export class GraphSmallBar extends BaseGraph {
    * @param data - The data used to generate the graph.
    * @returns The graph options.
    */
-  public getGraph(data: I_GraphBarData): AgChartOptions {
+  public getGraph(data: I_BarGraphCard): AgChartOptions {
     return this.getOptions(data);
-  }
-
-  /**
-   * Converts the data into the format required by the graph.
-   * @param data - The data to be converted.
-   * @returns The converted data.
-   */
-  getData(data: I_GraphBarData): any[] {
-    const chartData: any[] = [];
-    console.log('DATA: ', data);
-
-    for (let i = 0; i < data.owners.length; i++) {
-      const dataOut: any = {};
-      dataOut['owner'] = data.owners[i];
-      dataOut['1'] = data.values[i];
-      chartData.push(dataOut);
-    }
-
-    return chartData;
   }
 
   /**
@@ -43,12 +24,13 @@ export class GraphSmallBar extends BaseGraph {
    * @param data - The data used to generate the bar series.
    * @returns The bar series.
    */
-  getBarSeries(data: I_GraphBarData): any[] {
+  getBarSeries(data: I_BarGraphCard): any[] {
     return [
       {
         type: 'bar',
         xKey: 'owner',
-        yKey: '1',
+        yKey: 'metricValue',
+        yName: 'value',
         cornerRadius: 15,
         /*formatter: ({ datum, yKey }: any) => ({
           fillOpacity: getOpacity(datum[yKey], yKey, 0.8, 1, getData()),
@@ -71,17 +53,17 @@ export class GraphSmallBar extends BaseGraph {
 
   /**
    * Generates the graph options for the small bar graph.
-   * @param data - The data used to generate the graph options.
+   * @param barCard - The data used to generate the graph options.
    * @returns The graph options.
    */
-  private getOptions(data: I_GraphBarData): AgChartOptions {
+  private getOptions(barCard: I_BarGraphCard): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
-      data: this.getData(data),
+      data: barCard.data,
       title: {
-        text: data.metricName,
+        text: barCard.metricNames[0],
       },
-      series: this.getBarSeries(data),
+      series: this.getBarSeries(barCard),
       axes: [
         {
           type: 'category',

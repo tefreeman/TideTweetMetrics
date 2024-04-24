@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  I_StatCompData,
-  I_StatTrendData,
-  I_StatValueData,
-  T_DisplayableDataType,
+  I_BaseMetricCard,
+  I_BasicMetricCard,
+  I_CompMetricCard,
+  I_TrendMetricCard,
 } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { EditModeService } from '../../../core/services/edit-mode.service';
@@ -51,7 +51,7 @@ export class StatCardComponent implements OnInit {
   /**
    * Represents the displayable data to be shown in the stat card.
    */
-  @Input({ required: true }) displayableData!: T_DisplayableDataType;
+  @Input({ required: true }) displayableData!: I_BaseMetricCard;
 
   /**
    * Represents the hook for enabling or disabling the edit mode.
@@ -78,20 +78,20 @@ export class StatCardComponent implements OnInit {
    */
   applyClass = true;
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Initializes the component.
    */
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   /**
    * Checks if the given data is of type I_StatValueData.
    * @param data - The data to be checked.
    * @returns True if the data is of type I_StatValueData, false otherwise.
    */
-  isStatValue(data: T_DisplayableDataType): data is I_StatValueData {
-    return data.type === 'stat-value';
+  isStatValue(data: I_BaseMetricCard): data is I_BasicMetricCard {
+    return data.type === 'metric-value';
   }
 
   /**
@@ -99,8 +99,8 @@ export class StatCardComponent implements OnInit {
    * @param data - The data to be checked.
    * @returns True if the data is of type I_StatTrendData, false otherwise.
    */
-  isStatTrend(data: T_DisplayableDataType): data is I_StatTrendData {
-    return data.type === 'stat-trend';
+  isStatTrend(data: I_BaseMetricCard): data is I_TrendMetricCard {
+    return data.type === 'metric-trend';
   }
 
   /**
@@ -108,8 +108,8 @@ export class StatCardComponent implements OnInit {
    * @param data - The data to be checked.
    * @returns True if the data is of type I_StatCompData, false otherwise.
    */
-  isStatComp(data: T_DisplayableDataType): data is I_StatCompData {
-    return data.type === 'stat-comp';
+  isStatComp(data: I_BaseMetricCard): data is I_CompMetricCard {
+    return data.type === 'metric-comp';
   }
 
   /**

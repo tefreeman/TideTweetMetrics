@@ -8,7 +8,7 @@ import {
 } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { I_StatValueData } from '../../../core/interfaces/displayable-data-interface';
+import { I_BasicMetricCard } from '../../../core/interfaces/displayable-data-interface';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 
 /**
@@ -35,7 +35,7 @@ export class StatValueComponent implements OnInit {
   /**
    * The input property that represents the displayable data for the statistic value.
    */
-  @Input({ required: true }) displayableData!: I_StatValueData;
+  @Input({ required: true }) displayableData!: I_BasicMetricCard;
 
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
@@ -55,7 +55,7 @@ export class StatValueComponent implements OnInit {
    */
   ownerOne: string = '';
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Lifecycle hook that is called after data-bound properties of a directive are initialized.

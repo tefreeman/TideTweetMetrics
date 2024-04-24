@@ -1,5 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
+import { I_BarGraphCard } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -13,42 +13,25 @@ export class GraphLargeBar extends BaseGraph {
 
   /**
    * Gets the graph options for the large bar graph.
-   * @param {I_GraphBarData} data - The data for the graph.
+   * @param {I_BarGraphCard} barCard - The data for the graph.
    * @returns {AgChartOptions} The graph options.
    */
-  public getGraph(data: I_GraphBarData): AgChartOptions {
-    return this.getOptions(data);
-  }
-
-  /**
-   * Gets the chart data for the large bar graph.
-   * @param {I_GraphBarData} data - The data for the graph.
-   * @returns {any[]} The chart data.
-   */
-  getData(data: I_GraphBarData): any[] {
-    const chartData: any[] = [];
-
-    for (let i = 0; i < data.owners.length; i++) {
-      const dataOut: any = {};
-      dataOut['owner'] = data.owners[i];
-      dataOut['1'] = data.values[i];
-      chartData.push(dataOut);
-    }
-
-    return chartData;
+  public getGraph(barCard: I_BarGraphCard): AgChartOptions {
+    return this.getOptions(barCard);
   }
 
   /**
    * Gets the bar series for the large bar graph.
-   * @param {I_GraphBarData} data - The data for the graph.
+   * @param {I_BarGraphCard} bardCard - The data for the graph.
    * @returns {any[]} The bar series.
    */
-  getBarSeries(data: I_GraphBarData): any[] {
+  getBarSeries(bardCard: I_BarGraphCard): any[] {
     return [
       {
         type: 'bar',
         xKey: 'owner',
-        yKey: '1',
+        yKey: 'metricValue',
+        YName: 'value',
         cornerRadius: 15,
         /*formatter: ({ datum, yKey }: any) => ({
           fillOpacity: getOpacity(datum[yKey], yKey, 0.8, 1, getData()),
@@ -60,7 +43,7 @@ export class GraphLargeBar extends BaseGraph {
             yKey,
             0.8,
             1,
-            this.getData(data)
+            bardCard.data
           ),
         }),
         tooltip: {
@@ -74,18 +57,18 @@ export class GraphLargeBar extends BaseGraph {
 
   /**
    * Gets the options for the large bar graph.
-   * @param {I_GraphBarData} data - The data for the graph.
+   * @param {I_BarGraphCard} barCard - The data for the graph.
    * @returns {AgChartOptions} The graph options.
    */
-  private getOptions(data: I_GraphBarData): AgChartOptions {
+  private getOptions(barCard: I_BarGraphCard): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
 
-      data: this.getData(data),
+      data: barCard.data,
       title: {
-        text: "",
+        text: '',
       },
-      series: this.getBarSeries(data),
+      series: this.getBarSeries(barCard),
       axes: [
         {
           type: 'category',

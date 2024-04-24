@@ -1,8 +1,9 @@
+import { T_GridType } from './displayable-data-interface';
 import { I_DisplayableRequest } from './displayable-interface';
 
 export interface I_GridRequestEntry {
   displayables: I_DisplayableRequest[];
-  type: 'graph' | 'stat';
+  type: T_GridType;
   order: number;
 }
 

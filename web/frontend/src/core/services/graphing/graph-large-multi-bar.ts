@@ -1,5 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { I_GraphBarData } from '../../interfaces/displayable-data-interface';
+import { I_BarGroupedGraphCard } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -11,70 +11,28 @@ export class GraphLargeMutliBar extends BaseGraph {
   }
 
   /**
-   * Checks if the graph data is grouped.
-   * @param data - The graph data.
-   * @returns True if the data is grouped, false otherwise.
-   */
-  private isGrouped(data: I_GraphBarData): boolean {
-    if (data.groupId) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Gets the graph options.
-   * @param data - The graph data.
+   * @param barGroupedCard - The graph data.
    * @returns The graph options.
    */
-  public getGraph(data: I_GraphBarData): AgChartOptions {
-    return this.getOptions(data);
-  }
-
-  /**
-   * Gets the chart data.
-   * @param data - The graph data.
-   * @returns The chart data.
-   */
-  getData(data: I_GraphBarData): any[] {
-    const chartData: any[] = [];
-    console.log('DATA: ', data);
-
-    for (let i = 0; i < data.owners.length; i++) {
-      const dataOut: any = {};
-      dataOut['owner'] = data.owners[i];
-
-      if (data.valuesNested) {
-        for (let j = 0; j < data.metricNames!.length; j++) {
-          const metricName = data.metricNames![j];
-          const value = data.valuesNested[i][j];
-          dataOut[metricName] = value;
-        }
-      }
-
-      chartData.push(dataOut);
-    }
-
-    return chartData;
+  public getGraph(barGroupedCard: I_BarGroupedGraphCard): AgChartOptions {
+    return this.getOptions(barGroupedCard);
   }
 
   /**
    * Gets the series for the graph.
-   * @param data - The graph data.
+   * @param barGroupedCard - The graph data.
    * @returns The series for the graph.
    */
-  getSeries(data: I_GraphBarData): any[] {
+  getSeries(barGroupedCard: I_BarGroupedGraphCard): any[] {
     const series: any[] = [];
 
-    for (const metricName of data.metricNames || []) {
+    for (const metricName of barGroupedCard.metricNames || []) {
       series.push({
         type: 'bar',
         xKey: 'owner',
         yKey: metricName,
         cornerRadius: 15,
-        label: {
-          formatter: ({ value }: any) => this.formatNumber(value),
-        },
         tooltip: {
           renderer: ({ datum, xKey, yKey }: any) => {
             return {
@@ -91,18 +49,18 @@ export class GraphLargeMutliBar extends BaseGraph {
 
   /**
    * Gets the graph options.
-   * @param data - The graph data.
+   * @param barGroupedCard - The graph data.
    * @returns The graph options.
    */
-  private getOptions(data: I_GraphBarData): AgChartOptions {
+  private getOptions(barGroupedCard: I_BarGroupedGraphCard): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
 
-      data: this.getData(data),
+      data: barGroupedCard.data,
       title: {
         enabled: false,
       },
-      series: this.getSeries(data),
+      series: this.getSeries(barGroupedCard),
       axes: [
         {
           type: 'category',
@@ -111,7 +69,7 @@ export class GraphLargeMutliBar extends BaseGraph {
             text: 'Accounts',
           },
           label: {
-            enabled: true,
+            enabled: false,
           },
         },
         {
