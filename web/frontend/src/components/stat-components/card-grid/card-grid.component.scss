@@ -31,6 +31,12 @@
   height: 100%;
   background-color: #a51e36;
 }
+.grid-delete-hover {
+  /* Add your desired styles for when the grid is being hovered over for deletion */
+  /* For example: */
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease;
+}
 
 .dataCardContainer {
   margin: 0px 64px 32px 64px;

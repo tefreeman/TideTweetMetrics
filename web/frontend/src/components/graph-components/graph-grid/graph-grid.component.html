@@ -11,6 +11,7 @@
     <ng-container>
       <app-graph-card
         [ngStyle]="{ height: cardHeight, maxWidth: maxCardWidth }"
+        [class.grid-delete-hover]="isDeleteHovered"
         class="dataCard"
         (deleteEvent)="deleteCard(i)"
         #graphcard
@@ -40,6 +41,8 @@
     matTooltip="Double click to delete graph grid"
     [ngStyle]="{ 'max-width': maxCardWidth, 'min-height': '20rem' }"
     class="card-add"
+    (mouseenter)="onDeleteHover(true)"
+    (mouseleave)="onDeleteHover(false)"
     (dblclick)="deleteGrid()"
     *ngIf="gridEditMode | async"
   >

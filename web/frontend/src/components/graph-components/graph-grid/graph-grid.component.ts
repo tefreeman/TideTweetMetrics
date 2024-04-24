@@ -152,6 +152,10 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
   private type: T_GridType = 'graph';
 
   /**
+   * Represents the boolean for if the delete button is hovered.
+   */
+  public isDeleteHovered = false;
+  /**
    * Constructs a new instance of the GraphGridComponent.
    * @param cdr - The ChangeDetectorRef used for detecting changes.
    * @param dialog - The MatDialog used for opening dialogs.
@@ -338,5 +342,8 @@ export class GraphGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteGrid() {
     this.dashboardPageManagerService.deleteGrid$(this.page, this.name);
+  }
+  onDeleteHover(isHovered: boolean) {
+    this.isDeleteHovered = isHovered;
   }
 }
