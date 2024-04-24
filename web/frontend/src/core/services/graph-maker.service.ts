@@ -31,6 +31,7 @@ export class GraphMakerService {
         console.warn('unable to create chart');
         return null;
       }
+
       if (graphData.type === 'graph-bar') {
         if (graphData.owners.length <= 10)
           return this.graphSmallBar.getGraph(graphData as I_BarGraphCard);

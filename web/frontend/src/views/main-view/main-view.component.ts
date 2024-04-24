@@ -250,7 +250,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
       console.log(result);
       if (result) {
         if (typeof result['name'] === 'string') {
-          if (result['type'] === 'graph' || result['type'] === 'stat') {
+          if (result['type'] === 'graph' || result['type'] === 'metric') {
             this.dashboardPageManagerService.createAndAddGridToEnd$(
               this.pageName,
               result['name'],
