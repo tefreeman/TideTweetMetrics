@@ -1,5 +1,4 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { T_DisplayableGraph } from '../../interfaces/displayable-data-interface';
 
 const _baseTheme: AgChartTheme = {
   baseTheme: 'ag-default',
@@ -113,15 +112,6 @@ export abstract class BaseGraph {
    * @param graphData - The graph data.
    * @returns The structure of the graph data.
    */
-  protected getGraphStructure(graphData: T_DisplayableGraph) {
-    const dataDimension = Array.isArray(graphData.values[0])
-      ? graphData.values[0].length
-      : 1;
-    const ownerCount = graphData.owners.length;
-    const dataPoints = graphData.values.length;
-
-    return { dataDimension, ownerCount, dataPoints };
-  }
 
   /**
    * Get the domain (minimum and maximum values) for a given key in the data.

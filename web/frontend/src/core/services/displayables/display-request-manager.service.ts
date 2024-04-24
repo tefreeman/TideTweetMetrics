@@ -1,13 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
-import {
-  T_DisplayableDataType,
-  T_GridType,
-} from '../../interfaces/displayable-data-interface';
-import {
-  I_DisplayableRequest,
-  T_DisplayableTypeString,
-} from '../../interfaces/displayable-interface';
+import { catchError, first, map, Observable, of } from 'rxjs';
+import { T_GridType } from '../../interfaces/displayable-data-interface';
+import { I_DisplayableRequest } from '../../interfaces/displayable-interface';
 import { DashboardPageManagerService } from '../dashboard-page-manager.service';
 
 /**
@@ -35,7 +29,6 @@ export class DisplayRequestManagerService {
   ): Observable<I_DisplayableRequest[]> {
     return this._dashboardPageManagerService.getPage$(page).pipe(
       map((pageEntry) => {
-        console.log(pageEntry, name, type);
         return pageEntry[name]?.displayables || [];
       })
     );
@@ -49,30 +42,28 @@ export class DisplayRequestManagerService {
    * @param name - The displayable name.
    */
   addDisplayable(
-    request: I_DisplayableRequest | T_DisplayableDataType,
+    request: I_DisplayableRequest,
     type: T_GridType,
     page: string,
     name: string
   ): void {
-    // Check if request is of type T_DisplayableDataType and convert it to I_DisplayableRequest.
-    if (this.isDisplayableDataType(request)) {
-      request = this.convertToDisplayableRequest(request);
-    }
-
-    // Proceed with adding the displayable as before.
-    this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
-      if (grid && grid.type === type) {
-        if (!grid.displayables) {
-          grid.displayables = [];
+    this._dashboardPageManagerService
+      .getGrid$(page.toLowerCase(), name.toLowerCase())
+      .pipe(first())
+      .subscribe((grid) => {
+        console.log(grid);
+        if (grid && grid.type === type) {
+          if (!grid.displayables) {
+            grid.displayables = [];
+          }
+          grid.displayables.push(request);
+          this._dashboardPageManagerService.updateGrid$(page, name, grid);
+        } else {
+          console.error(
+            `Grid not found or type mismatch for page: '${page}', name: '${name}', type: '${type}'.`
+          );
         }
-        grid.displayables.push(request);
-        this._dashboardPageManagerService.updateGrid$(page, name, grid);
-      } else {
-        console.error(
-          `Grid not found or type mismatch for page: '${page}', name: '${name}', type: '${type}'.`
-        );
-      }
-    });
+      });
   }
 
   /**
@@ -83,68 +74,28 @@ export class DisplayRequestManagerService {
    * @param name - The displayable name.
    */
   addDisplayables(
-    request: I_DisplayableRequest[] | T_DisplayableDataType[],
-    type: 'graph' | 'stat',
+    requests: I_DisplayableRequest[],
+    type: T_GridType,
     page: string,
     name: string
   ): void {
-    let displayableRequests: I_DisplayableRequest[];
-    console.log('REQUEST WAS ', request);
-    // Check if the first item in the request array is of type T_DisplayableDataType and convert all to I_DisplayableRequest if true.
-    if (this.isDisplayableDataType(request[0])) {
-      displayableRequests = (request as T_DisplayableDataType[]).map((req) =>
-        this.convertToDisplayableRequest(req)
-      );
-    } else {
-      displayableRequests = request as I_DisplayableRequest[];
-    }
-    console.log('REQUEST BECAME ', displayableRequests);
-    // Proceed with adding the displayables.
-    this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
-      if (grid && grid.type === type) {
-        if (!grid.displayables) {
-          grid.displayables = [];
+    this._dashboardPageManagerService
+      .getGrid$(page, name)
+      .pipe(first())
+      .subscribe((grid) => {
+        if (grid && grid.type === type) {
+          if (!grid.displayables) {
+            grid.displayables = [];
+          }
+          // Append all displayable requests.
+          grid.displayables.push(...requests);
+          this._dashboardPageManagerService.updateGrid$(page, name, grid);
+        } else {
+          console.error(
+            `Grid not found or type mismatch for page: '${page}', name: '${name}', type: '${type}'.`
+          );
         }
-        // Append all displayable requests.
-        grid.displayables.push(...displayableRequests);
-        this._dashboardPageManagerService.updateGrid$(page, name, grid);
-      } else {
-        console.error(
-          `Grid not found or type mismatch for page: '${page}', name: '${name}', type: '${type}'.`
-        );
-      }
-    });
-  }
-
-  /**
-   * Checks if the request is of type T_DisplayableDataType.
-   * @param request - The request to check.
-   * @returns A boolean indicating if the request is of type T_DisplayableDataType.
-   */
-  private isDisplayableDataType(
-    request: any
-  ): request is T_DisplayableDataType {
-    if (request.metricName) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   * Converts a T_DisplayableDataType to an I_DisplayableRequest.
-   * @param data - The data to convert.
-   * @returns The converted displayable request.
-   */
-  private convertToDisplayableRequest(
-    data: T_DisplayableDataType
-  ): I_DisplayableRequest {
-    let stat_name = data.metricName;
-    let ownersParams = data.ownersParams;
-    let type = data.type as T_DisplayableTypeString; // Ensure the type aligns with T_GraphType enum values.
-
-    // Return a new object that matches I_DisplayableRequest.
-    return { stat_name, ownersParams, type };
+      });
   }
 
   /**
@@ -155,7 +106,7 @@ export class DisplayRequestManagerService {
    */
   getDisplayNamesWithOrder$(
     page: string,
-    type: 'graph' | 'stat'
+    type: T_GridType
   ): Observable<{ name: string; order: number }[]> {
     return this._dashboardPageManagerService.getPage$(page).pipe(
       map((pageGrids) =>
@@ -183,73 +134,30 @@ export class DisplayRequestManagerService {
    * @param type - The grid type.
    * @param index - The index of the displayable request to remove.
    */
-  removeDisplayable(page: string, name: string, type: string, index: number): void {
+  removeDisplayable(
+    page: string,
+    name: string,
+    type: string,
+    index: number
+  ): void {
     this._dashboardPageManagerService.getGrid$(page, name).subscribe((grid) => {
       if (!grid) {
         console.error('Grid is not defined!');
         return;
       }
-  
-      const consolidatedDisplayables = this.consolidateDisplayables(grid.displayables);
-
-      if (index >= consolidatedDisplayables.length) {
-        console.error('Index out of bounds!');
-        return;
-      }
-
-      const item = consolidatedDisplayables[index];
-      if (item.groupId) {
-        console.log(`Removing by groupId ${item.groupId} at logical index ${index}.`);
-        this.removeDisplayablesByGroupId(page, name, item.groupId);
-      } else {
+      // Check if index is in the valid range
+      if (index >= 0 && index < grid.displayables.length) {
         console.log(`Removing single displayable at logical index ${index}.`);
-        grid.displayables.splice(grid.displayables.indexOf(item), 1);
+        grid.displayables.splice(index, 1);
         this._dashboardPageManagerService.updateGrid$(page, name, grid);
-      }
-    });
-  }
-
-  consolidateDisplayables(displayables: any[]): any[] {
-    let result: any= [];
-    let groupMap = new Map<string, any>();
-
-    displayables.forEach(displayable => {
-      if (displayable.groupId) {
-        if (!groupMap.has(displayable.groupId)) {
-          groupMap.set(displayable.groupId, displayable);
-        }
       } else {
-        result.push(displayable);
-      }
-    });
-
-    result = [...result, ...Array.from(groupMap.values())];
-    return result;
-  }
-
-  // Assume removeDisplayablesByGroupId remains unchanged
-
-  
-  removeDisplayablesByGroupId(page: string, gridName: string, groupId: string): void {
-    this._dashboardPageManagerService.getGrid$(page, gridName).subscribe((grid) => {
-      if (!grid) {
-        console.error('Grid is not defined!'); // Debug: Confirm grid existence
-        return;
-      }
-  
-      const originalLength = grid.displayables.length;
-      grid.displayables = grid.displayables.filter(displayable => displayable.groupId !== groupId);
-      
-      console.log(`Filtered from ${originalLength} to ${grid.displayables.length} by removing groupId ${groupId}.`); // Debug: Log filtering effect
-  
-      if (originalLength !== grid.displayables.length) {
-        this._dashboardPageManagerService.updateGrid$(page, gridName, grid);
-      } else {
-        console.log('No displayables removed because no matching groupId found.'); // Debug: Log no removal case
+        console.error(
+          `Index ${index} is out of bounds for displayables array.`
+        );
       }
     });
   }
-  
+
   /**
    * Edits a displayable request.
    * @param page - The page name.

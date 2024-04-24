@@ -1,103 +1,71 @@
-import { I_OwnersParams } from './displayable-interface';
+import { I_DisplayableRequest, T_MetricValue } from './displayable-interface';
 
-import { T_MetricValue } from './metrics-interface';
+export type T_GridType = 'graph' | 'metric';
+export type T_BaseMetricId = 'metric-value' | 'metric-trend' | 'metric-comp';
+export type T_BaseCard = I_BaseMetricCard | I_BaseGraphCard;
 
-export interface I_StatValueData {
-  type: 'stat-value';
+export interface I_BaseMetricCard {
+  type: T_BaseMetricId;
   metricName: string;
-  ownersParams: I_OwnersParams;
+  data?: any;
+}
+
+export interface I_BaseMetricCardWithRequest extends I_BaseMetricCard {
+  request: I_DisplayableRequest;
+}
+
+export interface I_BasicMetricCard extends I_BaseMetricCard {
+  type: 'metric-value';
   owner: string;
   value: T_MetricValue;
 }
 
-export interface I_StatTrendData {
-  type: 'stat-trend';
-  metricName: string;
-  ownersParams: I_OwnersParams;
+export interface I_TrendMetricCard extends I_BaseMetricCard {
+  type: 'metric-trend';
   owner: string;
-  values: Array<T_MetricValue>;
-  times: Array<Number>;
-  time_period: string;
+  values: [number, number];
+  times: [number, number];
 }
 
-export interface I_StatCompData {
-  type: 'stat-comp';
-  metricName: string;
-  ownersParams: I_OwnersParams;
-  values: Array<T_MetricValue>;
-  owners: Array<string>;
+export interface I_CompMetricCard extends I_BaseMetricCard {
+  type: 'metric-comp';
+  owners: [string, string];
+  values: [number, number];
 }
 
-export interface I_GraphBarData {
-  type:
-    | 'small-graph-bar'
-    | 'large-graph-bar'
-    | 'large-graph-bar-grouped'
-    | 'small-graph-bar-grouped';
-  metricName: string;
-
-  metricNames?: Array<string>;
-
-  ownersParams: I_OwnersParams;
-  values: Array<T_MetricValue>;
-  valuesNested?: T_MetricValue[][];
-  owners: Array<string>;
-
-  groupId?: string;
-}
-
-export interface I_GraphLineData {
-  type: 'graph-line';
-  metricName: string;
-  metricNames?: Array<string>;
-  ownersParams: I_OwnersParams;
-  values: Array<T_MetricValue>;
-  valuesNested?: T_MetricValue[][];
-  owners: Array<string>;
-  groupId?: string;
-}
-
-export interface I_ScatterPlotData {
-  type: 'graph-scatter';
-  metricName: string;
-  metricNames?: Array<string>;
-  ownersParams: I_OwnersParams;
-  values: Array<T_MetricValue>;
-  valuesNested?: T_MetricValue[][];
-  owners: Array<string>;
-  groupId?: string;
-}
-
-export interface I_GenericGraphData {
-  type: 'auto';
-  metricName: string;
-  metricNames?: Array<string>;
-  ownersParams: I_OwnersParams;
-  values: Array<T_MetricValue>;
-  valuesNested?: T_MetricValue[][];
-  owners: Array<string>;
-  groupId?: string;
-}
-export type T_DisplayableStat =
-  | I_StatValueData
-  | I_StatTrendData
-  | I_StatCompData;
-
-export type T_GridType = 'stat' | 'graph';
-export type T_GraphTypeStr =
-  | 'small-graph-bar'
-  | 'large-graph-bar'
-  | 'large-graph-bar-grouped'
-  | 'small-graph-bar-grouped'
+export type T_BaseGraphId =
+  | 'graph-bar'
+  | 'graph-bar-grouped'
   | 'graph-line'
-  | 'graph-scatter'
-  | 'auto';
-export type T_DisplayableGraph =
-  | I_GraphBarData
-  | I_GraphLineData
-  | I_ScatterPlotData;
+  | 'graph-scatter';
 
-export type T_DisplayableDataType =
-  | T_DisplayableStat
-  | T_DisplayableGraph
-  | I_GenericGraphData;
+export interface I_BaseGraphCard {
+  type: T_BaseGraphId;
+  metricNames: Array<string>;
+  owners: Array<string>;
+  data?: any;
+}
+
+export interface I_BarGraphCard extends I_BaseGraphCard {
+  type: 'graph-bar';
+  data: { owner: string; metricValue: number }[];
+}
+
+export interface I_BarGroupedGraphCard extends I_BaseGraphCard {
+  type: 'graph-bar-grouped';
+  data: { owner: string; [metricName: string]: string | number }[];
+}
+
+export interface I_LineGraphCard extends I_BaseGraphCard {
+  type: 'graph-line';
+  data: { time: number; [owner: string]: number }[];
+}
+
+export interface I_ScatterGraphCard extends I_BaseGraphCard {
+  type: 'graph-scatter';
+  data: {
+    [owner: string]: {
+      [metricName: string]: number;
+    }[];
+  };
+}

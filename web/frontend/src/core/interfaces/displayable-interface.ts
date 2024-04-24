@@ -1,20 +1,11 @@
-import { T_MetricValue } from './metrics-interface';
+import { T_BaseGraphId, T_BaseMetricId } from './displayable-data-interface';
 
 export type T_DisplayableTypeString =
-  | 'stat-value'
-  | 'stat-trend'
-  | 'stat-comparison'
-  | 'stat-comp'
-  | 'graph-line'
-  | 'display'
-  | 'auto'
   | 'edit-mode'
   | 'auto-stat'
-  | 'small-graph-bar'
-  | 'large-graph-bar'
-  | 'large-graph-bar-grouped'
-  | 'small-graph-bar-grouped'
-  | 'graph-scatter';
+  | 'auto-graph'
+  | T_BaseMetricId
+  | T_BaseGraphId;
 
 export type T_OwnerType = 'all' | 'top' | 'bottom' | 'specific';
 
@@ -25,19 +16,19 @@ export interface I_OwnersParams {
 }
 
 export interface I_DisplayableRequest {
-  stat_name: string;
+  metricNames: string[];
   ownersParams: I_OwnersParams;
   type: T_DisplayableTypeString;
-  groupId?: string;
-
-  metric_names?: string[];
 }
 
-export interface IDisplayableData extends I_DisplayableRequest {
-  owners: { [owner: string]: T_MetricValue };
+export interface I_MetricSubset {
+  [metricName: string]: I_OwnerKeyVal;
 }
 
-export interface I_OwnerData {
-  owner: string;
-  value: T_MetricValue;
+export interface I_OwnerKeyVal {
+  [owner: string]: T_MetricValue;
 }
+
+export type T_MetricValue = number | number[] | [string | number, number][];
+
+export interface I_MetricJsonData extends I_MetricSubset {}

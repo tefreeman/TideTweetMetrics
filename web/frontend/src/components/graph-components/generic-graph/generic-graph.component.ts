@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
-import { T_DisplayableGraph } from '../../../core/interfaces/displayable-data-interface';
+import { I_BaseGraphCard } from '../../../core/interfaces/displayable-data-interface';
 import { GraphMakerService } from '../../../core/services/graph-maker.service';
 
 /**
@@ -28,7 +28,7 @@ export class GenericGraphComponent {
   /**
    * The displayable data for the graph.
    */
-  @Input({ required: true }) displayableData!: T_DisplayableGraph;
+  @Input({ required: true }) displayableData!: I_BaseGraphCard;
 
   /**
    * The height of the graph.
@@ -49,16 +49,18 @@ export class GenericGraphComponent {
    */
   public chartOptions: AgChartOptions = {};
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor(private cdr: ChangeDetectorRef) {}
 
   /**
    * Initializes the component.
    */
   ngOnInit(): void {
-    this.chartOptions = this.graphMakerService.createChart(
-      this.displayableData
-    );
-    console.log(this.chartOptions);
+    const result = this.graphMakerService.createChart(this.displayableData);
+    if (result) {
+      this.chartOptions = result;
+    } else {
+      console.warn('Failed to create chart in GenericGraphComponent');
+    }
   }
 
   /**

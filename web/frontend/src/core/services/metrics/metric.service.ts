@@ -4,7 +4,7 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import { HttpClient } from '@angular/common/http';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
-import { I_MetricsInterface } from '../../interfaces/metrics-interface';
+import { I_MetricJsonData } from '../../interfaces/displayable-interface';
 import { AuthService } from '../auth.service';
 import { KeyTranslatorService } from '../key-translator.service';
 import { LocalStorageService } from '../local-storage.service';
@@ -83,7 +83,7 @@ export class MetricService {
           console.error('No file version found for ', this.metricFileId);
           return throwError(() => new Error('No file version found'));
         }
-        const result = this._localStorageService.getItem<I_MetricsInterface>(
+        const result = this._localStorageService.getItem<I_MetricJsonData>(
           this.metricFileId,
           fileVer.version
         );
@@ -111,11 +111,11 @@ export class MetricService {
     );
   }
 
-  private fetchChartData(version: string): Observable<I_MetricsInterface> {
+  private fetchChartData(version: string): Observable<I_MetricJsonData> {
     return from(
       getDownloadURL(ref(this._storage, this.metricFileId + '.json'))
     ).pipe(
-      switchMap((url) => this._httpClient.get<I_MetricsInterface>(url)),
+      switchMap((url) => this._httpClient.get<I_MetricJsonData>(url)),
       tap((data) =>
         this._localStorageService.setItem(this.metricFileId, data, version)
       )

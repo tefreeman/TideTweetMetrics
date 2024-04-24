@@ -1,5 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import { I_GraphLineData } from '../../interfaces/displayable-data-interface';
+import { I_LineGraphCard } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -12,69 +12,23 @@ export class GraphSmallLine extends BaseGraph {
   }
 
   /**
-   * Checks if the data is grouped.
-   * @param data - The graph line data.
-   * @returns True if the data is grouped, false otherwise.
-   */
-  private isGrouped(data: I_GraphLineData): boolean {
-    if (data.groupId) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Gets the graph options.
-   * @param data - The graph line data.
+   * @param lineGraphCard - The graph line data.
    * @returns The graph options.
    */
-  public getGraph(data: I_GraphLineData): AgChartOptions {
-    return this.getOptions(data);
-  }
-
-  /**
-   * Gets the chart data.
-   * @param data - The graph line data.
-   * @returns The chart data.
-   */
-  getData(data: I_GraphLineData): any[] {
-    const chartData: any[] = [];
-    console.log('DATA-SMALLINE: ', data);
-    if (data.values) {
-      //@ts-ignore
-      for (let i = 0; i < data.values[0].length; i++) {
-        const dataOut: any = {};
-
-        for (let j = 0; j < data.owners.length; j++) {
-          const owner = data.owners[j];
-          //@ts-ignore
-          const valueArray = data.values[j][i] as any[];
-          const epochTime = valueArray[0];
-          const value = valueArray[1];
-
-          if (!dataOut.time) {
-            dataOut.time = epochTime;
-          }
-
-          dataOut[owner] = value;
-        }
-
-        chartData.push(dataOut);
-      }
-    }
-    console.log('DATA-SMALL-OUT: ', chartData);
-    return chartData;
+  public getGraph(lineGraphCard: I_LineGraphCard): AgChartOptions {
+    return this.getOptions(lineGraphCard);
   }
 
   /**
    * Gets the series for the graph.
-   * @param data - The graph line data.
+   * @param lineGraphCard - The graph line data.
    * @returns The series for the graph.
    */
-  getSeries(data: I_GraphLineData): any[] {
+  getSeries(lineGraphCard: I_LineGraphCard): any[] {
     const series: any[] = [];
-    this.getGraphStructure(data);
-    for (const owner of data.owners || []) {
+
+    for (const owner of lineGraphCard.owners || []) {
       series.push({
         type: 'line',
         xKey: 'time',
@@ -89,7 +43,8 @@ export class GraphSmallLine extends BaseGraph {
             };
           },
         },
-        marker: {   //Marker size should be strokeWidth*2, I think that looks good
+        marker: {
+          //Marker size should be strokeWidth*2, I think that looks good
           size: 4,
         },
         strokeWidth: 2,
@@ -101,17 +56,17 @@ export class GraphSmallLine extends BaseGraph {
 
   /**
    * Gets the graph options.
-   * @param data - The graph line data.
+   * @param lineGraphCard - The graph line data.
    * @returns The graph options.
    */
-  private getOptions(data: I_GraphLineData): AgChartOptions {
+  private getOptions(lineGraphCard: I_LineGraphCard): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
-      data: this.getData(data),
+      data: lineGraphCard.data,
       title: {
         enabled: false,
       },
-      series: this.getSeries(data),
+      series: this.getSeries(lineGraphCard),
       axes: [
         {
           type: 'time',
