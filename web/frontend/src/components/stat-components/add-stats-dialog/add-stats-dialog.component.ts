@@ -1,10 +1,11 @@
 // Import necessary Angular and RxJS elements
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 
 import { CommonModule, NgFor } from '@angular/common';
-import { T_DisplayableStat } from '../../../core/interfaces/displayable-data-interface';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { I_BaseMetricCardWithRequest } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { RecommendedDisplayableService } from '../../../core/services/displayables/recommended-displayable.service';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
@@ -13,10 +14,7 @@ import { MetricSelectListComponent } from '../../selectors/metric-select-list/me
 import { OwnerSearchComponent } from '../../selectors/owner-search/owner-search.component';
 import { CardBarComponent } from '../cardBar/cardBar.component';
 import { simpleStatGridComponent } from '../simple-stat-grid/simple-stat-grid.component';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-/**
- * Represents the Add Stats Dialog component.
- */
+
 @Component({
   selector: 'app-add-card',
   standalone: true,
@@ -38,25 +36,27 @@ export class addStatsDialogComponent implements OnInit {
   /**
    * Represents the recommended displayables subject.
    */
-  private _recommendedDisplayables = new BehaviorSubject<T_DisplayableStat[]>(
-    []
-  );
+  private _recommendedDisplayables = new BehaviorSubject<
+    I_BaseMetricCardWithRequest[]
+  >([]);
 
   /**
    * Represents the observable for recommended displayables.
    */
-  recommendedDisplayables$: Observable<T_DisplayableStat[]> =
+  recommendedDisplayables$: Observable<I_BaseMetricCardWithRequest[]> =
     this._recommendedDisplayables.asObservable();
 
   /**
    * Represents the added displayables subject.
    */
-  private _addedDisplayables = new BehaviorSubject<T_DisplayableStat[]>([]);
+  private _addedDisplayables = new BehaviorSubject<
+    I_BaseMetricCardWithRequest[]
+  >([]);
 
   /**
    * Represents the observable for added displayables.
    */
-  addedDisplayables$: Observable<T_DisplayableStat[]> =
+  addedDisplayables$: Observable<I_BaseMetricCardWithRequest[]> =
     this._addedDisplayables.asObservable();
 
   /**
@@ -72,7 +72,7 @@ export class addStatsDialogComponent implements OnInit {
   /**
    * Represents all displayables.
    */
-  allDisplayables: T_DisplayableStat[] = [];
+  allDisplayables: I_BaseMetricCardWithRequest[] = [];
 
   /**
    * Represents the current owners subject.
@@ -102,8 +102,7 @@ export class addStatsDialogComponent implements OnInit {
    * @param recommendedDisplayableService - The recommended displayable service.
    */
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: T_DisplayableStat[],
-    private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: I_BaseMetricCardWithRequest[],
     keyTranslatorService: KeyTranslatorService,
     recommendedDisplayableService: RecommendedDisplayableService
   ) {
@@ -122,17 +121,19 @@ export class addStatsDialogComponent implements OnInit {
     this.currentOwners
       .pipe(
         switchMap((owners) =>
-          this.recommendedDisplayableService.getRecommendedDisplayablesData(
-            owners
-          )
+          this.recommendedDisplayableService.getRecommendedMetricCards(owners)
         )
       )
       .subscribe((displayables) => {
-        this.allDisplayables = displayables as T_DisplayableStat[];
+        this.allDisplayables = displayables;
 
         if (this.data) {
           this._recommendedDisplayables.next(
-            this.filterAndLimitDisplayables(this.allDisplayables, this.data, 300)
+            this.filterAndLimitDisplayables(
+              this.allDisplayables,
+              this.data,
+              300
+            )
           );
         } else {
           this._recommendedDisplayables.next([]);
@@ -148,10 +149,10 @@ export class addStatsDialogComponent implements OnInit {
    * @returns The filtered and limited displayables.
    */
   private filterAndLimitDisplayables(
-    allDisplayables: T_DisplayableStat[],
-    data: T_DisplayableStat[],
+    allDisplayables: I_BaseMetricCardWithRequest[],
+    data: I_BaseMetricCardWithRequest[],
     limit: number
-  ): T_DisplayableStat[] {
+  ): I_BaseMetricCardWithRequest[] {
     const filteredDisplayables = allDisplayables.filter((displayable) =>
       data.every((d) => d.metricName !== displayable.metricName)
     );
@@ -190,13 +191,14 @@ export class addStatsDialogComponent implements OnInit {
    * Adds a card to the displayables.
    * @param card - The displayable stat card.
    */
-  addCard(card: T_DisplayableStat): void {
+  addCard(card: I_BaseMetricCardWithRequest): void {
     const currentCards = this._addedDisplayables.getValue();
     if (
       !currentCards.some(
         (existingCard) =>
           existingCard.metricName === card.metricName &&
-          existingCard.ownersParams.owners === card.ownersParams.owners
+          existingCard.request.ownersParams.owners ===
+            card.request.ownersParams.owners
       )
     ) {
       this._addedDisplayables.next([...currentCards, card]);
@@ -207,7 +209,7 @@ export class addStatsDialogComponent implements OnInit {
    * Removes a card from the displayables.
    * @param card - The displayable stat card.
    */
-  removeCard(card: T_DisplayableStat): void {
+  removeCard(card: I_BaseMetricCardWithRequest): void {
     const updatedCards = this._addedDisplayables
       .getValue()
       .filter((existingCard) => existingCard.metricName !== card.metricName);
@@ -219,7 +221,6 @@ export class addStatsDialogComponent implements OnInit {
    * @param $event - The owners array.
    */
   onOwnersChanged($event: string[]) {
-    console.log('EVENT: ', $event);
     this.currentOwners.next($event);
   }
 

@@ -8,7 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { T_DisplayableGraph } from '../../../core/interfaces/displayable-data-interface';
+import { I_BaseGraphCard } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { GenericGraphComponent } from '../generic-graph/generic-graph.component';
@@ -26,7 +26,7 @@ export class GraphCardComponent implements OnInit {
   /**
    * The displayable data to be shown in the graph card.
    */
-  @Input({ required: true }) displayableData!: T_DisplayableGraph;
+  @Input({ required: true }) displayableData!: I_BaseGraphCard;
 
   /**
    * Event emitted when the delete button is clicked.

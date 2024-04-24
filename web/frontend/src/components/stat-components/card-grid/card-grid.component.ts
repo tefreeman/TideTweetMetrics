@@ -23,9 +23,11 @@ import {
   takeUntil,
 } from 'rxjs';
 import {
-  T_DisplayableStat,
+  I_BaseMetricCard,
+  I_BaseMetricCardWithRequest,
   T_GridType,
 } from '../../../core/interfaces/displayable-data-interface';
+import { I_DisplayableRequest } from '../../../core/interfaces/displayable-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { DashboardPageManagerService } from '../../../core/services/dashboard-page-manager.service';
 import { DisplayRequestManagerService } from '../../../core/services/displayables/display-request-manager.service';
@@ -33,7 +35,6 @@ import { DisplayableProviderService } from '../../../core/services/displayables/
 import { EditModeService } from '../../../core/services/edit-mode.service';
 import { GridEditModeService } from '../../../core/services/grid-edit-mode.service';
 import { MoveableGridTilesService } from '../../../core/services/moveable-grid-tiles.service';
-import { BarChartComponent } from '../../graph-components/bar-chart/bar-chart.component';
 import { GraphCardComponent } from '../../graph-components/graph-card/graph-card.component';
 import { addStatsDialogComponent } from '../add-stats-dialog/add-stats-dialog.component';
 import { StatCardComponent } from '../stat-card/stat-card.component';
@@ -48,7 +49,6 @@ import { StatCardComponent } from '../stat-card/stat-card.component';
     NgFor,
     NgStyle,
     StatCardComponent,
-    BarChartComponent,
     AsyncPipe,
     MaterialModule,
     GraphCardComponent,
@@ -104,7 +104,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * The data grid service used to manage the grid tiles.
    */
-  public dataGrid: MoveableGridTilesService<T_DisplayableStat>;
+  public dataGrid: MoveableGridTilesService<I_BaseMetricCard>;
 
   /**
    * The observable representing the edit mode.
@@ -146,7 +146,7 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * The type of the grid.
    */
-  private type: T_GridType = 'stat';
+  private type: T_GridType = 'metric';
 
   /**
    * Creates an instance of CardGridComponent.
@@ -270,16 +270,24 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '100%',
     });
 
-    dialogRef.afterClosed().subscribe((result: T_DisplayableStat[] | null) => {
-      if (result) {
-        this.displayRequestManagerService.addDisplayables(
-          result,
-          this.type,
-          this.page,
-          this.name
-        );
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .subscribe((results: I_BaseMetricCardWithRequest[] | null) => {
+        if (results) {
+          const requests: I_DisplayableRequest[] = [];
+          for (const result of results) {
+            if (result.request) {
+              requests.push(result.request);
+            }
+          }
+          this.displayRequestManagerService.addDisplayables(
+            requests,
+            this.type,
+            this.page,
+            this.name
+          );
+        }
+      });
 
     this.editModeService.setEditMode(false);
   }

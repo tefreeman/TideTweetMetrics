@@ -1,30 +1,27 @@
 import {
-  IDisplayableData,
   I_DisplayableRequest,
-  I_OwnerData,
-} from '../../interfaces/displayable-interface';
-import {
-  I_MetricOwners,
-  I_MetricsInterface,
+  I_MetricJsonData,
+  I_MetricSubset,
+  I_OwnerKeyVal,
   T_MetricValue,
-} from '../../interfaces/metrics-interface';
+} from '../../interfaces/displayable-interface';
 
 /**
  * Represents a container for metrics.
  */
 export class MetricContainer {
-  _metrics: I_MetricsInterface = {};
+  _metrics: I_MetricJsonData = {};
 
   /**
    * Constructs a new MetricContainer instance.
    */
-  constructor() { }
+  constructor() {}
 
   /**
    * Sets the metrics for the container.
    * @param metrics - The metrics to set.
    */
-  setMetrics(metrics: I_MetricsInterface): void {
+  setMetrics(metrics: I_MetricJsonData): void {
     this._metrics = metrics;
     console.log('metrics set', this._metrics);
   }
@@ -43,7 +40,7 @@ export class MetricContainer {
    * @param owner - The owner of the statistic.
    * @returns The metric owners.
    */
-  getStatByOwner(stat_name: string, owner: string): I_MetricOwners {
+  getStatByOwner(stat_name: string, owner: string): I_OwnerKeyVal {
     return this._metrics[stat_name];
   }
 
@@ -88,111 +85,108 @@ export class MetricContainer {
    * @param displayable - The displayable request.
    * @returns The displayable data.
    */
-  addSpecificOwnerData(displayable: I_DisplayableRequest): IDisplayableData {
-    // Initialize an empty object to hold owner data
-    let ownersObj: { [key: string]: T_MetricValue } = {};
+  /**
+   * This section assumes `this._metrics` has the appropriately typed structure matching `I_MetricJsonData`
+   * and utility methods such as `isMetricDefined` are appropriately adjusted or reimplemented to work with
+   * the new structure if needed.
+   */
 
-    // Iterate through the list of owners specified in the displayable request
-    displayable.ownersParams.owners.forEach((owner) => {
-      if (this.isMetricDefined(displayable.stat_name, owner)) {
-        // Populate the ownersObj with data from the metrics
-        ownersObj[owner] = this._metrics[displayable.stat_name][owner];
-      }
+  addSpecificData(displayable: I_DisplayableRequest): I_MetricSubset {
+    const subSet: I_MetricSubset = {};
+
+    displayable.metricNames.forEach((metricName) => {
+      subSet[metricName] = {};
+
+      displayable.ownersParams.owners?.forEach((owner) => {
+        if (this.isMetricDefined(metricName, owner)) {
+          subSet[metricName][owner] = this._metrics[metricName][owner];
+        }
+      });
     });
 
-    // Construct and return the IDisplayableStats object
-    return {
-      ...displayable, // Spread the existing properties of the displayable object
-      owners: ownersObj, // Include the constructed owners data
-    };
+    return subSet;
   }
 
-  /**
-   * Gets the metric data for the displayable request.
-   * @param displayable - The displayable request.
-   * @returns The displayable data.
-   */
-  getMetricData(displayable: I_DisplayableRequest): IDisplayableData {
+  getMetricData(displayable: I_DisplayableRequest): I_MetricSubset {
+    if (displayable.metricNames.length === 0) {
+      console.warn('Cannot get metric data for an empty metricNames array.');
+      return {};
+    }
     if (displayable.ownersParams.type === 'specific') {
-      return this.addSpecificOwnerData(displayable);
+      return this.addSpecificData(displayable);
     }
 
-    let ownerData: I_OwnerData[] = [];
+    let subSet: I_MetricSubset = {};
 
-    // Retrieve all owners if the configuration is not specific. This essentially handles 'all', 'top', and 'bottom'.
-    const owners = this.getAllOwnerNamesByStat(displayable.stat_name);
+    displayable.metricNames.forEach((metricName) => {
+      subSet[metricName] = {}; // Initialize as empty object for each metric
 
-    // Populate ownerData for all owners relevant to the stat
-    owners.forEach((owner) => {
-      if (this.isMetricDefined(displayable.stat_name, owner)) {
-        ownerData.push({
-          owner: owner,
-          value: this._metrics[displayable.stat_name][owner],
-        });
+      const owners = this.getAllOwnerNamesByStat(metricName);
+      owners.forEach((owner) => {
+        if (this.isMetricDefined(metricName, owner)) {
+          subSet[metricName][owner] = this._metrics[metricName][owner];
+        }
+      });
+
+      if (
+        displayable.ownersParams.type === 'top' ||
+        displayable.ownersParams.type === 'bottom'
+      ) {
+        const getAverage = (value: T_MetricValue): number => {
+          if (typeof value === 'number') {
+            return value;
+          } else if (Array.isArray(value)) {
+            if (value.length === 0) {
+              return 0; // Return 0 for an empty array
+            }
+
+            const firstElement = value[0];
+            if (typeof firstElement === 'number') {
+              // Number[]
+              return (
+                value.reduce((sum: any, num) => sum + num, 0) / value.length
+              );
+            } else if (Array.isArray(firstElement)) {
+              // [string | number, number][]
+              return (
+                value.reduce((sum: any, tuple: any) => sum + tuple[1], 0) /
+                value.length
+              );
+            }
+          }
+          return 0; // Default value if the type is not recognized
+        };
+
+        const isTop = displayable.ownersParams.type === 'top';
+        const cutOff = displayable.ownersParams.count
+          ? displayable.ownersParams.count +
+            (displayable.ownersParams.owners
+              ? displayable.ownersParams.owners.length
+              : 0)
+          : Object.keys(subSet[metricName]).length;
+
+        subSet[metricName] = Object.entries(subSet[metricName])
+          .sort(([, valueA], [, valueB]) => {
+            const avgA = getAverage(valueA);
+            const avgB = getAverage(valueB);
+
+            return isTop ? avgB - avgA : avgA - avgB;
+          })
+          .slice(0, cutOff)
+          .reduce((obj, [owner, value]) => {
+            obj[owner] = value;
+            return obj;
+          }, {} as I_OwnerKeyVal);
       }
     });
-
-    // If type is 'top' or 'bottom', sort and slice the ownerData array accordingly
-    if (
-      displayable.ownersParams.type === 'top' ||
-      displayable.ownersParams.type === 'bottom'
-    ) {
-      const isTop = displayable.ownersParams.type === 'top';
-      const cutOff = displayable.ownersParams.count
-        ? displayable.ownersParams.count +
-        (displayable.ownersParams.owners
-          ? displayable.ownersParams.owners.length
-          : 0)
-        : ownerData.length;
-      ownerData = this.sortAndSlice(ownerData, cutOff, isTop);
-    }
-
-    // Convert ownerData array to an object in the format { owner: value }
-    const ownerObject = ownerData.reduce((obj, item) => {
-      obj[item.owner] = item.value;
-      return obj;
-    }, {} as { [owner: string]: T_MetricValue });
-
-    // Return the augmented displayable object with the owner data included
-    return {
-      ...displayable,
-      owners: ownerObject,
-    };
-  }
-
-  /**
-   * Sorts and slices the owner data array.
-   * @param ownerData - The owner data array.
-   * @param count - The count of owners to include.
-   * @param isTop - A boolean indicating if it is sorting for top owners.
-   * @returns The sorted and sliced owner data array.
-   */
-  private sortAndSlice(
-    ownerData: I_OwnerData[],
-    count: number,
-    isTop: boolean
-  ): I_OwnerData[] {
-    const firstOrDirect = (val: any): number => {
-      if (Array.isArray(val)) {
-        return val.length > 0 ? val[0] : 0;
-      }
-      return val;
-    };
-
-    return ownerData
-      .sort((a, b) =>
-        isTop
-          ? firstOrDirect(b.value) - firstOrDirect(a.value)
-          : firstOrDirect(a.value) - firstOrDirect(b.value)
-      )
-      .slice(0, count);
+    return subSet;
   }
 
   /**
    * Gets the metrics as a JSON object.
    * @returns The metrics as a JSON object.
    */
-  getJson(): I_MetricsInterface {
+  getJson(): I_MetricJsonData {
     return this._metrics;
   }
 }

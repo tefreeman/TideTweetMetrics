@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, of, switchMap } from 'rxjs';
 import { metricRanking } from '../../data/metric-ranking';
-import { T_DisplayableDataType } from '../../interfaces/displayable-data-interface';
+import { I_BaseMetricCard } from '../../interfaces/displayable-data-interface';
 import {
   I_DisplayableRequest,
   I_OwnersParams,
@@ -21,18 +21,17 @@ export class RecommendedDisplayableService {
     DisplayableProviderService
   );
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Retrieves recommended displayable data for the specified owners.
    * @param owners - An array of owner names.
    * @returns An observable that emits an array of recommended displayable data.
    */
-  getRecommendedDisplayablesData(
+  getRecommendedMetricCards(
     owners: string[]
-  ): Observable<T_DisplayableDataType[]> {
+  ): Observable<Array<I_BaseMetricCard & { request: I_DisplayableRequest }>> {
     if (owners.length === 0) {
-      console.log(owners);
       return of([]);
     }
 
@@ -41,41 +40,54 @@ export class RecommendedDisplayableService {
       owners: [owners[0]],
       count: 1,
     };
-    const comparsionOwnersParams: I_OwnersParams = {
+    const comparisonOwnersParams: I_OwnersParams = {
       type: 'specific',
-      owners: [owners[0], owners[1]],
+      owners: [owners[0], owners[1] ? owners[1] : owners[0]], // Adjusted for safety as before
       count: 2,
     };
 
-    if (owners.length === 1) {
-      return this.metricService.metricContainer$.pipe(
-        switchMap((metricContainer) =>
-          this.getRecommendedDisplayables(
-            [basicOwnersParams],
-            'auto-stat'
-          ).pipe(
-            map((displayables) =>
-              this.displayableProviderService.processRequests(
-                metricContainer,
-                displayables
-              )
-            )
-          )
-        )
-      );
-    }
+    const paramsToUse =
+      owners.length === 1 ? [basicOwnersParams] : [comparisonOwnersParams];
+    const requestType = owners.length === 1 ? 'auto-stat' : 'metric-comp';
+
+    console.log('Owners Params: ', paramsToUse);
     return this.metricService.metricContainer$.pipe(
       switchMap((metricContainer) =>
-        this.getRecommendedDisplayables(
-          [comparsionOwnersParams],
-          'stat-comp'
-        ).pipe(
-          map((displayables) =>
-            this.displayableProviderService.processRequests(
-              metricContainer,
-              displayables
-            )
-          )
+        this.getRecommendedRequests(paramsToUse, requestType).pipe(
+          map((requests) => {
+            console.log('Reccomended Requests: ', requests);
+            // First, process the requests to get baseMetricCards.
+            const baseMetricCardsWithPossibleNulls: (I_BaseMetricCard | null)[] =
+              this.displayableProviderService.processRequests(
+                metricContainer,
+                requests,
+                'metric'
+              ) as (I_BaseMetricCard | null)[];
+
+            console.log(
+              'Base Metric Cards, including possible nulls: ',
+              baseMetricCardsWithPossibleNulls
+            );
+
+            const enhancedCards = baseMetricCardsWithPossibleNulls
+              .map((card, index) => {
+                // Only proceed if card is not null
+                if (card !== null) {
+                  return {
+                    ...card,
+                    request: requests[index], // Attach the corresponding request
+                  };
+                }
+                return null;
+              })
+              .filter((card) => card !== null) as Array<
+              I_BaseMetricCard & { request: I_DisplayableRequest }
+            >; // Ensure the final array is free of nulls
+
+            console.log('Enhanced Cards, nulls removed: ', enhancedCards);
+
+            return enhancedCards;
+          })
         )
       )
     );
@@ -87,7 +99,7 @@ export class RecommendedDisplayableService {
    * @param type - The type of displayable.
    * @returns An observable that emits an array of displayable requests.
    */
-  getRecommendedDisplayables(
+  getRecommendedRequests(
     ownersParamsArr: I_OwnersParams[],
     type: T_DisplayableTypeString
   ): Observable<I_DisplayableRequest[]> {
@@ -97,7 +109,7 @@ export class RecommendedDisplayableService {
         ownersParamsArr.forEach((ownersParams) => {
           metricNames.forEach((metricName) => {
             displayables.push({
-              stat_name: metricName,
+              metricNames: [metricName],
               ownersParams: ownersParams,
               type: type,
             });

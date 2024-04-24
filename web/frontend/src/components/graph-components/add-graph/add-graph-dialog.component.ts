@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
-import { T_DisplayableGraph } from '../../../core/interfaces/displayable-data-interface';
+import { I_BaseGraphCard } from '../../../core/interfaces/displayable-data-interface';
 import {
   I_DisplayableRequest,
   I_OwnersParams,
@@ -21,16 +21,12 @@ import { RecommendedDisplayableService } from '../../../core/services/displayabl
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 import { MetricSearchComponent } from '../../selectors/metric-search/metric-search.component';
 import { MetricSelectListComponent } from '../../selectors/metric-select-list/metric-select-list.component';
-import { OwnerSearchGraphComponent } from '../../selectors/owner-search-graph/owner-search-graph.component';
+import { OwnerSearchComponent } from '../../selectors/owner-search/owner-search.component';
 import { CardBarComponent } from '../../stat-components/cardBar/cardBar.component';
 import { simpleStatGridComponent } from '../../stat-components/simple-stat-grid/simple-stat-grid.component';
 import { GenericGraphComponent } from '../generic-graph/generic-graph.component';
 import { ReactiveGenericGraphComponent } from '../reactive-generic-graph/reactive-generic-graph.component';
 import { SimpleGraphGridComponent } from '../simple-graph-grid/simple-graph-grid.component';
-
-interface I_DisplayableRequestPlus extends I_DisplayableRequest {
-  metric_names?: string[];
-}
 
 type ParseResult = {
   position: 'top' | 'bottom';
@@ -51,7 +47,7 @@ type ParseResult = {
     MetricSelectListComponent,
     MetricSearchComponent,
     simpleStatGridComponent,
-    OwnerSearchGraphComponent,
+    OwnerSearchComponent,
     SimpleGraphGridComponent,
     FormsModule,
     MatButtonToggleModule,
@@ -64,27 +60,14 @@ type ParseResult = {
 })
 export class AddGraphDialogComponent implements OnInit {
   /**
-   * Represents the recommended displayables subject.
-   */
-  private _recommendedDisplayables = new BehaviorSubject<T_DisplayableGraph[]>(
-    []
-  );
-
-  /**
-   * Represents the observable for recommended displayables.
-   */
-  recommendedDisplayables$: Observable<T_DisplayableGraph[]> =
-    this._recommendedDisplayables.asObservable();
-
-  /**
    * Represents the added displayables subject.
    */
-  private _addedDisplayables = new BehaviorSubject<T_DisplayableGraph[]>([]);
+  private _addedDisplayables = new BehaviorSubject<I_BaseGraphCard[]>([]);
 
   /**
    * Represents the observable for added displayables.
    */
-  addedDisplayables$: Observable<T_DisplayableGraph[]> =
+  addedDisplayables$: Observable<I_BaseGraphCard[]> =
     this._addedDisplayables.asObservable();
 
   /**
@@ -100,7 +83,7 @@ export class AddGraphDialogComponent implements OnInit {
   /**
    * Represents the array of all displayables.
    */
-  allDisplayables: T_DisplayableGraph[] = [];
+  allDisplayables: I_BaseGraphCard[] = [];
 
   /**
    * Represents the current owners subject.
@@ -120,20 +103,19 @@ export class AddGraphDialogComponent implements OnInit {
   /**
    * Represents the displayed data.
    */
-  public graphDisplayableReqSubject =
-    new BehaviorSubject<I_DisplayableRequestPlus>({
-      stat_name: '',
+  public graphDisplayableReqSubject = new BehaviorSubject<I_DisplayableRequest>(
+    {
+      metricNames: [],
       ownersParams: {
         type: 'specific',
         count: 2,
         owners: ['alabama_cs', 'azengineering'],
       },
-      groupId: '',
-      type: 'auto',
-    });
+      type: 'auto-graph',
+    }
+  );
 
-  //@ts-ignore
-  graphDisplayables: Observable<T_DisplayableGraph[]>;
+  graphDisplayables: Observable<I_BaseGraphCard[]>;
 
   displayableProviderService: DisplayableProviderService = inject(
     DisplayableProviderService
@@ -146,7 +128,7 @@ export class AddGraphDialogComponent implements OnInit {
    * @param recommendedDisplayableService - The recommended displayable service.
    */
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: T_DisplayableGraph[],
+    @Inject(MAT_DIALOG_DATA) public data: I_DisplayableRequest,
     private cdr: ChangeDetectorRef,
     keyTranslatorService: KeyTranslatorService,
     recommendedDisplayableService: RecommendedDisplayableService
@@ -157,149 +139,73 @@ export class AddGraphDialogComponent implements OnInit {
     this.isEnabled = this.currentMetrics.pipe(
       map((metrics) => metrics.length === 0)
     );
+
+    this.graphDisplayables = this.graphDisplayableReqSubject.pipe(
+      switchMap((req) => {
+        return this.displayableProviderService.processRequestsWithMetrics(
+          [req],
+          'graph'
+        );
+      })
+    ) as Observable<I_BaseGraphCard[]>;
   }
 
-  ngOnInit(): void {
-    this.graphDisplayables = this.graphDisplayableReqSubject.pipe(
-      switchMap(
-        (req) =>
-          this.displayableProviderService.processRequestsWithLatestMetricContainer(
-            this.decomposeRequestPlus(req)
-          ) as Observable<T_DisplayableGraph[]>
-      )
-    );
-  }
+  ngOnInit(): void {}
 
   /**
    * Method to update graphDisplayableReq with modifications based on the old object.
    * @param modifications Partial<I_DisplayableRequestPlus> object with fields that should be updated.
    */
-  updateGraphDisplayableReqWithNestedUpdates(
-    modifications: Partial<I_DisplayableRequestPlus>
-  ) {
+  updateGraphDisplayableReq(modifications: Partial<I_DisplayableRequest>) {
     // Retrieve the current value
     const currentReq = this.graphDisplayableReqSubject.getValue();
-    console.log('Current req: ', currentReq, ' MODS: ', modifications);
-    // Directly updating the ownersParams within the current request, aiming to trigger a change
-    if (modifications.ownersParams?.owners) {
-      currentReq.ownersParams = {
+
+    // Create a new object for ownersParams
+    let updatedOwnersParams: I_OwnersParams | undefined;
+
+    if (modifications.ownersParams) {
+      updatedOwnersParams = {
         ...currentReq.ownersParams,
         ...modifications.ownersParams,
       };
     }
 
     // Updating stat_name if it is specified in modifications
-    if (modifications.hasOwnProperty('stat_name')) {
-      currentReq.stat_name = modifications.stat_name!;
-    }
+    const updatedMetricNames =
+      modifications.metricNames ?? currentReq.metricNames;
 
-    // Updating metric_names if it is specified in modifications
-    if (modifications.metric_names) {
-      currentReq.metric_names = modifications.metric_names;
-    }
+    const updatedReq: I_DisplayableRequest = {
+      ...currentReq,
+      ownersParams: updatedOwnersParams ?? currentReq.ownersParams,
+      metricNames: updatedMetricNames,
+    };
 
-    // Force a new object to ensure changes are detected
-    const updatedReq = { ...currentReq };
-
-    // Debugging to see the updated request
-    console.log('Updated Request: ', updatedReq);
     this.graphDisplayableReqSubject.next(updatedReq);
-
     this.cdr.detectChanges(); // Force change detection to run
-  }
-  /**
-   * Filters and limits the displayables.
-   * @param allDisplayables - The array of all displayables.
-   * @param data - The data for the displayable graph.
-   * @param limit - The limit for the displayables.
-   * @returns The filtered and limited displayables.
-   */
-  private filterAndLimitDisplayables(
-    allDisplayables: T_DisplayableGraph[],
-    data: T_DisplayableGraph[],
-    limit: number
-  ): T_DisplayableGraph[] {
-    const filteredDisplayables = allDisplayables.filter((displayable) =>
-      data.every((d) => d.metricName !== displayable.metricName)
-    );
-    return filteredDisplayables.slice(0, limit);
-  }
-
-  decomposeRequestPlus(
-    requestPlus: I_DisplayableRequestPlus
-  ): I_DisplayableRequest[] {
-    // Check if metric_names is defined and has at least one element
-    if (!requestPlus.metric_names || requestPlus.metric_names.length === 0) {
-      return [requestPlus];
-    } else if (!requestPlus.ownersParams.owners) {
-      return [];
-    }
-    const tempGroupId = 'group' + '-' + Date.now().toString();
-    // Transform each metric name into a separate I_DisplayableRequest
-    const result = requestPlus.metric_names.map((metricName, index) => ({
-      // Use metricName as the stat_name for each new request object
-      stat_name: metricName,
-      // Copy over the ownersParams from the original I_DisplayableRequestPlus
-      ownersParams: requestPlus.ownersParams,
-      // Copy over the type from the original I_DisplayableRequestPlus
-      type: requestPlus.type,
-      // Generate a unique groupId for each new request. Adjust the generation logic as needed for your use case.
-      groupId: tempGroupId,
-    }));
-    console.log('DECOMPOSED REQUEST PLUS: ', result);
-
-    return result;
   }
   /**
    * Handles the search value change event.
    * @param value - The search value.
    */
   onSearchValueChange(value: string) {
-    if (value) {
-      this._recommendedDisplayables.next(
-        this.allDisplayables.filter((item) =>
-          this.keyTranslatorService
-            .keyToFullString(item.metricName)
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        )
-      );
-    } else {
-      this._recommendedDisplayables.next(
-        this.filterAndLimitDisplayables(
-          this.allDisplayables,
-          this._addedDisplayables.getValue().concat(this.data),
-          30
-        )
-      );
-    }
-  }
-
-  /**
-   * Adds a card to the displayables.
-   * @param card - The card to be added.
-   */
-  addCard(card: T_DisplayableGraph): void {
-    const currentCards = this._addedDisplayables.getValue();
-    if (
-      !currentCards.some(
-        (existingCard) => existingCard.metricName === card.metricName
-      )
-    ) {
-      this._addedDisplayables.next([...currentCards, card]);
-    }
-  }
-
-  /**
-   * Removes a card from the displayables.
-   * @param card - The card to be removed.
-   */
-  removeCard(card: T_DisplayableGraph): void {
-    const updatedCards = this._addedDisplayables
-      .getValue()
-      .filter((existingCard) => existingCard.metricName !== card.metricName && existingCard.groupId !== card.groupId);
-      console.log('REMOVING CARD: ', card, ' UPDATED CARDS: ', updatedCards)
-    this._addedDisplayables.next(updatedCards);
+    // if (value) {
+    //   this._recommendedDisplayables.next(
+    //     this.allDisplayables.filter((item) =>
+    //       this.keyTranslatorService
+    //         .keyToFullString(item.metricNames[0])
+    //         .toLowerCase()
+    //         .includes(value.toLowerCase())
+    //     )
+    //   );
+    // } else {
+    //   this._recommendedDisplayables.next(
+    //     this.filterAndLimitDisplayables(
+    //       this.allDisplayables,
+    //       this._addedDisplayables.getValue(),
+    //       30
+    //     )
+    //   );
+    // }
   }
 
   parseInput(input: string): ParseResult {
@@ -366,29 +272,14 @@ export class AddGraphDialogComponent implements OnInit {
     }
 
     // Update your graph display or other dependent functionality.
-    this.updateGraphDisplayableReqWithNestedUpdates({
+    this.updateGraphDisplayableReq({
       ownersParams,
     });
   }
 
   onMetricsChanged($event: string[]) {
-    console.log('METRIC CHANGED: ', $event);
-    if ($event.length == 0) {
-      this.updateGraphDisplayableReqWithNestedUpdates({
-        stat_name: '',
-      });
-    }
-    if ($event.length == 1) {
-      this.updateGraphDisplayableReqWithNestedUpdates({
-        stat_name: this.keyTranslatorService.reverseTranslate($event[0]),
-      });
-    } else {
-      this.updateGraphDisplayableReqWithNestedUpdates({
-        stat_name: '',
-        metric_names: $event.map((metric) =>
-          this.keyTranslatorService.reverseTranslate(metric)
-        ),
-      });
-    }
+    this.updateGraphDisplayableReq({
+      metricNames: $event,
+    });
   }
 }

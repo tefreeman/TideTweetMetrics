@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, filter, first, map } from 'rxjs';
+import { T_GridType } from '../interfaces/displayable-data-interface';
 import {
   I_GridEntry,
   I_GridRequestEntry,
@@ -176,23 +177,31 @@ export class DashboardPageManagerService {
    * @param gridName - The name of the grid to delete.
    */
   public deleteGrid$(pageName: string, gridName: string) {
-    this.pageMap$.pipe(
-      first(),
-      map(requests => {
-        // Create a deep clone if necessary to avoid direct mutations - shallow copy might be sufficient based on structure
-        const updatedRequests = JSON.parse(JSON.stringify(requests));
-        
-        if (updatedRequests[pageName] && updatedRequests[pageName][gridName]) {
-          delete updatedRequests[pageName][gridName];
-        } else {
-          console.error(`Grid "${gridName}" or Page "${pageName}" does not exist`);
-        }
-  
-        return updatedRequests;
-    })).subscribe((updatedRequests) => {
-      // Emit the changes to all subscribers
-      this.emitChanges(updatedRequests);
-    });
+    this.pageMap$
+      .pipe(
+        first(),
+        map((requests) => {
+          // Create a deep clone if necessary to avoid direct mutations - shallow copy might be sufficient based on structure
+          const updatedRequests = JSON.parse(JSON.stringify(requests));
+
+          if (
+            updatedRequests[pageName] &&
+            updatedRequests[pageName][gridName]
+          ) {
+            delete updatedRequests[pageName][gridName];
+          } else {
+            console.error(
+              `Grid "${gridName}" or Page "${pageName}" does not exist`
+            );
+          }
+
+          return updatedRequests;
+        })
+      )
+      .subscribe((updatedRequests) => {
+        // Emit the changes to all subscribers
+        this.emitChanges(updatedRequests);
+      });
   }
   /**
    * Adds a new grid to a page in the page map.
@@ -315,7 +324,7 @@ export class DashboardPageManagerService {
   public createAndAddGridToEnd$(
     pageName: string,
     gridName: string,
-    type: 'graph' | 'stat'
+    type: T_GridType
   ) {
     // Creating a blank I_GridRequestEntry
     const blankGridEntry: Omit<I_GridRequestEntry, 'order'> = {

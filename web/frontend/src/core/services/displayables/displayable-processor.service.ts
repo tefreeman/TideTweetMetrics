@@ -1,16 +1,26 @@
 import { Injectable } from '@angular/core';
 import {
-  I_GenericGraphData,
-  I_GraphBarData,
-  I_GraphLineData,
-  I_ScatterPlotData,
-  I_StatCompData,
-  I_StatTrendData,
-  I_StatValueData,
-  T_DisplayableDataType,
+  I_BarGraphCard,
+  I_BarGroupedGraphCard,
+  I_BasicMetricCard,
+  I_CompMetricCard,
+  I_LineGraphCard,
+  I_ScatterGraphCard,
+  I_TrendMetricCard,
+  T_BaseCard,
 } from '../../interfaces/displayable-data-interface';
-import { IDisplayableData } from '../../interfaces/displayable-interface';
-import { T_MetricValue } from '../../interfaces/metrics-interface';
+import {
+  I_DisplayableRequest,
+  I_MetricSubset,
+  T_MetricValue,
+} from '../../interfaces/displayable-interface';
+enum MetricValType {
+  Number = 1,
+  NumberArray,
+  EmptyArray,
+  StringNumberTupleArray,
+  Unknown,
+}
 
 /**
  * Service responsible for processing displayable data.
@@ -27,33 +37,28 @@ export class DisplayableProcessorService {
    * @returns The converted displayable data or null if conversion fails.
    * @throws Error if the data type is invalid.
    */
-  convert(data: IDisplayableData): T_DisplayableDataType | null {
-    if (
-      data.type === 'display' ||
-      data.type === 'auto' ||
-      data.type === 'auto-stat'
-    ) {
-      return this.decisionTree(data);
+  convert(
+    data: I_MetricSubset,
+    request: I_DisplayableRequest
+  ): T_BaseCard | null {
+    if (request.type === 'auto-graph' || request.type === 'auto-stat') {
+      return this.decisionTree(data, request);
     }
 
-    if (data.type === 'stat-value') {
-      return this.toStatValue(data);
-    } else if (data.type === 'stat-comp') {
-      return this.toStatComparison(data);
-    } else if (data.type === 'stat-trend') {
-      return this.toStatTrend(data);
-    } else if (data.type === 'small-graph-bar') {
-      return this.toSmallGraphBar(data);
-    } else if (data.type === 'large-graph-bar') {
-      return this.toLareGraphBar(data);
-    } else if (data.type === 'small-graph-bar-grouped') {
-      return this.toSmallGraphBarGrouped(data);
-    } else if (data.type === 'large-graph-bar-grouped') {
-      return this.toLargeGraphBarGrouped(data);
-    } else if (data.type === 'graph-scatter') {
-      return this.toScatterPlot(data);
-    } else if (data.type === 'graph-line') {
-      return this.toGraphLine(data);
+    if (request.type === 'metric-value') {
+      return this.toMetricValue(data);
+    } else if (request.type === 'metric-comp') {
+      return this.toMetricComp(data);
+    } else if (request.type === 'metric-trend') {
+      return this.toMetricTrend(data);
+    } else if (request.type === 'graph-bar') {
+      return this.toBarGraph(data);
+    } else if (request.type === 'graph-bar-grouped') {
+      return this.toBarGraph(data);
+    } else if (request.type === 'graph-line') {
+      return this.toLineGraph(data);
+    } else if (request.type === 'graph-scatter') {
+      return this.toScatterGraph(data);
     } else {
       throw new Error('Invalid data type');
     }
@@ -64,225 +69,431 @@ export class DisplayableProcessorService {
    * @param data The displayable data to process.
    * @returns The processed displayable data or null if processing fails.
    */
-  decisionTree(data: IDisplayableData): T_DisplayableDataType | null {
-    const ownerCount = Object.keys(data.owners).length;
-    //TODO: fix
-    const firstOwner = Object.values(data.owners)[0];
-    let dataPoints;
-    const dataDimension = Array.isArray(firstOwner)
-      ? Array.isArray(firstOwner[0])
-        ? firstOwner[0].length
-        : 1
-      : 1;
+  decisionTree(
+    data: I_MetricSubset,
+    request: I_DisplayableRequest
+  ): T_BaseCard | null {
+    const metricCount = request.metricNames.length;
+    const ownerCount = Object.keys(Object.values(data)[0]).length;
+    const MetricValTypeEnum: MetricValType = this.determineMetricValType(data);
 
-    // TODO: upgrade this to a switch statement
-    if (Array.isArray(firstOwner)) {
-      dataPoints = firstOwner.length;
-    } else {
-      dataPoints = 1;
+    if (request.type === 'auto-stat') {
+      if (metricCount === 1 && ownerCount === 1) {
+        if (MetricValTypeEnum === MetricValType.Number) {
+          return this.toMetricValue(data);
+        } else if (MetricValTypeEnum === MetricValType.StringNumberTupleArray) {
+          return this.toMetricTrend(data);
+        }
+      } else {
+        if (ownerCount === 2) {
+          return this.toMetricComp(data);
+        }
+      }
+      console.warn(
+        'Failed to process auto-stat displayable data',
+        data,
+        request
+      );
+      return null;
     }
 
-    if (data.type === 'auto-stat') {
-      if (ownerCount == 1 && dataDimension == 1 && dataPoints == 1)
-        return this.toStatValue(data);
-
-      if (ownerCount == 2 && dataDimension == 1 && dataPoints == 1)
-        return this.toStatComparison(data);
-
-      if (ownerCount == 1 && dataDimension == 2 && dataPoints > 1)
-        return this.toStatTrend(data);
-
-      // we can't fall through to the next if statement if auto-stat
-      return this.toStatValue(data);
+    if (request.type === 'auto-graph') {
+      if (
+        metricCount === 1 &&
+        ownerCount > 1 &&
+        MetricValTypeEnum === MetricValType.Number
+      ) {
+        return this.toBarGraph(data);
+      } else if (
+        metricCount > 1 &&
+        ownerCount > 1 &&
+        MetricValTypeEnum === MetricValType.Number
+      ) {
+        return this.toBarGroupedGraph(data);
+      } else if (
+        metricCount === 1 &&
+        ownerCount >= 1 &&
+        MetricValTypeEnum === MetricValType.StringNumberTupleArray
+      ) {
+        return this.toLineGraph(data);
+      } else if (
+        metricCount === 2 &&
+        ownerCount >= 1 &&
+        MetricValTypeEnum === MetricValType.NumberArray
+      ) {
+        return this.toScatterGraph(data);
+      }
+      console.warn(
+        'Failed to process auto-graph displayable data',
+        data,
+        request
+      );
+      return null;
     }
-    return this.genericGraphData(data);
+    console.warn('Invalid displayable type for decision tree processing');
+    return null;
   }
 
-  /**
-   * Converts the displayable data to the stat-value type.
-   * @param data The displayable data to convert.
-   * @returns The converted stat-value data or null if conversion fails.
-   */
-  private toStatValue(data: IDisplayableData): I_StatValueData | null {
-    if (Object.keys(data.owners).length < 1) {
-      console.log('Invalid data for stat-value');
+  private toMetricValue(data: I_MetricSubset): I_BasicMetricCard | null {
+    if (Object.keys(data).length !== 1) {
+      console.warn('Invalid data for metric-value displayable');
       return null;
     }
 
-    if (typeof data.stat_name !== 'string') {
-      console.log('Invalid data for stat-value');
+    const metricName = Object.keys(data)[0];
+    const ownerName = Object.keys(data[metricName])[0];
+    const metricValue = data[metricName][ownerName];
+
+    if (typeof metricValue !== 'number') {
+      console.warn('Invalid metric value for metric-value displayable');
       return null;
     }
 
-    const owner = Object.keys(data.owners)[0];
     return {
-      type: 'stat-value',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      owner: owner,
-      value: data.owners[owner],
+      type: 'metric-value',
+      metricName,
+      owner: ownerName,
+      value: metricValue,
     };
   }
 
-  /**
-   * Converts the displayable data to the stat-comp type.
-   * @param data The displayable data to convert.
-   * @returns The converted stat-comp data or null if conversion fails.
-   */
-  // Jerry rigged this to work need to go over
-  private toStatComparison(data: IDisplayableData): I_StatCompData | null {
-    if (Object.keys(data.owners).length != 2) {
-      console.log('Invalid data for stat-comp');
+  private toMetricTrend(data: I_MetricSubset): I_TrendMetricCard | null {
+    if (Object.keys(data).length !== 1) {
+      console.warn('Invalid data for metric-trend displayable');
       return null;
     }
 
-    if (typeof data.stat_name !== 'string') {
-      console.log('Invalid data for stat-value');
+    const metricName = Object.keys(data)[0];
+    const ownerName = Object.keys(data[metricName])[0];
+    const fullValuesArr = data[metricName][ownerName];
+
+    // Ensuring fullValuesArr is an array of [number, number] tuples.
+    if (!Array.isArray(fullValuesArr) || fullValuesArr.length < 2) {
+      console.warn(
+        'Invalid or insufficient metric values for metric-trend displayable'
+      );
       return null;
     }
-    const values = Object.values(data.owners).map((value) => {
-      return Array.isArray(value) ? value[value.length - 1] : value;
-    });
 
+    // Take the last two elements of the provided array
+    const lastTwoValues = fullValuesArr.slice(-2) as [number, number][];
+
+    // Validate the structure of the last two elements
     if (
-      values.length !== 2 ||
-      Array.isArray(values[0]) ||
-      Array.isArray(values[1])
+      lastTwoValues.some(
+        (val) =>
+          !Array.isArray(val) ||
+          val.length !== 2 ||
+          !val.every((num) => typeof num === 'number')
+      )
     ) {
-      console.log('Invalid data for stat-comp');
+      console.warn('Invalid structure for the last two metric values');
       return null;
     }
 
-    console.log('VALUE: ', values);
+    // Assuming the structure [[time, value], [time, value]]
+    const times: [number, number] = [lastTwoValues[0][0], lastTwoValues[1][0]];
+    const values: [number, number] = [lastTwoValues[0][1], lastTwoValues[1][1]];
+
     return {
-      type: 'stat-comp',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: values, // Directly use the processed 'values' array
-      owners: Object.keys(data.owners),
+      type: 'metric-trend',
+      metricName,
+      owner: ownerName,
+      times: times,
+      values: values,
+    };
+  }
+  private toMetricComp(data: I_MetricSubset): I_CompMetricCard | null {
+    if (Object.keys(data).length !== 1) {
+      console.warn('Invalid data for metric-comp displayable');
+      return null;
+    }
+
+    const metricName = Object.keys(data)[0];
+    const owners = Object.keys(data[metricName]);
+
+    // Ensure exactly two owners are provided for the comparison.
+    if (owners.length !== 2) {
+      console.warn(
+        'Invalid owners count for metric-comp displayable, expected 2 owners'
+      );
+      return null;
+    }
+
+    // Extract values for both owners as numbers
+    const valuesForOwners = owners.map((owner) => data[metricName][owner]);
+
+    // Check if the extracted values are numbers
+    const values = valuesForOwners.every((value) => typeof value === 'number')
+      ? (valuesForOwners as [number, number])
+      : null; // Safely cast to [number, number] since we checked all are numbers
+
+    if (!values) {
+      console.warn(
+        'Invalid or missing values for owner in metric-comp displayable'
+      );
+      return null;
+    }
+
+    return {
+      type: 'metric-comp',
+      metricName,
+      owners: [owners[0], owners[1]],
+      values,
     };
   }
 
-  /**
-   * Converts the displayable data to the stat-trend type.
-   * @param data The displayable data to convert.
-   * @returns The converted stat-trend data or null if conversion fails.
-   */
-  private toStatTrend(data: IDisplayableData): I_StatTrendData | null {
-    console.log('TREND: ', data);
+  // Assuming these interfaces are imported or exist in the same file.
+  toBarGraph(data: I_MetricSubset): I_BarGraphCard | null {
+    // Initialize the data array for the bar graph.
+    let graphData: { owner: string; metricValue: number }[] = [];
+    let metricNames: string[] = [];
+    let owners: string[] = [];
 
-    if (Object.keys(data.owners).length != 1) {
-      console.log('Invalid data for stat-trend');
+    for (const metricName in data) {
+      metricNames.push(metricName); // Collect metric names.
+      for (const owner in data[metricName]) {
+        // Make sure owner is unique.
+        if (!owners.includes(owner)) {
+          owners.push(owner);
+        }
+
+        const value: T_MetricValue = data[metricName][owner];
+
+        // Check if the value is a number. If not, console.warn and return null.
+        if (typeof value !== 'number') {
+          console.warn(
+            `Value for metric '${metricName}' by '${owner}' is not a number.`
+          );
+          return null;
+        }
+
+        // Add to graph data if it's a valid number.
+        graphData.push({ owner, metricValue: value });
+      }
+    }
+
+    // Create the bar graph card with the accumulated data.
+    const barGraphCard: I_BarGraphCard = {
+      type: 'graph-bar',
+      metricNames,
+      owners,
+      data: graphData,
+    };
+
+    return barGraphCard;
+  }
+  toBarGroupedGraph(data: I_MetricSubset): I_BarGroupedGraphCard | null {
+    let graphData: { owner: string; [metricName: string]: string | number }[] =
+      [];
+    let metricNames: string[] = [];
+    let owners: string[] = [];
+
+    // First pass: Check for invalid values and collect metric names and owners.
+    for (const metricName in data) {
+      if (!metricNames.includes(metricName)) {
+        metricNames.push(metricName);
+      }
+
+      for (const owner in data[metricName]) {
+        if (!owners.includes(owner)) {
+          owners.push(owner);
+        }
+
+        const value = data[metricName][owner];
+        if (typeof value !== 'number') {
+          console.warn(
+            `Value for metric '${metricName}' by '${owner}' is not a number.`
+          );
+          return null;
+        }
+      }
+    }
+
+    // Check if we have at least two metrics for a grouped bar graph.
+    if (metricNames.length < 2) {
+      console.warn(
+        'A grouped bar graph requires at least two different metric names.'
+      );
       return null;
     }
 
-    if (typeof data.stat_name !== 'string') {
-      console.log('Invalid data for stat-value');
-      return null;
-    }
-    const owner = Object.keys(data.owners)[0];
-    const values: T_MetricValue[] = Object.values(
-      data.owners
-    )[0] as T_MetricValue[];
+    // Second pass: Construct the data array according to the I_BarGroupedGraphCard format.
+    owners.forEach((owner) => {
+      // Define dataEntry with an index signature to allow dynamic string keys.
+      const dataEntry: { owner: string; [key: string]: string | number } = {
+        owner,
+      };
 
-    const times: T_MetricValue = [];
-    const value_arr: T_MetricValue[] = [];
+      metricNames.forEach((metricName) => {
+        if (data[metricName] && typeof data[metricName][owner] === 'number') {
+          dataEntry[metricName] = data[metricName][owner] as any;
+        }
+      });
 
-    values.forEach(([val1, val2]: any) => {
-      times.push(val1);
-      value_arr.push(val2);
+      graphData.push(dataEntry);
     });
 
-    if (Array.isArray(values)) {
-      return {
-        type: 'stat-trend',
-        metricName: data.stat_name,
-        ownersParams: data.ownersParams,
-        owner: owner,
-        times: times,
-        time_period: 'monthes', // Hardcoded for now TODO: fix
-        values: value_arr,
-      };
-    } else {
-      throw new Error('Invalid data for stat-trend');
+    const groupedGraphCard: I_BarGroupedGraphCard = {
+      type: 'graph-bar-grouped',
+      metricNames,
+      owners,
+      data: graphData,
+    };
+
+    return groupedGraphCard;
+  }
+
+  toLineGraph(data: I_MetricSubset): I_LineGraphCard | null {
+    const metricNames = Object.keys(data);
+
+    // Ensure there is exactly one metric
+    if (metricNames.length !== 1) {
+      console.warn('toLineGraph expects data for exactly one metric.');
+      return null;
     }
-  }
 
-  private genericGraphData(data: IDisplayableData): I_GenericGraphData {
-    return {
-      type: 'auto',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
-    };
-  }
-  /**
-   * Converts the displayable data to the graph-bar type.
-   * @param data The displayable data to convert.
-   * @returns The converted graph-bar data.
-   */
-  private toSmallGraphBar(data: IDisplayableData): I_GraphBarData {
-    return {
-      type: 'small-graph-bar',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
-    };
-  }
+    // Prepare for transformation
+    const metricName = metricNames[0];
+    const ownersData = data[metricName];
+    const owners = Object.keys(ownersData);
+    const lineGraphData: { time: number; [owner: string]: number }[] = [];
+    const processedTimes = new Set<number>();
 
-  private toLareGraphBar(data: IDisplayableData): I_GraphBarData {
-    return {
-      type: 'large-graph-bar',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
-    };
-  }
+    for (const owner of owners) {
+      const metricValues = ownersData[owner];
 
-  private toSmallGraphBarGrouped(data: IDisplayableData): I_GraphBarData {
-    return {
-      type: 'small-graph-bar-grouped',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
-    };
-  }
+      // Verify and cast the metric value to the expected tuple format
+      if (Array.isArray(metricValues)) {
+        for (const value of metricValues) {
+          if (
+            Array.isArray(value) &&
+            value.length === 2 &&
+            typeof value[0] === 'number' &&
+            typeof value[1] === 'number'
+          ) {
+            const [time, val] = value;
+            if (!processedTimes.has(time)) {
+              // Initialize or update lineGraphData with this time point for all owners
+              let dataPoint = lineGraphData.find((dp) => dp.time === time);
+              if (!dataPoint) {
+                dataPoint = { time, [owner]: val };
+                lineGraphData.push(dataPoint);
+              } else {
+                dataPoint[owner] = val;
+              }
+              processedTimes.add(time);
+            } else {
+              // Update the existing entry for a specific time point
+              const dataPoint = lineGraphData.find((dp) => dp.time === time);
+              if (dataPoint) {
+                dataPoint[owner] = val;
+              }
+            }
+          } else {
+            console.warn(
+              'Metric values are not in the expected [Number, Number] format.'
+            );
+            return null;
+          }
+        }
+      } else {
+        console.warn('Invalid metric value format.');
+        return null;
+      }
+    }
 
-  private toLargeGraphBarGrouped(data: IDisplayableData): I_GraphBarData {
-    return {
-      type: 'large-graph-bar-grouped',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
-    };
-  }
-  /**
-   * Converts the displayable data to the graph-line type.
-   * @param data The displayable data to convert.
-   * @returns The converted graph-line data.
-   */
-  private toGraphLine(data: IDisplayableData): I_GraphLineData {
     return {
       type: 'graph-line',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
+      metricNames: [metricName],
+      owners,
+      data: lineGraphData,
     };
   }
 
-  private toScatterPlot(data: IDisplayableData): I_ScatterPlotData {
+  toScatterGraph(data: I_MetricSubset): I_ScatterGraphCard | null {
+    const metricNames = Object.keys(data);
+
+    // Check if there are exactly two metrics
+    if (metricNames.length !== 2) {
+      console.warn('toGraphScatter expects data for exactly two metrics.');
+      return null;
+    }
+
+    const scatterData: I_ScatterGraphCard['data'] = {};
+    const [metricName1, metricName2] = metricNames;
+
+    for (const metricName of metricNames) {
+      const ownersData = data[metricName];
+
+      for (const [owner, value] of Object.entries(ownersData)) {
+        if (
+          !Array.isArray(value) ||
+          value.some((val) => typeof val !== 'number')
+        ) {
+          console.warn(
+            `${metricName} for ${owner} is not in the expected number[] format.`
+          );
+          return null; // Here, returning null if there's a format error remains correct
+        }
+
+        if (!scatterData[owner]) {
+          scatterData[owner] = [];
+        }
+
+        value.forEach((val) => {
+          let entry = scatterData[owner].find((entry) =>
+            entry.hasOwnProperty(metricName)
+          );
+          if (!entry) {
+            entry = {}; // Initialize a new entry if not found
+            scatterData[owner].push(entry);
+          }
+          entry[metricName] = val as number;
+        });
+      }
+    }
+
     return {
       type: 'graph-scatter',
-      metricName: data.stat_name,
-      ownersParams: data.ownersParams,
-      values: Object.values(data.owners),
-      owners: Object.keys(data.owners),
+      metricNames: [metricName1, metricName2],
+      owners: Object.keys(scatterData),
+      data: scatterData,
     };
+  }
+
+  private determineMetricValType(data: I_MetricSubset): MetricValType {
+    // Assuming we're inspecting the first metric for simplicity.
+    // In real applications, you might need to loop through or otherwise dynamically select which metric to inspect.
+    const firstMetricKey = Object.keys(data)[0];
+    const firstOwnerKey = Object.keys(data[firstMetricKey])[0];
+    const firstMetricValue = data[firstMetricKey][firstOwnerKey];
+
+    // Determine the type based on the characteristics of the firstMetricValue
+    if (typeof firstMetricValue === 'number') {
+      return MetricValType.Number;
+    } else if (Array.isArray(firstMetricValue)) {
+      if (firstMetricValue.length === 0) {
+        // If the array is empty, it's more difficult to determine the intended structure.
+        return MetricValType.EmptyArray;
+      } else {
+        // Inspect the first element of the array to determine its structure.
+        const firstElement = firstMetricValue[0];
+        if (typeof firstElement === 'number') {
+          return MetricValType.NumberArray;
+        } else if (
+          Array.isArray(firstElement) &&
+          (typeof firstElement[0] === 'string' ||
+            typeof firstElement[0] === 'number') &&
+          typeof firstElement[1] === 'number'
+        ) {
+          return MetricValType.StringNumberTupleArray;
+        } else {
+          return MetricValType.Unknown;
+        }
+      }
+    } else {
+      return MetricValType.Unknown;
+    }
   }
 }

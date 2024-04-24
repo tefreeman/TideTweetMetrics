@@ -1,6 +1,6 @@
 import { CommonModule, DecimalPipe, NgIf } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { I_StatTrendData } from '../../../core/interfaces/displayable-data-interface';
+import { I_TrendMetricCard } from '../../../core/interfaces/displayable-data-interface';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { KeyTranslatorService } from '../../../core/services/key-translator.service';
 
@@ -19,7 +19,7 @@ export class StatTrendComponent implements OnInit {
   /**
    * The displayable data for the statistical trend.
    */
-  @Input({ required: true }) displayableData!: I_StatTrendData;
+  @Input({ required: true }) displayableData!: I_TrendMetricCard;
 
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
@@ -75,7 +75,6 @@ export class StatTrendComponent implements OnInit {
     this.nowTime = this.displayableData.times.at(-1) as number;
 
     this.difference = this.nowPoint - this.oldPoint;
-    this.timeUnitString = this.displayableData.time_period;
 
     console.log('TIME : ', this.oldTime, this.nowTime);
     this.timeUnitString = this.createTimePeriodString(

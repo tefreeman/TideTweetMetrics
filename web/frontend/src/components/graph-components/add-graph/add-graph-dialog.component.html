@@ -11,14 +11,14 @@
   </div>
   <!-- Owner Search Bar-->
   <div class="owner-search">
-    <app-owner-search-graph
+    <app-owner-search
       [metricName]="'tweet_likes-sum'"
       [defaultOwners]="['alabama_cs', '_global']"
       (ownersChanged)="onOwnersChanged($event)"
       [isAllowed]="true"
       style="width: 100%"
     >
-    </app-owner-search-graph>
+    </app-owner-search>
   </div>
 </div>
 

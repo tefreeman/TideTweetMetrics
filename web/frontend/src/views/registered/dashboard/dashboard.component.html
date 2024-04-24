@@ -29,7 +29,7 @@
           {{ grid.name.charAt(0).toUpperCase() + grid.name.slice(1) }}
         </h2>
 
-        @if (grid.type == 'stat') {
+        @if (grid.type == 'metric') {
         <app-card-grid
           [page]="(pageName$ | async)!"
           [name]="grid.name"
@@ -50,7 +50,9 @@
       </div>
     </div>
   </div>
-    <!-- Footer section; visible only if there's at least one grid present -->
-    <div *ngIf="((grids$ | async) ?? []).length > 0" class="dashboard-footer">
-  </div>
+  <!-- Footer section; visible only if there's at least one grid present -->
+  <div
+    *ngIf="((grids$ | async) ?? []).length > 0"
+    class="dashboard-footer"
+  ></div>
 </div>

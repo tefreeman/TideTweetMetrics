@@ -18,7 +18,7 @@ function getData() {
 }
 
 /**
- * Formats a number as a string.
+ * Formas a string.
  * @param value - The number to format.
  * @returns The formatted number as a string.
  */

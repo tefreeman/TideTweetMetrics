@@ -1,8 +1,5 @@
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
-import {
-  I_GraphBarData,
-  I_ScatterPlotData,
-} from '../../interfaces/displayable-data-interface';
+import { I_ScatterGraphCard } from '../../interfaces/displayable-data-interface';
 import { BaseGraph } from './base-graph';
 
 export class GraphScatter extends BaseGraph {
@@ -10,68 +7,19 @@ export class GraphScatter extends BaseGraph {
     super();
   }
 
-  private isGrouped(data: I_GraphBarData): boolean {
-    if (data.groupId) {
-      return true;
-    }
-    return false;
+  public getGraph(scatterCard: I_ScatterGraphCard): AgChartOptions {
+    return this.getOptions(scatterCard);
   }
 
-  public getGraph(data: I_ScatterPlotData): AgChartOptions {
-    return this.getOptions(data);
-  }
-
-  getData(data: I_ScatterPlotData): { [key: string]: any[] } {
-    const chartData: { [key: string]: any[] } = {};
-    console.log('DATA: ', data);
-
-    if (data.valuesNested && data.metricNames) {
-      for (let i = 0; i < data.owners.length; i++) {
-        const owner = data.owners[i];
-
-        // Initialize with an empty array for each owner.
-        const ownerDataArray: any[] = [];
-
-        for (let j = 0; j < data.metricNames.length; j++) {
-          const metricName = data.metricNames[j];
-          const values = data.valuesNested[i][j];
-
-          // Check if values is an array and has multiple data points.
-          if (Array.isArray(values)) {
-            // Iterate through each value in the array.
-            values.forEach((value, index) => {
-              // Ensure there's an object at this index.
-              // If not, create a new object.
-              if (!ownerDataArray[index]) {
-                ownerDataArray[index] = {};
-              }
-              // Assign the metric name and value to the object at this index.
-              ownerDataArray[index][metricName] = value;
-            });
-          } else {
-            // If it's not an array, treat it as a single value metric.
-            // Ensure there's at least one object in the ownerDataArray.
-            if (ownerDataArray.length === 0) ownerDataArray.push({});
-            // Assign the metric name and value to the first object.
-            ownerDataArray[0][metricName] = values;
-          }
-        }
-
-        chartData[owner] = ownerDataArray;
-      }
-    }
-    console.log('GET SCATTER DATA: ', chartData);
-    return chartData;
-  }
-  getSeries(data: I_GraphBarData): any[] {
+  getSeries(data: I_ScatterGraphCard): any[] {
     return [];
   }
 
-  private getOptions(gData: I_ScatterPlotData): AgChartOptions {
+  private getOptions(scatterCard: I_ScatterGraphCard): AgChartOptions {
     let metricOne: string;
     let metricTwo: string;
-    if (gData.metricNames) {
-      [metricOne, metricTwo] = gData.metricNames;
+    if (scatterCard.metricNames) {
+      [metricOne, metricTwo] = scatterCard.metricNames;
     }
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
@@ -79,7 +27,7 @@ export class GraphScatter extends BaseGraph {
       title: {
         enabled: false,
       },
-      series: Object.entries(this.getData(gData)).map(([username, data]) => ({
+      series: Object.entries(scatterCard).map(([username, data]) => ({
         data,
         type: 'scatter',
         xKey: metricOne,
