@@ -168,21 +168,23 @@ export class addStatsDialogComponent implements OnInit {
    * @param notMetricHook - Indicates if it is not a metric hook.
    */
   onSearchValueChange(value: string, notMetricHook = true) {
-    console.log(value);
     if (value) {
       if (notMetricHook) this.lastMetricSearchValue = value;
       this._recommendedDisplayables.next(
         this.allDisplayables.filter((item) => {
-          // Split the search value into words
-          const searchWords = value.toLowerCase().split(' ');
-          // Split the item's metric name into words and convert it to a full string
-          const itemWords = this.keyTranslatorService
+          // Split the search value into words, considering spaces and common punctuations
+          const searchWords = value.toLowerCase().split(/\s+|,|\.|;/);
+          // Split the item's metric name into words, considering spaces and common punctuations
+          let itemWords = this.keyTranslatorService
             .keyToFullString(item.metricName.toLowerCase())
-            .split(' ');
-
-          // Check if any of the search words partially match the item words
+            .split(/\s+|,|\.|;/);
+          
+            itemWords = itemWords.map((word) => word.toLowerCase());
+          console.log("Item Metric Words:", itemWords);
+  
+          // Check if any of the search words starts with the item words
           return searchWords.some((searchWord) =>
-            itemWords.some((itemWord) => itemWord.includes(searchWord))
+            itemWords.some((itemWord) => itemWord.startsWith(searchWord))
           );
         })
       );
@@ -239,7 +241,6 @@ export class addStatsDialogComponent implements OnInit {
    * @param $event - The metrics array.
    */
   onMetricsChanged($event: string[]) {
-    console.log($event);
     if ($event.length == 0)
       this.onSearchValueChange(this.lastMetricSearchValue);
     if ($event.length == 1) this.onSearchValueChange($event[0], false);
