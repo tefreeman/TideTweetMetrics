@@ -1,12 +1,8 @@
-
-:host{
+:host {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-
-
-
 
 .grid-container {
   display: grid;
@@ -23,25 +19,26 @@
   width: calc(100% - 4rem);
 }
 
-.search-bar, .owner-search {
+.search-bar,
+.owner-search {
   flex: 1; // This makes both children take up equal space in the container
   min-width: 0; // Prevents flex items from overflowing their container
   // You can adjust or remove the max-width from these elements as necessary
 }
 
-  .scrollable-content, .recommend-cards {
-    background-color: #ECECEC;
-    
-    overflow-y: auto; // Keeps their own scrollbar as specified
-    -webkit-overflow-scrolling: touch; 
-    padding: 1rem;
-    max-height: 60vh; // Consider removing or adjusting max-height for better flexibility
-  }
+.scrollable-content,
+.recommend-cards {
+  background-color: #ececec;
+  overflow-y: auto; // Keeps their own scrollbar as specified
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - 500px); /* Adjust 150px based on your layout's needs */
+  padding: 1rem;
+}
 
-.title{
+.title {
   font-weight: bold;
-  font-size: 20px; 
-  letter-spacing: -.3px;
+  font-size: 20px;
+  letter-spacing: -0.3px;
 }
 
 .sub-title {
@@ -57,12 +54,19 @@
   margin: 0;
 }
 
-.content{
+.content {
+  flex: 1; // This takes up all available space, pushing the actions down
   overflow-y: hidden;
 }
 
 mat-dialog-actions {
-  justify-content: flex-end;  // Align buttons to the right
-  width: 100%;  // Ensure actions take full width for proper alignment
+  margin-top: auto; // Pushes the actions to the bottom
+  width: 100%; // Ensures full width
+  justify-content: flex-end; // Aligns buttons to the right
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
