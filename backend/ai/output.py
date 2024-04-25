@@ -20,21 +20,48 @@ from torch.optim.lr_scheduler import OneCycleLR
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from start import BertForSequenceClassificationWithFeatures
 import joblib
-
+import os
 # Function to load the model
 def load_model(model_dir):
     model_path = Path(model_dir) / 'epoch_13'  # Adjust 'epoch_X' to match your saved model directory
     model = BertForSequenceClassificationWithFeatures.from_pretrained(model_path)
     return model
 
-# Function to load the scaler
-def load_scaler(model_dir):
-    scaler_path = Path(model_dir) / 'like_count_scaler.save'
-    scaler = joblib.load(scaler_path)
-    return scaler
+SCALERS_DIR = 'D:\\TideTweetMetrics\\backend\\ai\\model_save'
+SCALERS_CONFIG = {
+    'like_count': 'like_count_scaler.save',
+    'features': 'feature_scaler.save',
+}
+def save_scaler(scaler_name, scaler_object):
+    """
+    Saves the scaler object based on the scaler name according to the predefined paths.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        joblib.dump(scaler_object, scaler_path)
+        print(f"Scaler {scaler_name} saved to {scaler_path}")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+
+def load_scaler(scaler_name):
+    """
+    Loads and returns the scaler object based on the scaler name.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        if os.path.exists(scaler_path):
+            return joblib.load(scaler_path)
+        else:
+            print(f"Scaler file {scaler_path} not found.")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+    return None
+
 
 # Function to prepare your data - this will need to be adjusted based on your actual data structure
-def prepare_data(test_df, scaler):
+def prepare_data(test_df, like_scaler, feature_scaler):
     # Load the scaler object that was saved in `start.py`
     
     # Assuming the necessary text cleaning and feature preparations are applied as in 'start.py'
@@ -57,7 +84,7 @@ def prepare_data(test_df, scaler):
 
 
     scaled_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
-    test_df[scaled_columns] = scaler.transform(test_df[scaled_columns])
+    test_df[scaled_columns] = feature_scaler.transform(test_df[scaled_columns])
     
     # Tokenization process
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
@@ -69,7 +96,8 @@ def prepare_data(test_df, scaler):
     # Preparing labels (conditional)
 
     if 'like_count' in test_df.columns:
-        test_df['like_count_scaled'] = scaler.transform(test_df[['like_count']])
+        test_df['like_count_scaled'] = like_scaler.transform(test_df[['like_count']])
+
 
     if 'like_count_scaled' in test_df.columns:
         test_labels = torch.tensor(test_df['like_count_scaled'].values, dtype=torch.float)
@@ -78,7 +106,8 @@ def prepare_data(test_df, scaler):
         test_labels = None 
         test_dataset = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features)
     
-    return test_dataset
+    
+    return test_dataset, test_labels
 
 def get_dataFrame_from_json():
     with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
@@ -146,31 +175,40 @@ def get_dataFrame_from_json():
 
     # Remove None values
     tweets = [tweet for tweet in tweets if tweet is not None]
-
-
     # Create a DataFrame
     df = pd.DataFrame(tweets)
 
     return df
 
+
 # Main function to evaluate the model
-def evaluate_model(model, test_inputs, true_counts):
+def evaluate_model(model, test_dataset):
     # Ensure the model is in evaluation mode
     model.eval()
 
     # Check if CUDA is available and move the model to GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
+    model.to(device)
     
-    # Move the test_inputs to the same device as the model
-    test_inputs = test_inputs.to(device)
-
+    # Wrap the test_dataset in a DataLoader
+    test_loader = DataLoader(test_dataset, batch_size=32)  # Adjust batch_size as needed
+    
+    all_predicted_counts = []
+    
     with torch.no_grad():
-        outputs = model(test_inputs)
-        # Assuming outputs are logits and the operation happens on the GPU
-        predicted_counts_scaled = outputs.logits.cpu().numpy()  # Move data back to CPU for numpy operations
+        for batch in test_loader:
+            b_input_ids, b_input_mask, b_features = [item.to(device) for item in batch]
+            
+            # Use autocast for the forward pass if applicable
+            with torch.cuda.amp.autocast(enabled=True):
+                logits = model(b_input_ids, attention_mask=b_input_mask, additional_features=b_features).squeeze()
+                
+                predicted_counts = logits.detach().cpu().numpy()
+                
+                all_predicted_counts.extend(predicted_counts)
 
-    return predicted_counts_scaled, true_counts
+    return np.array(all_predicted_counts)  # Return the predicted counts as an array
+
 
 if __name__ == '__main__':
     model_dir = 'D:\\TideTweetMetrics\\backend\\ai\\model_save'
@@ -178,18 +216,21 @@ if __name__ == '__main__':
 
     # Load model and scaler
     model = load_model(model_dir)
-    scaler = load_scaler(model_dir)
+    like_scaler = load_scaler('like_count')
+    feature_scaler = load_scaler('features')
     
     # Load and prepare your test data
     test_df = get_dataFrame_from_json()
-    test_inputs, true_counts = prepare_data(test_df, scaler)
+    test_inputs, test_dataset_length = prepare_data(test_df, like_scaler, feature_scaler)  # Get the length of the test dataset
 
     # Evaluate the model
-    predicted_counts_scaled, true_counts = evaluate_model(model, test_inputs, true_counts)
+    predicted_counts_scaled = evaluate_model(model, test_inputs)
 
     # Rescale predictions
-    predicted_counts = scaler.inverse_transform(predicted_counts_scaled.reshape(-1, 1)).flatten()
+    predicted_counts = like_scaler.inverse_transform(predicted_counts_scaled.reshape(-1, 1)).flatten()
 
+    # Get true counts from the test DataFrame, sliced to match the length of predicted counts
+    true_counts = test_df['like_count'].values[:test_dataset_length]
 
     # Calculate MSE and MAE
     mse = mean_squared_error(true_counts, predicted_counts)

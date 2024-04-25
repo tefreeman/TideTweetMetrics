@@ -154,7 +154,10 @@ export class addStatsDialogComponent implements OnInit {
     limit: number
   ): I_BaseMetricCardWithRequest[] {
     const filteredDisplayables = allDisplayables.filter((displayable) =>
-      data.every((d) => d.metricName !== displayable.metricName)
+      data.every(
+        (d) =>
+          d.metricName.toLowerCase() !== displayable.metricName.toLowerCase()
+      )
     );
     return filteredDisplayables.slice(0, limit);
   }
@@ -168,11 +171,20 @@ export class addStatsDialogComponent implements OnInit {
     console.log(value);
     if (value) {
       if (notMetricHook) this.lastMetricSearchValue = value;
-
       this._recommendedDisplayables.next(
-        this.allDisplayables.filter(
-          (item) => item.metricName.toLowerCase() === value.toLowerCase()
-        )
+        this.allDisplayables.filter((item) => {
+          // Split the search value into words
+          const searchWords = value.toLowerCase().split(' ');
+          // Split the item's metric name into words and convert it to a full string
+          const itemWords = this.keyTranslatorService
+            .keyToFullString(item.metricName.toLowerCase())
+            .split(' ');
+
+          // Check if any of the search words partially match the item words
+          return searchWords.some((searchWord) =>
+            itemWords.some((itemWord) => itemWord.includes(searchWord))
+          );
+        })
       );
     } else {
       this._recommendedDisplayables.next(
