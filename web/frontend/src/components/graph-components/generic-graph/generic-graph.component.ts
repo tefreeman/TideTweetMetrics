@@ -82,7 +82,8 @@ export class GenericGraphComponent {
    */
   adjustChartHeight(): void {
     const width = this.graphContainer.nativeElement.offsetWidth;
-    const newHeight = this.calculateHeightFromWidth(width);
+    const height = this.graphContainer.nativeElement.offsetWidth;
+    const newHeight = this.calculateGraphHeight(width);
     this.chartOptions = { ...this.chartOptions, height: newHeight };
     // You might need to update or redraw your chart based on the new height.
     this.cdr.detectChanges();
@@ -93,9 +94,55 @@ export class GenericGraphComponent {
    * @param width - The width of the graph container.
    * @returns The calculated height of the chart.
    */
-  private calculateHeightFromWidth(width: number): number {
-    // Implement your logic to calculate height from width. This is just an example.
-    return width / (16 / 9); // Example for a 16:9 aspect ratio
+  calculateGraphHeight(width: number) {
+    const minHeight = 200;
+    let maxHeight = window.innerHeight - 60;
+
+    const screenRatio = window.innerWidth / window.innerHeight;
+    console.log('Screen ratio:', screenRatio);
+
+    // Initial ideal height ratio assumptions
+    let idealHeightRatio = 0.6; // Default for standard screens in landscape
+
+    if (screenRatio < 1) {
+      // Portrait mode adjustment
+      const screenHeight = window.innerHeight;
+      const baseScreenHeight = 400;
+      const extendedScreenHeight = 800;
+      const minRatio = 0.75;
+      const maxRatio = 1; // More vertical space in portrait
+
+      if (screenHeight <= baseScreenHeight) {
+        idealHeightRatio = minRatio;
+      } else if (screenHeight >= extendedScreenHeight) {
+        idealHeightRatio = maxRatio;
+      } else {
+        // Smooth transition between minRatio and maxRatio for mid-sized screens
+        const ratioDelta = maxRatio - minRatio;
+        const screenDelta = screenHeight - baseScreenHeight;
+        const totalDelta = extendedScreenHeight - baseScreenHeight;
+        idealHeightRatio = minRatio + (ratioDelta * screenDelta) / totalDelta;
+      }
+    } else {
+      // Landscape mode adjustment
+      // Handles exceptionally tall and narrow screens in landscape
+      const screenHeight = window.innerHeight;
+      const minWidthHeightRatio = 1.2; // Minimum width:height aspect ratio to adjust height for
+      if (screenRatio < minWidthHeightRatio) {
+        // If the screen is tall and relatively narrow, adjust the height ratio upward
+        const maxLandscapeRatio = 0.8; // Allow for more vertical space usage
+        idealHeightRatio =
+          0.6 +
+          (maxLandscapeRatio - 0.6) *
+            ((minWidthHeightRatio - screenRatio) / (minWidthHeightRatio - 1));
+      }
+      // No further adjustment for wide screens; default ratio used
+    }
+
+    let graphHeight = width * idealHeightRatio;
+    graphHeight = Math.max(minHeight, Math.min(maxHeight, graphHeight));
+
+    return graphHeight;
   }
 
   /**
