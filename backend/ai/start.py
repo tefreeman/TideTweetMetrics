@@ -211,7 +211,7 @@ test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
 
 
         # Saving the scaler object
-joblib.dump(like_count_scaler, 'D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
+save_scaler('like_count', like_count_scaler)
 
 # Loading the scaler object
 #like_count_scaler = joblib.load('D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
@@ -233,16 +233,18 @@ test_labels = torch.tensor(test['like_count_scaled'].values)
 
 
 # Create a MinMaxScaler object
-scaler = MinMaxScaler()
+features_scaler = MinMaxScaler()
 
 # Define the columns to be scaled
 scale_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
 
 # Fit the scaler on the training data and transform the data
-train[scale_columns] = scaler.fit_transform(train[scale_columns])
-validate[scale_columns] = scaler.transform(validate[scale_columns])
-test[scale_columns] = scaler.transform(test[scale_columns])
+train[scale_columns] = features_scaler.fit_transform(train[scale_columns])
+validate[scale_columns] = features_scaler.transform(validate[scale_columns])
+test[scale_columns] = features_scaler.transform(test[scale_columns])
 
+
+save_scaler('features', features_scaler)
 # Create additional feature tensors with scaled features
 train_features = torch.tensor(train[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
 validate_features = torch.tensor(validate[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
@@ -259,14 +261,9 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 validate_loader = DataLoader(validate_dataset, batch_size=batch_size)
 test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
-# Load a pre-trained model
-model = BertForSequenceClassificationWithFeatures.from_pretrained('bert-base-uncased')
 
-# Replace the classifier with a new regression head
-model.classifier = nn.Sequential(
-    nn.Dropout(0.1),  # assuming the dropout rate from the original BERT
-    nn.Linear(model.classifier.in_features, 1)
-)
+
+
 
 
 # Loss function
