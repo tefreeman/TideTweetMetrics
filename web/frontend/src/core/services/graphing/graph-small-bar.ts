@@ -1,11 +1,15 @@
+import { inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_BarGraphCard } from '../../interfaces/displayable-data-interface';
+import { KeyTranslatorService } from '../key-translator.service';
 import { BaseGraph } from './base-graph';
 
 /**
  * Represents a small bar graph for displaying likes data.
  */
 export class GraphSmallBar extends BaseGraph {
+  private keyt: KeyTranslatorService = inject(KeyTranslatorService);
+
   constructor() {
     super();
   }
@@ -61,7 +65,7 @@ export class GraphSmallBar extends BaseGraph {
       // Data: Data to be displayed in the chart
       data: barCard.data,
       title: {
-        text: barCard.metricNames[0],
+        text: this.keyt.keyToFullString(barCard.metricNames[0]),
       },
       series: this.getBarSeries(barCard),
       axes: [

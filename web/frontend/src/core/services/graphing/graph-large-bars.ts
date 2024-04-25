@@ -1,5 +1,7 @@
+import { inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_BarGraphCard } from '../../interfaces/displayable-data-interface';
+import { KeyTranslatorService } from '../key-translator.service';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -7,6 +9,8 @@ import { BaseGraph } from './base-graph';
  * @class
  */
 export class GraphLargeBar extends BaseGraph {
+  private keyt: KeyTranslatorService = inject(KeyTranslatorService);
+
   constructor() {
     super();
   }
@@ -66,7 +70,7 @@ export class GraphLargeBar extends BaseGraph {
 
       data: barCard.data,
       title: {
-        text: barCard.metricNames[0],
+        text: this.keyt.keyToFullString(barCard.metricNames[0]),
       },
       series: this.getBarSeries(barCard),
       axes: [

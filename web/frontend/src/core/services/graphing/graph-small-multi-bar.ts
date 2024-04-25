@@ -1,11 +1,15 @@
+import { inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_BarGroupedGraphCard } from '../../interfaces/displayable-data-interface';
+import { KeyTranslatorService } from '../key-translator.service';
 import { BaseGraph } from './base-graph';
 
 /**
  * Represents a small multi-bar graph.
  */
 export class GraphSmallMultiBar extends BaseGraph {
+  private keyt: KeyTranslatorService = inject(KeyTranslatorService);
+
   constructor() {
     super();
   }
@@ -39,7 +43,7 @@ export class GraphSmallMultiBar extends BaseGraph {
         tooltip: {
           renderer: ({ datum, xKey, yKey }: any) => {
             return {
-              title: datum[xKey],
+              title: this.keyt.keyToFullString(datum[xKey]),
               content: this.formatNumber(datum[yKey]),
             };
           },
