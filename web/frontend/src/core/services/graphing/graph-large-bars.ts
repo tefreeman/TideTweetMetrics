@@ -66,7 +66,7 @@ export class GraphLargeBar extends BaseGraph {
 
       data: barCard.data,
       title: {
-        text: '',
+        text: barCard.metricNames[0],
       },
       series: this.getBarSeries(barCard),
       axes: [
