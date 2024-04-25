@@ -19,7 +19,7 @@ import optuna
 from torch.optim.lr_scheduler import OneCycleLR
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 torch.cuda.empty_cache()
-
+import os
 import joblib
 
 class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
@@ -76,6 +76,38 @@ def evaluate_model(model, val_loader, loss_fn, device):
 
     return avg_val_loss, predictions, true_labels
 
+# Define a base directory for scaler files
+SCALERS_DIR = 'D:\\TideTweetMetrics\\backend\\ai\\model_save'
+SCALERS_CONFIG = {
+    'like_count': 'like_count_scaler.save',
+    'features': 'feature_scaler.save',
+}
+def save_scaler(scaler_name, scaler_object):
+    """
+    Saves the scaler object based on the scaler name according to the predefined paths.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        joblib.dump(scaler_object, scaler_path)
+        print(f"Scaler {scaler_name} saved to {scaler_path}")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+
+def load_scaler(scaler_name):
+    """
+    Loads and returns the scaler object based on the scaler name.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        if os.path.exists(scaler_path):
+            return joblib.load(scaler_path)
+        else:
+            print(f"Scaler file {scaler_path} not found.")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+    return None
 
 
 with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
@@ -182,7 +214,7 @@ test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
 joblib.dump(like_count_scaler, 'D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
 
 # Loading the scaler object
-like_count_scaler = joblib.load('D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
+#like_count_scaler = joblib.load('D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
 
 # Tokenization and Encoding
 tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
@@ -382,7 +414,7 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
         
         mse = mean_squared_error(true_labels, predictions)
         mae = mean_absolute_error(true_labels, predictions)
-        print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | MSE: {mse} | MAE: {mae}| Time elapsed: {datetime.now() - start_time}')
+        print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | MSE: {mse} | MAE: {mae}| Time elapsed: {datetime.now() - start_time}')
         if epoch >= 8 and epoch % 4 == 0:
         # Save the model and optimizer state each epoch
             model_save_epoch_path = Path(model_save_path) / f"epoch_{epoch+1}"
@@ -396,9 +428,9 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
     # Assuming you have calculated metrics such as accuracy and loss
             with open(model_save_epoch_path / 'performance_metrics.txt', 'a') as f:
                 f.write(f"Epoch: {epoch + 1}\n")
-                f.write(f"Mean Squared Error: {mse:.4f}\n")
-                f.write(f"Mean Absolute Error: {mae:.4f}\n")
-                f.write(f"Validation Loss: {avg_val_loss:.4f}\n")
+                f.write(f"Mean Squared Error: {mse:.6f}\n")
+                f.write(f"Mean Absolute Error: {mae:.6f}\n")
+                f.write(f"Validation Loss: {avg_val_loss:.6f}\n")
 
 #train_model(model, train_loader, validate_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path='D:\\TideTweetMetrics\\backend\\ai\\model_save')
 if __name__ == '__main__':
