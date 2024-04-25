@@ -68,7 +68,7 @@ export class GraphSmallLine extends BaseGraph {
       // Data: Data to be displayed in the chart
       data: lineGraphCard.data,
       title: {
-        enabled: false,
+        text: "title-small-line",
       },
       series: this.getSeries(lineGraphCard),
       axes: [
