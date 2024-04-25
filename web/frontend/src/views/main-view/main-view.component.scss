@@ -95,10 +95,7 @@
   color:#a51e36;
 }
 
-.side-nav-contents{
-  font-size: 13px; 
-  letter-spacing: -.3px;
-}
+
 
 .add-card{
   background-color: #a51e36;
@@ -141,15 +138,21 @@ button{
   padding: 0px 5px; /* Small padding around the "X" */
   font-size: 16px; /* Adjust size as needed */
   line-height: 1;
-  margin-left: 1px;
+  margin-left: auto;
 }
 
 .custom-nav-item:hover .delete-button {
   visibility: visible; /* Show the button on hover */
 }
 
+.side-nav-contents{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
 .custom-nav-item {
-  display: flex;
   align-items: center;
   cursor: pointer;
   padding: 10px;

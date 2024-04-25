@@ -23,10 +23,12 @@
           mat-list-item
           (click)="sidenav.toggle()"
         >
-          <span class="side-nav-contents">{{ nav.name }}</span>
-          <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
-            x
-          </button>
+          <span class="side-nav-contents">{{ nav.name }}
+            <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
+              x
+            </button>
+          </span>
+          
         </a>
 
         <a mat-list-item (click)="addBoard()">
