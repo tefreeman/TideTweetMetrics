@@ -54,6 +54,7 @@ type ParseResult = {
     GenericGraphComponent,
     AsyncPipe,
     ReactiveGenericGraphComponent,
+    GenericGraphComponent,
   ],
   templateUrl: './add-graph-dialog.component.html',
   styleUrl: './add-graph-dialog.component.scss',
