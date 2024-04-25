@@ -17,7 +17,6 @@ _STAT_NAMES = [
     ("min", np.min),
     ("max", np.max),
     ("sum", np.sum),
-    ("count", len),
     ("median", np.median),
     ("25th_percentile", lambda x: np.percentile(x, 25)),
     ("75th_percentile", lambda x: np.percentile(x, 75)),

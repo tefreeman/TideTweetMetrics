@@ -1,4 +1,7 @@
 
+# ai dataset
+/backend/ai/data/*
+/backend/ai/model_save/*
 # backup_raw_data
 .angular/*
 /node_modules/*
@@ -6,6 +9,7 @@
 /backups/*
 *.7z
 /chrome/*
+**/docs/*
 # Mac shit
 
 bin/*

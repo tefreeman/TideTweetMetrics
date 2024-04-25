@@ -2,115 +2,59 @@ import { Injectable } from '@angular/core';
 import { I_DisplayableRequest } from '../interfaces/displayable-interface';
 import { I_PageMap } from '../interfaces/pages-interface';
 
-let test_displayed_data: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-median',
-  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-value',
-};
 let test_displayed_data1: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-max',
+  metricNames: ['tweet_likes-sum'],
   ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-value',
+  type: 'metric-value',
 };
 let test_displayed_data2: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-std',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', 'eecs_utk'] },
-  type: 'stat-value',
+  metricNames: ['tweet_likes-mean-yearly'],
+  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
+  type: 'metric-trend',
 };
 let test_displayed_data3: I_DisplayableRequest = {
-  stat_name: 'tweet_retweets-median',
-  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-value',
+  metricNames: ['tweet_retweets-median'],
+  ownersParams: { type: 'specific', owners: ['alabama_cs', '_global'] },
+  type: 'metric-comp',
 };
+
 let test_displayed_data4: I_DisplayableRequest = {
-  stat_name: 'tweet_retweets-max',
-  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'stat-value',
-};
-let test_displayed_data5: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-sum-yearly',
-  ownersParams: { type: 'specific', owners: ['alabama_cs'] },
-  type: 'auto-stat',
-};
-let test_displayed_data6: I_DisplayableRequest = {
-  stat_name: 'tweet_replies-mean',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', 'eecs_utk'] },
-  type: 'stat-comp',
-};
-let test_displayed_data7: I_DisplayableRequest = {
-  stat_name: 'tweet_replies-max',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', 'eecs_utk'] },
-  type: 'stat-comp',
-};
-let test_displayed_data8: I_DisplayableRequest = {
-  stat_name: 'likes_per_follower',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', 'eecs_utk'] },
-  type: 'stat-comp',
-};
-let test_displayed_data9: I_DisplayableRequest = {
-  stat_name: 'tweet_words-median',
-  ownersParams: { type: 'specific', owners: ['alabama_cs', 'eecs_utk'] },
-  type: 'stat-comp',
-};
-
-let test_displayed_data11: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'bottom', owners: ['alabama_cs'], count: 12 },
-  type: 'graph-bar',
-};
-
-let test_displayed_data12: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'bottom', owners: ['alabama_cs'], count: 12 },
-  type: 'graph-line',
-};
-
-let test_displayed_data13: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'all', owners: ['alabama_cs'], count: 100 },
-  type: 'graph-bar',
-};
-
-let test_displayed_data14: I_DisplayableRequest = {
-  stat_name: 'tweet_likes-mean',
-  ownersParams: { type: 'all', owners: ['alabama_cs'], count: 100 },
-  type: 'graph-line',
+  metricNames: ['tweet_likes-mean-yearly'],
+  ownersParams: { type: 'top', owners: ['alabama_cs', '_global'], count: 3 },
+  type: 'auto-graph',
 };
 
 @Injectable({
   providedIn: 'root',
 })
 export class MockDataService {
-  public overrideProfile = true;
+  /**
+   * Determines whether to override the profile or not.
+   */
+  public overrideProfile = false;
+
   constructor() {}
 
+  /**
+   * Retrieves mock data.
+   * @returns The mock data.
+   */
   getMockData(): I_PageMap {
     return {
       home: {
-        'dashboard-graph': {
-          displayables: [
-            test_displayed_data14,
-            test_displayed_data13,
-            test_displayed_data12,
-          ],
+        'graph grid': {
+          displayables: [test_displayed_data4],
           type: 'graph',
           order: 2,
         },
 
-        'dashboard-card': {
+        'card grid': {
           displayables: [
-            test_displayed_data,
             test_displayed_data1,
             test_displayed_data2,
             test_displayed_data3,
-            test_displayed_data4,
-            test_displayed_data5,
-            test_displayed_data6,
-            test_displayed_data7,
-            test_displayed_data8,
-            test_displayed_data9,
           ],
-          type: 'stat',
+          type: 'metric',
           order: 1,
         },
         // Add more mock data as needed for your use case

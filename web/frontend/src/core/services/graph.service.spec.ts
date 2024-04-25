@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DisplayableProcessorService } from './displayable-processor.service';
+import { DisplayableProcessorService } from './displayables/displayable-processor.service';
 
 describe('GraphService', () => {
   let service: DisplayableProcessorService;

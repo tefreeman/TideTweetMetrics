@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 
+/**
+ * Represents the EmailReportComponent.
+ */
 @Component({
   selector: 'app-email-report',
   standalone: true,
