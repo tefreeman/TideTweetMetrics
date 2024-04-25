@@ -18,11 +18,15 @@
       <mat-nav-list>
         <a
           *ngFor="let nav of dynamicNavRoutes"
+          class="custom-nav-item" 
           [routerLink]="nav.route"
           mat-list-item
           (click)="sidenav.toggle()"
         >
           <span class="side-nav-contents">{{ nav.name }}</span>
+          <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
+            x
+          </button>
         </a>
 
         <a mat-list-item (click)="addBoard()">
