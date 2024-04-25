@@ -1,47 +1,38 @@
 
-  .custom-toolbar {
-    border-top: 4px solid #a51e36; /* Add a red border line */
-    background-color: transparent;
+.custom-toolbar {
+  border-top: 4px solid #a51e36; /* Keep your red border line */
+  background-color: transparent;
+  display: grid; // Switch to grid from flex
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Three columns setup: left content, spacer, right content
+  align-items: center; // Center items vertically within the toolbar
+  justify-content:space-between;
+  width:100%;
+
+  .menu-button{
+    grid-column: 1
+  }
+  
+  .spacer {
+    display: none; // No longer needed since we're using grid, can be omitted
   }
 
-.page-border > .top-border, .page-border > .right-border, .page-border > .bottom-border, .page-border > .left-border {
-    position: fixed;
-    background: #ccc;
-    padding: 10px;
+  .button-class{
+    margin-top: 7px;
+  }
+  
+  // Default setting for buttons (right side content)
+  .right-side {
+    //grid-column: 3 / 4; // Align the right-side content to the third column
+    display: flex; // Use flexbox for the right side content to align buttons horizontally
+    gap: 10px; // A replace for the margin-left in button for consistent spacing
+    justify-content: flex-end; // This makes sure content aligns right
+    grid-column: -1 / -2;
+  }
+  
+
+
 }
 
-.page-border .bottom-border, .page-border .top-border {
-    width: 100%;
-    padding: 10px;
-    left: 0;
-}
-
-.page-border .left-border, .page-border .right-border {
-    height: 100%;
-    padding: 10px;
-    top: 0;
-}
-
-.page-border .top-border {
-    top: 0;
-}
-
-.page-border .right-border {
-    right: 0;
-}
-
-.page-border .bottom-border {
-    bottom: 0;
-}
-
-.page-border .left-border {
-    left: 0;
-}
-#wrapper {
-  //margin:0 15px;
- // padding: 15px 0;
-  position: relative;
-}
 
 .custom-background {
   position: relative;
@@ -104,10 +95,7 @@
   color:#a51e36;
 }
 
-.side-nav-contents{
-  font-size: 13px; 
-  letter-spacing: -.3px;
-}
+
 
 .add-card{
   background-color: #a51e36;
@@ -125,10 +113,67 @@
 }
 
 
-/* .underline {
-  display: inline-block;
-  width: 3rem;         // Set a fixed width sufficient to accommodate the largest text
-  text-align: center;  // This centers the text within the fixed width
-  border-bottom: 3px solid #a51e36;  // Your existing underline style
-  padding-bottom: 2px;
-} */
+button{
+  margin-left: 10px;
+}
+
+.text {
+  font-weight: bold;
+  font-size: .75rem;
+  letter-spacing: -0.3px;
+}
+
+.footer {
+  background-color: #f4f4f4;
+  min-height: 2rem;
+}
+
+.delete-button {
+  visibility: hidden; /* Hide button initially */
+  margin-left: auto; /* Push the button to the right */
+  color: red; /* Color the text red */
+  cursor: pointer; /* Change cursor on hover */
+  border: none; /* No border for a cleaner look */
+  background-color: transparent; /* Transparent background */
+  padding: 0px 5px; /* Small padding around the "X" */
+  font-size: 16px; /* Adjust size as needed */
+  line-height: 1;
+  margin-left: auto;
+  min-width: 44px; /* Optional, for clickability */
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between; /* This will push content to the far ends */
+  align-items: center; /* This ensures items are vertically centered */
+  width: 100%; /* Ensure the flex-container spans the full width of its parent */
+}
+
+
+
+.custom-nav-item:hover .delete-button {
+  visibility: visible; /* Show the button on hover */
+}
+
+.side-nav-contents{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+.side-nav-contents-custom-page{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  padding-left: 8px;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+
+.custom-nav-item {
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%
+}

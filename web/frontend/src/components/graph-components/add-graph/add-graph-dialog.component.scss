@@ -1,0 +1,93 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+mat-dialog-content {
+  max-height: unset !important;
+  flex: 1 0 0;
+}
+
+.grid-container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.search-container {
+  display: flex; // This turns the container into a flex container
+  justify-content: space-between; // This spreads the children evenly, with space between them
+  width: 100%; // Ensures the container takes up the full width
+  gap: 1rem; // Optional: Adds some space between the two search bars
+  margin: 0rem 2rem 1rem 2rem;
+  width: calc(100% - 4rem);
+}
+
+.search-bar,
+.owner-search {
+  flex: 1; // This makes both children take up equal space in the container
+  min-width: 0; // Prevents flex items from overflowing their container
+  // You can adjust or remove the max-width from these elements as necessary
+}
+
+.scrollable-content {
+  background-color: #ececec; // Off-white background color
+  overflow-y: auto; // Enables vertical scrolling if content overflows
+  -webkit-overflow-scrolling: touch;
+  max-height: 50vh;
+  min-height: 50vh;
+  padding: 1rem;
+}
+
+.recommend-cards {
+  background-color: #ececec;
+  overflow-y: auto; // Enables vertical scrolling if content overflows
+  -webkit-overflow-scrolling: touch;
+  max-height: 50vh;
+  min-height: 50vh;
+  padding: 1rem;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+
+.sub-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 1rem; /* Spacing below the subtitle for visual separation */
+}
+
+.card-margin {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+}
+
+.content {
+  overflow-y: hidden;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+}
+
+.example-form-field {
+  width: auto; /* Adjust based on your form field size */
+  margin-right: 1rem; /* Spacing between form fields */
+}
+
+mat-dialog-actions {
+  justify-content: flex-end; // Align buttons to the right
+  width: 100%; // Ensure actions take full width for proper alignment
+}
+
+.button-center {
+  margin-bottom: 32px;
+  margin-right: 8px;
+}

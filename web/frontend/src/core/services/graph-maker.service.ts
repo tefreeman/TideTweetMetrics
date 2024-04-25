@@ -1,232 +1,60 @@
-import { Injectable, inject } from '@angular/core';
-import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
+import { Injectable } from '@angular/core';
+import { AgChartOptions } from 'ag-charts-community';
 import {
-  I_GraphBarData,
-  I_GraphLineData,
-  T_DisplayableGraph,
+  I_BarGraphCard,
+  I_BarGroupedGraphCard,
+  I_BaseGraphCard,
+  I_LineGraphCard,
+  I_ScatterGraphCard,
 } from '../interfaces/displayable-data-interface';
-import { KeyTranslatorService } from './key-translator.service';
-
+import { GraphLargeBar } from './graphing/graph-large-bars';
+import { GraphLargeMutliBar } from './graphing/graph-large-multi-bar';
+import { GraphScatter } from './graphing/graph-scatter';
+import { GraphSmallBar } from './graphing/graph-small-bar';
+import { GraphSmallLine } from './graphing/graph-small-line';
+import { GraphSmallMultiBar } from './graphing/graph-small-multi-bar';
 @Injectable({
   providedIn: 'root',
 })
 export class GraphMakerService {
-  private keyTranslatorService: KeyTranslatorService =
-    inject(KeyTranslatorService);
-
+  private graphSmallBar: GraphSmallBar = new GraphSmallBar();
+  private graphLargeBar: GraphLargeBar = new GraphLargeBar();
+  private graphSmallMultiBar: GraphSmallMultiBar = new GraphSmallMultiBar();
+  private graphLargeMutliBar: GraphLargeMutliBar = new GraphLargeMutliBar();
+  private graphSmallLine: GraphSmallLine = new GraphSmallLine();
+  private graphScatter: GraphScatter = new GraphScatter();
   constructor() {}
 
-  getGraphStructure(graphData: T_DisplayableGraph) {
-    const dataDimension = Array.isArray(graphData.values[0])
-      ? graphData.values[0].length
-      : 1;
-    const ownerCount = graphData.owners.length;
-    const dataPoints = graphData.values.length;
+  createChart(graphData: I_BaseGraphCard): AgChartOptions | null {
+    if (graphData) {
+      if (graphData.metricNames.length === 0 || graphData.owners.length === 0) {
+        console.warn('unable to create chart');
+        return null;
+      }
 
-    return { dataDimension, ownerCount, dataPoints };
-  }
-
-  createLineChart(graphLineData: I_GraphLineData): AgChartOptions {
-    const structure = this.getGraphStructure(graphLineData);
-
-    const chartOptions = {
-      theme: this.getTheme(),
-      title: {
-        text: graphLineData.metricName,
-      },
-      data: this.getLineData(graphLineData),
-      series: this.getLineSeries(graphLineData),
-      axes: [
-        {
-          type: 'category',
-          label: {
-            enabled: graphLineData.owners.length < 15,
-            fontSize: 10,
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans',
-          },
-          position: 'bottom',
-        },
-        {
-          type: 'number',
-          position: 'left',
-          label: {
-            fontSize: 10, // Specify font size here
-            fontWeight: 'bold', // Specify font weight here
-            fontFamily: 'Open Sans',
-            color: '#999',
-          },
-        },
-      ],
-    };
-
-    return chartOptions;
-  }
-
-  createBarChart(graphBarData: I_GraphBarData): AgChartOptions {
-    const chartOptions: AgChartOptions = {
-      theme: this.getTheme(),
-
-      title: {
-        text: this.keyTranslatorService.keyToFullString(
-          graphBarData.metricName
-        ),
-      },
-      data: this.getBarData(graphBarData),
-
-      series: this.getBarSeries(graphBarData),
-      axes: [
-        {
-          type: 'category',
-          label: {
-            enabled: graphBarData.owners.length < 15,
-            fontSize: 10,
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans',
-          },
-          position: 'bottom',
-        },
-        {
-          type: 'number',
-          position: 'left',
-          label: {
-            fontSize: 10, // Specify font size here
-            fontWeight: 'bold', // Specify font weight here
-            fontFamily: 'Open Sans',
-            color: '#999',
-          },
-        },
-      ],
-    };
-
-    return chartOptions;
-  }
-  getTheme(): AgChartTheme {
-    const theme: AgChartTheme = {
-      baseTheme: 'ag-default',
-      palette: {
-        fills: [
-          '#a51e36',
-          '#ff7f7f',
-          '#ffa07a',
-          '#ffd700',
-          '#9acd32',
-          '#87ceeb',
-          '#6a5acd',
-          '#9370db',
-          '#8a2be2',
-          '#00ced1',
-          '#32cd32',
-        ],
-      },
-      overrides: {
-        common: {
-          title: {
-            fontSize: 13,
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans',
-            color: '#999',
-          },
-        },
-      },
-    };
-
-    return theme;
-  }
-
-  getBarData(graphBarData: I_GraphBarData): any[] {
-    const chartData: any[] = [];
-    for (let i = 0; i < graphBarData.owners.length; i++) {
-      const data: any = {};
-      data['owner'] = graphBarData.owners[i];
-      data['1'] = graphBarData.values[i];
-      chartData.push(data);
-    }
-    return chartData;
-  }
-
-  getBarSeries(data: I_GraphBarData): any[] {
-    return [
-      {
-        type: 'bar',
-        xKey: 'owner',
-        yKey: '1',
-        formatter: ({ datum, yKey }: any) => ({
-          fillOpacity: this.getOpacity(datum[yKey], yKey, 0.4, 1, data.values),
-        }),
-      },
-    ];
-  }
-
-  getLineData(graphBarData: I_GraphLineData): any[] {
-    const chartData: any[] = [];
-    for (let i = 0; i < graphBarData.owners.length; i++) {
-      const data: any = {};
-      data['owner'] = graphBarData.owners[i];
-      data['1'] = graphBarData.values[i];
-      chartData.push(data);
-    }
-    return chartData;
-  }
-
-  getOpacity(
-    value: number,
-    key: any,
-    minOpacity: any,
-    maxOpacity: any,
-    data: any
-  ) {
-    const [min, max] = this.getDomain(key, data);
-    let alpha = Math.round(((value - min) / (max - min)) * 10) / 10;
-    //console.log(min, max, value);
-    return this.map(alpha, 0, 1, minOpacity, maxOpacity);
-  }
-
-  getDomain(key: string | number, data: any) {
-    const min = Math.min(...data);
-    const max = Math.max(...data);
-    return [min, max];
-  }
-
-  map = (
-    value: number,
-    start1: number,
-    end1: number,
-    start2: number,
-    end2: number
-  ) => {
-    return ((value - start1) / (end1 - start1)) * (end2 - start2) + start2;
-  };
-
-  getLineSeries(data: I_GraphLineData): any[] {
-    const dataLength = data.values.length;
-
-    // Define a strategy for strokeWidth based on the data size
-    let strokeWidth = this.calculateStrokeWidth(dataLength);
-
-    return [
-      {
-        type: 'line',
-        xKey: 'owner',
-        yKey: '1',
-        strokeWidth: strokeWidth, // Use dynamic strokeWidth based on data size
-        marker: {
-          enabled: false,
-        },
-      },
-    ];
-  }
-
-  // Implement a method to calculate strokeWidth based on data size
-  calculateStrokeWidth(dataLength: number): number {
-    if (dataLength <= 10) {
-      return 4;
-    } else if (dataLength <= 50) {
-      return 3;
-    } else if (dataLength <= 100) {
-      return 2;
+      if (graphData.type === 'graph-bar') {
+        if (graphData.owners.length <= 10)
+          return this.graphSmallBar.getGraph(graphData as I_BarGraphCard);
+        else return this.graphLargeBar.getGraph(graphData as I_BarGraphCard);
+      } else if (graphData.type === 'graph-bar-grouped') {
+        if (graphData.owners.length * graphData.metricNames.length  <= 10)
+          return this.graphSmallMultiBar.getGraph(
+            graphData as I_BarGroupedGraphCard
+          );
+        else
+          return this.graphLargeMutliBar.getGraph(
+            graphData as I_BarGroupedGraphCard
+          );
+      } else if (graphData.type === 'graph-line') {
+        return this.graphSmallLine.getGraph(graphData as I_LineGraphCard);
+      } else if (graphData.type === 'graph-scatter') {
+        return this.graphScatter.getGraph(graphData as I_ScatterGraphCard);
+      } else {
+        throw new Error('Invalid graph type');
+      }
     } else {
-      return 1;
+      console.warn('unable to create chart');
+      return null;
     }
   }
 }

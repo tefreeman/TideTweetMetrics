@@ -43,7 +43,7 @@
     font-size: 15px;
     letter-spacing: -.3px; 
     color: #999;
-    width: 20%; 
+    width: 30%; 
     display: inline-block; 
     text-align: left; 
     margin-bottom: 1rem;   
@@ -55,7 +55,7 @@
     font-weight: bold;
     font-size: 12px; 
     letter-spacing: -.3px; 
-    width: 9rem; 
+    width: 6rem; 
     display: inline-block; 
     margin-right: 2rem;
     margin-left: 2rem; 
@@ -71,9 +71,8 @@
 
 .input{
     width: 100%;
-    max-width: 35rem;
+    max-width: 20rem;
     height: 4rem;
-    margin-left: -5rem;
     line-height: 0px;
     font-size: 10px;
 }
@@ -198,7 +197,10 @@
   font-weight: bold;
   letter-spacing: -.3px;
   margin-bottom: 1rem;
-  margin-left: 8rem;
+  width: 100%;
+  max-width: 15rem;
+  margin-left: 2rem;
+
   cursor: pointer;
   display: inline-flex;
   align-items: center;

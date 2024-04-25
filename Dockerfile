@@ -12,6 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH /project
+
+# Export the port on which your service will run
+EXPOSE 80
+
 # Define the command to run your application
-CMD ["python", "generate_full_metrics.py"]
-# CMD ["bash"]
+WORKDIR /project/backend/middleware
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
