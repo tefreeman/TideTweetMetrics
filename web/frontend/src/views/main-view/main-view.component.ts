@@ -294,4 +294,8 @@ export class MainViewComponent implements OnInit, OnDestroy {
       verticalPosition: 'bottom', // Change as needed.
     });
   }
+
+  deleteBoard(page: any){
+
+  }
 }

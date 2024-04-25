@@ -130,3 +130,28 @@ button{
   background-color: #f4f4f4;
   min-height: 2rem;
 }
+
+.delete-button {
+  visibility: hidden; /* Hide button initially */
+  margin-left: auto; /* Push the button to the right */
+  color: red; /* Color the text red */
+  cursor: pointer; /* Change cursor on hover */
+  border: none; /* No border for a cleaner look */
+  background-color: transparent; /* Transparent background */
+  padding: 0px 5px; /* Small padding around the "X" */
+  font-size: 16px; /* Adjust size as needed */
+  line-height: 1;
+  margin-left: 1px;
+}
+
+.custom-nav-item:hover .delete-button {
+  visibility: visible; /* Show the button on hover */
+}
+
+.custom-nav-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%
+}
