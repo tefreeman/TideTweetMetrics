@@ -1,4 +1,7 @@
 
+# ai dataset
+/backend/ai/data/*
+
 # backup_raw_data
 .angular/*
 /node_modules/*
