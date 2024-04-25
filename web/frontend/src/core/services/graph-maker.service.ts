@@ -37,7 +37,7 @@ export class GraphMakerService {
           return this.graphSmallBar.getGraph(graphData as I_BarGraphCard);
         else return this.graphLargeBar.getGraph(graphData as I_BarGraphCard);
       } else if (graphData.type === 'graph-bar-grouped') {
-        if (graphData.owners.length <= 10)
+        if (graphData.owners.length * graphData.metricNames.length  <= 10)
           return this.graphSmallMultiBar.getGraph(
             graphData as I_BarGroupedGraphCard
           );
