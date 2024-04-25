@@ -33,8 +33,8 @@
 }
 
 .dataCardContainer {
-  margin: 0px 64px 32px 64px;
   display: grid;
+  margin-bottom: 32px;
   gap: 1rem;
   grid-auto-flow: dense;
   justify-content: left;
