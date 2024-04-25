@@ -120,154 +120,154 @@ for profile in profiles:
 with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_tweets.json", 'r', encoding='utf-8') as file:
     data = json.load(file)
 
+def get():
+    # First, build a dictionary to hold the last 5 likes per author
+    author_last_10_likes_avg = {}
 
-# First, build a dictionary to hold the last 5 likes per author
-author_last_10_likes_avg = {}
+    # Initialize author tweets dict for accumulating tweets by author
+    author_tweets = {}
 
-# Initialize author tweets dict for accumulating tweets by author
-author_tweets = {}
+    # Accumulate tweets by authors
+    for tweet in data:
+        author_id = tweet['data']['author_id']
+        if author_id not in author_tweets:
+            author_tweets[author_id] = []
+        author_tweets[author_id].append(tweet)
 
-# Accumulate tweets by authors
-for tweet in data:
-    author_id = tweet['data']['author_id']
-    if author_id not in author_tweets:
-        author_tweets[author_id] = []
-    author_tweets[author_id].append(tweet)
+    # Calculate the average of the last 5 likes for each author
+    for author_id, tweets in author_tweets.items():
+        # Sort tweets by created_at
+        sorted_tweets = sorted(tweets, key=lambda x: x['data']['created_at']['$date'], reverse=True)
+        # Take last 5 tweets
+        last_5_tweets = sorted_tweets[:10]
+        # Calculate average likes
+        avg_likes = np.mean([tweet['data']['public_metrics']['like_count'] for tweet in last_5_tweets])
+        # Store in dict
+        author_last_10_likes_avg[author_id] = avg_likes
 
-# Calculate the average of the last 5 likes for each author
-for author_id, tweets in author_tweets.items():
-    # Sort tweets by created_at
-    sorted_tweets = sorted(tweets, key=lambda x: x['data']['created_at']['$date'], reverse=True)
-    # Take last 5 tweets
-    last_5_tweets = sorted_tweets[:10]
-    # Calculate average likes
-    avg_likes = np.mean([tweet['data']['public_metrics']['like_count'] for tweet in last_5_tweets])
-    # Store in dict
-    author_last_10_likes_avg[author_id] = avg_likes
-
-# Then adapt the creation of the tweets list to include the average likes of the last 5 tweets
-tweets = [{
-    'text': tweet['data']['text'],
-    'like_count': tweet['data']['public_metrics']['like_count'],
-    'created_at': tweet['data']['created_at']['$date'],
-    'author_id': tweet['data']['author_id'],
-    'hashtag_count': len(tweet['data']['entities']['hashtags']),
-    'mention_count': len(tweet['data']['entities']['mentions']),
-    'url_count': len(tweet['data']['entities']['urls']),
-    'photo_count': len(tweet['data']['attachments']['photos']),
-    'video_count': len(tweet['data']['attachments']['videos']),
-    'avg_last_10_likes': author_last_10_likes_avg.get(tweet['data']['author_id'], 0),  # Add the avg likes
-} for tweet in data]
-# Flatten the JSON data into a more convenient format
-
-
-
-
-# Add the followers_count field to the tweets
-# if the author_id is in the profile_dict
-# otherwise, set the tweet to None
-for i in range(len(tweets)):
-    if tweets[i]['author_id'] in profile_dict:
-        tweets[i]['followers_count'] = profile_dict[tweets[i]['author_id']]
-        del tweets[i]['author_id']
-    else:
-        tweets[i] = None
-
-# Remove None values
-tweets = [tweet for tweet in tweets if tweet is not None]
-
-
-# Create a DataFrame
-df = pd.DataFrame(tweets)
-
-# Data cleaning (e.g., removing URLs, special characters)
-df['text'] = df['text'].apply(lambda x: ' '.join(re.sub("(https?://[^\s]+)", " ", x).split()))
-
-# Calculate sentiment scores
-df['sentiment'] = df['text'].apply(lambda x: TextBlob(x).sentiment.polarity)
-
-# Calculate text length
-df['text_length'] = df['text'].apply(len)
-
-
-# Format the 'created_at' field and extract time-based features
-df['created_at'] = df['created_at'].apply(lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ'))
-df['day_of_week'] = df['created_at'].apply(lambda x: x.weekday())
-df['hour_of_day'] = df['created_at'].apply(lambda x: x.hour)
-
-
-# Splitting the dataset into training, validation, and test sets
-train, validate, test = np.split(df.sample(frac=1, random_state=42),
-                                 [int(.8*len(df)), int(.9*len(df))])
-
-
-# Fit to training data and transform
-like_count_scaler = MinMaxScaler()
-train['like_count_scaled'] = like_count_scaler.fit_transform(train[['like_count']])
-
-# Transform validation and test sets
-validate['like_count_scaled'] = like_count_scaler.transform(validate[['like_count']])
-test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
-
-
-        # Saving the scaler object
-save_scaler('like_count', like_count_scaler)
-
-# Loading the scaler object
-#like_count_scaler = joblib.load('D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
-
-# Tokenization and Encoding
-tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
-
-def encode_texts(texts):
-    return tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
-
-train_encodings = encode_texts(train['text'].tolist())
-validate_encodings = encode_texts(validate['text'].tolist())
-test_encodings = encode_texts(test['text'].tolist())
-
-# Then, when converting to tensors, use the scaled column
-train_labels = torch.tensor(train['like_count_scaled'].values)
-validate_labels = torch.tensor(validate['like_count_scaled'].values)
-test_labels = torch.tensor(test['like_count_scaled'].values)
-
-
-# Create a MinMaxScaler object
-features_scaler = MinMaxScaler()
-
-# Define the columns to be scaled
-scale_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
-
-# Fit the scaler on the training data and transform the data
-train[scale_columns] = features_scaler.fit_transform(train[scale_columns])
-validate[scale_columns] = features_scaler.transform(validate[scale_columns])
-test[scale_columns] = features_scaler.transform(test[scale_columns])
-
-
-save_scaler('features', features_scaler)
-# Create additional feature tensors with scaled features
-train_features = torch.tensor(train[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
-validate_features = torch.tensor(validate[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
-test_features = torch.tensor(test[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
-
-# Create TensorDatasets
-train_dataset = TensorDataset(train_encodings['input_ids'], train_encodings['attention_mask'], train_features, train_labels)
-validate_dataset = TensorDataset(validate_encodings['input_ids'], validate_encodings['attention_mask'], validate_features, validate_labels)
-test_dataset  = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features, test_labels)
-
-# Create DataLoaders with smaller batch sizes
-batch_size = 64
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-validate_loader = DataLoader(validate_dataset, batch_size=batch_size)
-test_loader = DataLoader(test_dataset, batch_size=batch_size)
+    # Then adapt the creation of the tweets list to include the average likes of the last 5 tweets
+    tweets = [{
+        'text': tweet['data']['text'],
+        'like_count': tweet['data']['public_metrics']['like_count'],
+        'created_at': tweet['data']['created_at']['$date'],
+        'author_id': tweet['data']['author_id'],
+        'hashtag_count': len(tweet['data']['entities']['hashtags']),
+        'mention_count': len(tweet['data']['entities']['mentions']),
+        'url_count': len(tweet['data']['entities']['urls']),
+        'photo_count': len(tweet['data']['attachments']['photos']),
+        'video_count': len(tweet['data']['attachments']['videos']),
+        'avg_last_10_likes': author_last_10_likes_avg.get(tweet['data']['author_id'], 0),  # Add the avg likes
+    } for tweet in data]
+    # Flatten the JSON data into a more convenient format
 
 
 
 
+    # Add the followers_count field to the tweets
+    # if the author_id is in the profile_dict
+    # otherwise, set the tweet to None
+    for i in range(len(tweets)):
+        if tweets[i]['author_id'] in profile_dict:
+            tweets[i]['followers_count'] = profile_dict[tweets[i]['author_id']]
+            del tweets[i]['author_id']
+        else:
+            tweets[i] = None
+
+    # Remove None values
+    tweets = [tweet for tweet in tweets if tweet is not None]
 
 
-# Loss function
-loss_fn = nn.MSELoss()
+    # Create a DataFrame
+    df = pd.DataFrame(tweets)
+
+    # Data cleaning (e.g., removing URLs, special characters)
+    df['text'] = df['text'].apply(lambda x: ' '.join(re.sub("(https?://[^\s]+)", " ", x).split()))
+
+    # Calculate sentiment scores
+    df['sentiment'] = df['text'].apply(lambda x: TextBlob(x).sentiment.polarity)
+
+    # Calculate text length
+    df['text_length'] = df['text'].apply(len)
+
+
+    # Format the 'created_at' field and extract time-based features
+    df['created_at'] = df['created_at'].apply(lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ'))
+    df['day_of_week'] = df['created_at'].apply(lambda x: x.weekday())
+    df['hour_of_day'] = df['created_at'].apply(lambda x: x.hour)
+
+
+    # Splitting the dataset into training, validation, and test sets
+    train, validate, test = np.split(df.sample(frac=1, random_state=42),
+                                    [int(.8*len(df)), int(.9*len(df))])
+
+
+    # Fit to training data and transform
+    like_count_scaler = MinMaxScaler()
+    train['like_count_scaled'] = like_count_scaler.fit_transform(train[['like_count']])
+
+    # Transform validation and test sets
+    validate['like_count_scaled'] = like_count_scaler.transform(validate[['like_count']])
+    test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
+
+
+            # Saving the scaler object
+    save_scaler('like_count', like_count_scaler)
+
+    # Loading the scaler object
+    #like_count_scaler = joblib.load('D:\\TideTweetMetrics\\backend\\ai\\model_save\\like_count_scaler.save')
+
+    # Tokenization and Encoding
+    tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
+
+    def encode_texts(texts):
+        return tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
+
+    train_encodings = encode_texts(train['text'].tolist())
+    validate_encodings = encode_texts(validate['text'].tolist())
+    test_encodings = encode_texts(test['text'].tolist())
+
+    # Then, when converting to tensors, use the scaled column
+    train_labels = torch.tensor(train['like_count_scaled'].values)
+    validate_labels = torch.tensor(validate['like_count_scaled'].values)
+    test_labels = torch.tensor(test['like_count_scaled'].values)
+
+
+    # Create a MinMaxScaler object
+    features_scaler = MinMaxScaler()
+
+    # Define the columns to be scaled
+    scale_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
+
+    # Fit the scaler on the training data and transform the data
+    train[scale_columns] = features_scaler.fit_transform(train[scale_columns])
+    validate[scale_columns] = features_scaler.transform(validate[scale_columns])
+    test[scale_columns] = features_scaler.transform(test[scale_columns])
+
+
+    save_scaler('features', features_scaler)
+    # Create additional feature tensors with scaled features
+    train_features = torch.tensor(train[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
+    validate_features = torch.tensor(validate[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
+    test_features = torch.tensor(test[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
+
+    # Create TensorDatasets
+    train_dataset = TensorDataset(train_encodings['input_ids'], train_encodings['attention_mask'], train_features, train_labels)
+    validate_dataset = TensorDataset(validate_encodings['input_ids'], validate_encodings['attention_mask'], validate_features, validate_labels)
+    test_dataset  = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features, test_labels)
+
+    # Create DataLoaders with smaller batch sizes
+    batch_size = 64
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    validate_loader = DataLoader(validate_dataset, batch_size=batch_size)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+
+
+
+
+
+    # Loss function
+    loss_fn = nn.MSELoss()
 
 def objective(trial):
     # Hyperparameters to optimize
