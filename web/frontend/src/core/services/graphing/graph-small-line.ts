@@ -64,11 +64,12 @@ export class GraphSmallLine extends BaseGraph {
    * @returns The graph options.
    */
   private getOptions(lineGraphCard: I_LineGraphCard): AgChartOptions {
+    console.log("line: ", lineGraphCard)
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
       data: lineGraphCard.data,
       title: {
-        text: "title-small-line",
+        text: this.keyt.keyToFullString(lineGraphCard.metricNames[0]),
       },
       series: this.getSeries(lineGraphCard),
       axes: [
@@ -84,9 +85,6 @@ export class GraphSmallLine extends BaseGraph {
           position: 'left',
           label: {
             formatter: ({ value }) => this.formatNumber(value),
-          },
-          title: {
-            text: this.keyt.keyToFullString(lineGraphCard.metricNames[0]),
           },
           crosshair: {
             label: {
