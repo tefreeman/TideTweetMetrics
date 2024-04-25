@@ -5,7 +5,7 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -69,6 +69,11 @@ export class DashboardComponent implements OnInit {
   grids$: Observable<I_GridRequestEntryWithName[]>;
   gridsSubscription: Subscription | undefined;
   localGrids: I_GridRequestEntryWithName[] = [];
+  minColSize = '40rem';
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.updateMinColSize();
+  }
 
   /**
    * Constructs a new instance of the DashboardComponent class.
@@ -96,7 +101,9 @@ export class DashboardComponent implements OnInit {
   /**
    * Initializes the component.
    */
-  ngOnInit() {}
+  ngOnInit() {
+    this.updateMinColSize();
+  }
 
   /**
    * Checks if the grids are empty.
@@ -105,7 +112,10 @@ export class DashboardComponent implements OnInit {
   isEmpty$(): Observable<boolean> {
     return this.grids$.pipe(map((stats) => stats.length === 0));
   }
-
+  updateMinColSize() {
+    const screenWidth = window.innerWidth - 32;
+    this.minColSize = screenWidth < 640 ? `${screenWidth}px` : '40rem';
+  }
   /**
    * Opens a snackbar with the specified message.
    * @param message - The message to display in the snackbar.
