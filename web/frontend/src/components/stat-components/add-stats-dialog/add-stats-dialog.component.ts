@@ -165,15 +165,13 @@ export class addStatsDialogComponent implements OnInit {
    * @param notMetricHook - Indicates if it is not a metric hook.
    */
   onSearchValueChange(value: string, notMetricHook = true) {
+    console.log(value);
     if (value) {
       if (notMetricHook) this.lastMetricSearchValue = value;
 
       this._recommendedDisplayables.next(
-        this.allDisplayables.filter((item) =>
-          this.keyTranslatorService
-            .keyToFullString(item.metricName)
-            .toLowerCase()
-            .includes(value.toLowerCase())
+        this.allDisplayables.filter(
+          (item) => item.metricName.toLowerCase() === value.toLowerCase()
         )
       );
     } else {
@@ -229,9 +227,11 @@ export class addStatsDialogComponent implements OnInit {
    * @param $event - The metrics array.
    */
   onMetricsChanged($event: string[]) {
+    console.log($event);
     if ($event.length == 0)
       this.onSearchValueChange(this.lastMetricSearchValue);
     if ($event.length == 1) this.onSearchValueChange($event[0], false);
+
     this.currentMetrics.next($event);
   }
 }
