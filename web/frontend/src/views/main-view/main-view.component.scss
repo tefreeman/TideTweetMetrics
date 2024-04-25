@@ -139,7 +139,17 @@ button{
   font-size: 16px; /* Adjust size as needed */
   line-height: 1;
   margin-left: auto;
+  min-width: 44px; /* Optional, for clickability */
 }
+
+.flex-container {
+  display: flex;
+  justify-content: space-between; /* This will push content to the far ends */
+  align-items: center; /* This ensures items are vertically centered */
+  width: 100%; /* Ensure the flex-container spans the full width of its parent */
+}
+
+
 
 .custom-nav-item:hover .delete-button {
   visibility: visible; /* Show the button on hover */
@@ -152,6 +162,15 @@ button{
   font-size: 13px; 
   letter-spacing: -.3px;
 }
+.side-nav-contents-custom-page{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  padding-left: 8px;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+
 .custom-nav-item {
   align-items: center;
   cursor: pointer;

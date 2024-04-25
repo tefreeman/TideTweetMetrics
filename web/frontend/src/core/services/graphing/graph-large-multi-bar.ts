@@ -4,6 +4,7 @@ import { I_BarGroupedGraphCard } from '../../interfaces/displayable-data-interfa
 import { KeyTranslatorService } from '../key-translator.service';
 import { BaseGraph } from './base-graph';
 
+
 /**
  * Represents a large multi-bar graph.
  */
@@ -57,6 +58,8 @@ export class GraphLargeMutliBar extends BaseGraph {
    * @param barGroupedCard - The graph data.
    * @returns The graph options.
    */
+
+
   private getOptions(barGroupedCard: I_BarGroupedGraphCard): AgChartOptions {
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart

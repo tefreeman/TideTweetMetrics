@@ -16,20 +16,18 @@
       </mat-nav-list>
       <div mat-subheader class="side-nav-subtitle">Custom Boards</div>
       <mat-nav-list>
-        <a
-          *ngFor="let nav of dynamicNavRoutes"
-          class="custom-nav-item" 
-          [routerLink]="nav.route"
-          mat-list-item
-          (click)="sidenav.toggle()"
-        >
-          <span class="side-nav-contents">{{ nav.name }}
-            <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
-              x
-            </button>
-          </span>
-          
-        </a>
+        <a *ngFor="let nav of dynamicNavRoutes"
+        class="custom-nav-item" 
+        [routerLink]="nav.route"
+        mat-list-item
+        (click)="sidenav.toggle()">
+       <span class="side-nav-contents-custom-page flex-container">
+         {{ nav.name }}
+         <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
+           x
+         </button>
+       </span>
+     </a>
 
         <a mat-list-item (click)="addBoard()">
           <mat-card class="add-card"> Add </mat-card>
