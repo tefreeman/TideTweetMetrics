@@ -295,7 +295,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteBoard(page: any){
-
+  deleteBoard(page: any) {
+    this.dashboardPageManagerService.deletePage$(page);
   }
 }
