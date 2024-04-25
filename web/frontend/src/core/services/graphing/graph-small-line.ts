@@ -1,5 +1,7 @@
+import { inject } from '@angular/core';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { I_LineGraphCard } from '../../interfaces/displayable-data-interface';
+import { KeyTranslatorService } from '../key-translator.service';
 import { BaseGraph } from './base-graph';
 
 /**
@@ -7,6 +9,8 @@ import { BaseGraph } from './base-graph';
  * @extends BaseGraph
  */
 export class GraphSmallLine extends BaseGraph {
+  private keyt: KeyTranslatorService = inject(KeyTranslatorService);
+
   constructor() {
     super();
   }
@@ -80,6 +84,9 @@ export class GraphSmallLine extends BaseGraph {
           position: 'left',
           label: {
             formatter: ({ value }) => this.formatNumber(value),
+          },
+          title: {
+            text: this.keyt.keyToFullString(lineGraphCard.metricNames[0]),
           },
           crosshair: {
             label: {
