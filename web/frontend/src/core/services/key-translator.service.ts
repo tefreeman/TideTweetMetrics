@@ -177,9 +177,15 @@ export class KeyTranslatorService {
       order: 2,
     },
     likes_per_follower: {
-      full: 'Total Likes per Follower ratio',
+      full: 'total Likes per Follower ratio',
       abr: 'LPF',
       desc: 'Sum of Tweet Likes divided by Total followers, for a given profile',
+      order: 1,
+    },
+    likes_per_follower_normalized: {
+      full: 'total likes per follower ratio normalized',
+      abr: 'LPF-Norm',
+      desc: 'Sum of Tweet Likes divided by Total followers, for a given profile normalized',
       order: 1,
     },
   };

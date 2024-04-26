@@ -4,9 +4,9 @@ from google.auth.transport.requests import Request
 from google.oauth2.id_token import fetch_id_token
 
 
-def upload_metrics(file_path: str):
+def upload_metrics(file_path: str, key_path: str):
     # Define the path to your service account key and the function URL (audience)
-    service_account_key_path = 'D:/ttm_key.json'
+    service_account_key_path = key_path
     function_url = 'https://us-central1-tidetweetmetrics-a047f.cloudfunctions.net/uploadFile'
     # Load the service account credentials and specify the target audience for the ID token
     credentials = service_account.IDTokenCredentials.from_service_account_file(
