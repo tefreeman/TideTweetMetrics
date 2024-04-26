@@ -28,10 +28,9 @@ class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
         self.bert = BertModel(config)
         # Here, we include the size for additional features
         total_input_size = config.hidden_size + num_additional_features
-        
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         # Adjust the classifier to account for BERT output + additional features
-        self.classifier = nn.Linear(total_input_size, config.num_labels)
+        self.classifier = nn.Linear(total_input_size, 1)  # Change the output size to 1
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None, inputs_embeds=None, additional_features=None):
         outputs = self.bert(input_ids,
@@ -40,41 +39,12 @@ class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
                             position_ids=position_ids,
                             head_mask=head_mask,
                             inputs_embeds=inputs_embeds)
-
-        pooled_output = outputs[1] 
+        pooled_output = outputs[1]
         if additional_features is not None:
             pooled_output = torch.cat((pooled_output, additional_features), 1)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
-
-        return logits
-
-
-# Hyperparams optimzation
-def evaluate_model(model, val_loader, loss_fn, device):
-    model.eval()  # Set the model to evaluation mode
-    total_val_loss = 0
-    predictions, true_labels = [], []
-
-    with torch.no_grad():  # No need to calculate gradients for validation
-        for batch in val_loader:
-            b_input_ids, b_input_mask, b_features, b_labels = [item.to(device) for item in batch]
-
-            with autocast():
-                logits = model(b_input_ids, attention_mask=b_input_mask, additional_features=b_features).squeeze()
-                loss = loss_fn(logits, b_labels.float())
-            
-            total_val_loss += loss.item()
-            # Move logits and labels to CPU
-            predictions.append(logits.detach().cpu().numpy())
-            true_labels.append(b_labels.detach().cpu().numpy())
-
-    avg_val_loss = total_val_loss / len(val_loader)
-    # Concatenate all predictions and true labels
-    predictions = np.concatenate(predictions, axis=0)
-    true_labels = np.concatenate(true_labels, axis=0)
-
-    return avg_val_loss, predictions, true_labels
+        return logits.squeeze()  # Remove the extra dimension
 
 # Define a base directory for scaler files
 SCALERS_DIR = 'D:\\TideTweetMetrics\\backend\\ai\\model_save'
@@ -110,17 +80,18 @@ def load_scaler(scaler_name):
     return None
 
 
-with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
-    profiles = json.load(file)
-
-profile_dict = {}
-for profile in profiles:
-    profile_dict[profile['username']] = profile['public_metrics']['followers_count']
-
-with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_tweets.json", 'r', encoding='utf-8') as file:
-    data = json.load(file)
 
 def get():
+    
+    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
+        profiles = json.load(file)
+
+    profile_dict = {}
+    for profile in profiles:
+        profile_dict[profile['username']] = profile['public_metrics']['followers_count']
+
+    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_tweets.json", 'r', encoding='utf-8') as file:
+        data = json.load(file)
     # First, build a dictionary to hold the last 5 likes per author
     author_last_10_likes_avg = {}
 
@@ -175,8 +146,7 @@ def get():
 
     # Remove None values
     tweets = [tweet for tweet in tweets if tweet is not None]
-
-
+    tweets = tweets[0:1000]
     # Create a DataFrame
     df = pd.DataFrame(tweets)
 
@@ -255,56 +225,14 @@ def get():
     validate_dataset = TensorDataset(validate_encodings['input_ids'], validate_encodings['attention_mask'], validate_features, validate_labels)
     test_dataset  = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features, test_labels)
 
-    # Create DataLoaders with smaller batch sizes
-    batch_size = 64
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    validate_loader = DataLoader(validate_dataset, batch_size=batch_size)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+    return train_dataset, validate_dataset, test_dataset
 
 
 
+def train_model_with_fixed_params(train_dataset, validate_dataset):
 
-
-
-    # Loss function
     loss_fn = nn.MSELoss()
-
-def objective(trial):
-    # Hyperparameters to optimize
-    lr = trial.suggest_loguniform('lr', 1e-6, 1e-4)
-    batch_size = trial.suggest_categorical('batch_size', [16, 32, 64])
-    dropout_rate = trial.suggest_uniform('dropout_rate', 0.1, 0.5)
-    epochs = trial.suggest_int('epochs', 3, 80)  # Optionally optimize the number of epochs
-
-    model = BertForSequenceClassificationWithFeatures.from_pretrained(
-        'bert-base-uncased',
-        hidden_dropout_prob=dropout_rate  # Adjusting the model's dropout_rate based on optuna's suggestion   
-    )
-    
-    model.classifier = nn.Sequential(
-        nn.Dropout(dropout_rate),  # Using suggested dropout rate
-        nn.Linear(model.classifier.in_features, 1)
-    )
-
-    # Updating the optimizer with the suggested learning rate
-    optimizer = AdamW(model.parameters(), lr=lr)
-    
-    # DataLoaders setup with trial's batch_size suggestion
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(validate_dataset, batch_size=batch_size)  
-    scaler = GradScaler()
-    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)
-    train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=epochs, model_save_path='model_save', dropout_rate=dropout_rate)
-
-    # Evaluation part
-    avg_val_loss, _, _ = evaluate_model(model, val_loader, loss_fn, 'cuda')
-
-    return avg_val_loss
-
-
-
-def train_model_with_fixed_params():
-
     # Fixed hyperparameters
     lr = 1e-5
     batch_size = 56
@@ -433,6 +361,7 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
 if __name__ == '__main__':
     #study = optuna.create_study(direction='minimize')
     #study.optimize(objective, n_trials=20)  # Adjust n_trials as needed
-    train_model_with_fixed_params()
+    train_dataset, validate_dataset, test_dataset = get()
+    train_model_with_fixed_params(train_dataset, validate_dataset)
 
 

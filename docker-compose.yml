@@ -2,18 +2,17 @@ version: '3.8'
 
 services:
   mongodb:
-    build:
-      context: .
-      dockerfile: Dockerfile.mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: Admin
-      MONGO_INITDB_ROOT_PASSWORD: your_password_here
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - metric-network
+    image: mongo
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  other_service:
+    build: .
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   metric_system:
     build: .
