@@ -69,7 +69,7 @@ export class DashboardComponent implements OnInit {
   grids$: Observable<I_GridRequestEntryWithName[]>;
   gridsSubscription: Subscription | undefined;
   localGrids: I_GridRequestEntryWithName[] = [];
-  minColSize = '40rem';
+  minColSize = '35rem';
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     this.updateMinColSize();
@@ -114,7 +114,7 @@ export class DashboardComponent implements OnInit {
   }
   updateMinColSize() {
     const screenWidth = window.innerWidth - 32;
-    this.minColSize = screenWidth < 640 ? `${screenWidth}px` : '40rem';
+    this.minColSize = screenWidth < 640 ? `${screenWidth}px` : '35rem';
   }
   /**
    * Opens a snackbar with the specified message.
