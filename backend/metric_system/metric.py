@@ -234,7 +234,7 @@ class MetricGenerator(ABC):
         
     def get_expected_metric_names(self) -> set[str]:
         """
-        Returns the set of expected metric names that were provided during initialization.
+        Do not override. Returns the set of expected metric names that were provided during initialization.
 
         :return: A set containing the names of metrics that are expected to be generated.
         :rtype: set[str]
@@ -243,7 +243,7 @@ class MetricGenerator(ABC):
     
     def generate_and_validate(self, stat_helper: TweetAnalyticsHelper) -> list[Metric]:
         """
-        Generates metrics using the provided statistics helper and validates the generated metrics against the expected metric names. Raises a ValueError if there is a discrepancy.
+        Do not override. Generates metrics using the provided statistics helper and validates the generated metrics against the expected metric names. Raises a ValueError if there is a discrepancy.
 
         :param stat_helper: An instance of TweetAnalyticsHelper used to assist in the generation of metrics.
         :type stat_helper: TweetAnalyticsHelper
@@ -264,7 +264,7 @@ class MetricGenerator(ABC):
     @abstractmethod
     def generate_metrics(self, stat_helper: TweetAnalyticsHelper) -> list[Metric]:
         """
-        Abstract method to be implemented by subclasses for generating metrics.
+        Override this. Abstract method to be implemented by subclasses for generating metrics.
 
         :param stat_helper: An instance of TweetAnalyticsHelper used to assist in the generation of metrics.
         :type stat_helper: TweetAnalyticsHelper

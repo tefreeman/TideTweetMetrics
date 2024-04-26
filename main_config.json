@@ -1,29 +1,29 @@
 {
-    "DB": {
-        "HOST": "10.0.0.28",
-        "PORT": 27017,
-        "NAME": "twitter_v2",
-        "USER": "Admin",
-        "PASSWORD": "***REMOVED***"
-    },
-    "CRAWLER": {
-        "NUM_THREADS": 4,
-        "SLEEP_TIME": 3,
-        "PROFILE_MIN_UPDATE_TIME": 18,
-        "MAX_TWEET_CRAWL_DEPTH": 40,
-        "START_TIME": "18:00",
-        "MAX_PAGE_LOAD_TIME": 20,
-        "MAX_URL_PAGE_ERROR": 10
-    },
-    "EMAIL": {
-        "KEY": "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"
-    },
-    "BACKUP": {
-        "RAW_DIR": "backup_raw_data",
-        "DIR": "backups"
-    },
-    "API": {
-        "SECRET_KEY": "django-insecure-ttd_=9ok@7l!+_p*1v7tyv+0!fv)0=jkuf!z-3!3kq4xoko@ip"
-    },
-    "VERSION": "0.0.1"
+  "DB": {
+    "HOST": "localhost",
+    "PORT": 27017,
+    "NAME": "twitter_v2",
+    "USER": "Admin",
+    "PASSWORD": "your_password_here"
+  },
+  "CRAWLER": {
+    "NUM_THREADS": 4,
+    "SLEEP_TIME": 3,
+    "PROFILE_MIN_UPDATE_TIME": 18,
+    "MAX_TWEET_CRAWL_DEPTH": 40,
+    "START_TIME": "18:00",
+    "MAX_PAGE_LOAD_TIME": 20,
+    "MAX_URL_PAGE_ERROR": 10
+  },
+  "EMAIL": {
+    "KEY": "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"
+  },
+  "BACKUP": {
+    "RAW_DIR": "backup_raw_data",
+    "DIR": "backups"
+  },
+  "API": {
+    "SECRET_KEY": "django-insecure-ttd_=9ok@7l!+_p*1v7tyv+0!fv)0=jkuf!z-3!3kq4xoko@ip"
+  },
+  "VERSION": "0.0.1"
 }
