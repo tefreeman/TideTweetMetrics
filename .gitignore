@@ -1,4 +1,6 @@
+#docker mongodb
 
+/mongodb_dump/**
 # ai dataset
 /backend/ai/data/*
 /backend/ai/model_save/*
