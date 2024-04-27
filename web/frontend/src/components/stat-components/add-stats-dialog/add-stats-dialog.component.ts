@@ -178,10 +178,9 @@ export class addStatsDialogComponent implements OnInit {
           let itemWords = this.keyTranslatorService
             .keyToFullString(item.metricName.toLowerCase())
             .split(/\s+|,|\.|;/);
-          
-            itemWords = itemWords.map((word) => word.toLowerCase());
-          console.log("Item Metric Words:", itemWords);
-  
+
+          itemWords = itemWords.map((word) => word.toLowerCase());
+
           // Check if any of the search words starts with the item words
           return searchWords.some((searchWord) =>
             itemWords.some((itemWord) => itemWord.startsWith(searchWord))

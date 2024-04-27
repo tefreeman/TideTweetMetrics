@@ -5,8 +5,8 @@ ENV MONGO_INITDB_ROOT_USERNAME=Admin
 ENV MONGO_INITDB_ROOT_PASSWORD=your_password_here
 
 # Copy the dump and the restore script
-COPY mongodb_dump /docker-entrypoint-initdb.d/dump
-COPY restore-db.sh /docker-entrypoint-initdb.d/
+#COPY mongodb_dump /docker-entrypoint-initdb.d/dump
+#COPY restore-db.sh /docker-entrypoint-initdb.d/
 
 # Grant execution permission to the restore script (important)
-RUN chmod +x /docker-entrypoint-initdb.d/restore-db.sh
+# RUN chmod +x /docker-entrypoint-initdb.d/restore-db.sh
