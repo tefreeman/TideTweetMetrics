@@ -1,5 +1,5 @@
 # Use an official Python runtime as a base image
-FROM python:3.10.6-slim
+FROM python:3.13.0b1-slim
 
 # Set the working directory inside the container
 WORKDIR /project
