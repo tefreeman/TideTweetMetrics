@@ -1,4 +1,4 @@
-from scheduler import CrawlerScheduler
+from backend.crawler_sys.scheduler import CrawlerScheduler
 import database as db
 from backend.config import Config
 from time import sleep
@@ -38,7 +38,6 @@ def crawl_job():
     # remove_backup_files()
 
 
-crawl_job()
 """
 schedule.every().day.at("19:04").do(crawl_job,)
 while True:

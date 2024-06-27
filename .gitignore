@@ -12,6 +12,9 @@
 /backups/*
 *.7z
 /chrome/*
+/chrome/*/*
+!/chrome/*/
+!/chrome/*/.gitkeep
 **/docs/*
 # Mac shit
 
