@@ -1,4 +1,5 @@
 import json
+from dotenv import load_dotenv
 from backend.crawler_sys.utils.backup import next_zip_num, init_backup_dirs
 import os
 
@@ -25,7 +26,7 @@ class Config:
 
     @staticmethod
     def db_host() -> str:
-        return Config.__CONFIG["DB"]["HOST"]
+        return os.getenv("DB_HOST")
 
     @staticmethod
     def db_port() -> int:
@@ -33,11 +34,11 @@ class Config:
 
     @staticmethod
     def db_user() -> str:
-        return Config.__CONFIG["DB"]["USER"]
+        return os.getenv("DB_USER")
 
     @staticmethod
     def db_password() -> str:
-        return Config.__CONFIG["DB"]["PASSWORD"]
+        return os.getenv("DB_PASSWORD")
 
     @staticmethod
     def get_profile_min_update_time_hours() -> int:
@@ -73,11 +74,11 @@ class Config:
 
     @staticmethod
     def email_key() -> str:
-        return Config.__CONFIG["EMAIL"]["KEY"]
+        return os.getenv("EMAIL_KEY")
     
     @staticmethod
     def api_secret_key() -> str:
-        return Config.__CONFIG["API"]["SECRET_KEY"]
+        return os.getenv("API_SECRET")
 
     @staticmethod
     def get_backup_dir() -> str:
@@ -88,8 +89,15 @@ class Config:
         return Config.__CONFIG["BACKUP"]["RAW_DIR"]
 
     @staticmethod
+    def load_env() -> None:
+        load_dotenv()
+
+    @staticmethod
     def Load():
         print(os.getcwd())
         with open("main_config.json", "r") as f:
             test = f.read()
             Config.__CONFIG = json.loads(test)
+        load_dotenv()
+
+
