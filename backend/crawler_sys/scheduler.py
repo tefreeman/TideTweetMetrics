@@ -1,15 +1,15 @@
 import threading
 import queue
 from urllib.parse import urlparse
-from crawler.twitter_crawler import TwitterCrawler
-from crawler.crawler import Crawler  # hmmm
+from backend.crawler_sys.crawler.twitter_crawler import TwitterCrawler
+from backend.crawler_sys.crawler.crawler import Crawler  # hmmm
 import time
 from backend.crawler_sys.twitter_account_manager import TwitterAccountManager
-from utils.summary_report import SummaryReport
-import database as db
-import utils.backup as Backup
+from backend.crawler_sys.utils.summary_report import SummaryReport
+import backend.crawler_sys.database as db
+import backend.crawler_sys.utils.backup as Backup
 from backend.config import Config
-from utils.link_handler import LinkHandler
+from backend.crawler_sys.utils.link_handler import LinkHandler
 import logging
 
 

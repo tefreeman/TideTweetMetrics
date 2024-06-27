@@ -1,1 +1,0 @@
-docker run --rm --network metric-network -v ${PWD}/mongodb_dump:/data/dump mongo bash -c 'mongorestore --uri "mongodb://Admin:your_password_here@mongodb:27017" /data/dump'
