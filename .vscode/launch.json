@@ -1,29 +1,37 @@
 {
-    "configurations": [
+  "configurations": [
     {
-            "name": "Python: Current File (Root)",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal"
-    },
-      {
-        "name": "Python Debugger: Current File (Integrated Terminal)",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${file}",
-        "cwd": "${workspaceFolder}",
-        "console": "integratedTerminal"
+      "name": "Python: Current File (Root)",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
       },
-      {
-        "name": "Python Debugger: Current File (External Terminal)",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${file}",
-        "cwd": "${workspaceFolder}",
-        "console": "externalTerminal"
-      }
-    ]
-  }
-  
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python Debugger: Current File (Integrated Terminal)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python Debugger: Current File (External Terminal)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "externalTerminal"
+    }
+  ]
+}

@@ -95,7 +95,7 @@ class Config:
     @staticmethod
     def Load():
         print(os.getcwd())
-        with open("main_config.json", "r") as f:
+        with open("config/main_config.json", "r") as f:
             test = f.read()
             Config.__CONFIG = json.loads(test)
         load_dotenv()
