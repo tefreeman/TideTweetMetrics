@@ -37,7 +37,7 @@ def crawl_job():
     # compress_backups()
     # remove_backup_files()
 
-
+crawl_job()
 """
 schedule.every().day.at("19:04").do(crawl_job,)
 while True:
