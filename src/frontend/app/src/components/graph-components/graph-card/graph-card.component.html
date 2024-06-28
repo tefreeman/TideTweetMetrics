@@ -1,0 +1,14 @@
+<mat-card class="card" style="height: 100%">
+  <button
+    *ngIf="editMode | async"
+    mat-icon-button
+    class="delete-icon"
+    (click)="onDelete()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <ng-container>
+    <app-generic-graph [displayableData]="displayableData"></app-generic-graph>
+  </ng-container>
+</mat-card>

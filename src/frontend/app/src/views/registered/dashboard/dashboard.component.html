@@ -1,0 +1,60 @@
+<div class="dashboard-container">
+  <div class="title-container"></div>
+
+  <!-- NEW DASHBOARD -->
+  @if (isEmpty$() | async) {
+  <div class="empty-container">
+    <div class="empty-card">
+      <h5 class="card-title">Welcome to your new dashboard!</h5>
+      <div class="card-content">
+        <h6 class="text">
+          To get started add a grid by click Grid Edit (above) and add grid.
+        </h6>
+      </div>
+    </div>
+  </div>
+  }
+
+  <div
+    cdkDropList
+    [cdkDropListData]="localGrids"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div *ngFor="let grid of grids$ | async; let isFirst = first">
+      <div
+        class="grid-container"
+        cdkDragLockAxis="y"
+        cdkDrag
+        [cdkDragDisabled]="!(gridEditMode | async)"
+      >
+        <h2 class="title-black" [style.color]="isFirst ? 'white' : null">
+          {{ grid.name.charAt(0).toUpperCase() + grid.name.slice(1) }}
+        </h2>
+
+        @if (grid.type == 'metric') {
+        <app-card-grid
+          [page]="(pageName$ | async)!"
+          [name]="grid.name"
+          maxCardWidth="30rem"
+          cardHeight="8rem"
+          maxColSize="1fr"
+          minColSize="18rem"
+        ></app-card-grid>
+        } @else {
+        <app-graph-grid
+          [page]="(pageName$ | async)!"
+          [name]="grid.name"
+          [cardHeight]="'auto'"
+          [maxColSize]="'1fr'"
+          [minColSize]="minColSize"
+        ></app-graph-grid>
+        }
+      </div>
+    </div>
+  </div>
+  <!-- Footer section; visible only if there's at least one grid present -->
+  <div
+    *ngIf="((grids$ | async) ?? []).length > 0"
+    class="dashboard-footer"
+  ></div>
+</div>

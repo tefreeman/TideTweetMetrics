@@ -1,7 +1,3 @@
-#docker mongodb
-
-/mongodb_dump/**
-!/mongodb_dump/.gitkeep
 # ai dataset
 /backend/ai/data/*
 /backend/ai/model_save/*
