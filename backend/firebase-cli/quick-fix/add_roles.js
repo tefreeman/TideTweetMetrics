@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-
 const serviceAccount = require('D:/tidetweetmetrics-a047f-f751b98212fd.json');
 
 admin.initializeApp({
