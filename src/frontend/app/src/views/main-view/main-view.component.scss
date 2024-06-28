@@ -1,0 +1,179 @@
+
+.custom-toolbar {
+  border-top: 4px solid #a51e36; /* Keep your red border line */
+  background-color: transparent;
+  display: grid; // Switch to grid from flex
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Three columns setup: left content, spacer, right content
+  align-items: center; // Center items vertically within the toolbar
+  justify-content:space-between;
+  width:100%;
+
+  .menu-button{
+    grid-column: 1
+  }
+  
+  .spacer {
+    display: none; // No longer needed since we're using grid, can be omitted
+  }
+
+  .button-class{
+    margin-top: 7px;
+  }
+  
+  // Default setting for buttons (right side content)
+  .right-side {
+    //grid-column: 3 / 4; // Align the right-side content to the third column
+    display: flex; // Use flexbox for the right side content to align buttons horizontally
+    gap: 10px; // A replace for the margin-left in button for consistent spacing
+    justify-content: flex-end; // This makes sure content aligns right
+    grid-column: -1 / -2;
+  }
+  
+
+
+}
+
+
+.custom-background {
+  position: relative;
+  background-color: #f4f4f4; 
+  overflow-y: auto;
+  height: calc(100vh); 
+}
+
+.background-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 310px;
+  z-index: -1; 
+}
+
+.background-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.side-nav {
+  width: 200px;
+}
+
+.side-nav-title{
+  font-weight: bold;
+  font-size: 15px; 
+  letter-spacing: -.3px;
+  color:#a51e36;
+}
+
+.side-nav-title span {
+  position: relative;
+  display: inline-block;
+}
+
+.side-nav-title span::after {
+  content: "";
+  position: absolute;
+  bottom: -8px; // Adjust this to move the line closer or further from the text
+  left: 0;
+  width: 100%;
+  border-bottom: 3px solid #a51e36;
+}
+
+.title{
+  font-weight: bold;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  color: white;
+  margin-left: 2px;
+}
+.side-nav-subtitle{
+  font-weight: bold;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  color:#a51e36;
+}
+
+
+
+.add-card{
+  background-color: #a51e36;
+  color: white;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+  display: flex;
+  align-items: center; // This centers the child items vertically inside the flex container
+
+
+  /* Adjust height and width as necessary, or let it adapt based on content */
+  width: auto; // Adjust based on your layout needs, or you can specify a width
+  padding: 5px; // Adds some inner space between the text/content and the border of the element
+  box-sizing: border-box; // This ensures the padding and border are included in the total width and height
+}
+
+
+button{
+  margin-left: 10px;
+}
+
+.text {
+  font-weight: bold;
+  font-size: .75rem;
+  letter-spacing: -0.3px;
+}
+
+.footer {
+  background-color: #f4f4f4;
+  min-height: 2rem;
+}
+
+.delete-button {
+  visibility: hidden; /* Hide button initially */
+  margin-left: auto; /* Push the button to the right */
+  color: red; /* Color the text red */
+  cursor: pointer; /* Change cursor on hover */
+  border: none; /* No border for a cleaner look */
+  background-color: transparent; /* Transparent background */
+  padding: 0px 5px; /* Small padding around the "X" */
+  font-size: 16px; /* Adjust size as needed */
+  line-height: 1;
+  margin-left: auto;
+  min-width: 44px; /* Optional, for clickability */
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between; /* This will push content to the far ends */
+  align-items: center; /* This ensures items are vertically centered */
+  width: 100%; /* Ensure the flex-container spans the full width of its parent */
+}
+
+
+
+.custom-nav-item:hover .delete-button {
+  visibility: visible; /* Show the button on hover */
+}
+
+.side-nav-contents{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+.side-nav-contents-custom-page{
+  display:flex;
+  align-items: center;
+  flex-grow: 1;
+  padding-left: 8px;
+  font-size: 13px; 
+  letter-spacing: -.3px;
+}
+
+.custom-nav-item {
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%
+}

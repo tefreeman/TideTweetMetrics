@@ -1,0 +1,18 @@
+<div
+  class="flex-container"
+  (mouseclick)="startQuickDrag()"
+  (mousedown)="startDragging($event)"
+  (mousemove)="onDragging($event)"
+  (mouseup)="stopDragging()"
+  (mouseleave)="stopDragging()"
+  (touchstart)="startDragging($event)"
+  (touchmove)="onDragging($event)"
+  (touchend)="stopDragging()"
+>
+  >
+  <mat-card class="no-shrink"></mat-card>
+  <mat-card class="no-shrink"></mat-card>
+  <mat-card class="no-shrink"></mat-card>
+  <mat-card class="no-shrink"></mat-card>
+  <mat-card class="no-shrink"></mat-card>
+</div>

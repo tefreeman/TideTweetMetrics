@@ -1,0 +1,17 @@
+<div class="card">
+  <h5 class="card-title">{{ metricName }}</h5>
+  <h2 class="card-value">{{ nowPoint | number : "1.0-3" }}</h2>
+  <h6 class="card-footer">
+    <span
+      [ngClass]="{
+        'green-arrow': difference > 0,
+        'red-arrow': difference <= 0
+      }"
+    >
+      <i class="fa fa-arrow-up" *ngIf="difference > 0"></i>
+      <i class="fa fa-arrow-down" *ngIf="difference < 0"></i>
+      {{ difference | number : "1.0-3" }}
+    </span>
+    Since {{ timeUnitString }}
+  </h6>
+</div>
