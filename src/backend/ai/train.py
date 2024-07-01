@@ -51,11 +51,13 @@ class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
         return logits.squeeze()  # Remove the extra dimension
 
 # Define a base directory for scaler files
-SCALERS_DIR = 'D:\\TideTweetMetrics\\backend\\ai\\model_save'
+BASE_DIR = 'data/ai/'
+SCALERS_DIR =  BASE_DIR + 'model_save'
 SCALERS_CONFIG = {
     'like_count': 'like_count_scaler.save',
     'features': 'feature_scaler.save',
 }
+
 def save_scaler(scaler_name, scaler_object):
     """
     Saves the scaler object based on the scaler name according to the predefined paths.
@@ -87,14 +89,14 @@ def load_scaler(scaler_name):
 
 def get():
     
-    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
+    with open(BASE_DIR + "db/v2_profiles.json", 'r', encoding='utf-8') as file:
         profiles = json.load(file)
 
     profile_dict = {}
     for profile in profiles:
         profile_dict[profile['username']] = profile['public_metrics']['followers_count']
 
-    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_tweets.json", 'r', encoding='utf-8') as file:
+    with open(BASE_DIR + "db/v2_tweets.json", 'r', encoding='utf-8') as file:
         data = json.load(file)
     # First, build a dictionary to hold the last 5 likes per author
     author_last_10_likes_avg = {}
@@ -152,7 +154,7 @@ def get():
     tweets = [tweet for tweet in tweets if tweet is not None]
     
     # Limit the number of tweets for slow PC's
-    #tweets = tweets[0:5000]
+    tweets = tweets[0:4000]
 
     df = pd.DataFrame(tweets)
 
@@ -260,7 +262,7 @@ def train_model_with_fixed_params(train_dataset, validate_dataset):
     lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)
 
     # Training via trainmodel function
-    train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=epochs, model_save_path='D:\\TideTweetMetrics\\backend\\ai\\model_save\\', dropout_rate=dropout_rate)
+    train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=epochs, model_save_path= BASE_DIR + 'model_save\\', dropout_rate=dropout_rate)
 
     avg_val_loss, _, _ = evaluate_model(model, val_loader, loss_fn, 'cuda')
     
@@ -295,7 +297,7 @@ def evaluate_model(model, val_loader, loss_fn, device):
 
     return avg_val_loss, predictions, true_labels
 
-def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path='backend\\ai\\model_save\\', dropout_rate=0.1):
+def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path= BASE_DIR +'model_save\\', dropout_rate=0.1):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     

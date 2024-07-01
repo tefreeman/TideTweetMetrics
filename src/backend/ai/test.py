@@ -28,18 +28,19 @@ from backend.ai.train import BertForSequenceClassificationWithFeatures
 # from your_model_module import YourModel
 
 
-
+BASE_DIR = 'data/ai/'
+SAVE_DIR =  BASE_DIR + 'model_save/'
 
 def get(like_count_scaler, features_scaler):
     
-    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_profiles.json", 'r', encoding='utf-8') as file:
+    with open(BASE_DIR + "db/v2_profiles.json", 'r', encoding='utf-8') as file:
         profiles = json.load(file)
 
     profile_dict = {}
     for profile in profiles:
         profile_dict[profile['username']] = profile['public_metrics']['followers_count']
 
-    with open("D:\\TideTweetMetrics\\backend\\ai\\data\\v2_tweets.json", 'r', encoding='utf-8') as file:
+    with open(BASE_DIR + "db/v2_tweets.json", 'r', encoding='utf-8') as file:
         data = json.load(file)
     # First, build a dictionary to hold the last 5 likes per author
     author_last_10_likes_avg = {}
@@ -95,7 +96,7 @@ def get(like_count_scaler, features_scaler):
 
     # Remove None values
     tweets = [tweet for tweet in tweets if tweet is not None]
-    tweets = tweets[0:1000]
+    tweets = tweets[5500:6000]
     # Create a DataFrame
     df = pd.DataFrame(tweets)
 
@@ -216,9 +217,9 @@ def compute_unscaled_metrics(predictions_scaled, true_labels_scaled, like_count_
 
 if __name__ == "__main__":
     # Adjust the paths accordingly
-    model_path = 'D:\\TideTweetMetrics\\backend\\ai\\model_save\\epoch_13'
-    like_count_scaler_path = 'D:\TideTweetMetrics\\backend\\ai\model_save\like_count_scaler.save'
-    features_scaler_path = 'D:\TideTweetMetrics\\backend\\ai\model_save\\feature_scaler.save'
+    model_path = SAVE_DIR + '/epoch_17'
+    like_count_scaler_path = SAVE_DIR + 'like_count_scaler.save'
+    features_scaler_path = SAVE_DIR + 'feature_scaler.save'
 
     # Device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
