@@ -102,8 +102,8 @@ export abstract class BaseGraph {
    * @param value - The number value to format.
    * @returns The formatted number value.
    */
-  protected formatNumber(value: number) {
-    if (isNaN(value)) return `${value}`;
+  protected formatNumber(value: any) {
+    if (typeof value !== 'number' || isNaN(value)) return `${value}`;
     return `${value.toFixed(2)}`;
   }
 
