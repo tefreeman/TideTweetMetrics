@@ -1,39 +1,30 @@
 import pandas as pd
-import json
 from transformers import BertTokenizerFast, BertForSequenceClassification
 from torch.utils.data import DataLoader, TensorDataset
 import torch
 from datetime import datetime
 import joblib
-from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
-from fastapi import FastAPI, HTTPException
+from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 import pandas as pd
-import json
-from transformers import AutoTokenizer
 import numpy as np
 import re
 from torch.utils.data import DataLoader, TensorDataset
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-from transformers import BertTokenizerFast, BertForSequenceClassification, AdamW
-from torch.cuda.amp import autocast, GradScaler
+from transformers import BertTokenizerFast
 from textblob import TextBlob
 from datetime import datetime
-from transformers import BertPreTrainedModel, BertModel
-from sklearn.preprocessing import MinMaxScaler
-from transformers import get_linear_schedule_with_warmup
-from torch.optim.lr_scheduler import OneCycleLR
-from sklearn.metrics import mean_squared_error, mean_absolute_error
 torch.cuda.empty_cache()
-import os
 import joblib
-from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from backend.config import Config
 from backend.ai.train import BertForSequenceClassificationWithFeatures
 from common import get_last_tweets_like_average, get_followers_count
-
+from openai import OpenAI
 
 app = FastAPI()
 
@@ -41,20 +32,27 @@ class Tweet(BaseModel):
     text: str
     author_id: str
     created_at: str
-    entities: dict
-    attachments: dict
-
+    mentions: List[str] = []
+    photo_count: int
+    video_count: int
+    
 class TweetList(BaseModel):
     tweets: List[Tweet]
+
+def get_hashtag_count(tweet_text):
+    return len(re.findall(r'#[a-z0-9_]+', tweet_text))
+    
+def get_url_count(tweet_text):
+    return len(re.findall(r'https?://[^\s]+', tweet_text))
 
 
 @app.on_event("startup")
 def load_model_and_scalers():
-    global model, like_count_scaler, mm_features_scaler, r_features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles
-    model_path = MODEL_DIR + '/epoch_21'
-    like_count_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('like_count')
-    mm_features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('mm_features')
-    r_features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('r_features')
+    global model, like_count_scaler, mm_features_scaler, r_features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles, gpt_client
+    model_path = MODEL_SAVE_DIR + 'epoch_41'
+    like_count_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('like_count')
+    mm_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('mm_features')
+    r_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('r_features')
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -64,11 +62,13 @@ def load_model_and_scalers():
 
     avg_last_10_likes_for_profiles = get_last_tweets_like_average(10)
     twitter_profiles = get_followers_count()
-
+    
+    Config.init()
+    gpt_client = OpenAI(organization=Config.get_gpt_org_id(), project=Config.get_gpt_project_id(), api_key=Config.get_gpt_api_key())
+                        
 def preprocess_and_tokenize(tweet_list):
 
     # Collect averages, text clean, sentiment etc.
-    data = tweet_list.tweets
 
 
     tweets = [{
@@ -76,13 +76,13 @@ def preprocess_and_tokenize(tweet_list):
         'created_at': datetime.strptime(tweet.created_at, '%Y-%m-%dT%H:%M:%S.%fZ'),
         'author_id': tweet.author_id,
         'followers_count': twitter_profiles.get(tweet.author_id, 0),
-        'hashtag_count': len(tweet.entities.get('hashtags', [])),
-        'mention_count': len(tweet.entities.get('mentions', [])),
-        'url_count': len(tweet.entities.get('urls', [])),
-        'photo_count': len(tweet.attachments.get('photos', [])),
-        'video_count': len(tweet.attachments.get('videos', [])),
+        'hashtag_count': get_hashtag_count(tweet.text),
+        'mention_count': len(tweet.mentions),
+        'url_count': get_url_count(tweet.text),
+        'photo_count': tweet.photo_count, 
+        'video_count': tweet.video_count,
         'avg_last_10_likes': avg_last_10_likes_for_profiles.get(tweet.author_id, 0)
-    } for tweet in data]
+    } for tweet in tweet_list]
 
     print(tweets)
 
@@ -107,6 +107,51 @@ def encode_texts(texts):
     return tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
 
 @app.post("/predict")
+def predict(tweet_list: TweetList):
+    return predict_likes(tweet_list)
+
+
+def load_model(model_path):
+    model = BertForSequenceClassificationWithFeatures.from_pretrained(model_path)
+    model.eval()  # Set the model to evaluation mode
+    return model
+
+def load_scalers(like_count_scaler_path, mm_features_scaler_path, r_features_scaler_path):
+    like_count_scaler = joblib.load(like_count_scaler_path)
+    mm_features_scaler = joblib.load(mm_features_scaler_path)
+    r_features_scaler = joblib.load(r_features_scaler_path)
+    return like_count_scaler, mm_features_scaler, r_features_scaler
+
+
+def generate_tweets(tweet: Tweet):
+    # Define the prompt
+    prompt = (
+        "Rewrite the following tweet five times to make it more engaging and likely to receive more likes. "
+        "Respond with only the rewritten tweet and no additional text. "
+        "Respond with only the tweets separated by newline characters. "
+        "Do not include any additional text or descriptions. "
+        f"{tweet.text}"
+    )
+
+    # Request to OpenAI API
+    response = gpt_client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ]
+    )
+
+
+    tweets = response.choices[0].message.content.split('\n')
+
+    
+    # filter out empty strings
+    tweets = list(filter(None, tweets))
+    tweets = list(filter(lambda x: len(x) > 0, tweets))
+
+    return tweets
+
 def predict_likes(tweet_list: TweetList):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -125,18 +170,20 @@ def predict_likes(tweet_list: TweetList):
     predictions_unscaled = like_count_scaler.inverse_transform(np.array(predictions).reshape(-1, 1)).flatten()
     return {'predictions': predictions_unscaled.tolist()}
 
-def load_model(model_path):
-    model = BertForSequenceClassificationWithFeatures.from_pretrained(model_path)
-    model.eval()  # Set the model to evaluation mode
-    return model
+@app.post("/optimize_tweet")
+def optimize_tweet(tweet: Tweet):
+    input_tweet = Tweet(text=tweet.text, author_id=tweet.author_id, created_at=tweet.created_at, mentions=tweet.mentions, photo_count=tweet.photo_count, video_count=tweet.video_count)
+    new_tweets = generate_tweets(input_tweet)
 
-def load_scalers(like_count_scaler_path, mm_features_scaler_path, r_features_scaler_path):
-    like_count_scaler = joblib.load(like_count_scaler_path)
-    mm_features_scaler = joblib.load(mm_features_scaler_path)
-    r_features_scaler = joblib.load(r_features_scaler_path)
-    return like_count_scaler, mm_features_scaler, r_features_scaler
+    tweet_list = []
+    tweet_list.append(input_tweet)
+    for new_tweet in new_tweets:
+        tweet_list.append(Tweet(text=new_tweet, author_id=tweet.author_id, created_at=tweet.created_at,
+                                 mentions=tweet.mentions, photo_count=tweet.photo_count, video_count=tweet.video_count))
+
+    return predict_likes(tweet_list)
+
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

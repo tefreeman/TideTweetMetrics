@@ -81,6 +81,19 @@ class Config:
         return os.getenv("API_SECRET")
 
     @staticmethod
+    def get_gpt_org_id() -> str:
+        return os.getenv("GPT_ORG_ID")
+    
+
+    @staticmethod
+    def get_gpt_api_key() -> str:
+        return os.getenv("GPT_API_KEY")
+    
+    @staticmethod
+    def get_gpt_project_id() -> str:
+        return os.getenv("GPT_PROJ_ID")
+
+    @staticmethod
     def get_backup_dir() -> str:
         return Config.__CONFIG["BACKUP"]["DIR"]
 
