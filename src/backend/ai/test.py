@@ -21,7 +21,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 torch.cuda.empty_cache()
 import os
 import joblib
-from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 from backend.ai.train import BertForSequenceClassificationWithFeatures
 # Assuming these are the definitions for your custom dataset and model
 # from your_dataset_module import YourCustomDataset
@@ -213,9 +213,9 @@ def compute_unscaled_metrics(predictions_scaled, true_labels_scaled, like_count_
 
 if __name__ == "__main__":
     # Adjust the paths accordingly
-    model_path = MODEL_DIR + '/epoch_17'
-    like_count_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('like_count')
-    features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('features')
+    model_path = MODEL_SAVE_DIR + '/epoch_17'
+    like_count_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('like_count')
+    features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('features')
 
     # Device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

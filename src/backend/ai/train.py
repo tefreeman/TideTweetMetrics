@@ -21,7 +21,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 torch.cuda.empty_cache()
 import os
 import joblib
-from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 from sklearn.preprocessing import RobustScaler
 # Bert model class with additional features
 # This class is a modified version of the BertForSequenceClassification class
@@ -58,7 +58,7 @@ def save_scaler(scaler_name, scaler_object):
     """
     scaler_file_name = SCALERS_CONFIG.get(scaler_name)
     if scaler_file_name:
-        scaler_path = os.path.join(SCALER_DIR, scaler_file_name)
+        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
         joblib.dump(scaler_object, scaler_path)
         print(f"Scaler {scaler_name} saved to {scaler_path}")
     else:
@@ -70,7 +70,7 @@ def load_scaler(scaler_name):
     """
     scaler_file_name = SCALERS_CONFIG.get(scaler_name)
     if scaler_file_name:
-        scaler_path = os.path.join(SCALER_DIR, scaler_file_name)
+        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
         if os.path.exists(scaler_path):
             return joblib.load(scaler_path)
         else:
@@ -287,7 +287,7 @@ def train_model_with_fixed_params(train_dataset, validate_dataset):
 
     # Training via trainmodel function
     train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler,
-                 epochs=epochs, model_save_path=MODEL_DIR, dropout_rate=dropout_rate)
+                 epochs=epochs, model_save_path=MODEL_SAVE_DIR, dropout_rate=dropout_rate)
 
     avg_val_loss, _, _ = evaluate_model(model, val_loader, loss_fn, 'cuda')
     
@@ -322,7 +322,7 @@ def evaluate_model(model, val_loader, loss_fn, device):
 
     return avg_val_loss, predictions, true_labels
 
-def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path=MODEL_DIR, dropout_rate=0.1):
+def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path=MODEL_SAVE_DIR, dropout_rate=0.1):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     
@@ -390,7 +390,7 @@ if __name__ == '__main__':
 
     train_dataset, validate_dataset, test_dataset = get()
      
-    test_dataset_filepath = MODEL_DIR + 'test_dataset.pt'
+    test_dataset_filepath = MODEL_SAVE_DIR + 'test_dataset.pt'
     torch.save(test_dataset, test_dataset_filepath)
 
     train_model_with_fixed_params(train_dataset, validate_dataset)

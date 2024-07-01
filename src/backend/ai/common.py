@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 
 
 def get_followers_count() -> dict:
