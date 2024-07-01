@@ -92,6 +92,7 @@ def get():
 
     with open(TWEETS_FILE_PATH, 'r', encoding='utf-8') as file:
         data = json.load(file)
+
     # First, build a dictionary to hold the last 5 likes per author
     author_last_10_likes_avg = {}
 
@@ -129,6 +130,13 @@ def get():
         'video_count': len(tweet['data']['attachments']['videos']),
         'avg_last_10_likes': author_last_10_likes_avg.get(tweet['data']['author_id'], 0),  # Add the avg likes
     } for tweet in data]
+
+    # Remove tweets from the uoregon account accidentally included
+    for i in range(len(tweets)):
+        if tweets[i]['author_id'] == 'uoregon':
+            tweets[i] = None
+    tweets = [tweet for tweet in tweets if tweet is not None]       
+
     # Flatten the JSON data into a more convenient format
 
 
@@ -146,11 +154,12 @@ def get():
 
 
     tweets = [tweet for tweet in tweets if tweet is not None]
-    
+    print(len(tweets))
+
     # Limit the number of tweets for slow PC's
     # randomly shuffle tweets array
-    np.random.shuffle(tweets)
-    tweets = tweets[0:10000]
+    # np.random.shuffle(tweets)
+    # tweets = tweets[0:10000]
 
     df = pd.DataFrame(tweets)
 
@@ -197,29 +206,51 @@ def get():
     test_labels = torch.tensor(test['like_count_scaled'].values)
 
 
-    features_scaler = MinMaxScaler()
+    mm_features_scaler = MinMaxScaler()
+    r_features_scaler = MinMaxScaler()
 
-    # scaled columns that will also be saved
-    scale_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
+    # Columns to be scaled with MinMaxScaler and RobustScaler
+    mm_scale_columns = ['hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length']
+    r_scale_columns = ['followers_count', 'avg_last_10_likes']
 
+    # Fit the MinMaxScaler on the training data and transform the data
+    train_mm_scaled = mm_features_scaler.fit_transform(train[mm_scale_columns])
+    validate_mm_scaled = mm_features_scaler.transform(validate[mm_scale_columns])
+    test_mm_scaled = mm_features_scaler.transform(test[mm_scale_columns])
 
-    # Fit the scaler on the training data and transform the data
-    train[scale_columns] = features_scaler.fit_transform(train[scale_columns])
-    validate[scale_columns] = features_scaler.transform(validate[scale_columns])
-    test[scale_columns] = features_scaler.transform(test[scale_columns])
+    # Fit the RobustScaler on the training data and transform the data
+    train_r_scaled = r_features_scaler.fit_transform(train[r_scale_columns])
+    validate_r_scaled = r_features_scaler.transform(validate[r_scale_columns])
+    test_r_scaled = r_features_scaler.transform(test[r_scale_columns])
 
+    # Combine the scaled features back into the DataFrame
+    train_scaled = train.copy()
+    train_scaled[mm_scale_columns] = train_mm_scaled
+    train_scaled[r_scale_columns] = train_r_scaled
 
-    save_scaler('features', features_scaler)
+    validate_scaled = validate.copy()
+    validate_scaled[mm_scale_columns] = validate_mm_scaled
+    validate_scaled[r_scale_columns] = validate_r_scaled
+
+    test_scaled = test.copy()
+    test_scaled[mm_scale_columns] = test_mm_scaled
+    test_scaled[r_scale_columns] = test_r_scaled
+
+    # Save the scalers
+    save_scaler('mm_features', mm_features_scaler)
+    save_scaler('r_features', r_features_scaler)
+
     # Create additional feature tensors with scaled features
-    train_features = torch.tensor(train[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
-    validate_features = torch.tensor(validate[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
-    test_features = torch.tensor(test[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
+    scale_columns = mm_scale_columns + r_scale_columns + ['sentiment', 'day_of_week', 'hour_of_day']
+    
+    train_features = torch.tensor(train_scaled[scale_columns].values, dtype=torch.float)
+    validate_features = torch.tensor(validate_scaled[scale_columns].values, dtype=torch.float)
+    test_features = torch.tensor(test_scaled[scale_columns].values, dtype=torch.float)
 
     # Create TensorDatasets
     train_dataset = TensorDataset(train_encodings['input_ids'], train_encodings['attention_mask'], train_features, train_labels)
     validate_dataset = TensorDataset(validate_encodings['input_ids'], validate_encodings['attention_mask'], validate_features, validate_labels)
-    test_dataset  = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features, test_labels)
-
+    test_dataset = TensorDataset(test_encodings['input_ids'], test_encodings['attention_mask'], test_features, test_labels)
 
     return train_dataset, validate_dataset, test_dataset
 
@@ -227,13 +258,14 @@ def get():
 
 def train_model_with_fixed_params(train_dataset, validate_dataset):
 
-    loss_fn = nn.MSELoss()
+    loss_fn = nn.SmoothL1Loss()
+    # loss_fn = nn.MSELoss()
     # Fixed hyperparameters
     #  May need to adjust this
     lr = 1e-5
     batch_size = 56
-    dropout_rate = 0.4
-    epochs = 100
+    dropout_rate = 0.325
+    epochs = 200
 
     model = BertForSequenceClassificationWithFeatures.from_pretrained(
         'bert-base-uncased',
@@ -251,7 +283,7 @@ def train_model_with_fixed_params(train_dataset, validate_dataset):
     val_loader = DataLoader(validate_dataset, batch_size=batch_size)
 
     scaler = GradScaler()
-    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)
+    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5)
 
     # Training via trainmodel function
     train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler,
@@ -335,7 +367,7 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
         mse = mean_squared_error(true_labels, predictions)
         mae = mean_absolute_error(true_labels, predictions)
         print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | MSE: {mse} | MAE: {mae}| Time elapsed: {datetime.now() - start_time}')
-        if epoch >= 8 and epoch % 4 == 0:
+        if epoch >= 20 and epoch % 10 == 0:
 
         # Save the model and optimizer state each epoch
             model_save_epoch_path = Path(model_save_path) / f"epoch_{epoch+1}"
@@ -353,11 +385,16 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
                 f.write(f"Mean Absolute Error: {mae:.6f}\n")
                 f.write(f"Validation Loss: {avg_val_loss:.6f}\n")
 
-#train_model(model, train_loader, validate_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path='D:\\TideTweetMetrics\\backend\\ai\\model_save')
+
 if __name__ == '__main__':
-    #study = optuna.create_study(direction='minimize')
-    #study.optimize(objective, n_trials=20)  # Adjust n_trials as needed
+
     train_dataset, validate_dataset, test_dataset = get()
+     
+    test_dataset_filepath = MODEL_DIR + 'test_dataset.pt'
+    torch.save(test_dataset, test_dataset_filepath)
+
     train_model_with_fixed_params(train_dataset, validate_dataset)
+
+
 
 
