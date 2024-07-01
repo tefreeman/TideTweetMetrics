@@ -21,8 +21,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 torch.cuda.empty_cache()
 import os
 import joblib
-
-
+from ai_config import SCALER_DIR, MODEL_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
+from sklearn.preprocessing import RobustScaler
 # Bert model class with additional features
 # This class is a modified version of the BertForSequenceClassification class
 # that includes additional features in the input and the classifier layer.
@@ -37,6 +37,8 @@ class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
         self.classifier = nn.Linear(total_input_size, 1)  # Change the output size to 1
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None, inputs_embeds=None, additional_features=None):
+        if additional_features is None:
+            raise ValueError("additional_features must be provided to the CustomBertModel.")
         outputs = self.bert(input_ids,
                             attention_mask=attention_mask,
                             token_type_ids=token_type_ids,
@@ -44,19 +46,11 @@ class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
                             head_mask=head_mask,
                             inputs_embeds=inputs_embeds)
         pooled_output = outputs[1]
-        if additional_features is not None:
-            pooled_output = torch.cat((pooled_output, additional_features), 1)
+        pooled_output = torch.cat((pooled_output, additional_features), 1)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         return logits.squeeze()  # Remove the extra dimension
 
-# Define a base directory for scaler files
-BASE_DIR = 'data/ai/'
-SCALERS_DIR =  BASE_DIR + 'model_save'
-SCALERS_CONFIG = {
-    'like_count': 'like_count_scaler.save',
-    'features': 'feature_scaler.save',
-}
 
 def save_scaler(scaler_name, scaler_object):
     """
@@ -64,7 +58,7 @@ def save_scaler(scaler_name, scaler_object):
     """
     scaler_file_name = SCALERS_CONFIG.get(scaler_name)
     if scaler_file_name:
-        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        scaler_path = os.path.join(SCALER_DIR, scaler_file_name)
         joblib.dump(scaler_object, scaler_path)
         print(f"Scaler {scaler_name} saved to {scaler_path}")
     else:
@@ -76,7 +70,7 @@ def load_scaler(scaler_name):
     """
     scaler_file_name = SCALERS_CONFIG.get(scaler_name)
     if scaler_file_name:
-        scaler_path = os.path.join(SCALERS_DIR, scaler_file_name)
+        scaler_path = os.path.join(SCALER_DIR, scaler_file_name)
         if os.path.exists(scaler_path):
             return joblib.load(scaler_path)
         else:
@@ -89,14 +83,14 @@ def load_scaler(scaler_name):
 
 def get():
     
-    with open(BASE_DIR + "db/v2_profiles.json", 'r', encoding='utf-8') as file:
+    with open(PROFILES_FILE_PATH, 'r', encoding='utf-8') as file:
         profiles = json.load(file)
 
     profile_dict = {}
     for profile in profiles:
         profile_dict[profile['username']] = profile['public_metrics']['followers_count']
 
-    with open(BASE_DIR + "db/v2_tweets.json", 'r', encoding='utf-8') as file:
+    with open(TWEETS_FILE_PATH, 'r', encoding='utf-8') as file:
         data = json.load(file)
     # First, build a dictionary to hold the last 5 likes per author
     author_last_10_likes_avg = {}
@@ -154,7 +148,9 @@ def get():
     tweets = [tweet for tweet in tweets if tweet is not None]
     
     # Limit the number of tweets for slow PC's
-    tweets = tweets[0:4000]
+    # randomly shuffle tweets array
+    np.random.shuffle(tweets)
+    tweets = tweets[0:10000]
 
     df = pd.DataFrame(tweets)
 
@@ -175,17 +171,13 @@ def get():
     train, validate, test = np.split(df.sample(frac=1, random_state=42),
                                     [int(.8*len(df)), int(.9*len(df))])
 
-
-    # Fit to training data and transform
-    like_count_scaler = MinMaxScaler()
+    # Scaling the like_count column using RobustScaler to handle outliers
+    like_count_scaler = RobustScaler()
     train['like_count_scaled'] = like_count_scaler.fit_transform(train[['like_count']])
-
-    # Transform validation and test sets
     validate['like_count_scaled'] = like_count_scaler.transform(validate[['like_count']])
     test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
 
-
-            # Saving the scaler object
+    # Saving the scaler object
     save_scaler('like_count', like_count_scaler)
 
 
@@ -262,7 +254,8 @@ def train_model_with_fixed_params(train_dataset, validate_dataset):
     lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)
 
     # Training via trainmodel function
-    train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=epochs, model_save_path= BASE_DIR + 'model_save\\', dropout_rate=dropout_rate)
+    train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler,
+                 epochs=epochs, model_save_path=MODEL_DIR, dropout_rate=dropout_rate)
 
     avg_val_loss, _, _ = evaluate_model(model, val_loader, loss_fn, 'cuda')
     
@@ -297,7 +290,7 @@ def evaluate_model(model, val_loader, loss_fn, device):
 
     return avg_val_loss, predictions, true_labels
 
-def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path= BASE_DIR +'model_save\\', dropout_rate=0.1):
+def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path=MODEL_DIR, dropout_rate=0.1):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     
