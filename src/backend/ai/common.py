@@ -1,7 +1,11 @@
 import json
 import numpy as np
+import os
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 
+def create_directories():
+    os.makedirs(SCALER_SAVE_DIR, exist_ok=True)
+    os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 
 def get_followers_count() -> dict:
     with open(PROFILES_FILE_PATH, 'r', encoding='utf-8') as file:

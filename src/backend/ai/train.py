@@ -23,18 +23,24 @@ import os
 import joblib
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 from sklearn.preprocessing import RobustScaler
+from common import create_directories
+
 # Bert model class with additional features
 # This class is a modified version of the BertForSequenceClassification class
 # that includes additional features in the input and the classifier layer.
 # May need to rework this if we have time for better analysis
 class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
-    def __init__(self, config, num_additional_features=11):
+    def __init__(self, config, num_additional_features=11, intermediate_size=256):
         super().__init__(config)
         self.bert = BertModel(config)
 
         total_input_size = config.hidden_size + num_additional_features
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(total_input_size, 1)  # Change the output size to 1
+        self.classifier = nn.Sequential(
+            nn.Linear(total_input_size, intermediate_size),
+            nn.ReLU(), # Forces non negative output
+            nn.Linear(intermediate_size, 1)
+        )
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None, inputs_embeds=None, additional_features=None):
         if additional_features is None:
@@ -259,21 +265,17 @@ def get():
 def train_model_with_fixed_params(train_dataset, validate_dataset):
 
     loss_fn = nn.SmoothL1Loss()
-    # loss_fn = nn.MSELoss()
+    #loss_fn = nn.MSELoss()
     # Fixed hyperparameters
     #  May need to adjust this
     lr = 1e-5
-    batch_size = 56
+    batch_size = 64
     dropout_rate = 0.325
     epochs = 200
 
     model = BertForSequenceClassificationWithFeatures.from_pretrained(
         'bert-base-uncased',
         hidden_dropout_prob=dropout_rate  # Fixed dropout_rate
-    )
-    model.classifier = nn.Sequential(
-        nn.Dropout(dropout_rate),  # Fixed dropout rate
-        nn.Linear(model.classifier.in_features, 1)
     )
 
     optimizer = AdamW(model.parameters(), lr=lr)
@@ -367,7 +369,7 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
         mse = mean_squared_error(true_labels, predictions)
         mae = mean_absolute_error(true_labels, predictions)
         print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | MSE: {mse} | MAE: {mae}| Time elapsed: {datetime.now() - start_time}')
-        if epoch >= 20 and epoch % 10 == 0:
+        if epoch >= 8 and epoch % 8 == 0:
 
         # Save the model and optimizer state each epoch
             model_save_epoch_path = Path(model_save_path) / f"epoch_{epoch+1}"
@@ -387,9 +389,8 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
 
 
 if __name__ == '__main__':
-
+    create_directories()
     train_dataset, validate_dataset, test_dataset = get()
-     
     test_dataset_filepath = MODEL_SAVE_DIR + 'test_dataset.pt'
     torch.save(test_dataset, test_dataset_filepath)
 
