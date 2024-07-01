@@ -64,7 +64,14 @@ export class GraphSmallLine extends BaseGraph {
    * @returns The graph options.
    */
   private getOptions(lineGraphCard: I_LineGraphCard): AgChartOptions {
-    console.log("line: ", lineGraphCard)
+    // TODO: patch this bug properly
+    // Bug is that time is in epoch seconds and needs to be in epoch milliseconds
+
+    lineGraphCard.data.forEach((d) => {
+      d.time = d.time * 1000;
+    });
+
+    console.log('line: ', lineGraphCard);
     const chartOptions: AgChartOptions = {
       // Data: Data to be displayed in the chart
       data: lineGraphCard.data,
