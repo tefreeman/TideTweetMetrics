@@ -50,15 +50,16 @@ class TweetList(BaseModel):
 
 @app.on_event("startup")
 def load_model_and_scalers():
-    global model, like_count_scaler, features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles
+    global model, like_count_scaler, mm_features_scaler, r_features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles
     model_path = MODEL_DIR + '/epoch_21'
     like_count_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('like_count')
-    features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('features')
+    mm_features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('mm_features')
+    r_features_scaler_path = SCALER_DIR + SCALERS_CONFIG.get('r_features')
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = load_model(model_path).to(device)
-    like_count_scaler, features_scaler = load_scalers(like_count_scaler_path, features_scaler_path)
+    like_count_scaler, mm_features_scaler, r_features_scaler = load_scalers(like_count_scaler_path, mm_features_scaler_path, r_features_scaler_path)
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
 
     avg_last_10_likes_for_profiles = get_last_tweets_like_average(10)
@@ -93,8 +94,11 @@ def preprocess_and_tokenize(tweet_list):
     df['hour_of_day'] = df['created_at'].apply(lambda x: x.hour)
 
     encoded_texts = encode_texts(df['text'].tolist())
-    scale_columns = ['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length', 'avg_last_10_likes']
-    df[scale_columns] = features_scaler.transform(df[scale_columns])
+    mm_scale_columns = ['hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length']
+    r_scale_columns = ['followers_count', 'avg_last_10_likes']
+
+    mm_features_scaler.fit_transform(df[mm_scale_columns])
+    r_features_scaler.fit_transform(df[r_scale_columns])
 
     features_tensor = torch.tensor(df[['followers_count', 'hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'sentiment', 'text_length', 'day_of_week', 'hour_of_day', 'avg_last_10_likes']].values, dtype=torch.float)
     return encoded_texts, features_tensor
@@ -126,10 +130,11 @@ def load_model(model_path):
     model.eval()  # Set the model to evaluation mode
     return model
 
-def load_scalers(like_count_scaler_path, features_scaler_path):
+def load_scalers(like_count_scaler_path, mm_features_scaler_path, r_features_scaler_path):
     like_count_scaler = joblib.load(like_count_scaler_path)
-    features_scaler = joblib.load(features_scaler_path)
-    return like_count_scaler, features_scaler
+    mm_features_scaler = joblib.load(mm_features_scaler_path)
+    r_features_scaler = joblib.load(r_features_scaler_path)
+    return like_count_scaler, mm_features_scaler, r_features_scaler
 
 if __name__ == "__main__":
     import uvicorn
