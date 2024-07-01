@@ -25,7 +25,7 @@ from backend.config import Config
 from backend.ai.train import BertForSequenceClassificationWithFeatures
 from common import get_last_tweets_like_average, get_followers_count
 from openai import OpenAI
-
+from fastapi.responses import JSONResponse
 app = FastAPI()
 
 class Tweet(BaseModel):
@@ -45,11 +45,33 @@ def get_hashtag_count(tweet_text):
 def get_url_count(tweet_text):
     return len(re.findall(r'https?://[^\s]+', tweet_text))
 
+class TweetNode:
+    def __init__(self, tweet: Tweet, prediction: float):
+        self.tweet = tweet
+        self.prediction = prediction
+        self.children = []
+
+    def add_child(self, child):
+        self.children.append(child)
+
+    def to_dict(self):
+        return {
+            "tweet": {
+                "text": self.tweet.text,
+                "author_id": self.tweet.author_id,
+                "created_at": self.tweet.created_at,
+                "mentions": self.tweet.mentions,
+                "photo_count": self.tweet.photo_count,
+                "video_count": self.tweet.video_count
+            },
+            "prediction": self.prediction,
+            "children": [child.to_dict() for child in self.children]
+        }
 
 @app.on_event("startup")
 def load_model_and_scalers():
     global model, like_count_scaler, mm_features_scaler, r_features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles, gpt_client
-    model_path = MODEL_SAVE_DIR + 'epoch_41'
+    model_path = MODEL_SAVE_DIR + 'epoch_33'
     like_count_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('like_count')
     mm_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('mm_features')
     r_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('r_features')
@@ -126,7 +148,10 @@ def load_scalers(like_count_scaler_path, mm_features_scaler_path, r_features_sca
 def generate_tweets(tweet: Tweet):
     # Define the prompt
     prompt = (
-        "Rewrite the following tweet five times to make it more engaging and likely to receive more likes. "
+        "Improve the following University tweet five times to make it more engaging and likely to receive  more likes. "
+        "For each tweet try a different approach to see which one works best."
+        "Remember to keep the tweet informative and professional. It should be suitable for a University account."
+        "Do not use emjois, slang, or inappropriate languages."
         "Respond with only the rewritten tweet and no additional text. "
         "Respond with only the tweets separated by newline characters. "
         "Do not include any additional text or descriptions. "
@@ -168,20 +193,59 @@ def predict_likes(tweet_list: TweetList):
             predictions.extend(logits.detach().cpu().numpy().flatten())
     
     predictions_unscaled = like_count_scaler.inverse_transform(np.array(predictions).reshape(-1, 1)).flatten()
-    return {'predictions': predictions_unscaled.tolist()}
+    return predictions_unscaled.tolist()
+
+
+def print_tree(node, level=0):
+    indent = ' ' * (level * 2)
+    print(f"{indent}Tweet: {node.tweet.text} | Prediction: {node.prediction}")
+    for child in node.children:
+        print_tree(child, level + 1)
+
 
 @app.post("/optimize_tweet")
 def optimize_tweet(tweet: Tweet):
+    n = 2
+    # Normalizing the Tweet input
     input_tweet = Tweet(text=tweet.text, author_id=tweet.author_id, created_at=tweet.created_at, mentions=tweet.mentions, photo_count=tweet.photo_count, video_count=tweet.video_count)
-    new_tweets = generate_tweets(input_tweet)
+    
+    # Initial prediction
+    initial_prediction = predict_likes([input_tweet])[0]
+    root_node = TweetNode(input_tweet, initial_prediction)
+    
+    # Recursive helper function
+    def recursive_optimize(node, n):
+        if n == 0:
+            return
+        
+        new_tweets = generate_tweets(node.tweet)
+        extended_tweet_list = [node.tweet] + [Tweet(
+            text=tweet_text,
+            author_id=node.tweet.author_id,
+            created_at=node.tweet.created_at,
+            mentions=node.tweet.mentions,
+            photo_count=node.tweet.photo_count,
+            video_count=node.tweet.video_count
+        ) for tweet_text in new_tweets]
 
-    tweet_list = []
-    tweet_list.append(input_tweet)
-    for new_tweet in new_tweets:
-        tweet_list.append(Tweet(text=new_tweet, author_id=tweet.author_id, created_at=tweet.created_at,
-                                 mentions=tweet.mentions, photo_count=tweet.photo_count, video_count=tweet.video_count))
+        # Predict likes for all tweets in the extended list
+        predictions = predict_likes(extended_tweet_list)
 
-    return predict_likes(tweet_list)
+        # Create new nodes with predictions and add as children to the current node
+        for i, tweet in enumerate(extended_tweet_list):
+            child_node = TweetNode(tweet, predictions[i])
+            node.add_child(child_node)
+
+        # Sort children by prediction value and recursively optimize the top two
+        top_children = sorted(node.children, key=lambda c: c.prediction, reverse=True)[:2]
+        
+        for child in top_children:
+            recursive_optimize(child, n - 1)
+    
+        # Start the recursion
+    recursive_optimize(root_node, n)
+    
+    return JSONResponse(content=root_node.to_dict())
 
 
 if __name__ == "__main__":
