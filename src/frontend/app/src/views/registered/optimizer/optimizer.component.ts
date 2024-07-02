@@ -22,6 +22,10 @@ import { optimizerData } from './optimizer.example';
   styleUrls: ['./optimizer.component.css'],
 })
 export class OptimizerComponent implements OnInit {
+  isRunning = false;
+  inputTweet = optimizerData.tweet.text;
+  improvedTweet = '';
+
   constructor(private http: HttpClient) {}
 
   ngOnInit() {}
