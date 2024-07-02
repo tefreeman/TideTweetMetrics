@@ -13,7 +13,7 @@ import {
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
-import { TweetPayload } from '../interfaces/tweet-payload-interface';
+import { TweetPayload } from '../interfaces/optimizer-interface';
 import {
   catchError,
   from,
@@ -156,26 +156,6 @@ export class AuthService {
         return token.claims['role'] === 'admin';
       }),
       map((isAdmin) => isAdmin)
-    );
-  }
-  /**
-   *
-   * @param payload
-   * @returns
-   */
-  optimizeTweet$(payload: TweetPayload): Observable<any> {
-    // Create a callable function reference
-    const callable = httpsCallable(this._functions, 'deleteUserAndProfile');
-    return from(callable(payload)).pipe(
-      map((result) => {
-        // Read result of the Cloud Function.
-        console.log(result.data);
-        return result.data;
-      }),
-      catchError((error) => {
-        console.error('Error calling function:', error);
-        return throwError(error); // or handle error appropriately
-      })
     );
   }
 
