@@ -1,15 +1,12 @@
 {
   "configurations": [
     {
-      "name": "Python: Current File (Root)",
-      "type": "python",
+      "name": "ng serve app",
+      "type": "chrome",
       "request": "launch",
-      "program": "${file}",
-      "cwd": "${workspaceFolder}",
-      "env": {
-        "PYTHONPATH": "${workspaceFolder}/src"
-      },
-      "console": "integratedTerminal"
+      "preLaunchTask": "npm: start",
+      "url": "http://localhost:4200/#",
+      "webRoot": "${workspaceFolder}"
     },
     {
       "name": "Python Debugger: Current File (Integrated Terminal)",
