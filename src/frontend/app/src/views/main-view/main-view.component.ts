@@ -154,11 +154,10 @@ export class MainViewComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(({ isAPage, page }) => {
+        this.editModeService.setEditMode(false);
         this.isPage = isAPage;
         this.pageName = page;
         this.pageNameCapitalized = page.charAt(0).toUpperCase() + page.slice(1);
-        // You can now check if the page is dynamic or part of the static routes
-        // You can do additional actions based on whether it's a dynamic route or part of static routes
       });
   }
 
