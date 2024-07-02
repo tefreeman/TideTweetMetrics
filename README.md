@@ -1,6 +1,5 @@
 # TideTweetMetrics
-Metrics dashboard that gives the UA CS department the ability to assess its Twitter presence against other peer universities
-
+TideTweetMetrics is an app providing a dynamic and customizable dashboard that allows UA's CS department to compare and enhance its Twitter presence against peer universities, featuring AI models for predicting and improving tweet quality.
 ## Important Links
 
 * Main wiki with deliverables: https://github.com/tefreeman/TideTweetMetrics/wiki
