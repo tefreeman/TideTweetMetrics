@@ -32,7 +32,6 @@ class Tweet(BaseModel):
     text: str
     author_id: str
     created_at: str
-    mentions: List[str] = []
     photo_count: int
     video_count: int
     
@@ -41,9 +40,13 @@ class TweetList(BaseModel):
 
 def get_hashtag_count(tweet_text):
     return len(re.findall(r'#[a-z0-9_]+', tweet_text))
+
+def get_mention_count(tweet_text):
+    return len(re.findall(r'@[a-z0-9_]+', tweet_text))
     
 def get_url_count(tweet_text):
     return len(re.findall(r'https?://[^\s]+', tweet_text))
+
 
 class TweetNode:
     def __init__(self, tweet: Tweet, prediction: float):
@@ -58,11 +61,6 @@ class TweetNode:
         return {
             "tweet": {
                 "text": self.tweet.text,
-                "author_id": self.tweet.author_id,
-                "created_at": self.tweet.created_at,
-                "mentions": self.tweet.mentions,
-                "photo_count": self.tweet.photo_count,
-                "video_count": self.tweet.video_count
             },
             "prediction": self.prediction,
             "children": [child.to_dict() for child in self.children]
@@ -99,7 +97,7 @@ def preprocess_and_tokenize(tweet_list):
         'author_id': tweet.author_id,
         'followers_count': twitter_profiles.get(tweet.author_id, 0),
         'hashtag_count': get_hashtag_count(tweet.text),
-        'mention_count': len(tweet.mentions),
+        'mention_count': get_mention_count(tweet.text),
         'url_count': get_url_count(tweet.text),
         'photo_count': tweet.photo_count, 
         'video_count': tweet.video_count,
@@ -160,7 +158,7 @@ def generate_tweets(tweet: Tweet):
 
     # Request to OpenAI API
     response = gpt_client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-4o",
     messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
@@ -207,7 +205,7 @@ def print_tree(node, level=0):
 def optimize_tweet(tweet: Tweet):
     n = 2
     # Normalizing the Tweet input
-    input_tweet = Tweet(text=tweet.text, author_id=tweet.author_id, created_at=tweet.created_at, mentions=tweet.mentions, photo_count=tweet.photo_count, video_count=tweet.video_count)
+    input_tweet = Tweet(text=tweet.text, author_id=tweet.author_id, created_at=tweet.created_at, photo_count=tweet.photo_count, video_count=tweet.video_count)
     
     # Initial prediction
     initial_prediction = predict_likes([input_tweet])[0]
@@ -223,7 +221,6 @@ def optimize_tweet(tweet: Tweet):
             text=tweet_text,
             author_id=node.tweet.author_id,
             created_at=node.tweet.created_at,
-            mentions=node.tweet.mentions,
             photo_count=node.tweet.photo_count,
             video_count=node.tweet.video_count
         ) for tweet_text in new_tweets]
