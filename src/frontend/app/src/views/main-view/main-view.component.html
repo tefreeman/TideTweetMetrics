@@ -86,9 +86,9 @@
                 mat-raised-button
                 aria-label="Edit"
                 color="white"
-                (click)="toggleEditMode()"
+                (click)="cancel()"
               >
-                <span class="text" style="color: #a51e36">Confirm</span>
+                <span class="text" style="color: #a51e36">Cancel</span>
               </button>
               <button
                 class="button-class"
@@ -98,7 +98,7 @@
                 color="primary"
                 (click)="toggleEditMode()"
               >
-                <span class="text">Card Edit</span>
+                <span class="text">Edit Mode</span>
               </button>
 
               <!-- <button
@@ -121,7 +121,7 @@
               >
                 <span class="text">Grid Edit</span>
               </button> -->
-
+              @if (getUnsavedChanges() === true) {
               <button
                 class="button-class"
                 mat-raised-button
@@ -131,7 +131,20 @@
               >
                 <span class="text">Save</span>
               </button>
+              } @else {
+              <button
+                mat-raised-button
+                class="button-class disabled-button"
+                aria-label="Update"
+                color="primary"
+                style="cursor: pointer"
+                matTooltip="No changes to save"
+              >
+                <span class="text">Save</span>
+              </button>
+              }
             </div>
+
             }
             <button
               mat-icon-button

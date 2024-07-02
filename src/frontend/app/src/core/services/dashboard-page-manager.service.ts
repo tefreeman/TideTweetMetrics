@@ -1,6 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, filter, first, map } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  filter,
+  first,
+  map,
+} from 'rxjs';
 import { T_GridType } from '../interfaces/displayable-data-interface';
 import {
   I_GridEntry,
@@ -21,15 +28,23 @@ export class DashboardPageManagerService {
   private _auth_service = inject(AuthService);
   private _mockDataService = inject(MockDataService);
   private pageMap$ = new BehaviorSubject<I_PageMap>({});
-
+  private pageSub: Subscription | undefined;
   /**
    * Observable that emits a null value whenever a change is detected.
    */
   public changeDetected$ = new BehaviorSubject<null>(null);
-  private unsavedChanges = false;
+  unsavedChanges = false;
 
   constructor(private router: Router) {
     this.initPages();
+  }
+
+  public getUnsavedChanges(): boolean {
+    return this.unsavedChanges;
+  }
+
+  public setUnsavedChanges(value: boolean): void {
+    this.unsavedChanges = value;
   }
 
   /**
@@ -45,8 +60,19 @@ export class DashboardPageManagerService {
   /**
    * Initializes the pages by retrieving them from the server.
    */
-  private initPages(): void {
-    this.getPages$().subscribe((requests) => {
+  public initPages(isUpdate?: boolean): void {
+    if (isUpdate === true) {
+      // Do nothing if there are no unsaved changes
+      if (this.unsavedChanges === false) {
+        return;
+      }
+
+      if (this.pageSub) {
+        this.pageSub.unsubscribe();
+      }
+    }
+
+    this.pageSub = this.getPages$().subscribe((requests) => {
       console.log('subscribing to getPages$');
       if (this._mockDataService.overrideProfile == true) {
         this.pageMap$.next(this._mockDataService.getMockData());
@@ -58,6 +84,8 @@ export class DashboardPageManagerService {
         }
       }
     });
+
+    this.unsavedChanges = false;
   }
 
   /**

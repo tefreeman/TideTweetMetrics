@@ -69,7 +69,7 @@ export class MoveableGridTilesService<T> {
     //     this.performSwap(index, dropPos);
     //   }
 
-    this.performSwap(index, dropPos);
+    return this.performSwap(index, dropPos);
   }
 
   /**
@@ -168,5 +168,6 @@ export class MoveableGridTilesService<T> {
         this.positionArr[index],
       ];
     }
+    return { index, closestIndex };
   }
 }
