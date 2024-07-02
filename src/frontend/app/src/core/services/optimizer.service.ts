@@ -9,11 +9,15 @@ import { Observable, from, map, catchError, throwError } from 'rxjs';
 export class OptimizerService {
   private _functions = inject(Functions);
 
-  findHighestPredictionNodes(root: TweetNode, n: number): TweetNode[] {
+  findHighestPredictionNodes(root: TweetNode, n?: number): TweetNode[] {
     const allNodes: TweetNode[] = [];
+    const uniqueTextSet: Set<string> = new Set();
 
     const traverse = (node: TweetNode): void => {
-      allNodes.push(node);
+      if (!uniqueTextSet.has(node.text)) {
+        uniqueTextSet.add(node.text);
+        allNodes.push(node);
+      }
       for (const child of node.children) {
         traverse(child);
       }
@@ -22,6 +26,10 @@ export class OptimizerService {
     traverse(root);
 
     allNodes.sort((a, b) => b.prediction - a.prediction);
+
+    if (n === undefined) {
+      return allNodes;
+    }
 
     return allNodes.slice(0, n);
   }

@@ -26,6 +26,7 @@ from backend.ai.train import BertForSequenceClassificationWithFeatures
 from common import get_last_tweets_like_average, get_followers_count
 from openai import OpenAI
 from fastapi.responses import JSONResponse
+from typing import Dict, Any
 app = FastAPI()
 
 class Tweet(BaseModel):
@@ -59,9 +60,7 @@ class TweetNode:
 
     def to_dict(self):
         return {
-            "tweet": {
-                "text": self.tweet.text,
-            },
+            "text": self.tweet.text,
             "prediction": self.prediction,
             "children": [child.to_dict() for child in self.children]
         }
@@ -202,7 +201,8 @@ def print_tree(node, level=0):
 
 
 @app.post("/optimize_tweet")
-def optimize_tweet(tweet: Tweet):
+def optimize_tweet(data: Dict[Any, Any]):
+    tweet = Tweet(**data['data'])
     n = 2
     # Normalizing the Tweet input
     input_tweet = Tweet(text=tweet.text, author_id=tweet.author_id, created_at=tweet.created_at, photo_count=tweet.photo_count, video_count=tweet.video_count)
@@ -242,7 +242,7 @@ def optimize_tweet(tweet: Tweet):
         # Start the recursion
     recursive_optimize(root_node, n)
     
-    return JSONResponse(content=root_node.to_dict())
+    return JSONResponse(content={"data": root_node.to_dict()})
 
 
 if __name__ == "__main__":

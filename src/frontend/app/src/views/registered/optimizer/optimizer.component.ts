@@ -28,28 +28,54 @@ import {
 })
 export class OptimizerComponent implements OnInit {
   isRunning = false;
-  inputTweet = optimizerData.tweet.text;
+  inputTweetText = optimizerData.text;
   improvementTree: TweetNode | null = null;
-
-  optimizerService: OptimizerService = inject(OptimizerService);
+  topNodes: TweetNode[] = [];
+  showingAllNodes = false;
+  showNumNodes = 3;
 
   constructor(private http: HttpClient) {}
-
+  optimizerService: OptimizerService = inject(OptimizerService);
   ngOnInit() {}
 
   submitTweet() {
-    const payload: TweetPayload = {
-      text: 'Congratulations @Chris_Crawford_on becoming the rank of Associate Professor!',
-      author_id: 'alabama_cs',
-      created_at: '2024-06-26T06:34:56.000Z',
-      photo_count: 1,
-      video_count: 0,
-    };
-    this.isRunning = true;
-    this.optimizerService.getOptimizeTweet$(payload).subscribe((result) => {
-      this.isRunning = false;
-      this.improvementTree = result;
-      console.log(result);
-    });
+    this.improvementTree = optimizerData;
+    this.showTopNodes();
+    //   const payload: TweetPayload = {
+    //     text: 'Congratulations @Chris_Crawford_on becoming the rank of Associate Professor!',
+    //     author_id: 'alabama_cs',
+    //     created_at: '2024-06-26T06:34:56.000Z',
+    //     photo_count: 1,
+    //     video_count: 0,
+    //   };
+    //   this.isRunning = true;
+    //   this.optimizerService.getOptimizeTweet$(payload).subscribe((result) => {
+    //     this.isRunning = false;
+    //     this.improvementTree = result;
+    //     console.log(result);
+    //   });
+  }
+
+  calc_prediction_improvement(node: TweetNode): number {
+    return Math.round(
+      Math.abs(
+        (node.prediction - optimizerData.prediction) / optimizerData.prediction
+      ) * 100
+    );
+  }
+
+  showTopNodes() {
+    this.showingAllNodes = false;
+    this.topNodes = this.optimizerService.findHighestPredictionNodes(
+      this.improvementTree!,
+      this.showNumNodes
+    );
+  }
+
+  showAllNodes() {
+    this.showingAllNodes = true;
+    this.topNodes = this.optimizerService.findHighestPredictionNodes(
+      this.improvementTree!
+    );
   }
 }
