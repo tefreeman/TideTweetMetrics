@@ -28,7 +28,7 @@ import {
 })
 export class OptimizerComponent implements OnInit {
   isRunning = false;
-  inputTweetText = optimizerData.text;
+  inputTweetText = '';
   improvementTree: TweetNode | null = null;
   topNodes: TweetNode[] = [];
   showingAllNodes = false;
@@ -39,21 +39,19 @@ export class OptimizerComponent implements OnInit {
   ngOnInit() {}
 
   submitTweet() {
-    this.improvementTree = optimizerData;
-    this.showTopNodes();
-    //   const payload: TweetPayload = {
-    //     text: 'Congratulations @Chris_Crawford_on becoming the rank of Associate Professor!',
-    //     author_id: 'alabama_cs',
-    //     created_at: '2024-06-26T06:34:56.000Z',
-    //     photo_count: 1,
-    //     video_count: 0,
-    //   };
-    //   this.isRunning = true;
-    //   this.optimizerService.getOptimizeTweet$(payload).subscribe((result) => {
-    //     this.isRunning = false;
-    //     this.improvementTree = result;
-    //     console.log(result);
-    //   });
+    const payload: TweetPayload = {
+      text: this.inputTweetText,
+      author_id: 'alabama_cs',
+      created_at: '2024-06-26T06:34:56.000Z',
+      photo_count: 0,
+      video_count: 0,
+    };
+    this.isRunning = true;
+    this.optimizerService.getOptimizeTweet$(payload).subscribe((result) => {
+      this.isRunning = false;
+      this.improvementTree = result;
+      this.showTopNodes();
+    });
   }
 
   calc_prediction_improvement(node: TweetNode): number {
