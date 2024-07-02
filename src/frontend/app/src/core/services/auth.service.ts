@@ -12,8 +12,8 @@ import {
 } from '@angular/fire/auth';
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-
 import { Router } from '@angular/router';
+import { TweetPayload } from '../interfaces/tweet-payload-interface';
 import {
   catchError,
   from,
@@ -78,7 +78,7 @@ export class AuthService {
    * Constructs a new AuthService instance.
    * @param router - The router service.
    */
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   /**
    * Retrieves all users with their roles from the server.
@@ -158,6 +158,26 @@ export class AuthService {
       map((isAdmin) => isAdmin)
     );
   }
+  /**
+   *
+   * @param payload
+   * @returns
+   */
+  optimizeTweet$(payload: TweetPayload): Observable<any> {
+    // Create a callable function reference
+    const callable = httpsCallable(this._functions, 'deleteUserAndProfile');
+    return from(callable(payload)).pipe(
+      map((result) => {
+        // Read result of the Cloud Function.
+        console.log(result.data);
+        return result.data;
+      }),
+      catchError((error) => {
+        console.error('Error calling function:', error);
+        return throwError(error); // or handle error appropriately
+      })
+    );
+  }
 
   /**
    * Retrieves the version of a file.
@@ -221,9 +241,7 @@ export class AuthService {
         const userDocRef = doc(this._firestore, `profiles/${user.uid}`);
 
         // Convert the Firestore set operation (a Promise) into an Observable
-        return from(setDoc(userDocRef, userData)).pipe(
-          map(() => undefined)
-        );
+        return from(setDoc(userDocRef, userData)).pipe(map(() => undefined));
       })
     );
   }
