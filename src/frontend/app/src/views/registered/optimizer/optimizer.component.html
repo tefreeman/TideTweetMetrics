@@ -20,25 +20,38 @@
       ></textarea>
     </mat-form-field>
 
-    <mat-form-field class="example-full-width">
-      <mat-label>Improved tweet</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="improvedTweet"
-        readonly
-        style="height: 280px"
-      ></textarea>
-    </mat-form-field>
-  </div>
-
-  <div class="footer">
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="submitTweet()"
-      style="float: right"
-    >
+    <button mat-raised-button color="primary" (click)="submitTweet()" style="float: right">
       Submit
     </button>
+
+  </div>
+
+  <div>
+    <mat-card class="optimizer-output inner-content">
+      <div class="text" style="margin: 1rem 2rem 1rem 1rem">
+        Heres the improved text!
+      </div>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="optimizer-output inner-content">
+      <div class="text" style="margin: 1rem 2rem 1rem 1rem">
+        And another!
+      </div>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="optimizer-output inner-content">
+      <div class="text" style="margin: 1rem 2rem 1rem 1rem">
+        And another!
+      </div>
+    </mat-card>
+  </div>
+
+  
+
+  <div class="footer">
   </div>
 </mat-card>
