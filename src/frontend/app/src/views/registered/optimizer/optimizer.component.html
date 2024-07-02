@@ -15,7 +15,7 @@
       <mat-label>Input tweet here</mat-label>
       <textarea
         matInput
-        [(ngModel)]="inputTweet"
+        [(ngModel)]="inputTweetText"
         style="height: 280px"
       ></textarea>
     </mat-form-field>
@@ -29,35 +29,64 @@
       Submit
     </button>
   </div>
-
-  <div>
-    <mat-card class="optimizer-output inner-content">
-      <div class="text" style="margin: 1rem 2rem 1rem 1rem">
-        Heres the improved text!
-      </div>
-      <span class="green-arrow">
-        <i class="fa fa-arrow-up"> 10% </i>
-      </span>
-    </mat-card>
-  </div>
-
-  <div>
-    <mat-card class="optimizer-output inner-content">
-      <div class="text" style="margin: 1rem 2rem 1rem 1rem">And another!</div>
-      <span class="green-arrow">
-        <i class="fa fa-arrow-up"> 10% </i>
-      </span>
-    </mat-card>
-  </div>
-
-  <div>
-    <mat-card class="optimizer-output inner-content">
-      <div class="text" style="margin: 1rem 2rem 1rem 1rem">And another!</div>
-      <span class="red-arrow">
-        <i class="fa fa-arrow-down"> 10% </i>
-      </span>
-    </mat-card>
-  </div>
-
-  <div class="footer"></div>
 </mat-card>
+
+@if (improvementTree) {
+<mat-card class="card-container">
+  <div class="card-content">
+    <div class="card-title" style="margin-top: 2rem; margin-bottom: 1rem">
+      Improved tweets
+    </div>
+    @for (node of topNodes; track node.text; ) { @if (node.prediction >
+    improvementTree!.prediction) {
+    <div>
+      <mat-card class="optimizer-output inner-content">
+        <div class="text" style="margin: 1rem 2rem 1rem 1rem">
+          {{ node.text }}
+        </div>
+        <span class="green-arrow">
+          <i class="fa fa-arrow-up">
+            {{ calc_prediction_improvement(node).toString() }}%</i
+          >
+        </span>
+      </mat-card>
+    </div>
+    } @else {
+    <div>
+      <mat-card class="optimizer-output inner-content">
+        <div class="text" style="margin: 1rem 2rem 1rem 1rem">
+          {{ node.text }}
+        </div>
+        <span class="red-arrow">
+          <i class="fa fa-arrow-down">
+            {{ calc_prediction_improvement(node).toString() }}%</i
+          >
+        </span>
+      </mat-card>
+    </div>
+    } } @if(showingAllNodes === false) {
+    <div style="margin: 16px; padding: 16px">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="showAllNodes()"
+        style="float: right; bottom: 16px"
+      >
+        Show All Tweets
+      </button>
+    </div>
+    } @else {
+    <div style="margin: 16px; padding: 16px">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="showTopNodes()"
+        style="float: right; bottom: 16px"
+      >
+        Show Top Tweets
+      </button>
+    </div>
+    }
+  </div>
+</mat-card>
+}

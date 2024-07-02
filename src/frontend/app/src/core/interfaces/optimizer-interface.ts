@@ -7,7 +7,7 @@ export interface TweetPayload {
 }
 
 export interface TweetNode {
-  tweet: TweetPayload;
+  text: string;
   prediction: number;
   children: TweetNode[];
 }

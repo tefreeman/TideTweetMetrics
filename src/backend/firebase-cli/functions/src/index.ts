@@ -375,24 +375,81 @@ exports.getAllUsersWithRoles = functions.https.onCall(async (data, context) => {
   return usersData;
 });
 
+// TODO: Implement rate limiting
+// const RATE_LIMIT = 5; // Maximum requests per interval
+// const RATE_LIMIT_INTERVAL = 60 * 1000; // Interval (1 minute) in milliseconds
+
+// async function checkAndUpdateRateLimit(userId: string): Promise<boolean> {
+//   const userRef = db.collection("rate_limits").doc(userId);
+//   const now = Date.now();
+
+//   try {
+//     const userDoc = await userRef.get();
+//     if (!userDoc.exists) {
+//       await userRef.set({ count: 1, lastRequest: now });
+//       return true;
+//     }
+
+//     const data = userDoc.data() || {};
+//     const { count, lastRequest } = data;
+//     if (now - lastRequest >= RATE_LIMIT_INTERVAL) {
+//       await userRef.set({ count: 1, lastRequest: now });
+//       return true;
+//     }
+
+//     if (count < RATE_LIMIT) {
+//       await userRef.update({ count: admin.firestore.FieldValue.increment(1) });
+//       return true;
+//     }
+
+//     // Rate limit exceeded
+//     return false;
+//   } catch (error) {
+//     console.error("Error checking rate limit:", error);
+//     return false;
+//   }
+// }
+
 export const optimizeTweet = functions.https.onRequest(
   (req: Request, res: Response) => {
+    res.set("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+    res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow specified methods
+    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    if (req.method === "OPTIONS") {
+      // Send response to OPTIONS requests
+      res.status(204).send(""); // No Content
+      return;
+    }
+
     if (req.method !== "POST") {
       res.status(405).send("Method Not Allowed");
       return;
     }
 
+    // Rate limiting implementation
+    // const userId = req.body.userId;
+    // if (!userId || !req.body) {
+    //   res.status(400).send("Bad Request");
+    //   return;
+    // }
+
+    // const allowed = await checkAndUpdateRateLimit(userId);
+    // if (!allowed) {
+    //   res.status(429).send("Too Many Requests");
+    //   return;
+    // }
+
     //const url = "https://ai.dopplernet.online/optimize_tweet";
 
     const payload = JSON.stringify(req.body);
-
     const options = {
       hostname: "ai.dopplernet.online",
       path: "/optimize_tweet",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Content-Length": payload.length,
+        "Content-Length": Buffer.byteLength(payload),
       },
     };
 
