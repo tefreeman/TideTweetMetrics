@@ -1,25 +1,38 @@
-
 .custom-toolbar {
   border-top: 4px solid #a51e36; /* Keep your red border line */
   background-color: transparent;
   display: grid; // Switch to grid from flex
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Three columns setup: left content, spacer, right content
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  ); // Three columns setup: left content, spacer, right content
   align-items: center; // Center items vertically within the toolbar
-  justify-content:space-between;
-  width:100%;
+  justify-content: space-between;
+  width: 100%;
 
-  .menu-button{
-    grid-column: 1
+  .menu-button {
+    grid-column: 1;
   }
-  
+
   .spacer {
     display: none; // No longer needed since we're using grid, can be omitted
   }
 
-  .button-class{
+  .button-class {
     margin-top: 7px;
   }
-  
+
+  .disabled-button {
+    background-color: #b30000; /* lighter red */
+    color: #ffffff; /* keeping the text white */
+    opacity: 0.85;
+    filter: grayscale(100%); /* additional cue that the button is disabled */
+    &:hover,
+    &:active {
+      background-color: #b30000; /* ensure no change on hover/active */
+    }
+  }
+
   // Default setting for buttons (right side content)
   .right-side {
     //grid-column: 3 / 4; // Align the right-side content to the third column
@@ -28,17 +41,13 @@
     justify-content: flex-end; // This makes sure content aligns right
     grid-column: -1 / -2;
   }
-  
-
-
 }
-
 
 .custom-background {
   position: relative;
-  background-color: #f4f4f4; 
+  background-color: #f4f4f4;
   overflow-y: auto;
-  height: calc(100vh); 
+  height: calc(100vh);
 }
 
 .background-image-container {
@@ -47,7 +56,7 @@
   left: 0;
   width: 100%;
   height: 310px;
-  z-index: -1; 
+  z-index: -1;
 }
 
 .background-image-container img {
@@ -60,11 +69,11 @@
   width: 200px;
 }
 
-.side-nav-title{
+.side-nav-title {
   font-weight: bold;
-  font-size: 15px; 
-  letter-spacing: -.3px;
-  color:#a51e36;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  color: #a51e36;
 }
 
 .side-nav-title span {
@@ -81,30 +90,27 @@
   border-bottom: 3px solid #a51e36;
 }
 
-.title{
+.title {
   font-weight: bold;
-  font-size: 13px; 
-  letter-spacing: -.3px;
+  font-size: 13px;
+  letter-spacing: -0.3px;
   color: white;
   margin-left: 2px;
 }
-.side-nav-subtitle{
+.side-nav-subtitle {
   font-weight: bold;
-  font-size: 13px; 
-  letter-spacing: -.3px;
-  color:#a51e36;
+  font-size: 13px;
+  letter-spacing: -0.3px;
+  color: #a51e36;
 }
 
-
-
-.add-card{
+.add-card {
   background-color: #a51e36;
   color: white;
-  font-size: 13px; 
-  letter-spacing: -.3px;
+  font-size: 13px;
+  letter-spacing: -0.3px;
   display: flex;
   align-items: center; // This centers the child items vertically inside the flex container
-
 
   /* Adjust height and width as necessary, or let it adapt based on content */
   width: auto; // Adjust based on your layout needs, or you can specify a width
@@ -112,14 +118,13 @@
   box-sizing: border-box; // This ensures the padding and border are included in the total width and height
 }
 
-
-button{
+button {
   margin-left: 10px;
 }
 
 .text {
   font-weight: bold;
-  font-size: .75rem;
+  font-size: 0.75rem;
   letter-spacing: -0.3px;
 }
 
@@ -149,31 +154,29 @@ button{
   width: 100%; /* Ensure the flex-container spans the full width of its parent */
 }
 
-
-
 .custom-nav-item:hover .delete-button {
   visibility: visible; /* Show the button on hover */
 }
 
-.side-nav-contents{
-  display:flex;
+.side-nav-contents {
+  display: flex;
   align-items: center;
   flex-grow: 1;
-  font-size: 13px; 
-  letter-spacing: -.3px;
+  font-size: 13px;
+  letter-spacing: -0.3px;
 }
-.side-nav-contents-custom-page{
-  display:flex;
+.side-nav-contents-custom-page {
+  display: flex;
   align-items: center;
   flex-grow: 1;
   padding-left: 8px;
-  font-size: 13px; 
-  letter-spacing: -.3px;
+  font-size: 13px;
+  letter-spacing: -0.3px;
 }
 
 .custom-nav-item {
   align-items: center;
   cursor: pointer;
   padding: 10px;
-  width: 100%
+  width: 100%;
 }

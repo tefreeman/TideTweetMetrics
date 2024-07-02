@@ -243,10 +243,14 @@ export class CardGridComponent implements OnInit, OnDestroy, AfterViewInit {
    * @param event - The CdkDragDrop event.
    */
   dropCard(event: CdkDragDrop<any[]>) {
-    this.dataGrid.swapClosestElements(event.previousIndex, {
+    const out = this.dataGrid.swapClosestElements(event.previousIndex, {
       x: event.dropPoint.x,
       y: event.dropPoint.y,
     });
+
+    if (out?.closestIndex != out?.index) {
+      this.dashboardPageManagerService.setUnsavedChanges(true);
+    }
   }
 
   /**

@@ -275,11 +275,21 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.gridEditModeService.toggleEditMode();
   }
 
+  getUnsavedChanges() {
+    return this.dashboardPageManagerService.getUnsavedChanges();
+  }
+
+  cancel() {
+    this.editModeService.setEditMode(false);
+    this.dashboardPageManagerService.initPages(true);
+  }
   /**
    * Updates the page.
    */
   update() {
     this.dashboardPageManagerService.savePage();
+    this.editModeService.setEditMode(false);
+
     this.openSnackBar('Page has been saved.');
   }
 
