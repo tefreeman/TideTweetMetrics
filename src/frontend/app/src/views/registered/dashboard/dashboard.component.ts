@@ -3,6 +3,7 @@ import {
   CdkDragDrop,
   CdkDropList,
   moveItemInArray,
+  CdkDragHandle,
 } from '@angular/cdk/drag-drop';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
 import { Component, HostListener, OnInit, inject } from '@angular/core';
@@ -44,6 +45,7 @@ import { MetricService } from '../../../core/services/metrics/metric.service';
     CommonModule,
     CdkDrag,
     CdkDropList,
+    CdkDragHandle,
     AsyncPipe,
     CardGridComponent,
     GraphGridComponent,

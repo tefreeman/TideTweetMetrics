@@ -5,9 +5,10 @@
 }
 
 .title-black {
+  display: inline-flex;
+  align-items: center; /* Align items vertically centered */
   font-weight: bolder;
   font-size: 25px !important;
-
 }
 
 .footer {
@@ -27,6 +28,7 @@
 
 .cdk-drag-preview {
   box-sizing: border-box;
+  background-color: grey;
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
@@ -95,6 +97,15 @@
   margin: 0px 64px 32px 64px;
 }
 
+.move-handle {
+  display: inline-flex; /* Ensures the svg stays inline */
+  align-items: center;
+  margin-right: 8px;
+  color: #ccc;
+  cursor: move;
+  width: 24px;
+  height: 24px;
+}
 @media (max-width: 1280px) {
   .dashboard-container {
     margin: 0px 32px 32px 32px;
