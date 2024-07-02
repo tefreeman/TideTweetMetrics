@@ -5,6 +5,7 @@
     "firebase-admin": "^12.1.0",
     "formidable": "^3.5.1",
     "install": "^0.13.0",
+    "node-fetch": "^3.3.2",
     "npm": "^10.5.2",
     "uuid": "^9.0.1"
   },

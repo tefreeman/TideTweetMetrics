@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = "http://127.0.0.1:8000/optimize_tweet"
+url = "https://us-central1-tidetweetmetrics-a047f.cloudfunctions.net/optimizeTweet"
 payload = {
 
             "text": "Congratulations @Chris_Crawford_on becoming the rank of Associate Professor!",
