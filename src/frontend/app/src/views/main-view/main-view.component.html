@@ -16,18 +16,24 @@
       </mat-nav-list>
       <div mat-subheader class="side-nav-subtitle">Custom Boards</div>
       <mat-nav-list>
-        <a *ngFor="let nav of dynamicNavRoutes"
-        class="custom-nav-item" 
-        [routerLink]="nav.route"
-        mat-list-item
-        (click)="sidenav.toggle()">
-       <span class="side-nav-contents-custom-page flex-container">
-         {{ nav.name }}
-         <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteBoard(nav);">
-           x
-         </button>
-       </span>
-     </a>
+        <a
+          *ngFor="let nav of dynamicNavRoutes"
+          class="custom-nav-item"
+          [routerLink]="nav.route"
+          mat-list-item
+          (click)="sidenav.toggle()"
+        >
+          <span class="side-nav-contents-custom-page flex-container">
+            {{ nav.name }}
+            <button
+              mat-icon-button
+              class="delete-button"
+              (click)="$event.stopPropagation(); deleteBoard(nav)"
+            >
+              x
+            </button>
+          </span>
+        </a>
 
         <a mat-list-item (click)="addBoard()">
           <mat-card class="add-card"> Add </mat-card>
@@ -64,7 +70,7 @@
             <!-- New wrapper for right-aligned buttons -->
             @if (isDynamicRoute(pageName)) {
             <div>
-              <button
+              <!-- <button
                 class="button-class"
                 *ngIf="!(editMode | async) && (gridEditMode | async)"
                 mat-raised-button
@@ -73,7 +79,7 @@
                 (click)="addGrid()"
               >
                 <span class="text">Add Grid</span>
-              </button>
+              </button> -->
               <button
                 class="button-class"
                 *ngIf="editMode | async"

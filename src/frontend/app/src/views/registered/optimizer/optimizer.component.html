@@ -13,7 +13,11 @@
   <div style="margin: 16px">
     <mat-form-field class="example-full-width">
       <mat-label>Input tweet here</mat-label>
-      <textarea matInput [(ngModel)]="value" style="height: 280px"></textarea>
+      <textarea
+        matInput
+        [(ngModel)]="inputTweet"
+        style="height: 280px"
+      ></textarea>
     </mat-form-field>
 
     <mat-form-field class="example-full-width">
@@ -25,10 +29,6 @@
         style="height: 280px"
       ></textarea>
     </mat-form-field>
-    <div>
-      <p>Estimated likes for old tweet: {{ oldLikes }}</p>
-      <p>Estimated new likes for new tweet: {{ newLikes }}</p>
-    </div>
   </div>
 
   <div class="footer">
