@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 import { Storage } from "@google-cloud/storage";
 import * as Busboy from "busboy";
 import { Request, Response } from "express";
+import * as https from "https";
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs";
@@ -374,6 +375,58 @@ exports.getAllUsersWithRoles = functions.https.onCall(async (data, context) => {
   return usersData;
 });
 
+export const optimizeTweet = functions.https.onRequest(
+  (req: Request, res: Response) => {
+    if (req.method !== "POST") {
+      res.status(405).send("Method Not Allowed");
+      return;
+    }
+
+    //const url = "https://ai.dopplernet.online/optimize_tweet";
+
+    const payload = JSON.stringify(req.body);
+
+    const options = {
+      hostname: "ai.dopplernet.online",
+      path: "/optimize_tweet",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": payload.length,
+      },
+    };
+
+    const externalReq = https.request(options, (externalRes) => {
+      let data = "";
+
+      externalRes.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      externalRes.on("end", () => {
+        if (
+          externalRes.statusCode &&
+          externalRes.statusCode >= 200 &&
+          externalRes.statusCode < 300
+        ) {
+          res.status(200).json(JSON.parse(data));
+        } else {
+          res
+            .status(externalRes.statusCode || 500)
+            .json({ error: "Failed to fetch optimized tweet" });
+        }
+      });
+    });
+
+    externalReq.on("error", (e) => {
+      console.error(`Error: ${e.message}`);
+      res.status(500).json({ error: "Request failed" });
+    });
+
+    externalReq.write(payload);
+    externalReq.end();
+  }
+);
 //   In your client apps, listen to the metadata location and call getIdToken(true) to force a refresh:
 
 // firebase.database().ref('metadata/' + user.uid).on('value', (snapshot) => {
