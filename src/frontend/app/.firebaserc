@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "tidetweetmetrics-a047f": {
+      "hosting": {
+        "frontend": [
+          "tidetweetmetrics-a047f"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "tidetweetmetrics-a047f"
+  }
+}

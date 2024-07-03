@@ -246,15 +246,22 @@ export class MainViewComponent implements OnInit, OnDestroy {
     const addBoardRef = this.dialog.open(AddGridComponent, {});
 
     addBoardRef.afterClosed().subscribe((result) => {
-      console.log(result);
       if (result) {
         if (typeof result['name'] === 'string') {
           if (result['type'] === 'graph' || result['type'] === 'metric') {
-            this.dashboardPageManagerService.createAndAddGridToEnd$(
-              this.pageName,
-              result['name'],
-              result['type']
-            );
+            this.dashboardPageManagerService
+              .doesGridExist$(this.pageName, result['name'])
+              .subscribe((exists) => {
+                if (exists) {
+                  this.openSnackBar('Grid already exists.');
+                } else {
+                  this.dashboardPageManagerService.createAndAddGridToEnd$(
+                    this.pageName,
+                    result['name'],
+                    result['type']
+                  );
+                }
+              });
           }
         }
       }
@@ -304,7 +311,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteBoard(page: any) {
+  deleteBoard(page: string) {
     this.dashboardPageManagerService.deletePage$(page);
   }
 }

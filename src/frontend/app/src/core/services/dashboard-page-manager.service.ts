@@ -117,11 +117,9 @@ export class DashboardPageManagerService {
    */
   public savePage(): void {
     this.pageMap$.pipe(first()).subscribe((requests) => {
-      console.log('SAVING: ', requests);
       this._auth_service
         .setProfileDoc({ displays: requests })
         .subscribe((response) => {
-          console.log('Saved page', response);
           this.unsavedChanges = false;
         });
     });
@@ -145,6 +143,7 @@ export class DashboardPageManagerService {
         // Check if the page already exists
         requests[page] = {}; // Add a new page to the array
         this.emitChanges({ ...requests });
+        this.savePage();
       } else {
         console.error(`Page "${page}" already exists`); // Handle edge case where page already exists
       }
@@ -165,11 +164,13 @@ export class DashboardPageManagerService {
    * Deletes a page from the page map.
    * @param page - The name of the page to delete.
    */
-  public deletePage$(page: string): void {
+  public deletePage$(pageName: string): void {
+    const page = pageName.toLowerCase();
     this.pageMap$.pipe(first()).subscribe((requests) => {
       if (requests[page]) {
         delete requests[page];
         this.emitChanges({ ...requests });
+        this.savePage();
       } else {
         console.error(`Page "${page}" does not exist`);
       }
@@ -186,6 +187,18 @@ export class DashboardPageManagerService {
     return this.getPage$(pageName).pipe(
       map((page) => page[gridName]),
       filter((grid) => !!grid),
+      first()
+    );
+  }
+  /**
+   * Checks if a specific grid exists in a page within the page map.
+   * @param pageName - The name of the page.
+   * @param gridName - The name of the grid.
+   * @returns An observable that emits a boolean indicating if the grid exists.
+   */
+  public doesGridExist$(pageName: string, gridName: string) {
+    return this.getPage$(pageName).pipe(
+      map((page) => !!page[gridName]),
       first()
     );
   }
