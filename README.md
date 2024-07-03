@@ -7,7 +7,7 @@ TideTweetMetrics is an app providing a dynamic and customizable dashboard that a
 
 ## App
 
-* **Demo Video:** [Watch Demo](https://youtu.be/h10BHb5Zo9U)
+* **Demo Video:** [Watch Demo](https://youtu.be/tJFX5iQi_rE)
 * **App Link:** [Access TideTweetMetrics](https://tidetweetmetrics-a047f.web.app/)
 * **Note:** To demo the app, please create an account and contact me at [tefreeman96+verify@gmail.com](mailto:tefreeman96+verify@gmail.com) for approval.
 
