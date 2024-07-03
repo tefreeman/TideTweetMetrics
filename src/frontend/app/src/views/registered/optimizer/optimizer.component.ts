@@ -56,8 +56,8 @@ export class OptimizerComponent implements OnInit {
 
   calc_prediction_improvement(node: TweetNode): number {
     return Math.round(
-      ((node.prediction - optimizerData.prediction) /
-        optimizerData.prediction) *
+      ((node.prediction - this.improvementTree!.prediction) /
+        this.improvementTree!.prediction) *
         100
     );
   }
@@ -75,5 +75,7 @@ export class OptimizerComponent implements OnInit {
     this.topNodes = this.optimizerService.findHighestPredictionNodes(
       this.improvementTree!
     );
+    console.log('show all nodes', this.topNodes);
+    console.log('improvement tree', this.improvementTree);
   }
 }
