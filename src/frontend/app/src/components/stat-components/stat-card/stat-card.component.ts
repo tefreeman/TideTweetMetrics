@@ -58,6 +58,7 @@ export class StatCardComponent implements OnInit {
    */
   @Input({ required: true }) editModeHook!: boolean;
 
+  @Input({ required: true }) cardColor!: string;
   /**
    * Represents the event emitted when the delete button is clicked.
    */

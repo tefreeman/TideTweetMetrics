@@ -20,6 +20,7 @@ export class StatTrendComponent implements OnInit {
    * The displayable data for the statistical trend.
    */
   @Input({ required: true }) displayableData!: I_TrendMetricCard;
+  @Input({ required: true }) color!: string;
 
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);

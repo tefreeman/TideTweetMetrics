@@ -36,6 +36,7 @@ export class StatValueComponent implements OnInit {
    * The input property that represents the displayable data for the statistic value.
    */
   @Input({ required: true }) displayableData!: I_BasicMetricCard;
+  @Input({ required: true }) color!: string;
 
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
