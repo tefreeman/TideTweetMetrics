@@ -18,18 +18,16 @@
     margin: 16px auto;
     max-width: 50rem;
 }
-.card-title{
-    font-weight: bold;
-    letter-spacing: -.3px; 
-    color: #999;
-}
+
 .card-content{
     margin: 0rem 2rem;
 }
 
-
+.form-field {
+    margin: 16px;
+}
 .text{
-    font-size: 12px;
+    font-size: 1rem;
     letter-spacing: -.3px; 
 }
 
@@ -47,6 +45,11 @@
     margin: 0rem 2rem 1rem 2rem;
 }
 
+.parent-card {
+    width: 80%;
+    margin: auto;
+}
+
 .footer{
     margin:1rem;
 }
@@ -56,7 +59,7 @@
     color: #52d2a9;
     margin-left: auto;
     margin-right: .4rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 .red-arrow {
@@ -64,9 +67,16 @@
     color: #f44156;
     margin-left: auto;
     margin-right: .4rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
+.gray-arrow {
+    font-weight: bold;
+    color: #b0b0b0;
+    margin-left: auto;
+    margin-right: .4rem;
+    font-size: 1rem;
+}
 .example-form {
     min-width: 150px;
     max-width: 500px;

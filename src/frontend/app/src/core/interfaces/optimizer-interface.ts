@@ -10,4 +10,5 @@ export interface TweetNode {
   text: string;
   prediction: number;
   children: TweetNode[];
+  showArrow?: boolean;
 }

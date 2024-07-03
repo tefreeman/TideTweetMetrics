@@ -52,4 +52,31 @@ export class OptimizerService {
       })
     );
   }
+
+  /**
+   * Finds and returns the parent nodes of a child node with specified text.
+   *
+   * @param root The root node of the tweet tree.
+   * @param targetText The text of the target child node.
+   * @returns An array of parent TweetNode objects.
+   */
+  findParentNodes(root: TweetNode, targetText: string): TweetNode[] {
+    const parents: TweetNode[] = [];
+
+    const traverse = (node: TweetNode, parentNodes: TweetNode[]): boolean => {
+      if (node.text === targetText) {
+        parents.push(...parentNodes);
+        return true;
+      }
+      for (const child of node.children) {
+        if (traverse(child, [...parentNodes, node])) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    traverse(root, []);
+    return parents;
+  }
 }
