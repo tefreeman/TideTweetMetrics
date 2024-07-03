@@ -38,6 +38,7 @@ export class OptimizerComponent implements OnInit {
   topNodes: TweetNode[] = [];
   showingAllNodes = false;
   showNumNodes = 3;
+  readonly date = new FormControl(new Date());
   selectedTime: string = '';
   photoCount = 0;
   videoCount = 0;
@@ -48,31 +49,44 @@ export class OptimizerComponent implements OnInit {
     })();
   }
   optimizerService: OptimizerService = inject(OptimizerService);
-  readonly date = new FormControl(new Date());
-
   ngOnInit() {}
 
+  getTimeString() {
+    // Combine date and selectedTime
+    const datePart = this.date.value;
+    const timePart = this.selectedTime;
+
+    if (!datePart || !timePart) return '2024-06-26T06:34:56.000Z';
+    // Ensure date and time are in proper format
+    let year = datePart.getFullYear();
+    let month = (datePart.getMonth() + 1).toString().padStart(2, '0'); // getMonth is zero-indexed
+    let day = datePart.getDate().toString().padStart(2, '0');
+    let hours = timePart.slice(0, 2).padStart(2, '0');
+    let minutes = timePart.slice(3, 5).padStart(2, '0');
+    let seconds = timePart.slice(6, 8).padStart(2, '0'); // assuming format is HH:mm:ss
+
+    // Create ISO 8601 date string
+    const timeString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
+    console.log(timeString);
+    return timeString;
+  }
   submitTweet() {
     const payload: TweetPayload = {
       text: this.inputTweetText,
       author_id: 'alabama_cs',
-      created_at: '2024-06-26T06:34:56.000Z',
-      photo_count: 0,
-      video_count: 0,
+      created_at: this.getTimeString(),
+      photo_count: Number(this.photoCount),
+      video_count: Number(this.videoCount),
     };
     this.isRunning = true;
-    // this.optimizerService
-    //   .getOptimizeTweet$(payload)
-    //   .pipe(first())
-    //   .subscribe((result) => {
-    //     this.isRunning = false;
-    //     this.improvementTree = result;
-    //     this.showTopNodes();
-    //   });
-
-    this.improvementTree = optimizerData;
-    this.isRunning = false;
-    this.showTopNodes();
+    this.optimizerService
+      .getOptimizeTweet$(payload)
+      .pipe(first())
+      .subscribe((result) => {
+        this.isRunning = false;
+        this.improvementTree = result;
+        this.showTopNodes();
+      });
   }
 
   calc_prediction_improvement(node: TweetNode): number {
