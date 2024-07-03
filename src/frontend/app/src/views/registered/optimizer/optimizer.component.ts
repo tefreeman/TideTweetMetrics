@@ -12,6 +12,7 @@ import {
   TweetNode,
   TweetPayload,
 } from '../../../core/interfaces/optimizer-interface';
+import { first } from 'rxjs';
 @Component({
   selector: 'app-optimizer',
   standalone: true,
@@ -47,11 +48,14 @@ export class OptimizerComponent implements OnInit {
       video_count: 0,
     };
     this.isRunning = true;
-    this.optimizerService.getOptimizeTweet$(payload).subscribe((result) => {
-      this.isRunning = false;
-      this.improvementTree = result;
-      this.showTopNodes();
-    });
+    this.optimizerService
+      .getOptimizeTweet$(payload)
+      .pipe(first())
+      .subscribe((result) => {
+        this.isRunning = false;
+        this.improvementTree = result;
+        this.showTopNodes();
+      });
   }
 
   calc_prediction_improvement(node: TweetNode): number {
