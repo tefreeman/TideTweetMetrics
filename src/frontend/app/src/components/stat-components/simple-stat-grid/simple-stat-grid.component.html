@@ -1,6 +1,7 @@
 <div class="dataCardContainer">
   <ng-container *ngFor="let displayableData of dataArr; let i = index">
     <app-stat-card
+      cardColor="#a51e36"
       (click)="onCardClick(displayableData)"
       [ngStyle]="{ 'max-width': maxCardWidth, height: cardHeight }"
       class="dataCard"

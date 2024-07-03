@@ -18,6 +18,7 @@ export class StatCompComponent {
    * The data to be displayed by the component.
    */
   @Input({ required: true }) displayableData!: I_CompMetricCard;
+  @Input({ required: true }) color!: string;
   private keyTranslatorService: KeyTranslatorService =
     inject(KeyTranslatorService);
 

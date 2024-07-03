@@ -14,14 +14,23 @@
   </button>
 
   <ng-container *ngIf="isStatValue(displayableData)">
-    <app-stat-value [displayableData]="displayableData"></app-stat-value>
+    <app-stat-value
+      [displayableData]="displayableData"
+      [color]="cardColor"
+    ></app-stat-value>
   </ng-container>
 
   <ng-container *ngIf="isStatTrend(displayableData)">
-    <app-stat-trend [displayableData]="displayableData"></app-stat-trend>
+    <app-stat-trend
+      [displayableData]="displayableData"
+      [color]="cardColor"
+    ></app-stat-trend>
   </ng-container>
 
   <ng-container *ngIf="isStatComp(displayableData)">
-    <app-stat-comp [displayableData]="displayableData"></app-stat-comp>
+    <app-stat-comp
+      [displayableData]="displayableData"
+      [color]="cardColor"
+    ></app-stat-comp>
   </ng-container>
 </mat-card>
