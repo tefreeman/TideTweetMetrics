@@ -56,9 +56,9 @@ export class OptimizerComponent implements OnInit {
 
   calc_prediction_improvement(node: TweetNode): number {
     return Math.round(
-      Math.abs(
-        (node.prediction - optimizerData.prediction) / optimizerData.prediction
-      ) * 100
+      ((node.prediction - optimizerData.prediction) /
+        optimizerData.prediction) *
+        100
     );
   }
 

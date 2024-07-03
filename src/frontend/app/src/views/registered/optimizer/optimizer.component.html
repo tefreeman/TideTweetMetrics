@@ -37,8 +37,10 @@
     <div class="card-title" style="margin-top: 2rem; margin-bottom: 1rem">
       Improved tweets
     </div>
-    @for (node of topNodes; track node.text; ) { @if (node.prediction >
-    improvementTree!.prediction) {
+    <p>% change denotes increase or decrease in estimated like count</p>
+    <mat-divider> </mat-divider>
+    @for (node of topNodes; track node.text; ) { @if
+    (calc_prediction_improvement(node) > 0) {
     <div>
       <mat-card class="optimizer-output inner-content">
         <div class="text" style="margin: 1rem 2rem 1rem 1rem">
