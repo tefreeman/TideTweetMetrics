@@ -16,7 +16,7 @@
       <textarea
         matInput
         [(ngModel)]="inputTweetText"
-        style="height: 280px"
+        style="height: 180px"
       ></textarea>
     </mat-form-field>
 
@@ -38,7 +38,7 @@
       Improved tweets
     </div>
     <p>% change denotes increase or decrease in estimated like count</p>
-    <mat-divider> </mat-divider>
+    <mat-divider style="margin-bottom: 16px"> </mat-divider>
     @for (node of topNodes; track node.text; ) { @if
     (calc_prediction_improvement(node) > 0) {
     <div>
