@@ -126,6 +126,7 @@ export class addStatsDialogComponent implements OnInit {
       )
       .subscribe((displayables) => {
         this.allDisplayables = displayables;
+        console.log('ALL DISPLAYABLES', this.allDisplayables);
 
         if (this.data) {
           this._recommendedDisplayables.next(
@@ -169,7 +170,7 @@ export class addStatsDialogComponent implements OnInit {
    */
   onSearchValueChange(value: string, notMetricHook = true) {
     if (value) {
-      if (notMetricHook) this.lastMetricSearchValue = value;
+      if (notMetricHook === true) this.lastMetricSearchValue = value;
       this._recommendedDisplayables.next(
         this.allDisplayables.filter((item) => {
           // Split the search value into words, considering spaces and common punctuations
@@ -240,9 +241,22 @@ export class addStatsDialogComponent implements OnInit {
    * @param $event - The metrics array.
    */
   onMetricsChanged($event: string[]) {
+    console.log($event);
     if ($event.length == 0)
-      this.onSearchValueChange(this.lastMetricSearchValue);
-    if ($event.length == 1) this.onSearchValueChange($event[0], false);
+      this._recommendedDisplayables.next(
+        this.filterAndLimitDisplayables(
+          this.allDisplayables,
+          this._addedDisplayables.getValue().concat(this.data),
+          30
+        )
+      );
+    if ($event.length == 1) {
+      this._recommendedDisplayables.next(
+        this.allDisplayables.filter((item) =>
+          item.metricName.toLowerCase().includes($event[0].toLowerCase())
+        )
+      );
+    }
 
     this.currentMetrics.next($event);
   }
