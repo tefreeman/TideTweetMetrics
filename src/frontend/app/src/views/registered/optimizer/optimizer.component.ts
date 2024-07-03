@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MaterialModule } from '../../../core/modules/material/material.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { HttpClient } from '@angular/common/http';
@@ -13,6 +13,8 @@ import {
   TweetPayload,
 } from '../../../core/interfaces/optimizer-interface';
 import { first } from 'rxjs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-optimizer',
   standalone: true,
@@ -22,7 +24,9 @@ import { first } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     MatExpansionModule,
+    MatDatepickerModule,
     NgIf,
+    MatIconModule,
   ],
   templateUrl: './optimizer.component.html',
   styleUrls: ['./optimizer.component.css'],
@@ -34,9 +38,18 @@ export class OptimizerComponent implements OnInit {
   topNodes: TweetNode[] = [];
   showingAllNodes = false;
   showNumNodes = 3;
-
-  constructor(private http: HttpClient) {}
+  selectedTime: string = '';
+  photoCount = 0;
+  videoCount = 0;
+  constructor(private http: HttpClient) {
+    this.selectedTime = (() => {
+      const currentHour = new Date().getHours();
+      return currentHour < 10 ? '0' + currentHour : currentHour.toString();
+    })();
+  }
   optimizerService: OptimizerService = inject(OptimizerService);
+  readonly date = new FormControl(new Date());
+
   ngOnInit() {}
 
   submitTweet() {
@@ -48,14 +61,18 @@ export class OptimizerComponent implements OnInit {
       video_count: 0,
     };
     this.isRunning = true;
-    this.optimizerService
-      .getOptimizeTweet$(payload)
-      .pipe(first())
-      .subscribe((result) => {
-        this.isRunning = false;
-        this.improvementTree = result;
-        this.showTopNodes();
-      });
+    // this.optimizerService
+    //   .getOptimizeTweet$(payload)
+    //   .pipe(first())
+    //   .subscribe((result) => {
+    //     this.isRunning = false;
+    //     this.improvementTree = result;
+    //     this.showTopNodes();
+    //   });
+
+    this.improvementTree = optimizerData;
+    this.isRunning = false;
+    this.showTopNodes();
   }
 
   calc_prediction_improvement(node: TweetNode): number {
@@ -81,5 +98,16 @@ export class OptimizerComponent implements OnInit {
     );
     console.log('show all nodes', this.topNodes);
     console.log('improvement tree', this.improvementTree);
+  }
+
+  showParents(node: TweetNode, i: number) {
+    const parents = this.optimizerService
+      .findParentNodes(this.improvementTree!, node.text)
+      .reverse();
+
+    parents.forEach((parent) => {
+      parent.showArrow = true;
+    });
+    this.topNodes.splice(i + 1, 0, ...parents);
   }
 }
