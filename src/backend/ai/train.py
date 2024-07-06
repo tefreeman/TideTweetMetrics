@@ -12,175 +12,27 @@ from transformers import BertTokenizerFast, BertForSequenceClassification, AdamW
 from torch.cuda.amp import autocast, GradScaler
 from textblob import TextBlob
 from datetime import datetime
-from transformers import BertPreTrainedModel, BertModel
 from sklearn.preprocessing import MinMaxScaler
 from transformers import get_linear_schedule_with_warmup
-import optuna
 from torch.optim.lr_scheduler import OneCycleLR
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-torch.cuda.empty_cache()
-import os
-import joblib
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 from sklearn.preprocessing import RobustScaler
-from common import create_directories
+from common import create_directories, save_scaler, load_scaler
+from model import EnhancedBertForSequenceRegression
+from data_loader import DataTransformer
 
-# Bert model class with additional features
-# This class is a modified version of the BertForSequenceClassification class
-# that includes additional features in the input and the classifier layer.
-# May need to rework this if we have time for better analysis
-class BertForSequenceClassificationWithFeatures(BertPreTrainedModel):
-    def __init__(self, config, num_additional_features=11, intermediate_size=256):
-        super().__init__(config)
-        self.bert = BertModel(config)
+torch.cuda.empty_cache()
 
-        total_input_size = config.hidden_size + num_additional_features
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Sequential(
-            nn.Linear(total_input_size, intermediate_size),
-            nn.ReLU(), # Forces non negative output
-            nn.Linear(intermediate_size, 1)
-        )
-
-    def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None, inputs_embeds=None, additional_features=None):
-        if additional_features is None:
-            raise ValueError("additional_features must be provided to the CustomBertModel.")
-        outputs = self.bert(input_ids,
-                            attention_mask=attention_mask,
-                            token_type_ids=token_type_ids,
-                            position_ids=position_ids,
-                            head_mask=head_mask,
-                            inputs_embeds=inputs_embeds)
-        pooled_output = outputs[1]
-        pooled_output = torch.cat((pooled_output, additional_features), 1)
-        pooled_output = self.dropout(pooled_output)
-        logits = self.classifier(pooled_output)
-        return logits.squeeze()  # Remove the extra dimension
-
-
-def save_scaler(scaler_name, scaler_object):
-    """
-    Saves the scaler object based on the scaler name according to the predefined paths.
-    """
-    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
-    if scaler_file_name:
-        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
-        joblib.dump(scaler_object, scaler_path)
-        print(f"Scaler {scaler_name} saved to {scaler_path}")
-    else:
-        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
-
-def load_scaler(scaler_name):
-    """
-    Loads and returns the scaler object based on the scaler name.
-    """
-    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
-    if scaler_file_name:
-        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
-        if os.path.exists(scaler_path):
-            return joblib.load(scaler_path)
-        else:
-            print(f"Scaler file {scaler_path} not found.")
-    else:
-        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
-    return None
-
-
+like_count_scaler = None
 
 def get():
     
-    with open(PROFILES_FILE_PATH, 'r', encoding='utf-8') as file:
-        profiles = json.load(file)
+    global like_count_scaler
+    data_loader = DataTransformer()
+    data_loader.append_avg_n_last_likes(10)
 
-    profile_dict = {}
-    for profile in profiles:
-        profile_dict[profile['username']] = profile['public_metrics']['followers_count']
-
-    with open(TWEETS_FILE_PATH, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-
-    # First, build a dictionary to hold the last 5 likes per author
-    author_last_10_likes_avg = {}
-
-    # Initialize author tweets dict for accumulating tweets by author
-    author_tweets = {}
-
-    # Accumulate tweets by authors
-    for tweet in data:
-        author_id = tweet['data']['author_id']
-        if author_id not in author_tweets:
-            author_tweets[author_id] = []
-        author_tweets[author_id].append(tweet)
-
-    # Calculate the average of the last 5 likes for each author
-    for author_id, tweets in author_tweets.items():
-        # Sort tweets by created_at
-        sorted_tweets = sorted(tweets, key=lambda x: x['data']['created_at']['$date'], reverse=True)
-        # Take last 5 tweets
-        last_5_tweets = sorted_tweets[:10]
-        # Calculate average likes
-        avg_likes = np.mean([tweet['data']['public_metrics']['like_count'] for tweet in last_5_tweets])
-        # Store in dict
-        author_last_10_likes_avg[author_id] = avg_likes
-
-    # Then adapt the creation of the tweets list to include the average likes of the last 5 tweets
-    tweets = [{
-        'text': tweet['data']['text'],
-        'like_count': tweet['data']['public_metrics']['like_count'],
-        'created_at': tweet['data']['created_at']['$date'],
-        'author_id': tweet['data']['author_id'],
-        'hashtag_count': len(tweet['data']['entities']['hashtags']),
-        'mention_count': len(tweet['data']['entities']['mentions']),
-        'url_count': len(tweet['data']['entities']['urls']),
-        'photo_count': len(tweet['data']['attachments']['photos']),
-        'video_count': len(tweet['data']['attachments']['videos']),
-        'avg_last_10_likes': author_last_10_likes_avg.get(tweet['data']['author_id'], 0),  # Add the avg likes
-    } for tweet in data]
-
-    # Remove tweets from the uoregon account accidentally included
-    for i in range(len(tweets)):
-        if tweets[i]['author_id'] == 'uoregon':
-            tweets[i] = None
-    tweets = [tweet for tweet in tweets if tweet is not None]       
-
-    # Flatten the JSON data into a more convenient format
-
-
-
-
-    # Add the followers_count field to the tweets
-    # if the author_id is in the profile_dict
-    # otherwise, set the tweet to None
-    for i in range(len(tweets)):
-        if tweets[i]['author_id'] in profile_dict:
-            tweets[i]['followers_count'] = profile_dict[tweets[i]['author_id']]
-            del tweets[i]['author_id']
-        else:
-            tweets[i] = None
-
-
-    tweets = [tweet for tweet in tweets if tweet is not None]
-    print(len(tweets))
-
-    # Limit the number of tweets for slow PC's
-    # randomly shuffle tweets array
-    # np.random.shuffle(tweets)
-    # tweets = tweets[0:10000]
-
-    df = pd.DataFrame(tweets)
-
-    # Data cleaning
-    df['text'] = df['text'].apply(lambda x: ' '.join(re.sub("(https?://[^\s]+)", " ", x).split()))
-
-    df['sentiment'] = df['text'].apply(lambda x: TextBlob(x).sentiment.polarity)
-
-    df['text_length'] = df['text'].apply(len)
-
-
-    df['created_at'] = df['created_at'].apply(lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ'))
-    df['day_of_week'] = df['created_at'].apply(lambda x: x.weekday())
-    df['hour_of_day'] = df['created_at'].apply(lambda x: x.hour)
-
+    df = data_loader.transform_all_to_df()
 
     # Splitting the dataset into training, validation, and test sets
     train, validate, test = np.split(df.sample(frac=1, random_state=42),
@@ -188,6 +40,8 @@ def get():
 
     # Scaling the like_count column using RobustScaler to handle outliers
     like_count_scaler = RobustScaler()
+
+
     train['like_count_scaled'] = like_count_scaler.fit_transform(train[['like_count']])
     validate['like_count_scaled'] = like_count_scaler.transform(validate[['like_count']])
     test['like_count_scaled'] = like_count_scaler.transform(test[['like_count']])
@@ -195,16 +49,9 @@ def get():
     # Saving the scaler object
     save_scaler('like_count', like_count_scaler)
 
-
-    # Tokenization and Encoding
-    tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
-
-    def encode_texts(texts):
-        return tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
-
-    train_encodings = encode_texts(train['text'].tolist())
-    validate_encodings = encode_texts(validate['text'].tolist())
-    test_encodings = encode_texts(test['text'].tolist())
+    train_encodings = data_loader.encode_texts(train['text'].tolist())
+    validate_encodings =  data_loader.encode_texts(validate['text'].tolist())
+    test_encodings =  data_loader.encode_texts(test['text'].tolist())
 
     # Then, when converting to tensors, use the scaled column
     train_labels = torch.tensor(train['like_count_scaled'].values)
@@ -213,7 +60,7 @@ def get():
 
 
     mm_features_scaler = MinMaxScaler()
-    r_features_scaler = MinMaxScaler()
+    r_features_scaler = RobustScaler()
 
     # Columns to be scaled with MinMaxScaler and RobustScaler
     mm_scale_columns = ['hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length']
@@ -264,16 +111,16 @@ def get():
 
 def train_model_with_fixed_params(train_dataset, validate_dataset):
 
-    loss_fn = nn.SmoothL1Loss()
-    #loss_fn = nn.MSELoss()
+    #loss_fn = nn.SmoothL1Loss()
+    loss_fn = nn.MSELoss()
     # Fixed hyperparameters
     #  May need to adjust this
     lr = 1e-5
     batch_size = 64
-    dropout_rate = 0.325
+    dropout_rate = 0.15
     epochs = 200
 
-    model = BertForSequenceClassificationWithFeatures.from_pretrained(
+    model = EnhancedBertForSequenceRegression.from_pretrained(
         'bert-base-uncased',
         hidden_dropout_prob=dropout_rate  # Fixed dropout_rate
     )
@@ -295,8 +142,12 @@ def train_model_with_fixed_params(train_dataset, validate_dataset):
     
     return avg_val_loss
 
+def inverse_scale(scaled_values, scaler):
+    reshaped = scaled_values.reshape(-1, 1)  # Reshape because the scaler expects 2D input
+    return scaler.inverse_transform(reshaped).flatten()  # Flatten back to 1D
 
-def evaluate_model(model, val_loader, loss_fn, device):
+
+def evaluate_model(model, val_loader, loss_fn, device, scaler):
     model.eval()  # Set the model to evaluation mode
     total_val_loss = 0
     predictions, true_labels = [], []
@@ -313,6 +164,7 @@ def evaluate_model(model, val_loader, loss_fn, device):
                 loss = loss_fn(logits, b_labels.float())
 
             total_val_loss += loss.item()
+
             # Ensure logits and b_labels are 1D before appending
             predictions.append(logits.detach().cpu().numpy())
             true_labels.append(b_labels.detach().cpu().numpy())
@@ -322,7 +174,10 @@ def evaluate_model(model, val_loader, loss_fn, device):
     predictions = np.concatenate(predictions, axis=0)
     true_labels = np.concatenate(true_labels, axis=0)
 
-    return avg_val_loss, predictions, true_labels
+    unscaled_predictions = inverse_scale(predictions, scaler)
+    unscaled_true_labels = inverse_scale(true_labels, scaler)
+
+    return avg_val_loss, predictions, true_labels, unscaled_predictions, unscaled_true_labels
 
 def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_scheduler, epochs=5, model_save_path=MODEL_SAVE_DIR, dropout_rate=0.1):
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -361,14 +216,19 @@ def train_model(model, train_loader, val_loader, optimizer, loss_fn, scaler, lr_
 
         avg_train_loss = total_train_loss / len(train_loader)
         
-        avg_val_loss, predictions, true_labels = evaluate_model(model, val_loader, loss_fn, device)
-        
-        
+        avg_val_loss, predictions, true_labels, unscaled_predictions, unscaled_true_labels = evaluate_model(model, val_loader, loss_fn, device, like_count_scaler)
+
+
         lr_scheduler.step(avg_val_loss)
         
         mse = mean_squared_error(true_labels, predictions)
         mae = mean_absolute_error(true_labels, predictions)
-        print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | MSE: {mse} | MAE: {mae}| Time elapsed: {datetime.now() - start_time}')
+
+        unscaled_mse = mean_squared_error(unscaled_true_labels, unscaled_predictions)
+        unscaled_mae = mean_absolute_error(unscaled_true_labels, unscaled_predictions)
+
+
+        print(f'Epoch {epoch + 1}/{epochs} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | MSE: {mse:.6f} | MAE: {mae:.6f} | Unscaled MSE: {unscaled_mse:.6f} | Unscaled MAE: {unscaled_mae:.6f} | Time elapsed: {datetime.now() - start_time}')
         if epoch >= 8 and epoch % 8 == 0:
 
         # Save the model and optimizer state each epoch
