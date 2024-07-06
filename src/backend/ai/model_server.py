@@ -22,7 +22,7 @@ torch.cuda.empty_cache()
 import joblib
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
 from backend.config import Config
-from backend.ai.train import BertForSequenceClassificationWithFeatures
+from backend.ai.train import EnhancedBertForSequenceRegression
 from common import get_last_tweets_like_average, get_followers_count
 from openai import OpenAI
 from fastapi.responses import JSONResponse
@@ -68,7 +68,7 @@ class TweetNode:
 @app.on_event("startup")
 def load_model_and_scalers():
     global model, like_count_scaler, mm_features_scaler, r_features_scaler, tokenizer, avg_last_10_likes_for_profiles, twitter_profiles, gpt_client
-    model_path = MODEL_SAVE_DIR + 'epoch_33'
+    model_path = MODEL_SAVE_DIR + 'epoch_17'
     like_count_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('like_count')
     mm_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('mm_features')
     r_features_scaler_path = SCALER_SAVE_DIR + SCALERS_CONFIG.get('r_features')
@@ -103,7 +103,6 @@ def preprocess_and_tokenize(tweet_list):
         'avg_last_10_likes': avg_last_10_likes_for_profiles.get(tweet.author_id, 0)
     } for tweet in tweet_list]
 
-    print(tweets)
 
     df = pd.DataFrame(tweets)
     df['text'] = df['text'].apply(lambda x: ' '.join(re.sub("(https?://[^\s]+)", " ", x).split()))
@@ -131,7 +130,7 @@ def predict(tweet_list: TweetList):
 
 
 def load_model(model_path):
-    model = BertForSequenceClassificationWithFeatures.from_pretrained(model_path)
+    model = EnhancedBertForSequenceRegression.from_pretrained(model_path)
     model.eval()  # Set the model to evaluation mode
     return model
 

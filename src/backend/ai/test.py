@@ -22,7 +22,7 @@ torch.cuda.empty_cache()
 import os
 import joblib
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
-from backend.ai.train import BertForSequenceClassificationWithFeatures
+from backend.ai.train import EnhancedBertForSequenceRegression
 # Assuming these are the definitions for your custom dataset and model
 # from your_dataset_module import YourCustomDataset
 # from your_model_module import YourModel
@@ -171,7 +171,7 @@ def get(like_count_scaler, features_scaler):
 
 def load_model(model_path):
     
-    model = BertForSequenceClassificationWithFeatures.from_pretrained(model_path)
+    model = EnhancedBertForSequenceRegression.from_pretrained(model_path)
     model.eval()  # Set the model to evaluation mode
     return model
 

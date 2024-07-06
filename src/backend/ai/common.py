@@ -1,4 +1,5 @@
 import json
+import joblib
 import numpy as np
 import os
 from ai_config import SCALER_SAVE_DIR, MODEL_SAVE_DIR, TWEETS_FILE_PATH, PROFILES_FILE_PATH, SCALERS_CONFIG
@@ -47,3 +48,33 @@ def get_last_tweets_like_average(tweet_count: int) -> dict:
         author_likes_avg[author_id] = avg_likes
 
     return author_likes_avg
+
+
+def save_scaler(scaler_name, scaler_object):
+    """
+    Saves the scaler object based on the scaler name according to the predefined paths.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
+        joblib.dump(scaler_object, scaler_path)
+        print(f"Scaler {scaler_name} saved to {scaler_path}")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+
+
+def load_scaler(scaler_name):
+    """
+    Loads and returns the scaler object based on the scaler name.
+    """
+    scaler_file_name = SCALERS_CONFIG.get(scaler_name)
+    if scaler_file_name:
+        scaler_path = os.path.join(SCALER_SAVE_DIR, scaler_file_name)
+        if os.path.exists(scaler_path):
+            return joblib.load(scaler_path)
+        else:
+            print(f"Scaler file {scaler_path} not found.")
+    else:
+        print(f"Scaler name '{scaler_name}' not found in SCALERS_CONFIG.")
+    return None
+

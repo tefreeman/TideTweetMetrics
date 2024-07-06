@@ -1,7 +1,7 @@
 #define global variables for AI configuration
 
 BASE_DIR = 'data/ai/'
-MODEL_NAME = 'deep_smooth_l1'
+MODEL_NAME = 'test2'
 MODEL_SAVE_DIR =  BASE_DIR + 'models/' + MODEL_NAME + '/' + 'model_saves/'
 SCALER_SAVE_DIR = BASE_DIR + 'models/' + MODEL_NAME  + '/' + 'scalers/'
 SCALERS_CONFIG = {
