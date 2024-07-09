@@ -109,19 +109,26 @@ class DataTransformer:
         tweets_list = []
         for author_id, tweets in self.tweet_map.items():
             for tweet in tweets:
-             tweets_list.append({
-                'text': tweet['data']['text'],
-                'like_count': tweet['data']['public_metrics']['like_count'],
-                'created_at': tweet['data']['created_at']['$date'],
-                'author_id': tweet['data']['author_id'],
-                'followers_count': self.profile_map[author_id]['public_metrics']['followers_count'],
-                'hashtag_count': len(tweet['data']['entities']['hashtags']),
-                'mention_count': len(tweet['data']['entities']['mentions']),
-                'url_count': len(tweet['data']['entities']['urls']),
-                'photo_count': len(tweet['data']['attachments']['photos']),
-                'video_count': len(tweet['data']['attachments']['videos']),
-                 self.last_n_likes_str: tweet['data'][self.last_n_likes_str],  # Add the avg likes
-            })
+                if tweet['data'][self.last_n_likes_str] == 0:
+                    divide_by = tweet['data']['public_metrics']['like_count']
+                else:
+                    divide_by = tweet['data'][self.last_n_likes_str]
+                if divide_by == 0:
+                    divide_by = 1
+                print(divide_by)
+                tweets_list.append({
+                    'text': tweet['data']['text'],
+                    'like_count': tweet['data']['public_metrics']['like_count'] / divide_by,
+                    'created_at': tweet['data']['created_at']['$date'],
+                    'author_id': tweet['data']['author_id'],
+                    'followers_count': self.profile_map[author_id]['public_metrics']['followers_count'],
+                    'hashtag_count': len(tweet['data']['entities']['hashtags']),
+                    'mention_count': len(tweet['data']['entities']['mentions']),
+                    'url_count': len(tweet['data']['entities']['urls']),
+                    'photo_count': len(tweet['data']['attachments']['photos']),
+                    'video_count': len(tweet['data']['attachments']['videos']),
+                    self.last_n_likes_str: tweet['data'][self.last_n_likes_str],  # Add the avg likes
+                })
         
         df = pd.DataFrame(tweets_list)
         self.clean_df(df)

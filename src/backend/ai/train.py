@@ -39,7 +39,7 @@ def get():
                                     [int(.8*len(df)), int(.9*len(df))])
 
     # Scaling the like_count column using RobustScaler to handle outliers
-    like_count_scaler = RobustScaler()
+    like_count_scaler = MinMaxScaler()
 
 
     train['like_count_scaled'] = like_count_scaler.fit_transform(train[['like_count']])
@@ -60,7 +60,7 @@ def get():
 
 
     mm_features_scaler = MinMaxScaler()
-    r_features_scaler = RobustScaler()
+    r_features_scaler = MinMaxScaler()
 
     # Columns to be scaled with MinMaxScaler and RobustScaler
     mm_scale_columns = ['hashtag_count', 'mention_count', 'url_count', 'photo_count', 'video_count', 'text_length']

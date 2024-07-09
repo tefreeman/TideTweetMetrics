@@ -1,197 +1,125 @@
-from http.client import HTTPException, ResponseNotReady
-from typing import TypedDict
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from backend.encoders.tweet_encoder import Tweet
-from backend.encoders.profile_encoder import Profile
-from account import Account
-from urllib.parse import urlparse
-import database as db
-from utils.driver import create_undetected_driver
-from selenium.common.exceptions import WebDriverException
-from utils.error_sys import Error
-import time
+from transitions import Machine, State
+import asyncio
+from backend.crawler_sys.driver.driver import Driver
+from nodriver import Browser, Tab
 
-class CrawlResults(TypedDict):
-    profile: Profile
-    tweets: list[Tweet]
-    raw_data: str | None
-    errors: list[Error]
-    account_needs_rest: bool 
 
 class Crawler:
-    """
-    A class that represents a web crawler for scraping tweets and profiles.
+    states = [
+        State(name='error', on_enter=['on_error']),
+        State(name='start_browser', on_enter=['on_start_browser']),
+        State(name='next_target', on_enter=['on_next_target']),
+        State(name='login', on_enter=['on_login'])
+    ]
 
-    Attributes:
-        driver: The web driver used for crawling.
-        account: The account used for authentication.
-    """
+    def __init__(self, driver: Driver) -> None:
+        self.driver = driver
+        self.browser: Browser = None
+        self.page: Tab = None
 
-    def __init__(self) -> None:
-        """
-        Initializes a new instance of the Crawler class.
-        """
-        self.driver = None
-        self.account: Account = None
-
-    def init_driver_to_account(self, account: Account) -> None:
-        """
-        Initializes the web driver and account.
-
-        Args:
-            account: The account to be used for authentication.
-        """
-        self.account = account
-        
-        if self.driver != None:
-            self.driver.quit()
-            time.sleep(5)
-        self.driver = create_undetected_driver(
-            account.get_chrome_profile(), account.get_chrome_profile()
-        )
+        self.machine = Machine(model=self, states=Crawler.states, initial='start_browser')
+        self.machine.add_transition(trigger='to_next_target', source='start_browser', dest='next_target')
+        self.machine.add_transition(trigger='fail_to_next_target', source='next_target', dest='login')
+        self.machine.add_transition(trigger='login_success', source='login', dest='next_target')
+        self.machine.add_transition(trigger='login_failure', source='login', dest='error')
+        self.machine.add_transition(trigger='to_error', source='*', dest='error')
 
 
-    def try_load_page(self, url, errors: list[Error]) -> None:
-        """
-        Tries to load a web page and handles exceptions.
-
-        Args:
-            url: The URL of the web page to load.
-            errors: The list to store any encountered errors.
-        """
+    async def on_start_browser(self):
         try:
-            self.driver_load_page(url)
+            success = await start_browser(self)
+            if success:
+                self.to_next_target()
+            else:
+                self.to_error()
+            
+        except Exception as e:
+            print(f"Error starting browser: {e}")
+            self.error()
 
-        except (WebDriverException, HTTPException, ResponseNotReady) as e:
-            errors.append(Error(e.__class__.__name__))
-            return
 
-        # check these
-        if self.driver.has_connection() == False:
-            errors.append(Error("NoInternetConnection"))
-            return
+    async def on_next_target(self):
+        success = await next_target(self)
 
-        # status = self.driver.get_status_code()
-        # if status is None:
-        #     errors.append(Error("noHTTPResponseCode"))
-        #     return
-        # if status >= 300:
-        #     errors.append(Error("BadHTTPResponseCode"))
-        #     return
-
-        html_not_loaded_error = self.detected_html_not_loaded()
-        if html_not_loaded_error != None:
-            errors.append(html_not_loaded_error)
-            return
+        if success:
+            self.fail_to_next_target()
         
+        else:
+            self.fail_to_next_target()
 
-    def crawl(self, url: str, tweet_count: int) -> CrawlResults:
-        """
-        Crawls a web page and retrieves crawl results.
+    async def on_login(self):
+        success = await login(self)
+        if success:
+            self.login_success()
+        else:
+            self.login_failure()
 
-        Args:
-            url: The URL of the web page to crawl.
-            tweet_count: The number of tweets to retrieve.
 
-        Returns:
-            The crawl results containing the profile, tweets, raw data, and errors.
-        """
-        results: CrawlResults = {
-            "profile": None,
-            "tweets": [],
-            "raw_data": None,
-            "errors": [],
-            "account_needs_rest": False,
-        }
+async def start_browser(crawler: Crawler):
+    print("Starting browser")
+    crawler.browser = await crawler.driver.start_window()
+    return True
 
-        self.try_load_page(url, results["errors"])
 
-        if len(results["errors"]) > 0:
-            return results
 
-        if self.is_logged_in_quick() == False:
-            self.login(self.account)
-            self.try_load_page(url, results["errors"])
+async def next_target(crawler: Crawler):
+    print("Executing next_target")
+    crawler.page = await crawler.browser.get("https://x.com/")
 
-        self.parse_tweets_and_profile(results, tweet_count, self.account)
+    return False
 
-        cleaned_errors = [item for item in results["errors"] if item is not None]
-        results["errors"] = cleaned_errors
+    if page.status == 200:
+        return True
+    return False
 
-        return results
+async def login(crawler):
+    print("Executing login")
+    page: Tab = crawler.page
 
-    def shutdown(self):
-        """
-        Shuts down the web driver.
-        """
-        self.driver.quit()
+     # click on login button
+    login = await page.select('[data-testid="loginButton"]')
+    await login.click()
 
-    def detected_html_not_loaded(self) -> Error | None:
-        """
-        Checks if the HTML failed to load.
+    # enter email
+    email_input = await page.select('input[autocomplete="username"]')
+    await email_input.send_keys("trevorefreeman@gmail.com")
 
-        Returns:
-            An Error object if the HTML failed to load, None otherwise.
-        """
-        raise NotImplementedError()
+    # next button
+    next_btn = await page.find_element_by_text("Next")
+    await next_btn.click()
 
-    def driver_load_page(self, url: str):
-        """
-        Loads a web page using the web driver.
+    # enter password
+    try:
+        password_input = await page.select('input[autocomplete="current-password"]', timeout=2)
+        await password_input.send_keys("Tuckfuck55!")
 
-        Args:
-            url: The URL of the web page to load.
-        """
-        raise NotImplementedError()
+    except Exception as e:
+        phone_verf = await page.select('[data-testid="ocfEnterTextTextInput"]')
+        await phone_verf.send_keys("2053351103")
 
-    def login(self) -> None:
-        """
-        Logs into an account using the web driver.
 
-        Args:
-            account: The account to log into.
-        """
-        raise NotImplementedError()
-    def is_logged_in(self) -> bool:
-        """
-        Checks if the user is logged in.
+            # next button
+        next_btn = await page.find_element_by_text("Next")
+        await next_btn.click()
 
-        Returns:
-            True if the user is logged in, False otherwise.
-        """
-        raise NotImplementedError()
+        password_input = await page.select('input[autocomplete="current-password"]')
+        await password_input.send_keys("Tuckfuck55!")
 
-    def is_logged_in_quick(self) -> bool:
-        """
-        Quickly checks if the user is logged in.
+    # log in button
+    login_btn = await page.select('button[data-testid="LoginForm_Login_Button"]')
+    await login_btn.click()
 
-        Returns:
-            True if the user is logged in, False otherwise.
-        """
-        raise NotImplementedError()
-    
-    def get_raw_data(self) -> str:
-        """
-        Retrieves the raw HTML data of the loaded page.
+async def run_crawler():
+    crawler = Crawler(Driver())
 
-        Returns:
-            The raw HTML data of the loaded page.
-        """
-        return self.driver.page_source
+    while True:
+        await asyncio.sleep(1)
+        if crawler.state == 'start_browser':
+            await crawler.on_start_browser()
+        if crawler.state == 'next_target':
+            await crawler.on_next_target()
+        elif crawler.state == 'login':
+            await crawler.on_login()
 
-    def parse_tweets_and_profile(
-        self, results: CrawlResults, tweet_count: int
-    ) -> tuple[list[Tweet], Profile]:
-        """
-        Parses tweets and profile from the loaded page.
-
-        Args:
-            results: The crawl results to store the parsed tweets and profile.
-            tweet_count: The number of tweets to retrieve.
-
-        Returns:
-            A tuple containing the parsed tweets and profile.
-        """
-        raise NotImplementedError()
-
+if __name__ == "__main__":
+    asyncio.run(run_crawler())
