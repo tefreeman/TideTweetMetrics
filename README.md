@@ -15,3 +15,7 @@ TideTweetMetrics is an app providing a dynamic and customizable dashboard that a
 
 * **Live Presentation:** [Watch Live Presentation](https://youtu.be/h10BHb5Zo9U)
 * **Google Slides:** [View Presentation](https://docs.google.com/presentation/d/10BCo9PUOJShbjQ5s69a3-dB1oSNw_WSNHeJQj1JODYk/edit?usp=sharing)
+
+## In-depth code analysis 
+
+* **coming  soon**
